@@ -37,17 +37,24 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.347 2004/03/12 18:53:50 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.348 2004/03/12 19:07:15 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
 
-our %config;    # Holds the config variables
-our $mw;        # Mainwindow
-
 #####
 # YOU SHOULD NOT NEED TO MODIFY ANYTHING BELOW HERE FOR NORMAL USE
 #####
+
+##########
+# Set up variables that need to be global for now
+##########
+our %config;     # Holds the config variables
+our $mw;         # Mainwindow
+our $dbh;        # Database Handle
+our $icon;       # Window Icon
+our $mainbox;    # Main search box
+##########
 
 our $current_token;
 our $lock_hotkeys   = 0;
@@ -1119,6 +1126,7 @@ sub build_category_menubutton
         );
     }
     $sth->finish;
+    $menu->configure( -text => return_longcat($$var_ref) );
     return ($menu);
 }
 
@@ -1680,7 +1688,7 @@ sub add_new_song
     my $newfilename =
       move_file( $addsong_filename, $addsong_title, $addsong_artist );
 
-    my $addsong_title = $dbh->quote($addsong_title);
+    $addsong_title = $dbh->quote($addsong_title);
     if ( $addsong_info eq "" )
     {
         $addsong_info = "NULL";
@@ -1909,21 +1917,21 @@ sub edit_song
     my (@selected) = $mainbox->curselection();
     my ( $edit_title, $edit_artist, $edit_category, $edit_publisher,
         $edit_info );
-    $count = $#selected + 1;
+    my $count = $#selected + 1;
     if ( $count == 1 )
     {
 
         # We're looking to edit one song, so we can choose everything
         my $id = get_song_id( $mainbox, $selected[0] );
-        $query =
+        my $query =
           "SELECT title,artist,category,info,publisher from mrvoice where id=$id";
-        (
+        my (
             $edit_title, $edit_artist, $edit_category,
             $edit_info,  $edit_publisher
           )
           = $dbh->selectrow_array($query);
 
-        $box = $mw->DialogBox(
+        my $box = $mw->DialogBox(
             -title          => "Edit Song",
             -buttons        => [ "Edit", "Cancel" ],
             -default_button => "Edit"
@@ -1933,32 +1941,32 @@ sub edit_song
             -text =>
               "You may use this form to modify information about a song that is already in the database\n"
         )->pack();
-        $frame1 = $box->add("Frame")->pack( -fill => 'x' );
+        my $frame1 = $box->add("Frame")->pack( -fill => 'x' );
         $frame1->Label( -text => "Song Title" )->pack( -side => 'left' );
         $frame1->Entry(
             -width        => 30,
             -textvariable => \$edit_title
         )->pack( -side => 'right' );
-        $frame2 = $box->add("Frame")->pack( -fill => 'x' );
+        my $frame2 = $box->add("Frame")->pack( -fill => 'x' );
         $frame2->Label( -text => "Artist" )->pack( -side => 'left' );
         $frame2->Entry(
             -width        => 30,
             -textvariable => \$edit_artist
         )->pack( -side => 'right' );
-        $frame3 = $box->add("Frame")->pack( -fill => 'x' );
+        my $frame3 = $box->add("Frame")->pack( -fill => 'x' );
         $frame3->Label( -text => "Category" )->pack( -side => 'left' );
         my $menu = build_category_menubutton( $frame3, \$edit_category );
         $menu->pack( -side => 'right' );
 
-        $frame4 = $box->add("Frame")->pack( -fill => 'x' );
+        my $frame4 = $box->add("Frame")->pack( -fill => 'x' );
         $frame4->Label( -text => "Extra Info" )->pack( -side => 'left' );
         $frame4->Entry(
             -width        => 30,
             -textvariable => \$edit_info
         )->pack( -side => 'right' );
-        $pubframe = $box->add("Frame")->pack( -fill => 'x' );
+        my $pubframe = $box->add("Frame")->pack( -fill => 'x' );
         $pubframe->Label( -text => 'Publisher' )->pack( -side => 'left' );
-        $pubmenu = $pubframe->Menubutton(
+        my $pubmenu = $pubframe->Menubutton(
             -text        => 'Choose Publisher',
             -relief      => 'raised',
             -tearoff     => 0,
@@ -1977,14 +1985,14 @@ sub edit_song
             );
         }
         $pubmenu->configure( -text => $edit_publisher );
-        $result = $box->Show();
+        my $result = $box->Show();
         if ( $result eq "Edit" )
         {
             $edit_artist = $dbh->quote($edit_artist);
             $edit_title  = $dbh->quote($edit_title);
             $edit_info   = $dbh->quote($edit_info);
 
-            $query =
+            my $query =
               "UPDATE mrvoice SET artist=$edit_artist, title=$edit_title, info=$edit_info, category='$edit_category' WHERE id=$id";
             if ( $dbh->do($query) )
             {
@@ -2022,7 +2030,7 @@ sub edit_song
             my $songid = get_song_id( $mainbox, $id );
             push( @songids, $songid );
         }
-        $box = $mw->DialogBox(
+        my $box = $mw->DialogBox(
             -title          => "Edit $count Songs",
             -buttons        => [ "Edit", "Cancel" ],
             -default_button => "Edit"
@@ -2032,7 +2040,7 @@ sub edit_song
             -text =>
               "You are editing the attributes of $count songs.\nAny changes you make here will be applied to all $count.\n\nTo completely erase a field, use the checkbox beside the field\n"
         )->pack();
-        $frame2 = $box->add("Frame")->pack( -fill => 'x' );
+        my $frame2 = $box->add("Frame")->pack( -fill => 'x' );
         $frame2->Label( -text => "Artist" )->pack( -side => 'left' );
         $frame2->Checkbutton(
             -text     => "Clear Field",
@@ -2042,12 +2050,12 @@ sub edit_song
             -width        => 30,
             -textvariable => \$edit_artist
         )->pack( -side => 'right' );
-        $frame3 = $box->add("Frame")->pack( -fill => 'x' );
+        my $frame3 = $box->add("Frame")->pack( -fill => 'x' );
         $frame3->Label( -text => "Category" )->pack( -side => 'left' );
         my $menu = build_category_menubutton( $frame3, \$edit_category );
         $menu->pack( -side => 'right' );
 
-        $frame4 = $box->add("Frame")->pack( -fill => 'x' );
+        my $frame4 = $box->add("Frame")->pack( -fill => 'x' );
         $frame4->Label( -text => "Extra Info" )->pack( -side => 'left' );
         $frame4->Checkbutton(
             -text     => "Clear Field",
@@ -2057,9 +2065,9 @@ sub edit_song
             -width        => 30,
             -textvariable => \$edit_info
         )->pack( -side => 'right' );
-        $pubframe = $box->add("Frame")->pack( -fill => 'x' );
+        my $pubframe = $box->add("Frame")->pack( -fill => 'x' );
         $pubframe->Label( -text => 'Publisher' )->pack( -side => 'left' );
-        $pubmenu = $pubframe->Menubutton(
+        my $pubmenu = $pubframe->Menubutton(
             -text        => 'Choose Publisher',
             -relief      => 'raised',
             -tearoff     => 0,
@@ -2077,7 +2085,7 @@ sub edit_song
                 }
             );
         }
-        $result = $box->Show();
+        my $result = $box->Show();
         if (
             ( $result eq "Edit" )
             && (   $edit_artist
@@ -2110,9 +2118,9 @@ sub edit_song
 
             $string = join( ", ", @querystring );
 
-            foreach $songid (@songids)
+            foreach my $songid (@songids)
             {
-                $query = "UPDATE mrvoice SET $string WHERE id=$songid";
+                my $query = "UPDATE mrvoice SET $string WHERE id=$songid";
                 $dbh->do($query);
             }
             $status = "Edited $count songs";
@@ -2126,7 +2134,6 @@ sub edit_song
     {
         $status = "No songs selected for editing";
     }
-
 }
 
 sub delete_song
@@ -2201,7 +2208,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.347 $';
+    my $rev = '$Revision: 1.348 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3307,14 +3314,14 @@ sub Tank_Drop
 #########
 # MAIN PROGRAM
 #########
-our $mw = MainWindow->new;
+$mw = MainWindow->new;
 $mw->withdraw();
 $mw->configure( -menu => $menubar = $mw->Menu );
 $mw->geometry("+0+0");
 $mw->title("Mr. Voice");
 $mw->minsize( 67, 2 );
 $mw->protocol( 'WM_DELETE_WINDOW', \&do_exit );
-our $icon = $mw->Pixmap( -data => $icon_data );
+$icon = $mw->Pixmap( -data => $icon_data );
 $mw->Icon( -image => $icon );
 
 read_rcfile();
