@@ -15,8 +15,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/03/07 02:47:46 $
-#	CVS REVISION NUMBER:    $Revision: 1.29 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/07 13:29:21 $
+#	CVS REVISION NUMBER:    $Revision: 1.30 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -312,7 +312,7 @@ sub add_new_song
     {
       infobox ("File Error","Could not open input file $addsong_filename\nfor reading.  Check file permissions"); 
     }
-    elsif (! -r $addsong_title)
+    elsif (! $addsong_title)
     {
       infobox ("File Error","You must provide the title for the song."); 
     }
