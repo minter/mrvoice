@@ -1619,7 +1619,7 @@ sub bulk_add
             # Valid title, all we need
             my $time = get_songlength($file);
             print "Got time $time\n" if $debug;
-            my $md5      = get_md5($file);
+            my $md5 = get_md5( catfile( $config{filepath}, $file ) );
             my $db_title = $dbh->quote($title);
             my $db_artist;
             if ( ($artist) && ( $artist !~ /^\s*$/ ) )
@@ -3182,7 +3182,6 @@ sub import_bundle
     }
 
     my $tmpdir = tempdir( CLEANUP => 1 );
-    print "DEBUG: My dir is $tmpdir\n";
     my $cwd = getcwd();
     chdir($tmpdir);
 
@@ -3192,8 +3191,6 @@ sub import_bundle
 
     foreach my $cat_ref ( @{ $bundle->{categories} } )
     {
-        print
-          "DEBUG: Got code $cat_ref->{code} and desc $cat_ref->{description}\n";
         unless ( get_category( $cat_ref->{code} ) )
         {
             print "Adding category $cat_ref->{code}, $cat_ref->{description}\n";
@@ -3209,9 +3206,6 @@ sub import_bundle
         foreach my $song_ref ( @{ $bundle->{songs} } )
         {
             next if check_md5( $song_ref->{md5} );
-            print "DEBUG: Working on song $song_ref->{title}\n";
-            print "DEBUG: Testing for file ",
-              catfile( $config{filepath}, $song_ref->{filename} ), "\n";
             if ( !-r catfile( $config{filepath}, $song_ref->{filename} ) )
             {
                 print "Moving $song_ref->{filename} to $config{filepath}\n";
@@ -3645,7 +3639,7 @@ sub update_time
         next if ( !-r catfile( $config{filepath}, $filename ) );
         my $newtime =
           get_songlength( catfile( $config{'filepath'}, $filename ) );
-        my $newmd5 = get_md5($filename);
+        my $newmd5 = get_md5( catfile( $config{filepath}, $filename ) );
         if ( ( $newtime ne $time ) || ( $newmd5 ne $md5 ) )
         {
             print
@@ -3855,7 +3849,7 @@ sub get_md5
 {
     my $filename = shift;
     local $/ = undef;
-    open( my $fh, "<", catfile( $config{filepath}, $filename ) );
+    open( my $fh, "<", $filename );
     my $bindata = <$fh>;
     return md5_hex($bindata);
 }
@@ -4261,6 +4255,103 @@ sub search_online
 
 }
 
+sub compare_online
+{
+    my $arg = shift;
+    my $box = shift;
+    $box->delete('all');
+    my $xmlrpc;
+
+    my %local_md5;
+    my %remote_md5;
+
+    my $local_sth =
+      $dbh->prepare(
+        "SELECT * FROM mrvoice,categories WHERE md5 IS NOT NULL AND mrvoice.category = categories.code"
+      )
+      or die;
+    $local_sth->execute or die;
+    while ( my $row = $local_sth->fetchrow_hashref )
+    {
+        $local_md5{ $row->{md5} } = $row;
+    }
+
+    unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
+    {
+        $status = "Could not initialize XMLRPC";
+        return;
+    }
+
+    $onlinewin->Busy( -recurse => 1 );
+    my $md5_call =
+      $xmlrpc->call( 'search_songs', { online_key => $config{online_key}, } );
+
+    my $result = $md5_call->result;
+
+    if ( !$result )
+    {
+        chomp( my $error = $md5_call->faultstring );
+        infobox( $mw, "XMLRPC error", $error );
+        $status = "XMLRPC error";
+        return;
+    }
+
+    foreach my $res (@$result)
+    {
+        $remote_md5{ $res->{md5} } = $res;
+    }
+
+    if ( $arg eq "show_local" )
+    {
+        foreach my $md5 (
+            sort { $local_md5{$a}->{category} cmp $local_md5{$b}->{category} }
+            keys %local_md5
+          )
+        {
+            unless ( exists $remote_md5{$md5} )
+            {
+                my $row_hashref = $local_md5{$md5};
+                my $string      = "($row_hashref->{description}";
+                $string = $string . " - $row_hashref->{info}"
+                  if ( $row_hashref->{info} );
+                $string = $string . ") - \"$row_hashref->{title}\"";
+                $string = $string . " by $row_hashref->{artist}"
+                  if ( $row_hashref->{artist} );
+                $string = $string . " $row_hashref->{time}";
+                $string = $string . " ($row_hashref->{publisher})"
+                  if ( $config{'show_publisher'} == 1 );
+                print "Adding ID $row_hashref->{id} and string $string\n"
+                  if $debug;
+                $box->add(
+                    $row_hashref->{id},
+                    -data => $row_hashref->{id},
+                    -text => $string
+                );
+            }
+        }
+
+    }
+    elsif ( $arg eq "show_remote" )
+    {
+        foreach my $remote (
+            sort { $remote_md5{$a}->{string} cmp $remote_md5{$b}->{string} }
+            keys %remote_md5
+          )
+        {
+            unless ( exists $local_md5{$remote} )
+            {
+                $box->add(
+                    $remote_md5{$remote}->{id},
+                    -data => $remote_md5{$remote}->{id},
+                    -text => $remote_md5{$remote}->{string}
+                );
+            }
+        }
+    }
+    $onlinewin->Unbusy( -recurse => 1 );
+
+}
+
 sub online_download
 {
     my $listbox = shift;
@@ -4350,6 +4441,26 @@ sub online_search_window
         $onlinewin->withdraw();
         $onlinewin->Icon( -image => $icon );
         bind_hotkeys($onlinewin);
+
+        my $online_menubar = $onlinewin->Menu;
+        $onlinewin->configure( -menu => $online_menubar );
+        my $searchmenu = $online_menubar->cascade(
+            -label     => 'Predefined Searches',
+            -tearoff   => 0,
+            -menuitems => [
+                [
+                    'command',
+                    'Show Online Songs Not On This System',
+                    -command =>
+                      sub { compare_online( "show_remote", $onlinebox ) }
+                ],
+                [
+                    'command',
+                    'Show Local Songs That Are Not Online',
+                    -command => sub { compare_online( "show_local", $mainbox ) }
+                ],
+            ]
+        );
 
         my $catframe =
           $onlinewin->Frame()->pack( -fill => 'x', -side => 'top' );
