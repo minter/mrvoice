@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.172 2002/11/09 13:57:05 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.173 2002/11/09 14:39:26 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -972,6 +972,7 @@ sub add_new_song
   copy ($addsong_filename,"$filepath$newfilename");
   if ($dbh->do($query))
   {
+    $addsong_filename = Win32::GetLongPathName($addsong_filename) if ($^O eq "MSWin32");
     infobox ($mw, "File Added Successfully","Successfully added new song into database.\n\nYou may now delete/move/etc. the file:\n$addsong_filename\nas it is no longer needed by Mr. Voice");
     $status = "File added";
   }
@@ -1198,7 +1199,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.172 $';
+  $rev = '$Revision: 1.173 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
