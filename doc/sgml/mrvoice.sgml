@@ -4,12 +4,12 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.28 2002/05/08 20:30:14 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.29 2002/05/23 14:32:14 minter Exp $ 
 -->
 <book status="draft">
 
 <bookinfo>
-  <title>Mr. Voice 1.5 Installation and Reference Manual</title>
+  <title>Mr. Voice 1.5.3 Installation and Reference Manual</title>
   <author>
     <firstname>H. Wade</firstname><surname>Minter</surname>
     <affiliation>
@@ -56,6 +56,15 @@
 <preface>
   <title>What's New</title>
   <para>A quick reference to what's changed between versions.</para>
+  <sect1><title>What's new in Version 1.5.3</title>
+    <para>
+      <itemizedlist>
+        <listitem><para>The scroll-wheel on scroll-wheel mice is now supported in the main search box.  (Suggested by Bling-Bling in Raleigh).</para></listitem>
+	<listitem><para>Added a warning popup when you do a blank search, which would display the entire database and could take quite a bit of time.  (Suggested by Randy in KC)</para></listitem>
+	<listitem><para>Added a hotkey (Control-P) that will play the currently-selected song.  (Suggested by Randy in KC and Bill in Portland)</para></listitem>
+      </itemizedlist>
+    </para>
+  </sect1>
   <sect1><title>What's New In Version 1.5</title>
     <para>
       <itemizedlist>
@@ -111,8 +120,8 @@
     <itemizedlist>
       <listitem><para>There needs to be a way to edit categories.</para></listitem>
       <listitem><para>The "last files accessed" menu should be smarter about recognizing if files that are already on the list are being accessed.  Right now, it'll just add another listing for the same file on the bottom of the list.</para></listitem>
-      <listitem><para>The file-selector box for Unix ignores the <varname>$savedir</varname> variable, putting you in / instead.  This is a bug with Perl/Tk and will be fixed in Tk800.024.</para></listitem>
       <listitem><para>The Holding Tank is still very gimpy - more work is needed to figure out how to best use it.</para></listitem>
+      <listitem><para>There needs to be an advanced search feature.</para></listitem>
     </itemizedlist>
   </para>
 </appendix>
