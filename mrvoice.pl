@@ -40,7 +40,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.219 2003/04/11 00:11:17 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.220 2003/04/12 12:49:59 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1029,6 +1029,7 @@ sub bulk_add
 		     {
 		        $directory = BrowseForFolder("Choose Directory", CSIDL_DESKTOP);
 			$directory =~ s|\\|/|g;
+			$directory = Win32::GetShortPathName($directory);
 		     }
 		     else
 		     {
@@ -1058,14 +1059,15 @@ sub bulk_add
     return(1);
   }
 
-  my $mp3glob = File::Spec->catfile($directory, "*.mp3");
-  my $oggglob = File::Spec->catfile($directory, "*.ogg");
+  my @mp3glob = glob(File::Spec->catfile($directory, "*.mp3"));
+  my @oggglob = glob(File::Spec->catfile($directory, "*.ogg"));
 
-  my @list = <$mp3glob $oggglob>;
+  my @list = (@mp3glob, @oggglob);
 
   $mw->Busy(-recurse=>1);
   foreach $file (@list)
   {
+    $file = Win32::GetShortPathName($file) if ($^O eq "MSWin32");
     my ($title, $artist) = get_title_artist($file);
     if ($title)
     {
@@ -1661,7 +1663,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.219 $';
+  $rev = '$Revision: 1.220 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
