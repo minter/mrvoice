@@ -1,87 +1,98 @@
 #!/usr/bin/perl
 
+# SVN ID: $Id$
+
 use warnings;
 use strict;
 
-use Tk;
 use DBI;
 use Date::Manip;
+use Text::Wrapper;
 
-our %config;       # Configuration hash
-our $mw;           # Tk MainWindow
-our $icon;         # Window icon
-our $homedir;      # Unix home directory
-our $mysql_dbh;    # MySQL database handle
+our %config;           # Configuration hash
+our $mw;               # Tk MainWindow
+our $icon;             # Window icon
+our $homedir;          # Unix home directory
+our $mysql_dbh;        # MySQL database handle
+our $sqlite_dbfile;    # New SQLite Database File
+our $rcfile;           # Config file
+our $wrapper = Text::Wrapper->new;
 
-sub icon_data
+sub get_dbdir
 {
+    my $homedir;
+    if ( $^O eq "MSWin32" )
+    {
+        $homedir = "C:/";
+    }
+    else
+    {
+        $homedir = "~";
+        $homedir =~ s{ ^ ~ ( [^/]* ) }
+              { $1
+                   ? (getpwnam($1))[7]
+                   : ( $ENV{HOME} || $ENV{LOGDIR}
+                        || (getpwuid($>))[7]
+                     )
+              }ex;
+    }
+    return $homedir;
+}
 
-    # Define 32x32 XPM icon data
-    my $icon = <<'end-of-icon-data';
-/* XPM */
-static char * mrvoice_3232_xpm[] = {
-"32 32 21 1",
-" 	c None",
-".	c #FFFFFF",
-"+	c #AAAAAA",
-"@	c #000000",
-"#	c #E3E3E3",
-"$	c #393939",
-"%	c #555555",
-"&	c #727272",
-"*	c #8E8E8E",
-"=	c #C7C7C7",
-"-	c #1D1D1D",
-";	c #FFABAA",
-">	c #FF5755",
-",	c #FF7472",
-"'	c #FF0300",
-")	c #FF201D",
-"!	c #FF3B39",
-"~	c #915A59",
-"{	c #FF8F8E",
-"]	c #FFC8C7",
-"^	c #FFE3E3",
-"................................",
-"+@@@#....$@@%...................",
-"+@@@+....@@@%...................",
-"+@@@&...+@@@%...................",
-"+@@@$...&@@@%.%%*%&.............",
-"#&@@@...%@@$=.@@@@@*............",
-".+@%@+..@%@%..@@@@@%............",
-".+@*@&.=@*@%..+@%*@%............",
-".+@+-$.*@=@%...@+.%%............",
-".+@+%@.%@.@%...@+.**............",
-".+@+*@+-%.@%...@+...............",
-".+@+=@%@*.@%...@+...............",
-".+@+.@@@+.@%...@+...............",
-"=$@$*%@@=%@-*..@+...............",
-"+@@@%*@$+@@@%.+@&....=+#........",
-"+@@@%=@&+@@@%.@@@;>>>@@%...,>>>.",
-"+@@@%.@++@@@%.@@@;'''@@%...)''!.",
-"=%%%*.&.=%%%*.%%%;'''~%+..{'''].",
-".................;''';...^'''>..",
-".................;''';...,'''^..",
-".................;''';..]'''{...",
-".................^''';..!'')....",
-"..................''';.;''';....",
-"..................''';.)''!.....",
-"..................''';,'''].....",
-"..................'''{''',......",
-"..................''')'')^......",
-"..................''''''{.......",
-"..................''''')........",
-"..................''''']........",
-"..................)'''>.........",
-"..................];;;^........."};
-end-of-icon-data
+sub save_rcfile
+{
+    if ( !open( RCFILE, ">$rcfile" ) )
+    {
+        die
+          "Could not open $rcfile for writing. Your preferences will not be saved\n";
+    }
+    else
+    {
+        foreach my $key ( sort keys %config )
+        {
+            print RCFILE "$key" . "::$config{$key}\n";
+        }
+        close(RCFILE);
+    }
+}
 
-    return ($icon);
+sub create_new_database
+{
+    my $dbfile = shift;
+    my $create_dbh;
+    my @queries;
+    if (
+        !( $create_dbh = DBI->connect( "dbi:SQLite:dbname=$dbfile", "", "" ) ) )
+    {
+        die "Could not create new database file $dbfile via DBI";
+    }
+
+    my $query;
+    while ( my $line = <DATA> )
+    {
+        chomp($line);
+        next if ( ( $line =~ /^\s*#/ ) || ( $line =~ /^\s+$/ ) );
+
+        if ( $line =~ /\);/ )
+        {
+            push( @queries, "$query \)\;" );
+            $query = "";
+        }
+        else
+        {
+            $query .= $line;
+        }
+    }
+
+    foreach my $query (@queries)
+    {
+        my $sth = $create_dbh->prepare($query);
+        $sth->execute or die "Could not run database query $query";
+    }
 }
 
 sub read_rcfile
 {
-    my $rcfile;
     if ( $^O eq "MSWin32" )
     {
         $rcfile = "C:\\mrvoice.cfg";
@@ -134,31 +145,24 @@ sub read_rcfile
 
 }
 
-sub do_exit
-{
-    Tk::exit;
-}
-
 sub check_17
 {
 
     # This checks to see if the Mr. Voice database is at least at the
     # 1.7 level (song time column)
 
-    my $infoframe = shift;
-    my $query_17  = "SELECT time FROM mrvoice LIMIT 1";
+    my $query_17 = "SELECT time FROM mrvoice LIMIT 1";
     if ( !$mysql_dbh->do($query_17) )
     {
-        $infoframe->Label( -text =>
-              "FATAL ERROR - Your database does not have the song time column.  You need to upgrade your installation of Mr. Voice to at least version 1.10 before you can perform this upgrade"
-        )->pack( -side => 'top' );
+        die
+          "FATAL ERROR - Your database does not have the song time column.  You need to upgrade your installation of Mr. Voice to at least version 1.10 before you can perform this upgrade\n\n";
         return (0);
     }
     else
     {
-        $infoframe->Label( -text =>
-              "OK - Your database has the song time column, so it is at least at the 1.7 level"
-        )->pack( -side => 'top' );
+        print $wrapper->wrap(
+            "OK - Your database has the song time column, so it is at least at the 1.7 level\n\n"
+        );
         return (1);
     }
 
@@ -170,20 +174,18 @@ sub check_110
     # This checks to see if the Mr. Voice database is at least at the
     # 1.10 level (publisher column)
 
-    my $infoframe = shift;
     my $query_110 = "SELECT publisher FROM mrvoice LIMIT 1";
     if ( !$mysql_dbh->do($query_110) )
     {
-        $infoframe->Label( -text =>
-              "FATAL ERROR - Your database does not have the publisher column.  You need to upgrade your installation of Mr. Voice to at least version 1.10 before you can perform this upgrade"
-        )->pack( -side => 'top' );
+        die
+          "FATAL ERROR - Your database does not have the publisher column.  You need to upgrade your installation of Mr. Voice to at least version 1.10 before you can perform this upgrade\n\n";
         return (0);
     }
     else
     {
-        $infoframe->Label( -text =>
-              "OK - Your database has the publisher column, so it is at least at the 1.10 level"
-        )->pack( -side => 'top' );
+        print $wrapper->wrap(
+            "OK - Your database has the publisher column, so it is at least at the 1.10 level\n\n"
+        );
         return (1);
     }
 }
@@ -193,9 +195,9 @@ sub upgrade_20
 
     # This migrates the database from MySQL to SQLite
 
-    my $sqlite_dbh =
-      DBI->connect( "dbi:SQLite:dbname=/home/minter/mrvoice.db", "", "" )
-      or die;
+    my $sqlite_dbh = DBI->connect( "dbi:SQLite:dbname=$sqlite_dbfile", "", "" )
+      or die
+      "Could not connect to SQLite database $sqlite_dbfile - error $DBI::errstr\n\n";
 
     my $mysql_cats = "SELECT * FROM categories";
     my $cats_sth   = $mysql_dbh->prepare($mysql_cats);
@@ -237,39 +239,71 @@ sub upgrade_20
 
 }
 
-$mw = MainWindow->new;
-
-#$mw->geometry("+0+0");
-$mw->title("Mr. Voice 2.0 Updater");
-$mw->minsize( 50, 50 );
-$mw->protocol( 'WM_DELETE_WINDOW', \&do_exit );
-$icon = $mw->Pixmap( -data => icon_data() );
-$mw->Icon( -image => $icon );
-
-my $frame1 = $mw->Frame()->pack( -side => 'top' );
-$frame1->Label( -text =>
-      "This utility will upgrade your Mr. Voice database from the version 1.x series (MySQL)\nto the version 2.x series (SQLite).  It should ONLY be run to upgrade an existing Mr. Voice installation.  For\nnew installs, do XXX"
-)->pack( -side => 'top' );
-
-my $infoframe = $mw->Frame()->pack( -side => 'top' );
+print $wrapper->wrap(
+    "This utility will upgrade your Mr. Voice database from the version 1.x series (MySQL) to the version 2.x series (SQLite).  It should ONLY be run to upgrade an existing Mr. Voice installation.  For new installs, do XXX\n\n"
+);
 
 if ( !read_rcfile() )
 {
-    $frame1->Label( -text =>
-          "FATAL ERROR - We could not find your Mr. Voice configuration file, so we cannot upgrade\n"
-    )->pack( -side => 'top' );
+    die
+      "FATAL ERROR - We could not find your Mr. Voice configuration file, so we cannot upgrade\n\n";
 }
 
 # Connect to the MySQL database
 $mysql_dbh =
   DBI->connect( "DBI:mysql:$config{db_name}", $config{db_username},
     $config{db_pass} )
-  or die;
+  or die
+  "Could not connect to your current MySQL database.  Using Database Name $config{db_name}, User $config{db_username}, Password $config{db_pass}.  MySQL error returned: $DBI::errstr\n\n";
 
-if ( check_17($infoframe) && check_110($infoframe) )
-{
+# Check to see if we're at the minimum database levels
+die if ( !check_17 );
 
-    #upgrade_20();
-}
+die if ( !check_110 );
 
-MainLoop;
+my $dbdir = get_dbdir;
+$sqlite_dbfile = "$dbdir/mrvoice.db";
+
+print $wrapper->wrap(
+    "Your new SQLite Mr. Voice 2.0 database will be created at:\n$sqlite_dbfile\nYou can move this file after the upgrade if you want it somewhere else.\n\n"
+);
+
+create_new_database($sqlite_dbfile);
+
+print $wrapper->wrap(
+    "New SQLite database created - we will now migrate your MySQL data to it.\n\n"
+);
+
+upgrade_20();
+
+print $wrapper->wrap("Database upgraded!\n\n");
+
+save_rcfile();
+
+print $wrapper->wrap("New config file saved as $rcfile\n");
+
+print $wrapper->wrap("Press Enter to exit\n");
+my $key = getc(STDIN);
+exit;
+
+__DATA__
+# This is the Mr. Voice database schema
+#
+
+CREATE TABLE mrvoice (
+   id INTEGER PRIMARY KEY,
+   title varchar(255) NOT NULL,
+   artist varchar(255),
+   category varchar(8) NOT NULL,
+   info varchar(255),
+   filename varchar(255) NOT NULL,
+   time varchar(10),
+   modtime timestamp(6),
+   publisher varchar(16)
+);
+
+CREATE TABLE categories (
+   code varchar(8) NOT NULL,
+   description varchar(255) NOT NULL
+);
+
