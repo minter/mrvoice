@@ -1,3 +1,6 @@
+Mon  Dec 15 2003	H. Wade Minter (minter@lunenburg.org)
+     * Fixed a typo in a variable name.
+
 Sat  Dec  6 2003	H. Wade Minter (minter@lunenburg.org)
      * Allow drags to the Hotkeys from either the mainbox or Holding Tank.
 
@@ -510,4 +513,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.104 2003/12/07 20:00:46 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.105 2003/12/15 18:50:30 minter Exp $
