@@ -1,6 +1,5 @@
 #!/usr/bin/perl
 use Tk;
-#use Tk::FileSelect;
 use Tk::DialogBox;
 use Tk::FileDialog;
 use File::Basename;
@@ -16,8 +15,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/03/07 01:44:30 $
-#	CVS REVISION NUMBER:    $Revision: 1.27 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/07 02:45:47 $
+#	CVS REVISION NUMBER:    $Revision: 1.28 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
