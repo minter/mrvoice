@@ -1,3 +1,6 @@
+Wed  Apr  9 2003        H. Wade Minter (minter@lunenburg.org)
+     * Fix database dump/import under Win32.
+
 Sun  Apr  6 2003        H. Wade Minter (minter@lunenburg.org)
      * More File::Spec'ing to improve portability.
 
@@ -417,4 +420,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.80 2003/04/06 21:06:09 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.81 2003/04/09 18:47:39 minter Exp $
