@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.9 2001/10/11 16:14:34 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.10 2001/10/29 19:25:43 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
@@ -143,11 +143,6 @@ mysql>
            </listitem>
            <listitem>
              <para>You will need a directory to store your MP3 files, and a directory to store your hotkey save files.  I suggest <filename>C:\MP3\</filename> for the MP3 directory and <filename>C:\mrvoice-hotkeys\</filename> for the save files, but you can pick anything.  Go ahead and create the directories now.
-               <note>
-                 <para>Mr. Voice doesn't handle path names with spaces very well, so you should make sure that the path to these directories does not contain  spaces.  For example:</para>
-             <para>C:\mrvoice\mp3s\  <emphasis>[GOOD]</emphasis></para>
-             <para>C:\Program Files\Crazy Stuff\My MP3s\ <emphasis>[BAD]</emphasis></para>
-               </note>
              </para>
            </listitem>
          </itemizedlist>

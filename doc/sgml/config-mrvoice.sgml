@@ -1,21 +1,21 @@
 <!--
-  CVS ID: $Id: config-mrvoice.sgml,v 1.10 2001/10/29 17:48:13 minter Exp $
+  CVS ID: $Id: config-mrvoice.sgml,v 1.11 2001/10/29 19:25:43 minter Exp $
 -->
 
 <chapter><title>Configuring Mr. Voice</title>
-  <para>This section will take you through configuring the Mr. Voice software.  Mr. Voice isconfigured via an external configuration file - this provides the most flexibility in keeping your configuration sane from one version to the next.  On Unix, the config file is named <filename>.mrvoicerc</filename>, and lives in your home directory.  On Windows, the filename is <filename>C:\mrvoice.cfg</filename>.  <important><para>Editing the configuration variables directly in <filename>mrvoice.pl</filename> is no longer the recommended way to configure Mr. Voice.  The functionality is still there, but will be removed in a future version.</para></important></para>
-  <para>If you start Mr. Voice without a configuration file, or if there is an error in your configuration, Mr. Voice will pop up the preferences box, allowing you to enter and edit the configuration information.  Changes are then written out to the appropriate configuration file.  The configuration options are detailed below.
+  <para>This section will take you through configuring the Mr. Voice software.  Mr. Voice is configured via an external configuration file - this provides the most flexibility in keeping your configuration sane from one version to the next.  On Unix, the config file is named <filename>.mrvoicerc</filename>, and lives in your home directory.  On Windows, the filename is <filename>C:\mrvoice.cfg</filename>.  <important><para>Editing the configuration variables directly in <filename>mrvoice.pl</filename> is no longer the recommended way to configure Mr. Voice.  The functionality is still there, but will be removed in a future version.</para></important></para>
+  <para>If you start Mr. Voice without a configuration file, or if there is an error in your configuration, Mr. Voice will pop up the preferences window, allowing you to enter and edit the configuration information.  Changes are then written out to the appropriate configuration file.  The configuration options are detailed below.
   <sect1><title>Configuration Options and Variables</title>
-    <para>The options that you can set in the <guimenu>Preferences</guimenu> menu are listed below.  After the name of each option, the actual variable name is given in parenthesis, in case you need to edit the configuration files manually.</para>
+    <para>The options that you can set in the <menuchoice> <guimenu>File</guimenu> <guimenuitem>Preferences</guimenuitem> </menuchoice> menu are listed below.  After the name of each option, the actual variable name is given in parenthesis, in case you need to edit the configuration files manually (Manual configuration is detailed in section 2.1.1).</para>
     <itemizedlist>
       <listitem>
         <para><varname>Databases Name (db_name)</varname> - This should be set to the name of the database containing the mrvoice and categories tables.  If the database is local to the machine that you are running mrvoice on (as is normally the case), you simply need to supply the database name.  If it is on a remote server, the variable takes the form of "DATABASENAME:HOSTNAME:PORT".</para>
       </listitem>
       <listitem>
-        <para><varname>Database User Name (db_username)</varname> - Set to a username that has SELECT access on the tables.</para>
+        <para><varname>Database User Name (db_username)</varname> - Set to a username that has SELECT access on the tables.  In this configuration guide, that user is named "root".</para>
       </listitem>
       <listitem>
-        <para><varname>Database Password (db_pass)</varname> - The password in the database for user <varname>db_username</varname></para>
+        <para><varname>Database Password (db_pass)</varname> - The password in the database for user <varname>db_username</varname>.  You set this up when you configured MySQL in Chapter 1.</para>
       </listitem>
       <listitem>
         <para><varname>MP3 Player (mp3player)</varname> - The path to your MP3 player.  Likely options are <filename>/usr/bin/xmms</filename> for Unix systems, and <filename>C:\Program Files\WinAmp\WinAmp.exe</filename> for Windows systems.</para>
@@ -24,7 +24,7 @@
         <para><varname>MP3 Directory (filepath)</varname> - The path information that will be prepended to the filename retrieved from the database or, in other words, the directory where you store your MP3 files.  Used to find the actual MP3 files on the local system.  The user who is running Mr. Voice must have write permission into this directory.</para>
       </listitem>
       <listitem>
-        <para><varname>Hotkey Directory (savepath)</varname> - This will be the default directory that hotkey save files will go into.  The user you're running the program as must have write permission into that directory. Recommended to be different than the Mr. Voice install directory.</para>
+        <para><varname>Hotkey Directory (savepath)</varname> - This will be the default directory that hotkey save files will go into.  The user running the program as must have write permission into that directory. Recommended to be different than the Mr. Voice install directory.</para>
       </listitem>
       <listitem>
         <para><varname>Number of Dynamic Documents To Show (savefile_max)</varname> - The number of "most recently accessed hotkey files" to keep available under the <guimenu>File</guimenu> menu.  Defaults to 4.</para>
