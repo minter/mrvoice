@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.comedyworx.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/11/03 13:07:22 $
-#	CVS REVISION NUMBER:    $Revision: 1.78 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/11/03 19:27:14 $
+#	CVS REVISION NUMBER:    $Revision: 1.79 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -240,16 +240,15 @@ sub dynamic_documents
 
   push (@current, $file);
 
-  $filemenu->command(-label=>"$file",
-                     -command => [\&open_file, $file]);
+  $dynamicmenu->command(-label=>"$file",
+                        -command => [\&open_file, $file]);
 
-  #FIXME
   if ($#current >= $savefile_max)
   {
-    $filemenu->menu->delete(7);
+    print "Over the limit!\n";
+    $dynamicmenu->delete(0);
     shift (@current);
   }
-  #FIXME
 }
 
 sub infobox
@@ -1207,6 +1206,7 @@ $menuframe=$mw->Frame(-relief=>'ridge',
                                             -anchor=>'n');
 $filemenu = $menuframe->Menubutton(-text=>"File",
                                    -tearoff=>0)->pack(-side=>'left');
+$dynamicmenu=$filemenu->menu->Menu(-tearoff=>0);
 $filemenu->AddItems(["command"=>"Open Hotkey File",
                     -command=>\&open_file]); 
 $filemenu->AddItems(["command"=>"Save Hotkeys To A File",
@@ -1214,13 +1214,14 @@ $filemenu->AddItems(["command"=>"Save Hotkeys To A File",
 $filemenu->AddItems("-");
 $filemenu->AddItems(["command"=>"Preferences",
                     -command=>\&edit_preferences]);
+$filemenu->cascade(-label=>"Recent Files");
+$filemenu->entryconfigure("Recent Files", -menu=>$dynamicmenu);
 $filemenu->AddItems("-");
 $filemenu->AddItems(["command"=>"Exit", 
                      -command=>sub { 
                                      $dbh->disconnect;
                                       Tk::exit;
                                     }]);
-$filemenu->AddItems("-");
 $hotmenu = $menuframe->Menubutton(-text=>"Hotkeys",
                                   -tearoff=>0)->pack(-side=>'left');
 $hotmenu->AddItems(["command"=>"Show Hotkeys",
