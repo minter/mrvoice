@@ -5,6 +5,7 @@ use diagnostics;
 #use strict; # Yeah right
 use Tk;
 use Tk::DialogBox;
+use Tk::Dialog;
 use Tk::DragDrop;
 use Tk::DropSite;
 use Tk::NoteBook;
@@ -40,7 +41,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.238 2003/07/22 13:06:20 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.239 2003/07/22 16:19:48 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -955,12 +956,12 @@ sub import_database
     else
     {
       # We can read the file - pop up a warning before continuing.
-      my $box = $mw->DialogBox(-title=>"Warning", 
-                               -buttons=>["Ok","Cancel"],
-                               -default_button=>"Cancel");  
+      my $box = $mw->Dialog(-title=>"Warning", 
+                            -bitmap=>'warning',
+                            -text=>"Warning!\nImporting this database dumpfile will completely\noverwrite your current Mr. Voice database.\n\nIf you are certain that you want to do this,\npress Ok.  Otherwise, press Cancel.",
+                            -buttons=>["Ok","Cancel"],
+                            -default_button=>"Cancel");  
       $box->Icon(-image=>$icon);
-      my $frame1 = $box->add("Frame")->pack(-fill=>'x');
-      $frame1->Label(-text=>"Warning!\nImporting this database dumpfile will completely\noverwrite your current Mr. Voice database.\n\nIf you are certain that you want to do this,\npress Ok.  Otherwise, press Cancel.")->pack(); 
       my $button = $box->Show;
       
       if ($button eq "Ok")
@@ -1079,10 +1080,13 @@ sub infobox
   # a reference to the parent widget, the title for the box, and a 
   # formatted string of data to display.
   
-  my ($parent_window, $title, $string) = @_;
-  my $box = $parent_window->DialogBox(-title=>"$title", -buttons=>["OK"]);
+  my ($parent_window, $title, $string,$type) = @_;
+  $type = "info" if ! $type;
+  my $box = $parent_window->Dialog(-title=>"$title", 
+                                   -bitmap=>$type,
+                                   -text=>$string,
+                                   -buttons=>["OK"]);
   $box->Icon(-image=>$icon);
-  $box->add("Label",-text=>"$string")->pack();
   $box->Show;
 }
 
@@ -1908,7 +1912,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.238 $';
+  $rev = '$Revision: 1.239 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2653,10 +2657,11 @@ sub do_exit
   # Disconnects from the database, attempts to close the MP3 player, and 
   # exits the program.
 
-  $box = $mw->DialogBox(-title=>"Exit Mr. Voice", 
-                        -buttons=>["Yes", "No"]);
+  $box = $mw->Dialog(-title=>"Exit Mr. Voice", 
+                     -text=>"Exit Mr. Voice?",
+                     -bitmap=>"question",
+                     -buttons=>["Yes", "No"]);
   $box->Icon(-image=>$icon);
-  $box->add("Label",-text=>"Exit Mr. Voice?")->pack();
   $choice = $box->Show();
 
   if ($choice =~ /yes/i)
@@ -2968,22 +2973,29 @@ if (! $sth->execute)
 # We use the following statement to open the MP3 player asynchronously
 # when the Mr. Voice app starts.
 
-if ("$^O" eq "MSWin32")
+if (! -x $mp3player)
 {
-  # Start the MP3 player on a Windows system
-  my $object;
-  Win32::Process::Create($object, $mp3player,'',1, NORMAL_PRIORITY_CLASS, ".");
-  $mp3_pid=$object->GetProcessID();
-  sleep(1);
+  infobox($mw,"Warning - MP3 Player Not Found","Warning - Could not execute your defined MP3 player:\n\n$mp3player\n\nYou may need to select the proper file in the preferences.","warning");
 }
 else
 {
-  # Start the MP3 player on a Unix system using fork/exec
-  $mp3_pid = fork();
-  if ($mp3_pid == 0) 
+  if ("$^O" eq "MSWin32")
   {
-    # We're the child of the fork
-    exec ("$mp3player");
+    # Start the MP3 player on a Windows system
+    my $object;
+    Win32::Process::Create($object, $mp3player,'',1, NORMAL_PRIORITY_CLASS, ".");
+    $mp3_pid=$object->GetProcessID();
+    sleep(1);
+  }
+  else
+  {
+    # Start the MP3 player on a Unix system using fork/exec
+    $mp3_pid = fork();
+    if ($mp3_pid == 0) 
+    {
+      # We're the child of the fork
+      exec ("$mp3player");
+    }
   }
 }
 
@@ -3390,16 +3402,6 @@ $mw->bind("<Control-Key-p>", [\&play_mp3,"Current"]);
 if (-r File::Spec->catfile($savedir, "default.mrv"))
 {
   open_file ($mw, File::Spec->catfile($savedir, "default.mrv"));
-}
-
-if (! -x $mp3player)
-{
-  my $box = $mw->DialogBox(-title=>"Warning - MP3 player not found", -buttons=>["OK"]);
-  $box->Icon(-image=>$icon);
-  $box->add("Label",-text=>"Warning - Could not execute your defined MP3 player:")->pack();
-  $box->add("Label",-text=>"$mp3player")->pack();
-  $box->add("Label",-text=>"You may need to select the proper file in the preferences.")->pack();
-  $box->Show;
 }
 
 $mw->deiconify();
