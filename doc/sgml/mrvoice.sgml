@@ -4,7 +4,7 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.25 2002/05/03 16:59:44 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.26 2002/05/08 19:37:05 minter Exp $ 
 -->
 <book status="draft">
 
@@ -57,6 +57,7 @@
         <listitem><para>The Windows version of the software now contains the <filename>mrvoice.exe</filename> file.  This is an experimental binary build of the software using perl2exe.  If it works like it's supposed to, that one file replaces the need to have ActivePerl and all of the perl modules, which should make installation easier.</para></listitem>
         <listitem><para>If a hotkey file named <filename>default.mrv</filename> exists in your hotkey save directory, Mr. Voice will automatically load those hotkeys when the program starts.</para></listitem>
         <listitem><para>Fixed a bug where the count of items returned might not agree with the number of items in the search box.</para></listitem>
+        <listitem><para>Other minor bugfixes and GUI cleanups.</para></listitem>
       </itemizedlist>
     </para>
   </sect1>
