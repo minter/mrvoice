@@ -1,3 +1,10 @@
+Mon  Apr 15 2002	H. Wade Minter (minter@lunenburg.org)
+     * Sent the taxes off.  Yuck.
+     * Clarified some stuff in the docs in preparation for shipping
+       the software to Buffalo and KC.
+     * Removed the dependancy on Data::Dumper, since I don't think that's
+       needed.
+
 Mon  Feb 11 2002	H. Wade Minter (minter@lunenburg.org)
      * Released version 1.4
 
@@ -206,4 +213,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.37 2002/02/11 14:56:48 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.38 2002/04/16 00:32:44 minter Exp $
