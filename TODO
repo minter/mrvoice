@@ -1,7 +1,8 @@
 Things I'm currently working on:
 
 * General cleanup and pretty-fication.
-* And "Edit Category" feature.
+* Add "Edit Category" feature.
+* Tighter integration with WinAmp for Windows version.  Win32::GUI?
 
 --
-CVS ID: $Id: TODO,v 1.14 2002/04/25 20:15:13 minter Exp $
+CVS ID: $Id: TODO,v 1.15 2002/05/03 16:24:00 minter Exp $
