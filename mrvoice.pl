@@ -3303,10 +3303,19 @@ sub read_rcfile
                   "Does not exist, so Mr. Voice will initialize it after you view the preferences\n\n";
             }
 
-            $config{mp3player} =
-              ( $^O eq "MSWin32" )
-              ? Win32::GetShortPathName("C:/Program Files/Winamp/Winamp.exe")
-              : "/usr/bin/xmms";
+            if ( $^O eq "MSWin32" )
+            {
+                $config{mp3player} =
+                  Win32::GetShortPathName("C:/Program Files/Winamp/Winamp.exe");
+            }
+            elsif ( $^O eq "darwin" )
+            {
+                $config{mp3player} = "/sw/bin/xmms";
+            }
+            else
+            {
+                $config{mp3player} = "/usr/bin/xmms";
+            }
             $string .= "Looking for MP3 player in $config{mp3player}...";
             $string .=
               ( -f $config{mp3player} ) ? "found it\n\n" : "nothing there!\n\n";
