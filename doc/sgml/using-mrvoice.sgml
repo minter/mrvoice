@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: using-mrvoice.sgml,v 1.17 2001/12/05 18:55:11 minter Exp $
+  CVS ID: $Id: using-mrvoice.sgml,v 1.18 2001/12/05 19:09:39 minter Exp $
 -->
 
 <chapter><title>Using Mr. Voice</title>
@@ -201,7 +201,7 @@
       <para>The most recent hotkey files that you have accessed via a save or open will be listed at the bottom of the <guimenu>File</guimenu> menu.  These four filenames can be selected directly off of the <guimenu>File</guimenu> menu for one-click access to recently-used hotkey files.  To adjust the number of files that are displayed, use the <menuchoice> <guimenu>File</guimenu> <guimenuitem>Preferences</guimenuitem> </menuchoice> menu.</para>
     </sect2>
     <sect2><title>The Holding Tank</title>
-      <para>Somewhere in a netherworld between the search box and hotkeys exists the Holding Tank.  You can drag songs to it, like with the Hotkeys window.  Unlike the Hotkeys window, though, you can have an unlimited number of songs in there at any time, but you can't get one-button access to playing those songs, nor can you save the contents of the Holding Tank to a file.
+      <para>Somewhere in a netherworld between the search box and hotkeys exists the Holding Tank.  The Holding Tank can be accessed via the <menuchoice> <guimenu>Hotkeys</guimenu> <guimenuitem>Show Holding Tank</guimenuitem> </menuchoice> menu choice.  You can drag songs to it, like with the Hotkeys window.  Unlike the Hotkeys window, though, you can have an unlimited number of songs in there at any time, but you can't get one-button access to playing those songs, nor can you save the contents of the Holding Tank to a file.
       <figure>
         <title>The Holding Tank window</title>
         <mediaobject>
