@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/03/06 02:59:33 $
-#	CVS REVISION NUMBER:    $Revision: 1.23 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/06 04:07:58 $
+#	CVS REVISION NUMBER:    $Revision: 1.24 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -908,6 +908,7 @@ $searchframe4->Entry(-textvariable=>\$anyfield)->pack(-side=>'left');
 #####
 # Search Button
 $mw->Button(-text=>"Do Search",
+            -cursor=>'question_arrow',
             -command=>\&do_search)->pack();
 #
 #####
