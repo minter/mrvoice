@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.373 2004/04/22 20:34:31 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.374 2004/04/23 11:28:43 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1086,7 +1086,7 @@ sub dynamic_documents
             # The item is currently in the list.  Move it to the front of
             # the line.
             splice( @current, $counter, 1 );
-            @current = ( $file, @current );
+            unshift @current, $file;
             $counter++;
             $success = 1;
         }
@@ -1100,7 +1100,7 @@ sub dynamic_documents
     {
 
         # The file isn't in our current list, so we need to add it.
-        @current = ( $file, @current );
+        unshift @current, $file;
         $savefile_count++;
     }
 
@@ -2285,7 +2285,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.373 $';
+    my $rev    = '$Revision: 1.374 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::mysql->VERSION;
