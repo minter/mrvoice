@@ -14,8 +14,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/24 00:33:58 $
-#	CVS REVISION NUMBER:    $Revision: 1.59 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/24 19:20:27 $
+#	CVS REVISION NUMBER:    $Revision: 1.60 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1229,10 +1229,14 @@ $mainbox->bind("<Button-3>", [\&rightclick_menu]);
 $statusframe = $mw->Frame()->pack(-side=>'bottom',
                                   -anchor=>'s',
                                   -fill=>'x');
-$statusframe->Button(-text=>"Play Now",
+$playbutton = $statusframe->Button(-text=>"Play Now",
                      -command=>[\&play_mp3,"play"])->pack(-side=>'left');
-$statusframe->Button(-text=>"Stop Now",
+$playbutton->configure(-bg=>'green',
+                       -activebackground=>'SpringGreen2');
+$stopbutton = $statusframe->Button(-text=>"Stop Now",
                      -command=>[\&stop_mp3])->pack(-side=>'left');
+$stopbutton->configure(-bg=>'red',
+                       -activebackground=>'tomato3');
 $statusframe->Button(-text=>"Assign Hotkey",
                      -command=>[\&set_hotkey])->pack(-side=>'right');
 
