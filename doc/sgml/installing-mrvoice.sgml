@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.4 2001/09/26 15:36:02 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.5 2001/09/26 17:07:48 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
@@ -57,7 +57,7 @@
           <para>Compile and/or install any required software from above (perl modules, etc.).  Set up your database properly and start it.</para>
         </listitem>
         <listitem>
-          <para>Set up a database for the program to use.  It needs two tables in a database, so you can either use an existing database or create one expressly for mrvoice.</para>
+          <para>Set up a database for the program to use.  It needs two tables in a database, so you can either use an existing database or create one expressly for Mr. Voice.</para>
           <para>In MySQL, you would do something like the following:
             <screen>
 [you@yourhost you]$ mysql -u root -p mysql
@@ -93,7 +93,7 @@ mysql>
             <para>Unzip the MySQL .zip file that you downloaded to a temporary place (such as C:\mysql-temp).  Go to that directory and run the <filename>setup.exe</filename> file.  It will install into <filename>C:\mysql</filename> by default - accept that unless you have a reason to put it somewhere else.  Choose the "Typical" installation.</para>
           </listitem>
           <listitem>
-            <para>Set up Windows to run the file <filename>C:\mysql\bin\mysqld.exe</filename> upon startup.  I believe you do this by going under Start->Settings->Taskbar & Start Menu, choosing "Advanced" under "Customize Start Menu", and placing a shortcut to the <filename>mysqld.exe</filename> file under the "StartUp" section.  There may be a better way - feel free to email me and let me know what it is.  Double-click the <filename>mysqld.exe</filename> file to start up the MySQL daemon.</para>
+            <para>Set up Windows to run the file <filename>C:\mysql\bin\mysqld.exe</filename> upon startup.  Under Windows 98, you can do this by going under Start->Settings->Taskbar & Start Menu, choosing "Advanced" under "Customize Start Menu", and placing a shortcut to the <filename>mysqld.exe</filename> file under the "StartUp" section.  There may be a better way - feel free to email me and let me know what it is.  Double-click the <filename>mysqld.exe</filename> file to start up the MySQL daemon.</para>
           </listitem>   
           <listitem>
             <para>While you're messing with MySQL, it's a good time to set up your superuser password and create the database that you're going to use for Mr. Voice.  To do this, go to <filename>C:\mysql\bin\</filename> and run <filename>mysql.exe</filename>.  It will open a DOS window with a <prompt>MySQL></prompt> prompt.  At this prompt, enter <userinput>use mysql;</userinput>.</para>
@@ -142,9 +142,11 @@ mysql>
              <para>Open a DOS prompt window, and cd to <filename>C:\mrvoice-x.x\</filename>.  Run the command: <userinput>C:\mysql\bin\mysql -u root -p <replaceable>DATABASE_NAME</replaceable> < dbinit.sql</userinput> where <replaceable>DATABASE_NAME</replaceable> is the name you set up above.  It will prompt you for a password.  Enter the password you set up above.  If it runs the command without errors, then your database is initialized.</para>
            </listitem>
            <listitem>
-             <para>You will need a directory to store your MP3 files, and a directory to store your hotkey save files.  I suggest <filename>C:\MP3\</filename> for the MP3 directory and <filename>C:\mrvoice-hotkeys\</filename> for the save files, but you can pick anything.  NOTE! - Mr. Voice doesn't handle path names with spaces very well, so you should make sure that the path to these directories does not contain  spaces.  For example:
+             <para>You will need a directory to store your MP3 files, and a directory to store your hotkey save files.  I suggest <filename>C:\MP3\</filename> for the MP3 directory and <filename>C:\mrvoice-hotkeys\</filename> for the save files, but you can pick anything.  
+               <note><para>Mr. Voice doesn't handle path names with spaces very well, so you should make sure that the path to these directories does not contain  spaces.  For example:
              <para>C:\mrvoice\mp3s\  <emphasis>[GOOD]</emphasis></para>
              <para>C:\Program Files\Crazy Stuff\My MP3s\ <emphasis>[BAD]</emphasis></para>
+               </para></note>
            </listitem>
          </itemizedlist>
       </sect3>
