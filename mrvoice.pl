@@ -15,8 +15,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/03/07 13:29:21 $
-#	CVS REVISION NUMBER:    $Revision: 1.30 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/07 23:18:09 $
+#	CVS REVISION NUMBER:    $Revision: 1.31 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -26,7 +26,6 @@ use MPEG::MP3Info;
 #####
 # CONFIGURATION VARIABLES
 #####
-my $ostype = "unix";			# Valid values are "unix" and "windows"
 my $db_name = "comedysportz";			# In the form DBNAME:HOSTNAME:PORT
 my $db_username = "root";                   # The username used to connect
                                         # to the database.
@@ -61,16 +60,8 @@ $savedir = "/tmp/";				# The default directory where
 my $version = "1.0pre";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
 
-if ($ostype eq "windows")
-{
-  $filepath = "$filepath\\" unless ($filepath =~ "/.*\\\\$/");
-  $savedir = "$savedir\\" unless ($savedir =~ "/.*\\\\$/");
-}
-else
-{
-  $filepath = "$filepath/" unless ($filepath =~ "/.*\/$/");
-  $savedir = "$savedir/" unless ($savedir =~ "/.*\/$/");
-}
+$filepath = "$filepath/" unless ($filepath =~ "/.*\/$/");
+$savedir = "$savedir/" unless ($savedir =~ "/.*\/$/");
 
 sub open_file
 {
@@ -720,7 +711,7 @@ sub play_mp3
   }
   if ($filename)
   {
-    system ("$mp3player --play $filepath$filename");
+    system ("$mp3player $filepath$filename");
   }
 }
 
