@@ -35,7 +35,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.194 2003/03/17 02:56:12 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.195 2003/03/27 18:26:27 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -655,37 +655,24 @@ sub backup_hotkeys
   # This saves the contents of the hotkeys to temporary variables, so 
   # you can restore them after a file open, etc.
 
-  $old_f1 = $f1;
-  $old_f2 = $f2;
-  $old_f3 = $f3;
-  $old_f4 = $f4;
-  $old_f5 = $f5;
-  $old_f6 = $f6;
-  $old_f7 = $f7;
-  $old_f8 = $f8;
-  $old_f9 = $f9;
-  $old_f10 = $f10;
-  $old_f11 = $f11;
-  $old_f12 = $f12;
+  foreach $key (%fkeys)
+  {
+    $oldfkeys{$key}->{title} = $fkeys{$key}->{title}; 
+    $oldfkeys{$key}->{id} = $fkeys{$key}->{id}; 
+    $oldfkeys{$key}->{filename} = $fkeys{$key}->{filename}; 
+  }
   $hotkeysmenu->menu->entryconfigure("Restore Hotkeys", -state=>"normal");
 }
 
 sub restore_hotkeys
 {
   # Replaces the hotkeys with the old ones from backup_hotkeys()
-
-  $f1 = $old_f1;
-  $f2 = $old_f2;
-  $f3 = $old_f3;
-  $f4 = $old_f4;
-  $f5 = $old_f5;
-  $f6 = $old_f6;
-  $f7 = $old_f7;
-  $f8 = $old_f8;
-  $f9 = $old_f9;
-  $f10 = $old_f10;
-  $f11 = $old_f11;
-  $f12 = $old_f12;
+  foreach $key (%oldfkeys)
+  {
+    $fkeys{$key}->{title} = $oldfkeys{$key}->{title}; 
+    $fkeys{$key}->{id} = $oldfkeys{$key}->{id}; 
+    $fkeys{$key}->{filename} = $oldfkeys{$key}->{filename}; 
+  }
   $status = "Previous hotkeys restored.";
   $hotkeysmenu->menu->entryconfigure("Restore Hotkeys", -state=>"disabled");
 }
@@ -1264,7 +1251,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.194 $';
+  $rev = '$Revision: 1.195 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -1302,18 +1289,13 @@ sub clear_hotkeys
   # Backs up the hotkeys, then deletes all of them.
 
   backup_hotkeys();
-  $f1="";
-  $f2="";
-  $f3="";
-  $f4="";
-  $f5="";
-  $f6="";
-  $f7="";
-  $f8="";
-  $f9="";
-  $f10="";
-  $f11="";
-  $f12="";
+  foreach $fkeynum (1 .. 12)
+  {
+    $fkey = "f$fkeynum";
+    $fkeys{$fkey}->{id}='';
+    $fkeys{$fkey}->{filename}='';
+    $fkeys{$fkey}->{title}='';
+  }
   $status = "All hotkeys cleared";
 }
 
@@ -1322,18 +1304,78 @@ sub clear_selected
   # If a hotkey has its checkbox activated, then that hotkey will have
   # its entry cleared.  Then all checkboxes are unselected.
 
-  $f1="" if ($f1_cb);
-  $f2="" if ($f2_cb);
-  $f3="" if ($f3_cb);
-  $f4="" if ($f4_cb);
-  $f5="" if ($f5_cb);
-  $f6="" if ($f6_cb);
-  $f7="" if ($f7_cb);
-  $f8="" if ($f8_cb);
-  $f9="" if ($f9_cb);
-  $f10="" if ($f10_cb);
-  $f11="" if ($f11_cb);
-  $f12="" if ($f12_cb);
+  if ($f1_cb)
+  {
+    $fkeys{f1}->{title}='';
+    $fkeys{f1}->{id}='';
+    $fkeys{f1}->{filename}='';
+  }
+  if ($f2_cb)
+  {
+    $fkeys{f2}->{title}='';
+    $fkeys{f2}->{id}='';
+    $fkeys{f2}->{filename}='';
+  }
+  if ($f3_cb)
+  {
+    $fkeys{f3}->{title}='';
+    $fkeys{f3}->{id}='';
+    $fkeys{f3}->{filename}='';
+  }
+  if ($f4_cb)
+  {
+    $fkeys{f4}->{title}='';
+    $fkeys{f4}->{id}='';
+    $fkeys{f4}->{filename}='';
+  }
+  if ($f5_cb)
+  {
+    $fkeys{f5}->{title}='';
+    $fkeys{f5}->{id}='';
+    $fkeys{f5}->{filename}='';
+  }
+  if ($f6_cb)
+  {
+    $fkeys{f6}->{title}='';
+    $fkeys{f6}->{id}='';
+    $fkeys{f6}->{filename}='';
+  }
+  if ($f7_cb)
+  {
+    $fkeys{f7}->{title}='';
+    $fkeys{f7}->{id}='';
+    $fkeys{f7}->{filename}='';
+  }
+  if ($f8_cb)
+  {
+    $fkeys{f8}->{title}='';
+    $fkeys{f8}->{id}='';
+    $fkeys{f8}->{filename}='';
+  }
+  if ($f9_cb)
+  {
+    $fkeys{f9}->{title}='';
+    $fkeys{f9}->{id}='';
+    $fkeys{f9}->{filename}='';
+  }
+  if ($f10_cb)
+  {
+    $fkeys{f10}->{title}='';
+    $fkeys{f10}->{id}='';
+    $fkeys{f10}->{filename}='';
+  }
+  if ($f11_cb)
+  {
+    $fkeys{f11}->{title}='';
+    $fkeys{f11}->{id}='';
+    $fkeys{f11}->{filename}='';
+  }
+  if ($f12_cb)
+  {
+    $fkeys{f12}->{title}='';
+    $fkeys{f12}->{id}='';
+    $fkeys{f12}->{filename}='';
+  }
   $f1_cb=0;
   $f2_cb=0;
   $f3_cb=0;
@@ -1419,87 +1461,87 @@ sub list_hotkeys
     my $f1_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f1_frame->Checkbutton(-text=>"F1: ",
                            -variable=>\$f1_cb)->pack(-side=>'left');
-    $f1_frame->Label(-textvariable=>\$f1, 
+    $f1_frame->Label(-textvariable=>\$fkeys{f1}->{title}, 
                      -anchor=>'w')->pack(-side=>'left');
     $f1_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, \$f1, $dnd_token ]);
+                        -dropcommand=>[\&Hotkey_Drop, "f1", $dnd_token ]);
     my $f2_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f2_frame->Checkbutton(-text=>"F2: ",
                            -variable=>\$f2_cb)->pack(-side=>'left');
-    $f2_frame->Label(-textvariable=>\$f2,
+    $f2_frame->Label(-textvariable=>\$fkeys{f2}->{title},
                      -anchor=>'w')->pack(-side=>'left');
     $f2_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, \$f2, $dnd_token ]);
+                        -dropcommand=>[\&Hotkey_Drop, "f2", $dnd_token ]);
     my $f3_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f3_frame->Checkbutton(-text=>"F3: ",
                            -variable=>\$f3_cb)->pack(-side=>'left');
-    $f3_frame->Label(-textvariable=>\$f3,
+    $f3_frame->Label(-textvariable=>\$fkeys{f3}->{title},
                      -anchor=>'w')->pack(-side=>'left');
     $f3_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, \$f3, $dnd_token ]);
+                        -dropcommand=>[\&Hotkey_Drop, "f3", $dnd_token ]);
     my $f4_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f4_frame->Checkbutton(-text=>"F4: ",
                            -variable=>\$f4_cb)->pack(-side=>'left');
-    $f4_frame->Label(-textvariable=>\$f4,
+    $f4_frame->Label(-textvariable=>\$fkeys{f4}->{title},
                      -anchor=>'w')->pack(-side=>'left');
     $f4_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, \$f4, $dnd_token ]);
+                        -dropcommand=>[\&Hotkey_Drop, "f4", $dnd_token ]);
     my $f5_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f5_frame->Checkbutton(-text=>"F5: ",
                            -variable=>\$f5_cb)->pack(-side=>'left');
-    $f5_frame->Label(-textvariable=>\$f5,
+    $f5_frame->Label(-textvariable=>\$fkeys{f5}->{title},
                      -anchor=>'w')->pack(-side=>'left');
     $f5_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, \$f5, $dnd_token ]);
+                        -dropcommand=>[\&Hotkey_Drop, "f5", $dnd_token ]);
     my $f6_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f6_frame->Checkbutton(-text=>"F6: ",
                            -variable=>\$f6_cb)->pack(-side=>'left');
-    $f6_frame->Label(-textvariable=>\$f6,
+    $f6_frame->Label(-textvariable=>\$fkeys{f6}->{title},
                      -anchor=>'w')->pack(-side=>'left');
     $f6_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, \$f6, $dnd_token ]);
+                        -dropcommand=>[\&Hotkey_Drop, "f6", $dnd_token ]);
     my $f7_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f7_frame->Checkbutton(-text=>"F7: ",
                            -variable=>\$f7_cb)->pack(-side=>'left');
-    $f7_frame->Label(-textvariable=>\$f7,
+    $f7_frame->Label(-textvariable=>\$fkeys{f7}->{title},
                      -anchor=>'w')->pack(-side=>'left');
     $f7_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, \$f7, $dnd_token ]);
+                        -dropcommand=>[\&Hotkey_Drop, "f7", $dnd_token ]);
     my $f8_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f8_frame->Checkbutton(-text=>"F8: ",
                            -variable=>\$f8_cb)->pack(-side=>'left');
-    $f8_frame->Label(-textvariable=>\$f8,
+    $f8_frame->Label(-textvariable=>\$fkeys{f8}->{title},
                      -anchor=>'w')->pack(-side=>'left');
     $f8_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, \$f8, $dnd_token ]);
+                        -dropcommand=>[\&Hotkey_Drop, "f8", $dnd_token ]);
     my $f9_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f9_frame->Checkbutton(-text=>"F9: ",
                            -variable=>\$f9_cb)->pack(-side=>'left');
-    $f9_frame->Label(-textvariable=>\$f9,
+    $f9_frame->Label(-textvariable=>\$fkeys{f9}->{title},
                      -anchor=>'w')->pack(-side=>'left');
     $f9_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, \$f9, $dnd_token ]);
+                        -dropcommand=>[\&Hotkey_Drop, "f9", $dnd_token ]);
     my $f10_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f10_frame->Checkbutton(-text=>"F10:",
                             -variable=>\$f10_cb)->pack(-side=>'left');
-    $f10_frame->Label(-textvariable=>\$f10,
+    $f10_frame->Label(-textvariable=>\$fkeys{f10}->{title},
                       -anchor=>'w')->pack(-side=>'left');
     $f10_frame->DropSite(-droptypes=>['Local'],
-                         -dropcommand=>[\&Hotkey_Drop, \$f10, $dnd_token ]);
+                         -dropcommand=>[\&Hotkey_Drop, "f10", $dnd_token ]);
     my $f11_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f11_frame->Checkbutton(-text=>"F11:",
                             -variable=>\$f11_cb)->pack(-side=>'left');
-    $f11_frame->Label(-textvariable=>\$f11,
+    $f11_frame->Label(-textvariable=>\$fkeys{f11}->{title},
                       -anchor=>'w')->pack(-side=>'left');
     $f11_frame->DropSite(-droptypes=>['Local'],
-                         -dropcommand=>[\&Hotkey_Drop, \$f11, $dnd_token ]);
+                         -dropcommand=>[\&Hotkey_Drop, "f11", $dnd_token ]);
     my $f12_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f12_frame->Checkbutton(-text=>"F12:",
                             -variable=>\$f12_cb)->pack(-side=>'left');
-    $f12_frame->Label(-textvariable=>\$f12,
+    $f12_frame->Label(-textvariable=>\$fkeys{f12}->{title},
                       -anchor=>'w')->pack(-side=>'left');
     $f12_frame->DropSite(-droptypes=>['Local'],
-                         -dropcommand=>[\&Hotkey_Drop, \$f12, $dnd_token ]);
+                         -dropcommand=>[\&Hotkey_Drop, "f12", $dnd_token ]);
     my $buttonframe = $hotkeysbox->Frame()->pack(-side=>'bottom',
                                                  -fill=>'x');
     $buttonframe->Button(-text=>"Close",
@@ -1574,6 +1616,24 @@ sub get_filename
   return ($filename);
 }
 
+sub get_title
+{
+  my $id = $_[0];
+  my $query = "SELECT title,artist FROM mrvoice WHERE id=$id";
+  my $sth=$dbh->prepare($query);
+  $sth->execute or die "can't execute the query: $DBI::errstr\n";
+  @result = $sth->fetchrow_array;
+  $sth->finish;
+  if ($result[1])
+  {
+    return ("$result[0] by $result[1]");
+  }
+  else
+  {
+    return ("$result[0]");
+  }
+}
+
 sub stop_mp3
 {
   # Sends a stop command to the MP3 player.  Works for both xmms and WinAmp,
@@ -1588,18 +1648,18 @@ sub play_mp3
   # See if the request is coming from one our hotkeys first...
   if ( ($_[1] ) && ( ($_[1] =~ /^F.*/) || ($_[1] =~ /^ALT.*/) ) )
   {
-    if ($_[1] eq "F1") { $filename = $f1; }
-    elsif ($_[1] eq "F2") { $filename = $f2; }
-    elsif ($_[1] eq "F3") { $filename = $f3; }
-    elsif ($_[1] eq "F4") { $filename = $f4; }
-    elsif ($_[1] eq "F5") { $filename = $f5; }
-    elsif ($_[1] eq "F6") { $filename = $f6; }
-    elsif ($_[1] eq "F7") { $filename = $f7; }
-    elsif ($_[1] eq "F8") { $filename = $f8; }
-    elsif ($_[1] eq "F9") { $filename = $f9; }
-    elsif ($_[1] eq "F10") { $filename = $f10; }
-    elsif ($_[1] eq "F11") { $filename = $f11; }
-    elsif ($_[1] eq "F12") { $filename = $f12; }
+    if ($_[1] eq "F1") { $filename = $fkeys{f1}->{filename}; }
+    elsif ($_[1] eq "F2") { $filename = $fkeys{f2}->{filename}; }
+    elsif ($_[1] eq "F3") { $filename = $fkeys{f3}->{filename}; }
+    elsif ($_[1] eq "F4") { $filename = $fkeys{f4}->{filename}; }
+    elsif ($_[1] eq "F5") { $filename = $fkeys{f5}->{filename}; }
+    elsif ($_[1] eq "F6") { $filename = $fkeys{f6}->{filename}; }
+    elsif ($_[1] eq "F7") { $filename = $fkeys{f7}->{filename}; }
+    elsif ($_[1] eq "F8") { $filename = $fkeys{f8}->{filename}; }
+    elsif ($_[1] eq "F9") { $filename = $fkeys{f9}->{filename}; }
+    elsif ($_[1] eq "F10") { $filename = $fkeys{f10}->{filename}; }
+    elsif ($_[1] eq "F11") { $filename = $fkeys{f11}->{filename}; }
+    elsif ($_[1] eq "F12") { $filename = $fkeys{f12}->{filename}; }
   #STARTCSZ
   #  elsif ($_[1] eq "ALT-T") { $filename = $altt; }
   #  elsif ($_[1] eq "ALT-Y") { $filename = $alty; }
@@ -1985,7 +2045,10 @@ sub Hotkey_Drop {
   my ($fkey_var, $dnd_source) = @_;
   my $id = get_song_id($mainbox, $dnd_source->cget(-text));
   my $filename = get_filename($id);
-  $$fkey_var = $filename;
+  my $title = get_title($id);
+  $fkeys{$fkey_var}->{id} = $id;
+  $fkeys{$fkey_var}->{filename} = $filename;
+  $fkeys{$fkey_var}->{title} = $title;
 }
 
 sub Tank_Drop 
