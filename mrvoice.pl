@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/25 16:56:55 $
-#	CVS REVISION NUMBER:    $Revision: 1.64 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/25 17:23:45 $
+#	CVS REVISION NUMBER:    $Revision: 1.65 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1078,7 +1078,9 @@ sub StartDrag
   my $index = $widget->nearest($event->y);
   if (defined $index)
   {
-    $token->configure(-text=>$widget->get($index));
+    my $text = $widget->get($index);
+    $text =~ s/.*?(".*?").*/$1/;
+    $token->configure(-text=>$text);
     my ($X, $Y) = ($event->X, $event->Y);
     $token->raise;
     $token->deiconify;
