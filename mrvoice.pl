@@ -17,7 +17,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.101 2002/02/05 02:15:38 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.102 2002/02/05 17:00:56 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -98,7 +98,7 @@ else
 
 #####
 
-my $version = "1.3.1";			# Program version
+my $version = "1.4";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
 
 # Define 32x32 XPM icon data
@@ -894,6 +894,7 @@ sub holding_tank
     return;
   }
   $holdingtank = $mw->Toplevel();
+#  $holdingtank->Icon(-image=>$mw->Pixmap(-data=>$icon_data));
   bind_hotkeys($holdingtank);              
   $holdingtank->title("Holding Tank");
   $holdingtank->Label(-text=>"A place to store songs for later use")->pack;
@@ -942,6 +943,7 @@ sub list_hotkeys
     return;
   }
   $hotkeysbox=$mw->Toplevel();
+#  $hotkeysbox->Icon(-image=>$mw->Pixmap(-data=>$icon_data));
   bind_hotkeys($hotkeysbox);
   $hotkeysbox->title("Hotkeys");
   $hotkeysbox->Label(-text=>"Currently defined hotkeys:")->pack;
@@ -1488,12 +1490,12 @@ $helpmenu = $menubar->cascade(-label=>'Help',
 sub filemenu_items
 {
   [
-    ['command', 'Open Hotkey File', -command=>\&open_file],
-    ['command', 'Save Hotkeys To A File', -command=>\&save_file, -accelerator=>"Ctrl-S"],
+    ['command', 'Open Hotkey File', -command=>\&open_file, -accelerator=>'Ctrl-O'],
+    ['command', 'Save Hotkeys To A File', -command=>\&save_file, -accelerator=>'Ctrl-S'],
     ['command', 'Preferences', -command=>\&edit_preferences],
     ['cascade', 'Recent Files', -tearoff=>0],
     '',
-    ['command', 'Exit', -command=>\&do_exit],
+    ['command', 'Exit', -command=>\&do_exit, -accelerator=>'Ctrl-X'],
   ];
 }
 
