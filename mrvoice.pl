@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.341 2004/03/11 13:57:06 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.342 2004/03/11 15:46:05 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2199,7 +2199,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.341 $';
+    my $rev = '$Revision: 1.342 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3744,6 +3744,115 @@ sub songsmenu_items
     ];
 }
 
+sub orphans
+{
+
+    # Build up a list of all files in the filepath directory
+    my @mp3files = glob( catfile( $config{filepath}, "*.mp3" ) );
+    my @oggfiles = glob( catfile( $config{filepath}, "*.ogg" ) );
+    my @wavfiles = glob( catfile( $config{filepath}, "*.wav" ) );
+    my @m3ufiles = glob( catfile( $config{filepath}, "*.m3u" ) );
+    my @plsfiles = glob( catfile( $config{filepath}, "*.pls" ) );
+    my @files = ( @mp3files, @oggfiles, @wavfiles, @m3ufiles, @plsfiles );
+    my @orphans;
+
+    # Display a ProgressBar while we scan the files
+    $mw->Busy( -recurse => 1 );
+    my $percent_done = 0;
+    my $file_count   = 0;
+    my $progressbox  = $mw->Toplevel();
+    $progressbox->withdraw();
+    $progressbox->Icon( -image => $icon );
+    $progressbox->title("Orphan Search");
+    $progressbox->Label( -text => "Checking all files for orphans" )
+      ->pack( -side => 'top' );
+    my $pb = $progressbox->ProgressBar( -width => 150 )->pack( -side => 'top' );
+    my $progress_frame1 = $progressbox->Frame()->pack( -side => 'top' );
+    $progressbox->update();
+    $progressbox->deiconify();
+    $progressbox->raise();
+
+    # Cycle through each file and check whether or not a database entry
+    # references it.
+    foreach my $file (@files)
+    {
+        $file = basename($file);
+        my $query = "SELECT * FROM mrvoice WHERE filename='$file'";
+        my $rv    = $dbh->do($query);
+        if ( $rv == 0 )
+        {
+            push( @orphans, $file );
+        }
+        $file_count++;
+        $percent_done = int( ( $file_count / $#files ) * 100 );
+        $pb->set($percent_done);
+        $progressbox->update();
+    }
+    $mw->Unbusy( -recurse => 1 );
+    $progressbox->destroy();
+    print "DEBUG: The orphan files are " . join( "\n", @orphans ) . "\n";
+
+    # Create a listbox with the orphans
+    my $orphanbox = $mw->Toplevel( -title => "Orphaned Files" );
+    $orphanbox->withdraw();
+    $orphanbox->Icon( -image => $icon );
+    $orphanbox->Label( -text =>
+          "The following files are orphans - they are not referenced by\nany entry in the database.  You can remove them without impacting your system.\n\nYou may close this box and do nothing, or select some or all of the files and delete them."
+    )->pack( -side => 'top' );
+    my $buttonframe =
+      $orphanbox->Frame()->pack( -side => 'bottom', -fill => 'x' );
+    my $lb = $orphanbox->Scrolled(
+        "Listbox",
+        -scrollbars => "osoe",
+        -setgrid    => 1,
+        -width      => 50,
+        -height     => 20,
+        -selectmode => "extended"
+    )->pack( -side => 'top' );
+    $buttonframe->Button(
+        -text    => 'Close',
+        -command => sub { $orphanbox->destroy() }
+    )->pack( -side => 'left' );
+    $buttonframe->Button(
+        -text    => 'Select All',
+        -command => sub { $lb->selectionSet( 0, 'end' ) }
+    )->pack( -side => 'right' );
+    $buttonframe->Button(
+        -text    => 'Delete Selected',
+        -command => sub {
+            my @list = $lb->curselection();
+            if ( $#list >= 0 )
+            {
+                my $deleted = 0;
+                foreach my $index (@list)
+                {
+                    my $filename = $lb->get($index);
+                    print "DEBUG: Deleting file "
+                      . catfile( $config{filepath}, $filename ) . "\n";
+                    unlink( catfile( $config{filepath}, $filename ) );
+                    $deleted++;
+                }
+                $status = sprintf( "Deleted %d orphaned file%s",
+                    $deleted, $deleted == 1 ? "s" : "" );
+            }
+            else
+            {
+                $status = "No files selected to delete";
+            }
+            $orphanbox->destroy();
+        },
+    )->pack( -side => 'right' );
+
+    foreach my $orphan (@orphans)
+    {
+        $lb->insert( 'end', $orphan );
+    }
+
+    $orphanbox->update();
+    $orphanbox->deiconify();
+    $orphanbox->raise();
+}
+
 sub advanced_search
 {
     my $query = "select modtime from mrvoice order by modtime asc limit 1";
@@ -3972,6 +4081,7 @@ sub advancedmenu_items
             -command => [ \&do_search, "timespan", "30 days" ]
         ],
         [ 'command', 'Advanced date search', -command => \&advanced_search ],
+        [ 'command', 'Find orphaned files',  -command => \&orphans ],
     ];
 }
 

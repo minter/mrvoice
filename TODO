@@ -1,10 +1,9 @@
 Things I'm currently working on:
 
-* Move the Orphans check into the main codebase.
 * Debug mode - log stuff to a file with the proper switch.
 * Investigate switching to an HList, to get the -data option
 * General code cleanup and pretty-fication.
 * Get code to compile under "use strict"
 
 --
-CVS ID: $Id: TODO,v 1.37 2004/03/10 21:01:06 minter Exp $
+CVS ID: $Id: TODO,v 1.38 2004/03/11 15:46:05 minter Exp $

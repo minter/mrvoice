@@ -1,3 +1,7 @@
+Thu  Mar 11 2004	H. Wade Minter (minter@lunenburg.org)
+     * Move the check for orphaned files into the main codebase, under
+       the Advanced Search menu.
+
 Wed  Mar 10 2004	H. Wade Minter (minter@lunenburg.org)
      * Fixed "y3k" bug in the Advanced Search, where you couldn't select
        a year greater than 2003, thanks to hardcoded values.  Oops.
@@ -597,4 +601,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.125 2004/03/10 20:58:49 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.126 2004/03/11 15:46:05 minter Exp $
