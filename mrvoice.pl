@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.177 2002/11/13 16:38:01 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.178 2002/11/13 17:22:49 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1234,7 +1234,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.177 $';
+  $rev = '$Revision: 1.178 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2446,7 +2446,7 @@ $playbutton = $statusframe->Button(-text=>"Play Now",
 $playbutton->configure(-bg=>'green',
                        -activebackground=>'SpringGreen2');
 $stopbutton = $statusframe->Button(-text=>"Stop Now",
-                     -command=>\&stop_mp3)->pack(-side=>'left');
+                     -command=>\&stop_mp3)->pack(-side=>'right');
 if ($^O eq "MSWin32")
 {
   # Windows users can shift-click on the stop button to activate WinAmp's
