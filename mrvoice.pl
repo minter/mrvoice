@@ -34,7 +34,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.145 2002/08/13 19:30:37 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.146 2002/08/13 19:34:39 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -69,17 +69,6 @@ our $mp3types = [
 if ("$^O" eq "MSWin32")
 {
   our $rcfile = "C:\\mrvoice.cfg";
-  BEGIN 
-  {
-    if ($^O eq "MSWin32")
-    {
-      require Win32::Process; 
-      Win32::Process->import();
-      require Win32::GUI; 
-      Win32::GUI->import();
-    }
-  }
-  use constant WM_USER => 1024;
 
   # You have to manually set the time zone for Windows.
   my ($l_min, $l_hour, $l_year, $l_yday) = (localtime $^T)[1, 2, 5, 7];
@@ -340,8 +329,7 @@ sub bind_hotkeys
   if ($^O eq "MSWin32")
   {
     $window->bind("<Shift-Key-Escape>", sub {
-    Win32::GUI::SendMessage( $winamphandle, WM_COMMAND, 40147, 0 );
-    Tk->break;
+    # Replace this with code to fade-stop WinAmp
     });
   }
 }
@@ -1041,7 +1029,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.145 $';
+  $rev = '$Revision: 1.146 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -1380,15 +1368,7 @@ sub stop_mp3
   # Sends a stop command to the MP3 player.  Works for both xmms and WinAmp,
   # though not particularly cleanly.
 
-  if ($^O eq "MSWin32")
-  {
-    # Use the Win32 API into WinAmp to tell it to stop.
-    Win32::GUI::SendMessage( $winamphandle, WM_COMMAND, 40047, 0 );
-  }
-  else
-  {
-    system ("$mp3player --stop");
-  }
+  system ("$mp3player --stop");
   $status = "Playing Stopped";
 }
 
@@ -1826,7 +1806,6 @@ if ("$^O" eq "MSWin32")
   Win32::Process::Create($object, $mp3player,'',1, NORMAL_PRIORITY_CLASS, ".");
   $mp3_pid=$object->GetProcessID();
   sleep(1);
-  $winamphandle = Win32::GUI::FindWindow("Winamp v1.x","");
 }
 else
 {
@@ -2206,8 +2185,7 @@ if ($^O eq "MSWin32")
   # It's not changing the relief back after it's done, though.
   $stopbutton->bindtags([$stopbutton,ref($stopbutton),$stopbutton->toplevel,'all']);
   $stopbutton->bind("<Shift-ButtonRelease-1>" => sub {
-    Win32::GUI::SendMessage( $winamphandle, WM_COMMAND, 40147, 0 );
-    Tk->break;
+    # Replace this with the code to fade-stop WinAmp
     });
 }
 
