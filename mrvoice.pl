@@ -1,4 +1,5 @@
 #!/usr/bin/perl 
+use warnings;
 use Tk;
 use Tk::DialogBox;
 use Tk::DragDrop;
@@ -30,7 +31,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.138 2002/07/09 16:05:57 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.139 2002/07/11 19:05:18 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -495,7 +496,7 @@ sub dynamic_documents
   }
 
   # Get rid of the old menu and rebuild from our array
-  $dynamicmenu->delete(0,end);
+  $dynamicmenu->delete(0,'end');
   foreach $fileentry (@current)
   {
     $dynamicmenu->command(-label=>"$fileentry",
@@ -1040,7 +1041,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.138 $';
+  $rev = '$Revision: 1.139 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -1058,6 +1059,7 @@ sub show_about
 #  $box->Icon(-image=>$icon);
 #  $box->add("Label",-text=>"The following hotkeys are always available\nand may not be changed")->pack();
 #  $box->add("Label",-text=>"<Escape> - Stop the currently playing MP3",-anchor=>'nw')->pack(-fill=>'x');
+#  $box->add("Label",-text=>"<Control-P> - Play the currently selected song",-anchor=>'nw')->pack(-fill=>'x');
 #  $box->add("Label",-text=>"<Enter> - Perform the currently entered search",-anchor=>'nw')->pack(-fill=>'x');
 #  $box->add("Label",-text=>"<ALT-t> - The \"Ta-Da\" MIDI",-anchor=>'nw')->pack(-fill=>'x');
 #  $box->add("Label",-text=>"<ALT-y> - The \"You're Out\" MIDI",-anchor=>'nw')->pack(-fill=>'x');
@@ -1737,7 +1739,7 @@ sub Tank_Drop
 {
   my ($dnd_source) = @_;
   my $selection = $mainbox->get($mainbox->curselection());
-  $tankbox->insert(end,$selection);
+  $tankbox->insert('end',$selection);
 }
 
 #########
