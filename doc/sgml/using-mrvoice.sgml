@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: using-mrvoice.sgml,v 1.12 2001/11/14 14:44:19 minter Exp $
+  CVS ID: $Id: using-mrvoice.sgml,v 1.13 2001/12/03 17:23:17 minter Exp $
 -->
 
 <chapter><title>Using Mr. Voice</title>
@@ -11,7 +11,22 @@
     <para>Mr. Voice lets you set up categories, then put your songs into those categories for later use.  So we'll address the categories first.</para>
     <sect2><title>Categories</title>
       <para>Category options are very simple.  You can either add a category, or delete a category.  Both options can be found under the <menuchoice> <guimenu>Categories</guimenu> </menuchoice> menu on the main display.</para>
-      <para>To add a new category, choose <menuchoice> <guimenu>Categories</guimenu> <guimenuitem>Add Category</guimenuitem> </menuchoice>.  You will then have a box pop up where you can enter two items: The <guilabel>Category Code</guilabel> and the <guilabel>Category Description</guilabel>.  <screenshot> <graphic fileref="../images/addcat.jpg" scale="75"> </screenshot> The Category Code is a short (4-5 letters max.) identifier for the category, whereas the Category Description is the longer name that you'll actually see.  For example, if you want a category called "Joe's Fly Tunes", you could use "JOE" for the Category Code and "Joe's Fly Tunes" for the category description.  </para>
+      <para>To add a new category, choose <menuchoice> <guimenu>Categories</guimenu> <guimenuitem>Add Category</guimenuitem> </menuchoice>.  You will then have a box pop up where you can enter two items: The <guilabel>Category Code</guilabel> and the <guilabel>Category Description</guilabel>.  
+        <figure>
+	  <title>The Add Category window</title>
+	  <mediaobject>
+	    <imageobject>
+	      <imagedata fileref="../images/addcat.jpg" format="jpg">
+	    </imageobject>
+	    <imageobject>
+	      <imagedata fileref="../images/addcat.eps" format="eps">
+	    </imageobject>
+	    <textobject>
+	      <phrase>Screenshot of the Add Category window</phrase>
+	    </textobject>
+	  </mediaobject>
+	</figure>
+      The Category Code is a short (4-5 letters max.) identifier for the category, whereas the Category Description is the longer name that you'll actually see.  For example, if you want a category called "Joe's Fly Tunes", you could use "JOE" for the Category Code and "Joe's Fly Tunes" for the category description.  </para>
       <note>
         <para>After you add the category, you will get a note that you need to restart Mr. Voice before the new categories will be available.  This should hopefully be fixed in later releases.</para>
       </note>
