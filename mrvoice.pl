@@ -1,7 +1,8 @@
 #!/usr/bin/perl
 use Tk;
-use Tk::FileSelect;
+#use Tk::FileSelect;
 use Tk::DialogBox;
+use Tk::FileDialog;
 use File::Basename;
 use DBI;
 use MPEG::MP3Info;
@@ -14,8 +15,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/03/04 01:01:33 $
-#	CVS REVISION NUMBER:    $Revision: 1.13 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/04 14:45:14 $
+#	CVS REVISION NUMBER:    $Revision: 1.14 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -25,10 +26,10 @@ use MPEG::MP3Info;
 #####
 # CONFIGURATION VARIABLES
 #####
-my $db_name = "";			# In the form DBNAME:HOSTNAME:PORT
-my $db_username = "";                   # The username used to connect
+my $db_name = "comedysportz";			# In the form DBNAME:HOSTNAME:PORT
+my $db_username = "root";                   # The username used to connect
                                         # to the database.
-my $db_pass = "";                       # The password used to connect
+my $db_pass = "rangers";                       # The password used to connect
                                         # to the database.
 $category = "Any";			# The default category to search
                                         # Initial status message
@@ -37,12 +38,12 @@ $category = "Any";			# The default category to search
 # This is due to Windows using the \ character for its path, while perl
 # interprets this character as special.
 $mp3player = "/usr/bin/xmms";		# Full path to MP3 player
-$filepath = "";				# Path that will be prepended onto
+$filepath = "/mp3/";				# Path that will be prepended onto
 					# the filename retrieved from the
 					# database, to find the actual
 					# MP3 on the local system.
 					# MUST END WITH TRAILING /
-$savedir = "";				# The default directory where 
+$savedir = "/tmp/";				# The default directory where 
                                         # hotkey save files will live.
 
 #####
@@ -67,12 +68,17 @@ $savedir = "$savedir/" unless ($savedir =~ "/.*\/$/");
 
 sub open_file
 {
-  $fileselectw = $mw->FileSelect(-directory=>"$savedir",
-                                 -acceptlabel=>"Load File",
-                                 -filelabel=>'The file to open:',
-                                 -defaultextension => "mrv");
-  $fileselectw->configure(-title=>"Open A File...");
-  $selectedfile = $fileselectw->Show;
+#  $fileselectw = $mw->FileSelect(-directory=>"$savedir",
+#                                 -acceptlabel=>"Load File",
+#                                 -filelabel=>'The file to open:',
+#                                 -defaultextension => "mrv");
+#  $fileselectw->configure(-title=>"Open A File...");
+#  $selectedfile = $fileselectw->Show;
+   $fileselectw = $mw->FileDialog(-Title=>'Open a File',
+                                  -FPat=>"*.mrv",
+                                  -Path=>$savedir);
+   $selectedfile = $fileselectw->Show;
+                      
   if ($selectedfile)
   {
     if (! -r $selectedfile)
@@ -98,12 +104,18 @@ sub open_file
 
 sub save_file
 {
-  $fileselectw = $mw->FileSelect(-directory => "$savedir",
-                                 -acceptlabel => "Save File",
-                                 -filelabel => 'The file to save:',
-                                 -defaultextension => "mrv");
-  $fileselectw->configure(-title=>"Save A File...");
-  $selectedfile = $fileselectw->Show;
+#  $fileselectw = $mw->FileSelect(-directory => "$savedir",
+#                                 -acceptlabel => "Save File",
+#                                 -filelabel => 'The file to save:',
+#                                 -defaultextension => "mrv");
+#  $fileselectw->configure(-title=>"Save A File...");
+#
+#  $selectedfile = $fileselectw->Show;
+   $fileselectw = $mw->FileDialog(-Title=>'Save a File',
+                                  -FPat=>"*.mrv",
+                                  -Path=>$savedir);
+   $selectedfile = $fileselectw->Show;
+
   if ($selectedfile)
   {
     if ( (! -w $selectedfile) && (-e $selectedfile) )
