@@ -11,8 +11,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/02/25 23:07:29 $
-#	CVS REVISION NUMBER:    $Revision: 1.6 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/02/25 23:32:41 $
+#	CVS REVISION NUMBER:    $Revision: 1.7 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -41,11 +41,11 @@ $filepath = "";				# Path that will be prepended onto
 
 # The following variables set the locations of MP3s for static hotkey'd 
 # sounds
-$altt = "/home/minter/TaDa.mp3";
-$alty = "/home/minter/CalloutMusic.mp3";
-$altb = "/home/minter/BrownBag.mp3";
-$altg = "/home/minter/Groaner.mp3";
-$altv = "/mp3/PriceIsRightTheme.mp3";
+#$altt = "/home/minter/TaDa.mp3";
+#$alty = "/home/minter/CalloutMusic.mp3";
+#$altb = "/home/minter/BrownBag.mp3";
+#$altg = "/home/minter/Groaner.mp3";
+#$altv = "/mp3/PriceIsRightTheme.mp3";
 #
 #####
 
@@ -71,29 +71,29 @@ sub show_about
   }
 }
 
-sub show_predefined_hotkeys
-{
-  if (! Exists($predefbox))
-  {
-    $predefbox = $mw->Toplevel();
-    $predefbox->title("Predefined Hotkeys");
-    $predefbox->Label(-text=>"The following hotkeys are always available\nand may not be changed")->pack();
-    $predefbox->Label(-text=>"<Escape> - Stop the currently playing MP3")->pack();
-    $predefbox->Label(-text=>"<Enter> - Perform the currently entered search")->pack();
-    $predefbox->Label(-text=>"<ALT-t> - The \"Ta-Da\" MIDI")->pack();
-    $predefbox->Label(-text=>"<ALT-y> - The \"You're Out\" MIDI")->pack();
-    $predefbox->Label(-text=>"<ALT-b> - The Brown Bag MIDI")->pack();
-    $predefbox->Label(-text=>"<ALT-g> - The Groaner MIDI")->pack();
-    $predefbox->Label(-text=>"<ALT-v> - The Price Is Right theme (Volunteer photos)")->pack();
-    $predefbox->Button(-text=>"Close",
-                       -command=>sub { $predefbox->withdraw})->pack;
-  }
-  else
-  {
-    $predefbox->deiconify();
-    $predefbox->raise();
-  }
-}
+#sub show_predefined_hotkeys
+#{
+#  if (! Exists($predefbox))
+#  {
+#    $predefbox = $mw->Toplevel();
+#    $predefbox->title("Predefined Hotkeys");
+#    $predefbox->Label(-text=>"The following hotkeys are always available\nand may not be changed")->pack();
+#    $predefbox->Label(-text=>"<Escape> - Stop the currently playing MP3")->pack();
+#    $predefbox->Label(-text=>"<Enter> - Perform the currently entered search")->pack();
+#    $predefbox->Label(-text=>"<ALT-t> - The \"Ta-Da\" MIDI")->pack();
+#    $predefbox->Label(-text=>"<ALT-y> - The \"You're Out\" MIDI")->pack();
+#    $predefbox->Label(-text=>"<ALT-b> - The Brown Bag MIDI")->pack();
+#    $predefbox->Label(-text=>"<ALT-g> - The Groaner MIDI")->pack();
+#    $predefbox->Label(-text=>"<ALT-v> - The Price Is Right theme (Volunteer photos)")->pack();
+#    $predefbox->Button(-text=>"Close",
+#                       -command=>sub { $predefbox->withdraw})->pack;
+#  }
+#  else
+#  {
+#    $predefbox->deiconify();
+#    $predefbox->raise();
+#  }
+#}
 
 sub clear_hotkeys
 {
@@ -296,11 +296,11 @@ sub play_mp3
   elsif ($_[1] eq "F10") { $filename = $f10; }
   elsif ($_[1] eq "F11") { $filename = $f11; }
   elsif ($_[1] eq "F12") { $filename = $f12; }
-  elsif ($_[1] eq "ALT-T") { $filename = $altt; }
-  elsif ($_[1] eq "ALT-Y") { $filename = $alty; }
-  elsif ($_[1] eq "ALT-B") { $filename = $altb; }
-  elsif ($_[1] eq "ALT-G") { $filename = $altg; }
-  elsif ($_[1] eq "ALT-V") { $filename = $altv; }
+#  elsif ($_[1] eq "ALT-T") { $filename = $altt; }
+#  elsif ($_[1] eq "ALT-Y") { $filename = $alty; }
+#  elsif ($_[1] eq "ALT-B") { $filename = $altb; }
+#  elsif ($_[1] eq "ALT-G") { $filename = $altg; }
+#  elsif ($_[1] eq "ALT-V") { $filename = $altv; }
   else
   {
     # If not, find the selected song.
@@ -520,11 +520,11 @@ $mw->bind("<Key-F11>", [\&play_mp3,"F11"]);
 $mw->bind("<Key-F12>", [\&play_mp3,"F12"]);
 $mw->bind("<Key-Return>", [\&do_search]);
 $mw->bind("<Key-Escape>", [\&stop_mp3]);
-$mw->bind("<Alt-Key-t>", [\&play_mp3,"ALT-T"]);
-$mw->bind("<Alt-Key-y>", [\&play_mp3,"ALT-Y"]);
-$mw->bind("<Alt-Key-b>", [\&play_mp3,"ALT-B"]);
-$mw->bind("<Alt-Key-g>", [\&play_mp3,"ALT-G"]);
-$mw->bind("<Alt-Key-v>", [\&play_mp3,"ALT-V"]);
+#$mw->bind("<Alt-Key-t>", [\&play_mp3,"ALT-T"]);
+#$mw->bind("<Alt-Key-y>", [\&play_mp3,"ALT-Y"]);
+#$mw->bind("<Alt-Key-b>", [\&play_mp3,"ALT-B"]);
+#$mw->bind("<Alt-Key-g>", [\&play_mp3,"ALT-G"]);
+#$mw->bind("<Alt-Key-v>", [\&play_mp3,"ALT-V"]);
 #
 #####
 
