@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.359 2004/03/25 21:25:37 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.360 2004/03/27 01:20:37 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2251,7 +2251,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.359 $';
+    my $rev    = '$Revision: 1.360 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::mysql->VERSION;
@@ -3141,7 +3141,9 @@ sub do_search
     $status = sprintf( "Displaying %d search result%s ",
         $numrows, $numrows == 1 ? "" : "s" );
     $status .= "($diff seconds elapsed)";
-    $mainbox->update();
+    $mainbox->yview('scroll',1,'units');
+    $mainbox->update;
+    $mainbox->yview('scroll', -1,'units');
 }
 
 sub return_longcat
