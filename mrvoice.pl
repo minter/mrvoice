@@ -11,8 +11,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/02/26 02:44:22 $
-#	CVS REVISION NUMBER:    $Revision: 1.9 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/02/28 02:53:36 $
+#	CVS REVISION NUMBER:    $Revision: 1.10 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -22,7 +22,7 @@ use MPEG::MP3Info;
 #####
 # CONFIGURATION VARIABLES
 #####
-my $db_name = "";                       # In the form DBNAME:HOSTNAME:PORT
+my $db_name = "";			# In the form DBNAME:HOSTNAME:PORT
 my $db_username = "";                   # The username used to connect
                                         # to the database.
 my $db_pass = "";                       # The password used to connect
@@ -319,8 +319,7 @@ sub play_mp3
   }
   if ($filename)
   {
-    $status="Playing $filename now";
-    system ("$mp3player --play $path$filename");
+    system ("$mp3player --play $filepath$filename");
   }
 }
 
@@ -345,15 +344,13 @@ sub do_search
   $sth->execute or die "can't execute the query: $DBI::errstr\n";
   while (@table_row = $sth->fetchrow_array)
   {
-    if (-e $table_row[5])
+    if (-e "$filepath$table_row[5]")
     {
       $string="$table_row[0]:($table_row[1]";
       $string = $string . " - $table_row[2]" if ($table_row[2]);
       $string = $string . ") - \"$table_row[4]\"";
       $string = $string. " by $table_row[3]" if ($table_row[3]);
-      #####  WADE #####
       my $info = get_mp3info("$filepath$table_row[5]");
-      #################
       $minute = $info->{MM};
       $minute = "0$minute" if ($minute < 10);
       $second = $info->{SS};
@@ -382,9 +379,8 @@ sub do_exit
 # MAIN PROGRAM
 #########
 
+$dbh = DBI->connect("DBI:mysql:$db_name",$db_username,$db_pass) or die "Couldn't connect to database: $DBI::errstr\n";
 open (XMMS,"$mp3player|");
-$dbh = DBI->connect("DBI:mysql:$db_name",$db_username,$db_pass) or die "Could
-n't connect to database: $DBI::errstr\n";
 
 $mw = MainWindow->new;
 $mw->geometry("+0+0");
