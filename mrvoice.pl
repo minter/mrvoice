@@ -3272,6 +3272,8 @@ sub read_rcfile
     }
     else
     {
+        $mw->deiconify();
+        $mw->raise();
         my $norcbox = $mw->Dialog(
             -title => "Configuration file not found",
             -text  =>
@@ -3490,6 +3492,7 @@ sub create_new_database
 #########
 # MAIN PROGRAM
 #########
+$|  = 1;
 $mw = MainWindow->new;
 $mw->withdraw();
 my $menubar = $mw->Menu;
@@ -3505,6 +3508,8 @@ read_rcfile();
 
 if ( !defined $config{db_file} )
 {
+    $mw->deiconify();
+    $mw->raise();
     my $box = $mw->DialogBox( -title => "Fatal Error", -buttons => ["Ok"] );
     $box->Icon( -image => $icon );
     $box->add( "Label",
