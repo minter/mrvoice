@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.comedyworx.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/11/01 02:53:42 $
-#	CVS REVISION NUMBER:    $Revision: 1.76 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/11/02 01:25:08 $
+#	CVS REVISION NUMBER:    $Revision: 1.77 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1156,7 +1156,7 @@ sub Hotkey_Drop {
 $mw = MainWindow->new;
 $mw->geometry("+0+0");
 $mw->title("Mr. Voice");
-$mw->minsize(67,0);
+$mw->minsize(67,2);
 
 read_rcfile();
 
