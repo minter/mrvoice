@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: using-mrvoice.sgml,v 1.19 2001/12/19 20:23:19 minter Exp $
+  CVS ID: $Id: using-mrvoice.sgml,v 1.20 2001/12/22 14:39:07 minter Exp $
 -->
 
 <chapter><title>Using Mr. Voice</title>
@@ -41,9 +41,6 @@
 	  </mediaobject>
 	</figure>
       The Category Code is a short (4-5 letters max.) identifier for the category, whereas the Category Description is the longer name that you'll actually see.  For example, if you want a category called "Joe's Fly Tunes", you could use "JOE" for the Category Code and "Joe's Fly Tunes" for the category description.  </para>
-      <note>
-        <para>After you add the category, you will get a note that you need to restart Mr. Voice before the new categories will be available.  This should hopefully be fixed in later releases.</para>
-      </note>
       <para>To delete a category, choose <menuchoice> <guimenu>Categories</guimenu> <guimenuitem>Delete Category</guimenuitem> </menuchoice>.  A box will pop up listing all of your defined categories.  You can choose the button next to the category that you would like to delete, then press <guibutton>Ok</guibutton> to delete the category. 
         <figure>
 	  <title>The Delete Category window</title>
