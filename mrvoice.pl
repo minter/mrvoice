@@ -41,7 +41,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.253 2003/07/28 16:45:21 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.254 2003/07/28 17:30:48 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1482,6 +1482,7 @@ sub move_file
 sub add_new_song
 {
   my $continue = 0;
+  my ($longcat,$addsong_cat);
   while ($continue != 1)
   {
     $box = $mw->DialogBox(-title=>"Add New Song", -buttons=>["OK","Cancel"]);
@@ -1505,6 +1506,7 @@ sub add_new_song
                               -relief=>'raised',
                               -tearoff=>0,
                               -indicatoron=>1)->pack(-side=>'right');
+    $frame3->Label(-textvariable=>\$longcat)->pack(-side=>'right');
     $query="SELECT * from categories ORDER BY description";
     my $sth=$dbh->prepare($query);
     $sth->execute or die "can't execute the query: $DBI::errstr\n";
@@ -1514,7 +1516,9 @@ sub add_new_song
       $name=$table_row[1];
       $menu->radiobutton(-label=>$name,
                          -value=>$code,
-                         -variable=>\$addsong_cat);
+                         -variable=>\$addsong_cat,
+                         -command=>sub {
+                                $longcat = "(" . return_longcat($addsong_cat) . ")";});
     }
     $sth->finish;
     $frame4 = $box->add("Frame")->pack(-fill=>'x');
@@ -1943,7 +1947,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.253 $';
+  $rev = '$Revision: 1.254 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
