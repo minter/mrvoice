@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.16 2002/05/03 16:59:44 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.17 2002/05/08 20:52:11 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
@@ -137,6 +137,9 @@ mysql>
               <para>Enter <userinput>search MP3</userinput>.  At the <prompt>PPM></prompt> prompt, enter <userinput>install MP3-Info</userinput> to install the MPEG::MP3-Info module.</para>
             </listitem>
             <listitem>
+              <para>Enter <userinput>search Audio</userinput>.  At the <prompt>PPM></prompt> prompt, enter <userinput>install Audio-Wav</userinput> to install the Audio::Wav module.</para>
+            </listitem>
+            <listitem>
               <para>You're now done with the Perl install!  Enter <userinput>quit</userinput> at the <prompt>PPM></prompt> prompt to exit back to the DOS shell.  Close the DOS shell.</para>
             </listitem>
           </itemizedlist>
@@ -154,13 +157,13 @@ mysql>
 		  <para>Go to a DOS/Command prompt, type <userinput>ppm</userinput> and hit enter.  You should see "PPM Interactive Shell" and a <prompt>PPM></prompt> prompt.</para>
 		</listitem>
 		<listitem>
-		  <para>From that prompt, run <userinput>search --location=C:\PPM</userinput>.  That should return a list of four packages (DBI, DBD-Mysql, Tk, and MP3-Info).</para>
+		  <para>From that prompt, run <userinput>search --location=C:\PPM</userinput>.  That should return a list of five packages (DBI, DBD-Mysql, Tk, Audio-Wav, and MP3-Info).</para>
 		</listitem>
 		<listitem>
 		  <para>Next, you have to tell PPM that your new directory is a valid repository, so run <userinput>set repository local C:\PPM</userinput> to enable the local directory.</para>
 		</listitem>
 		<listitem>
-		  <para>From the <prompt>PPM></prompt> prompt, run <userinput>install DBI DBD-Mysql Tk MP3-Info</userinput>.  Answer "y" to the confirmations.</para>
+		  <para>From the <prompt>PPM></prompt> prompt, run <userinput>install DBI DBD-Mysql Tk Audio-Wav MP3-Info</userinput>.  Answer "y" to the confirmations.</para>
 		</listitem>
 		<listitem>
 		  <para>From the <prompt>PPM></prompt> prompt, run <userinput>query</userinput> to make sure those four packages show up as being installed.</para>
