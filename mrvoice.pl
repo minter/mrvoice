@@ -3113,6 +3113,7 @@ sub do_search
     {
         my $curr_entry = ( $mainbox->info("children") )[0];
         $mainbox->selectionSet($curr_entry);
+        $mainbox->see($curr_entry);
     }
     $sth->finish;
     my $endtime = gettimeofday();
