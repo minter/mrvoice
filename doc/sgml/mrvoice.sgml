@@ -5,7 +5,7 @@
   <!ENTITY epilogue SYSTEM "troubleshooting.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.34 2002/12/11 22:13:42 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.35 2002/12/11 22:22:38 minter Exp $ 
 -->
 <book status="draft">
 
@@ -121,9 +121,7 @@
 &epilogue
 
 <appendix><title>Known Bugs and Issues</title>
-  <para>Check the <ulink url="http://www.lunenburg.org/bugzilla/">Mr. Voice Bugzilla</ulink> database for outstanding issues.</para></listitem>
-    </itemizedlist>
-  </para>
+  <para>Check the <ulink url="http://www.lunenburg.org/bugzilla/">Mr. Voice Bugzilla</ulink> database for outstanding issues.</para>
 </appendix>
 
 <appendix><title>Contributing, Contacting, and Bug Reporting</title>
