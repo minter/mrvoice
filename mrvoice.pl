@@ -17,7 +17,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.106 2002/02/07 15:14:39 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.107 2002/02/07 15:40:19 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -340,7 +340,7 @@ sub infobox
   
   my ($parent_window, $title, $string) = @_;
   my $box = $parent_window->DialogBox(-title=>"$title", -buttons=>["OK"]);
-  $box->Icon(-image=>$mw->Pixmap(-data=>$icon_data));
+  $box->Icon(-image=>$icon);
   $box->add("Label",-text=>"$string")->pack();
   $box->Show;
 }
@@ -388,7 +388,7 @@ sub restore_hotkeys
 sub add_category
 {
   my $box = $mw->DialogBox(-title=>"Add a category", -buttons=>["Ok","Cancel"]);
-  $box->Icon(-image=>$mw->Pixmap(-data=>$icon_data));
+  $box->Icon(-image=>$icon);
   my $acframe1 = $box->add("Frame")->pack(-fill=>'x');
   $acframe1->Label(-text=>"Category Code:  ")->pack(-side=>'left');
   $acframe1->Entry(-width=>6,
@@ -438,7 +438,7 @@ sub edit_category
 sub delete_category
 {
   my $box = $mw->DialogBox(-title=>"Delete a category",-buttons=>["Ok","Cancel"]);
-  $box->Icon(-image=>$mw->Pixmap(-data=>$icon_data));
+  $box->Icon(-image=>$icon);
   $box->add("Label",-text=>"Choose a category to delete.")->pack();
 
   my $query="SELECT * from categories ORDER BY description";
@@ -488,7 +488,7 @@ sub delete_category
 sub add_new_song
 {
   $box = $mw->DialogBox(-title=>"Add New Song", -buttons=>["OK","Cancel"]);
-  $box->Icon(-image=>$mw->Pixmap(-data=>$icon_data));
+  $box->Icon(-image=>$icon);
   $box->add("Label",-text=>"Enter the following information for the new song,\nand choose the file to add.")->pack();
   $box->add("Label",-text=>"Items in red are required.\n")->pack();
   $frame1 = $box->add("Frame")->pack(-fill=>'x');
@@ -618,7 +618,7 @@ sub edit_preferences
   my $box = $mw->DialogBox(-title=>"Edit Preferences",
                            -buttons=>["Ok","Cancel"],
                            -default_button=>"Ok");
-  $box->Icon(-image=>$mw->Pixmap(-data=>$icon_data));
+  $box->Icon(-image=>$icon);
   my $notebook = $box->add('NoteBook', -ipadx=>6, -ipady=>6);
   my $database_page = $notebook->add("database", 
                                      -label=>"Database Options", 
@@ -710,7 +710,7 @@ sub edit_song
 
   $box = $mw->DialogBox(-title=>"Edit Song", -buttons=>["Edit","Cancel"],
                                              -default_button=>"Cancel");
-  $box->Icon(-image=>$mw->Pixmap(-data=>$icon_data));
+  $box->Icon(-image=>$icon);
   $box->add("Label",-text=>"You may use this form to modify information about\na song that is already in the database\n")->pack();
   $frame1 = $box->add("Frame")->pack(-fill=>'x');
   $frame1->Label(-text=>"Song Title")->pack(-side=>'left');
@@ -781,7 +781,7 @@ sub delete_song
     $box = $mw->DialogBox(-title=>"Confirm Deletion", 
                           -default_button=>"Cancel",
                           -buttons=>["Delete","Cancel"]);
-    $box->Icon(-image=>$mw->Pixmap(-data=>$icon_data));
+    $box->Icon(-image=>$icon);
     $box->add("Label",-text=>"About to delete song id $id from the database\nBe sure this is what you want to do!")->pack();
     $box->add("Checkbutton",-text=>"Delete file on disk",
                             -variable=>\$delete_file_cb)->pack();
@@ -825,7 +825,7 @@ sub show_about
 #sub show_predefined_hotkeys
 #{
 #  $box = $mw->DialogBox(-title=>"Predefined Hotkeys", -buttons=>["Close"]);
-#  $box->Icon(-image=>$mw->Pixmap(-data=>$icon_data));
+#  $box->Icon(-image=>$icon);
 #  $box->add("Label",-text=>"The following hotkeys are always available\nand
 #may not be changed")->pack();
 #  $box->add("Label",-text=>"<Escape> - Stop the currently playing MP3")->pack();
@@ -898,7 +898,8 @@ sub holding_tank
     return;
   }
   $holdingtank = $mw->Toplevel();
-  $holdingtank->iconimage($icon);
+  $holdingtank->withdraw();
+  $holdingtank->Icon(-image=>$icon);
   bind_hotkeys($holdingtank);              
   $holdingtank->title("Holding Tank");
   $holdingtank->Label(-text=>"A place to store songs for later use")->pack;
@@ -928,6 +929,9 @@ sub holding_tank
                        -command=>sub {$holdingtank->destroy})->pack(-side=>'right');
   $buttonframe->Button(-text=>"Clear Selected",
                        -command=>\&clear_tank)->pack(-side=>'right');
+  $holdingtank->update();
+  $holdingtank->deiconify();
+  $holdingtank->raise();
 }
 
 sub clear_tank
@@ -947,7 +951,8 @@ sub list_hotkeys
     return;
   }
   $hotkeysbox=$mw->Toplevel();
-  $hotkeysbox->iconimage($icon);
+  $hotkeysbox->withdraw();
+  $hotkeysbox->Icon(-image=>$icon);
   bind_hotkeys($hotkeysbox);
   $hotkeysbox->title("Hotkeys");
   $hotkeysbox->Label(-text=>"Currently defined hotkeys:")->pack;
@@ -1023,10 +1028,15 @@ sub list_hotkeys
   $f12_frame->Label(-textvariable=>\$f12)->pack(-side=>'left');
   $f12_frame->DropSite(-droptypes=>['Local'],
                       -dropcommand=>[\&Hotkey_Drop, \$f12, $dnd_token ]);
-  $hotkeysbox->Button(-text=>"Close",
-                      -command=>sub { $hotkeysbox->destroy})->pack(-side=>'left');
-  $hotkeysbox->Button(-text=>"Clear Selected",
-                      -command=>\&clear_selected)->pack(-side=>'right');
+  my $buttonframe = $hotkeysbox->Frame()->pack(-side=>'bottom',
+                                               -fill=>'x');
+  $buttonframe->Button(-text=>"Close",
+                       -command=>sub { $hotkeysbox->destroy})->pack(-side=>'left');
+  $buttonframe->Button(-text=>"Clear Selected",
+                       -command=>\&clear_selected)->pack(-side=>'right');
+  $hotkeysbox->update();
+  $hotkeysbox->deiconify();
+  $hotkeysbox->raise();
 }
 
 sub get_song_id
@@ -1062,7 +1072,7 @@ sub set_hotkey
 {
   my $id = get_song_id($mainbox);
   $box = $mw->DialogBox(-title=>"Bind Hotkeys", -buttons=>["Apply","Cancel"]);
-  $box->Icon(-image=>$mw->Pixmap(-data=>$icon_data));
+  $box->Icon(-image=>$icon);
   $box->add("Label",-text=>"Choose the keys to bind song $id to:")->pack();
   $box->add("Checkbutton",-text=>"F1",
                           -variable=>\$f1_cb)->pack();
@@ -1400,15 +1410,15 @@ $mw->geometry("+0+0");
 $mw->title("Mr. Voice");
 $mw->minsize(67,2);
 $mw->protocol('WM_DELETE_WINDOW',\&do_exit);
-$mw->Icon(-image=>$mw->Pixmap(-data=>$icon_data));
 $icon = $mw->Pixmap(-data=>$icon_data);
+$mw->Icon(-image=>$icon);
 
 read_rcfile();
 
 if (! ($dbh = DBI->connect("DBI:mysql:$db_name",$db_username,$db_pass)))
 {
   $box = $mw->DialogBox(-title=>"Fatal Error", -buttons=>["Ok"]);
-  $box->Icon(-image=>$mw->Pixmap(-data=>$icon_data));
+  $box->Icon(-image=>$icon);
   $box->add("Label",-text=>"Could not connect to database.")->pack();
   $box->add("Label",-text=>"Make sure your database configuration is correct,\nand that your database is running.")->pack();
   $box->add("Label",-text=>"The preferences menu will now pop up for you to\ncheck or set any configuration options.")->pack();
@@ -1425,7 +1435,7 @@ if (! ($dbh = DBI->connect("DBI:mysql:$db_name",$db_username,$db_pass)))
 if (! -W $filepath)
 {
   $box = $mw->DialogBox(-title=>"Fatal Error", -buttons=>["Exit"]);
-  $box->Icon(-image=>$mw->Pixmap(-data=>$icon_data));
+  $box->Icon(-image=>$icon);
   $box->add("Label",-text=>"MP3 Directory unavailable")->pack();
   $box->add("Label",-text=>"The MP3 directory that you set is unavailable.  Check\nto make sure the directory is correct, and you have\npermission to access it.")->pack();
   $box->add("Label",-text=>"The preferences menu will now pop up for you to\ncheck or set any configuration options.")->pack();
@@ -1442,7 +1452,7 @@ if (! -W $filepath)
 if (! -W $savedir)
 {
   $box = $mw->DialogBox(-title=>"Warning", -buttons=>["Continue"]);
-  $box->Icon(-image=>$mw->Pixmap(-data=>$icon_data));
+  $box->Icon(-image=>$icon);
   $box->add("Label",-text=>"Hotkey save directory unavailable")->pack();
   $box->add("Label",-text=>"The hotkey save directory is unset or you do not\nhave permission to write to it.")->pack();
   $box->add("Label",-text=>"While this will not impact the operation of Mr. Voice,\nyou should probably fix it in the File->Preferences menu.")->pack();
@@ -1673,7 +1683,7 @@ bind_hotkeys($mw);
 if (! -x $mp3player)
 {
   my $box = $mw->DialogBox(-title=>"Warning - MP3 player not found", -buttons=>["OK"]);
-  $box->Icon(-image=>$mw->Pixmap(-data=>$icon_data));
+  $box->Icon(-image=>$icon);
   $box->add("Label",-text=>"Warning - Could not execute your defined MP3 player:")->pack();
   $box->add("Label",-text=>"$mp3player")->pack();
   $box->add("Label",-text=>"You may need to select the proper file in the preferences.")->pack();
