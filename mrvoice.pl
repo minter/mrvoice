@@ -23,6 +23,7 @@ use Time::Local;
 use Ogg::Vorbis::Header::PurePerl;
 use File::Glob qw(:globally :nocase);
 use File::Temp qw/ tempfile tempdir /;
+use Cwd 'abs_path';
 
 # These modules need to be hardcoded into the script for perl2exe to 
 # find them.
@@ -44,7 +45,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.280 2003/12/29 21:08:57 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.281 2003/12/30 12:58:20 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1980,7 +1981,7 @@ sub delete_song
 
 sub show_docs
 {
-  my $basedir = dirname($0);
+  my $basedir = dirname(abs_path($0));
   $docbase = catfile($basedir,"doc","html");
   if (! -r catfile($docbase,"index.html"))
   {
@@ -2009,7 +2010,7 @@ sub show_docs
   
 sub show_about
 {
-  $rev = '$Revision: 1.280 $';
+  $rev = '$Revision: 1.281 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
