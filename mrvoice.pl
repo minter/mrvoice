@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.176 2002/11/12 21:14:19 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.177 2002/11/13 16:38:01 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -686,6 +686,16 @@ sub restore_hotkeys
   $hotkeysmenu->menu->entryconfigure("Restore Hotkeys", -state=>"disabled");
 }
 
+sub bulk_add
+{
+  my $box1 = $mw->DialogBox(-title=>"Add all songs in directory",
+                            -buttons=>["Continue","Cancel"]);
+  $box1->Icon(-image=>$icon);
+  my $box1frame1 = $box1->add("Frame")->pack(-fill=>'x');
+  $box1frame1->Label(-text=>"This will allow you to add all songs in a directory to a particular\ncategory, using the information stored in MP3 or OGG files to fill in\nthe title and artist.  You will have to go back after the fact to add Extra Info or do any\nediting.  If a file does not have at least a title embedded in it, it will not be added.\n\nChoose your directory and category below.")->pack(-side=>'top');
+  my $firstbutton = $box1->Show;
+}
+
 sub add_category
 {
   my $box = $mw->DialogBox(-title=>"Add a category", -buttons=>["Ok","Cancel"]);
@@ -1224,7 +1234,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.176 $';
+  $rev = '$Revision: 1.177 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2148,6 +2158,7 @@ sub songsmenu_items
     ['command', 'Add New Song', -command=>\&add_new_song],
     ['command', 'Edit Currently Selected Song', -command=>\&edit_song],
     ['command', 'Delete Currently Selected Song', -command=>\&delete_song],
+    ['command', 'Add All Songs In Directory', -command=>\&bulk_add],
   ];
 }
 
@@ -2450,8 +2461,8 @@ if ($^O eq "MSWin32")
 
 $stopbutton->configure(-bg=>'red',
                        -activebackground=>'tomato3');
-$statusframe->Button(-text=>"Assign Hotkey",
-                     -command=>\&set_hotkey)->pack(-side=>'right');
+#$statusframe->Button(-text=>"Assign Hotkey",
+#                     -command=>\&set_hotkey)->pack(-side=>'right');
 
 $statusframe->Label(-textvariable=>\$status,
                     -relief=>'sunken')->pack(-anchor=>'center',
