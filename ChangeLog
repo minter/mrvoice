@@ -1,3 +1,9 @@
+Wed  Oct 24 2001	H. Wade Minter (minter@lunenburg.org)
+     * Changed hotkey display to side-by-side instead of top-bottom.
+     * Added color to the play/stop buttons.
+     * Added drag-and-drop support for the hotkeys.
+     * Thanks to Larry and Kasey for the suggestions!
+
 Wed  Oct 17 2001	H. Wade Minter (minter@lunenburg.org)
      * Added a right-click menu to enable editing and deleting
        songs right from the listbox.
@@ -94,4 +100,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.19 2001/10/17 22:19:30 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.20 2001/10/24 20:02:10 minter Exp $
