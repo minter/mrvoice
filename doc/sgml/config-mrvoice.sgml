@@ -1,9 +1,9 @@
 <!--
-  CVS ID: $Id: config-mrvoice.sgml,v 1.17 2002/04/16 00:32:20 minter Exp $
+  CVS ID: $Id: config-mrvoice.sgml,v 1.18 2002/08/14 18:32:02 minter Exp $
 -->
 
 <chapter><title>Configuring Mr. Voice</title>
-  <para>This section will take you through configuring the Mr. Voice software.  Mr. Voice is configured via an external configuration file - this provides the most flexibility in keeping your configuration sane from one version to the next.  On Unix, the config file is named <filename>.mrvoicerc</filename>, and lives in your home directory.  On Windows, the filename is <filename>C:\mrvoice.cfg</filename>.  <important><para>Editing the configuration variables directly in <filename>mrvoice.pl</filename> is no longer the recommended way to configure Mr. Voice.  The functionality is still there, but will be removed in a future version.</para></important></para>
+  <para>This section will take you through configuring the Mr. Voice software.  Mr. Voice is configured via an external configuration file - this provides the most flexibility in keeping your configuration sane from one version to the next.  On Unix, the config file is named <filename>.mrvoicerc</filename>, and lives in your home directory.  On Windows, the filename is <filename>C:\mrvoice.cfg</filename>.</para>
   <para>If you start Mr. Voice without a configuration file, or if there is an error in your configuration, Mr. Voice will pop up the preferences window, allowing you to enter and edit the configuration information.  Changes are then written out to the appropriate configuration file.  The configuration options are detailed below.
     <figure>
       <title>The Preferences window</title>
@@ -40,6 +40,9 @@
       </listitem>
       <listitem>
         <para><varname>Number of Dynamic Documents To Show (savefile_max)</varname> - The number of "most recently accessed hotkey files" to keep available under the <guimenu>File</guimenu> menu.  Defaults to 4.</para>
+      </listitem>
+      <listitem>
+        <para><varname>httpQ Passowrd (httpq_pw)</varname> - The password used to connect to the httpQ plugin for WinAmp.  Only useful under Windows if you're using the httpQ plugin.  Otherwise it's ignored.</para>
       </listitem>
     </itemizedlist>
     <sect2><title>Manual Configuration</title>
