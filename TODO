@@ -3,9 +3,8 @@ Things I'm currently working on:
 * Debug mode - log stuff to a file with the proper switch.
 * Save/load holding tank.
 * Fix DirSelect problem on first run.
-* Switch some edit listings from RadioButton to ListBox.
 * Drag-And-Drop between the Hotkeys listing and the Holding Tank.
 * General cleanup and pretty-fication.
 
 --
-CVS ID: $Id: TODO,v 1.26 2003/11/25 22:13:13 minter Exp $
+CVS ID: $Id: TODO,v 1.27 2003/11/26 16:41:41 minter Exp $
