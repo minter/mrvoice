@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.180 2002/12/03 22:19:32 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.181 2002/12/10 21:36:46 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -124,7 +124,7 @@ else
 
 #####
 
-my $version = "1.6.1";			# Program version
+my $version = "1.7";			# Program version
 our $status = "Welcome to Mr. Voice version $version";		
 
 # Define 32x32 XPM icon data
@@ -749,6 +749,7 @@ sub add_category
 	$status = "Added category $addcat_desc";
         infobox($mw,"Success","Category added.");
       }
+      $sth->finish;
     }
     else 
     {
@@ -845,6 +846,7 @@ sub delete_category
     my $sth=$dbh->prepare($query);
     $sth->execute;
     $rows = $sth->rows;
+    $sth->finish;
     if ($rows > 0)
     {
       infobox($mw, "Error","Could not delete category $del_cat because\nthere are still entries in the database\nusing it.  Delete all entries using\nthis category before deleting the category");
@@ -859,6 +861,7 @@ sub delete_category
         $status = "Deleted category $del_cat";
         infobox ($mw, "Success","Category $del_cat has been deleted.");
       }
+      $sth->finish;
     }
   }
   else
@@ -1257,7 +1260,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.180 $';
+  $rev = '$Revision: 1.181 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -1524,6 +1527,33 @@ sub get_song_id
   return ($id);
 }
 
+sub update_time
+{
+  $mw->Busy(-recurse=>1);
+  my $count = 0;
+  my $query = "SELECT id,filename,time FROM mrvoice";
+  my $sth=$dbh->prepare($query);
+  $sth->execute;
+  while (@table_row = $sth->fetchrow_array)
+  {
+    ($id,$filename,$time) = @table_row;
+    $newtime = get_songlength("$filepath/$filename");
+    if ($newtime ne $time)
+    {
+      $query = "UPDATE mrvoice SET time='$newtime' WHERE id='$id'";
+      my $sth=$dbh->prepare($query);
+      $sth->execute;
+      $sth->finish;
+      $count++;
+    }
+  }
+  $mw->Unbusy(-recurse=>1);
+  $box = $mw->DialogBox(-title=>"Updating Song Times", -buttons=>["Ok"]);
+  $box->Icon(-image=>$icon);
+  $box->add("Label",-text=>"Updated times on $count files")->pack();
+  $box->Show();
+}    
+  
 sub get_filename
 {
   # Takes a database ID as an argument, queries the database, and returns
@@ -2085,6 +2115,97 @@ if (! -W $savedir)
   $result = $box->Show();
 }
 
+# Check to see if the database is compatible with version 1.7+
+$query = "SELECT time FROM mrvoice LIMIT 1";
+my $sth=$dbh->prepare($query);
+if (! $sth->execute)
+{
+  $box = $mw->DialogBox(-title=>"Database Update Needed", -buttons=>["Continue","Quit"]);
+  $box->Icon(-image=>$icon);
+  $box->add("Label",-text=>"Your database is not compatible with Mr. Voice 1.7")->pack();
+  $box->add("Label",-text=>"With the 1.7 release, some database changes were introduced.\nPress the Continue button to automatically update your database, or Quit to exit.")->pack();
+  $box->add("Label",-text=>"Continuing will update your tables and record the song times into the database\nThis process may take upwards of a few minutes, depending on the number of songs\nin your database, so don't panic if it looks like nothing is happening.")->pack();
+  $result = $box->Show();
+  if ($result eq "Continue")
+  {
+    $box = $mw->DialogBox(-title=>"Updating Database", -buttons=>["Continue"]);
+    $box->Icon(-image=>$icon);
+    $box->add("Label",-text=>"Creating temp database...")->pack();
+    $query = "CREATE TABLE mrvoice2 (
+   id int(8) NOT NULL auto_increment,
+   title varchar(255) NOT NULL,
+   artist varchar(255),
+   category varchar(8) NOT NULL,
+   info varchar(255),
+   filename varchar(255) NOT NULL,
+   time varchar(10),
+   modtime timestamp(6),
+   PRIMARY KEY (id))";
+
+    my $sth=$dbh->prepare($query);
+    $sth->execute;
+    if ($DBI::err)
+    {
+      $string = "$DBI::errstr";
+      $box->add("Label",-text=>"FAILED: $string")->pack();
+    }
+    else
+    {
+      $box->add("Label",-text=>"SUCCEEDED")->pack();
+    }
+    $query = "SELECT * from mrvoice";
+    $sth=$dbh->prepare($query);
+    $sth->execute;
+    while (@table_row = $sth->fetchrow_array)
+    {
+      $tmpid = $dbh->quote($table_row[0]);
+      $tmptitle = $dbh->quote($table_row[1]);
+      $tmpartist = $dbh->quote($table_row[2]);
+      $tmpcategory = $dbh->quote($table_row[3]);
+      $tmpinfo = $dbh->quote($table_row[4]);
+      $tmpfilename = $dbh->quote($table_row[5]);
+      $tmpmodtime = $dbh->quote($table_row[6]);
+    
+      $query = "INSERT INTO mrvoice2 (id,title,artist,category,info,filename,time,modtime) VALUES ($tmpid, $tmptitle,";
+      if ($tmpartist eq "")
+      {
+        $query .= "NULL,";
+      }
+      else
+      {
+        $query .= "$tmpartist,";
+      }
+      $query .= "$tmpcategory,";
+      if ($tmpinfo eq "")
+      {
+        $query .= "NULL,";
+      }
+      else
+      {
+        $query .= "$tmpinfo,";
+      }
+      $query .= "$tmpfilename,";
+      $length = get_songlength("$filepath$table_row[5]");
+      $query .= "'$length',$tmpmodtime)";
+      $sth2=$dbh->prepare($query);
+      $sth2->execute;
+      $sth2->finish;
+    }
+    $box->add("Label",-text=>"Building new table...SUCCEEDED")->pack();
+    $sth->finish;
+    $dbh->do("RENAME TABLE mrvoice TO oldmrvoice");
+    $dbh->do("RENAME TABLE mrvoice2 TO mrvoice");
+    $box->add("Label",-text=>"Renaming tables...SUCCEEDED")->pack();
+    $box->add("Label",-text=>"The database has been updated - song times are now stored in the database itself\nIn the future, if you modify a file in $filepath directly,\nyou will need to run the Update Song Times function from the Songs menu.")->pack();
+    $box->Show();
+  }
+  else
+  {
+    do_exit;
+  }
+}
+
+
 # We use the following statement to open the MP3 player asynchronously
 # when the Mr. Voice app starts.
 
@@ -2181,7 +2302,7 @@ sub songsmenu_items
     ['command', 'Add New Song', -command=>\&add_new_song],
     ['command', 'Edit Currently Selected Song', -command=>\&edit_song],
     ['command', 'Delete Currently Selected Song', -command=>\&delete_song],
-    ['command', 'Add All Songs In Directory', -command=>\&bulk_add],
+    ['command', 'Update Song Times', -command=>\&update_time],
   ];
 }
 
