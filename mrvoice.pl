@@ -14,8 +14,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/09/28 16:20:49 $
-#	CVS REVISION NUMBER:    $Revision: 1.51 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/01 22:57:00 $
+#	CVS REVISION NUMBER:    $Revision: 1.52 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -325,8 +325,7 @@ sub delete_category
     $name=$table_row[1];
     $box->add("Radiobutton",-text=>$name,
                             -value=>$code,
-                            -variable=>\$del_cat)->pack(-expand=>"x",
-                                                        -anchor=>"w");
+                            -variable=>\$del_cat)->pack(-anchor=>"w");
   }
   $sth->finish;
   $choice = $box->Show();
@@ -1089,7 +1088,11 @@ $mw->Button(-text=>"Stop Now",
 $mw->Button(-text=>"Assign Hotkey",
             -command=>[\&set_hotkey])->pack(-side=>'right');
 
-$mw->Label(-textvariable=>\$status)->pack(-side=>'bottom');
+$mw->Label(-textvariable=>\$status,
+           -relief=>'sunken')->pack(-side=>'bottom',
+                                    -expand=>1,
+                                    -padx=>5,
+                                    -fill=>'both');
 
 bind_hotkeys($mw);
 
