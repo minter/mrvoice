@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.174 2002/11/11 01:31:35 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.175 2002/11/12 21:02:11 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1224,7 +1224,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.174 $';
+  $rev = '$Revision: 1.175 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -1635,12 +1635,14 @@ sub play_mp3
     my $id = get_song_id($box);
     if ($id)
     {
-      $query = "SELECT filename from mrvoice WHERE id=$id";
+      $query = "SELECT filename,title,artist from mrvoice WHERE id=$id";
       my $sth=$dbh->prepare($query);
       $sth->execute or die "can't execute the query: $DBI::errstr\n";
       @result = $sth->fetchrow_array;
       $sth->finish;
       $filename = $result[0];
+      $title = $result[1];
+      $artist = $result[2];
     }
   }
   if ( ($filename) && ($_[0] eq "addsong") )
@@ -1650,7 +1652,15 @@ sub play_mp3
   }
   elsif ($filename)
   {
-    $status = "Playing file $filename";
+    if ($artist)
+    {
+      $songstatusstring = "\"$title\" by $artist";
+    }
+    else
+    {
+      $songstatusstring = "\"$title\"";
+    }
+    $status = "Playing $songstatusstring";
     system ("$mp3player $filepath$filename");
   }
 }
