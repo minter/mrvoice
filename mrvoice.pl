@@ -17,7 +17,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.102 2002/02/05 17:00:56 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.103 2002/02/05 19:52:44 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -61,9 +61,9 @@ $hotkeytypes = [
   ];
 
 $mp3types = [
-    ['MP3 Files', '*.mp3'],
-    ['WAV Files', '*.wav'],
-    ['Vorbis Files', '*.ogg'],
+    ['MP3 Files', ['*.mp3', '*.MP3']],
+    ['WAV Files', ['*.wav', '*.WAV']],
+    ['Vorbis Files', ['*.ogg', '*.OGG']],
     ['All Files', '*'],
   ];
 
