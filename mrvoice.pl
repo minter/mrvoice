@@ -10,6 +10,7 @@ use File::Copy;
 use DBI;
 use MPEG::MP3Info;
 use Audio::Wav;
+use Date::Manip;
 
 # These modules need to be hardcoded into the script for perl2exe to 
 # find them.
@@ -20,7 +21,7 @@ use Tk::Checkbutton;
 use DBD::mysql;
 use Carp::Heavy;
 
-use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_items helpmenu_items/;
+use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_items advancedmenu_items helpmenu_items/;
 
 #########
 # AUTHOR: H. Wade Minter <minter@lunenburg.org>
@@ -28,7 +29,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.124 2002/05/23 16:25:59 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.125 2002/05/24 20:22:02 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -109,7 +110,7 @@ else
 
 #####
 
-my $version = "1.5.3";			# Program version
+my $version = "1.5.4";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
 
 # Define 32x32 XPM icon data
@@ -921,7 +922,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.124 $';
+  $rev = '$Revision: 1.125 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -1349,7 +1350,16 @@ sub get_songlength
 
 sub do_search
 {
-  if ( (! $anyfield) && (! $title) && (! $artist) && (! $cattext) && ($category eq "Any") )
+  if ($_[0] eq "timespan")
+  {
+    $date = DateCalc("today","- $_[1]"); 
+    $date =~ /^(\d{4})(\d{2})(\d{2}).*?/;
+    $year = $1;
+    $month = $2;
+    $date = $3;
+    $datestring = "$year-$month-$date";
+  }
+  elsif ( (! $anyfield) && (! $title) && (! $artist) && (! $cattext) && ($category eq "Any") )
   {
     my $box = $mw->DialogBox(-title=>"Confirm full search", -buttons=>["Ok","Cancel"],-default_button=>"Cancel");
     $box->Icon(-image=>$icon);
@@ -1369,6 +1379,7 @@ sub do_search
   $mw->Busy(-recurse=>1);
   $mainbox->delete(0,'end');
   my $query = "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.filename from mrvoice,categories where mrvoice.category=categories.code ";
+  $query = $query . "AND modtime >= '$datestring'" if ($_[0]);
   $query = $query . "AND category='$category' " if ($category ne "Any");
   if ($anyfield)
   {
@@ -1665,6 +1676,9 @@ $categoriesmenu = $menubar->cascade(-label=>'Categories',
 $songsmenu = $menubar->cascade(-label=>'Songs',
                                -tearoff=>0,
                                -menuitems=> songsmenu_items);
+$advancedmenu = $menubar->cascade(-label=>'Advanced Search',
+                                  -tearoff=>0,
+				  -menuitems=> advancedmenu_items);
 $helpmenu = $menubar->cascade(-label=>'Help',
                               -tearoff=>0,
                               -menuitems=> helpmenu_items);
@@ -1709,6 +1723,15 @@ sub songsmenu_items
     ['command', 'Add New Song', -command=>\&add_new_song],
     ['command', 'Edit Currently Selected Song', -command=>\&edit_song],
     ['command', 'Delete Currently Selected Song', -command=>\&delete_song],
+  ];
+}
+
+sub advancedmenu_items
+{
+  [
+    ['command','Show songs added/changed today', -command=>[\&do_search,"timespan","0 days"]],
+    ['command','Show songs added/changed in past 7 days', -command=>[\&do_search,"timespan","7 days"]],
+    ['command','Show songs added/changed in past 14 days', -command=>[\&do_search,"timespan","14 days"]],
   ];
 }
 
