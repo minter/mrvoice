@@ -1,8 +1,9 @@
 Things I'm currently working on:
 
-* Fix it so hotkeys work when non-main menus are active.
+* Fix it so hotkeys work when non-main menus are active. (If possible)
 * General cleanup and pretty-fication.
 * Move the add/remove categories/songs from PHP to within the program.
+* Finalize Windows port.
 
 --
-CVS ID: $Id: TODO,v 1.5 2001/03/04 00:29:36 minter Exp $
+CVS ID: $Id: TODO,v 1.6 2001/03/04 15:09:07 minter Exp $

@@ -15,8 +15,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/03/04 14:45:14 $
-#	CVS REVISION NUMBER:    $Revision: 1.14 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/04 15:09:08 $
+#	CVS REVISION NUMBER:    $Revision: 1.15 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -26,24 +26,21 @@ use MPEG::MP3Info;
 #####
 # CONFIGURATION VARIABLES
 #####
-my $db_name = "comedysportz";			# In the form DBNAME:HOSTNAME:PORT
-my $db_username = "root";                   # The username used to connect
+my $db_name = "";			# In the form DBNAME:HOSTNAME:PORT
+my $db_username = "";                   # The username used to connect
                                         # to the database.
-my $db_pass = "rangers";                       # The password used to connect
+my $db_pass = "";                       # The password used to connect
                                         # to the database.
 $category = "Any";			# The default category to search
                                         # Initial status message
 
-# If you're using Windows, your paths must be of the form "C:/path/file.exe"
-# This is due to Windows using the \ character for its path, while perl
-# interprets this character as special.
-$mp3player = "/usr/bin/xmms";		# Full path to MP3 player
-$filepath = "/mp3/";				# Path that will be prepended onto
+$mp3player = "/usr//bin/xmms";		# Full path to MP3 player
+$filepath = "";				# Path that will be prepended onto
 					# the filename retrieved from the
 					# database, to find the actual
 					# MP3 on the local system.
 					# MUST END WITH TRAILING /
-$savedir = "/tmp/";				# The default directory where 
+$savedir = "";				# The default directory where 
                                         # hotkey save files will live.
 
 #####
@@ -60,7 +57,7 @@ $savedir = "/tmp/";				# The default directory where
 
 #####
 
-my $version = "0.8.1devel";			# Program version
+my $version = "0.9";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
 
 $filepath = "$filepath/" unless ($filepath =~ "/.*\/$/");
@@ -68,16 +65,23 @@ $savedir = "$savedir/" unless ($savedir =~ "/.*\/$/");
 
 sub open_file
 {
-#  $fileselectw = $mw->FileSelect(-directory=>"$savedir",
-#                                 -acceptlabel=>"Load File",
-#                                 -filelabel=>'The file to open:',
-#                                 -defaultextension => "mrv");
-#  $fileselectw->configure(-title=>"Open A File...");
-#  $selectedfile = $fileselectw->Show;
-   $fileselectw = $mw->FileDialog(-Title=>'Open a File',
-                                  -FPat=>"*.mrv",
-                                  -Path=>$savedir);
-   $selectedfile = $fileselectw->Show;
+  if ($ostype eq "windows")
+  {
+    $fileselectw = $mw->FileSelect(-directory=>"$savedir",
+                                   -acceptlabel=>"Load File",
+                                   -filelabel=>'The file to open:',
+                                   -defaultextension => "mrv");
+    $fileselectw->configure(-title=>"Open A File...");
+    $selectedfile = $fileselectw->Show;
+  }
+  else
+  {
+    $fileselectw = $mw->FileDialog(-Title=>'Open a File',
+                                   -FPat=>"*.mrv",
+                                   -OKButtonLabel=>"Open File",
+                                   -Path=>$savedir);
+    $selectedfile = $fileselectw->Show;
+  }
                       
   if ($selectedfile)
   {
@@ -100,21 +104,31 @@ sub open_file
       $status = "Loaded hotkey file $selectedfile successfully";
     } 
   }
+  else
+  {
+    $status = "File load cancelled."; 
+  }
 }
 
 sub save_file
 {
-#  $fileselectw = $mw->FileSelect(-directory => "$savedir",
-#                                 -acceptlabel => "Save File",
-#                                 -filelabel => 'The file to save:',
-#                                 -defaultextension => "mrv");
-#  $fileselectw->configure(-title=>"Save A File...");
-#
-#  $selectedfile = $fileselectw->Show;
-   $fileselectw = $mw->FileDialog(-Title=>'Save a File',
-                                  -FPat=>"*.mrv",
-                                  -Path=>$savedir);
-   $selectedfile = $fileselectw->Show;
+  if ($ostype eq "windows")
+  {
+    $fileselectw = $mw->FileSelect(-directory => "$savedir",
+                                   -acceptlabel => "Save File",
+                                   -filelabel => 'The file to save:',
+                                   -defaultextension => "mrv");
+    $fileselectw->configure(-title=>"Save A File...");
+    $selectedfile = $fileselectw->Show;
+  }
+  else
+  {
+    $fileselectw = $mw->FileDialog(-Title=>'Save a File',
+                                   -FPat=>"*.mrv",
+                                   -OKButtonLabel=>"Save File",
+                                   -Path=>$savedir);
+    $selectedfile = $fileselectw->Show;
+  }
 
   if ($selectedfile)
   {
@@ -149,6 +163,10 @@ sub save_file
       close (HOTKEYFILE);
       $status = "Finished saving hotkeys to $selectedfile\n";
     }
+  }
+  else
+  {
+    $status = "File save cancelled.";
   }
 }
 

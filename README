@@ -19,6 +19,7 @@ REQUIRED COMPONENTS:
   + Data-Dumper (Data-Dumper-2.101)
   + TK (Tk800.022)
   + MPEG-MP3Info (MPEG-MP3Info-0.71)
+  + Tk::FileDialog (Tk-FileDialog-1.3)
 * Relational database, with available perl DBI module (Tested with MySQL)
   If you use something other than MySQL, you'll need to do some
   modifications.
@@ -28,7 +29,7 @@ REQUIRED COMPONENTS:
   frontends.
 
 INSTALLING:
-1) Compile and install any required software from above (perl modules, etc.)
+1) Compile and/or install any required software from above (perl modules, etc.)
 2) Set up a database for the program to use.  It needs two tables in a
    database, so you can either use an existing database or create one
    expressly for mrvoice.
@@ -49,7 +50,7 @@ The following configuration settings can/should be adjusted in the mrvoice.pl
 file itself:
 
 First, make sure that the first line of the file points to your perl binary.
-It is set up by default to look for /usr/bin/perl.
+It is set up by default to look for /usr/bin/perl.  
 
 The following variables need to be altered to reflect your setup:
 $db_name - This should be set to the name of the database containing the
@@ -69,7 +70,8 @@ $filepath - The path information that will be prepended to the filename
             "/".  (ie. "/usr/local/mp3/" is valid, but "/usr/local/mp3"
             is not).
 $savepath - This will be the default directory that hotkey save files
-            will go into.  
+            will go into.  The user you're running the program as must
+            have write permission into that directory.
 
 CONFIGURING THE PHP FRONTENDS:
 To configure the PHP frontends, edit the file config.php.  It sets
@@ -146,4 +148,4 @@ guarantee that I'll do it, but I'm glad to listen to any suggestions.  Check
 the TODO file to see stuff I'm currently working on.
 
 --
-CVS ID: $Id: README,v 1.7 2001/03/04 14:45:13 minter Exp $
+CVS ID: $Id: README,v 1.8 2001/03/04 15:09:07 minter Exp $
