@@ -4538,7 +4538,7 @@ sub hotkeysmenu_items
             -command     => \&holding_tank,
             -accelerator => 'Ctrl-T'
         ],
-        [ 'command', 'Empty Holding Tank', -command => \&wipe_tank ],
+        [ 'command', 'Flush the Holding Tank', -command => \&wipe_tank ],
 
         "",
         [ 'command',     'Restore Hotkeys', -command  => \&restore_hotkeys ],
