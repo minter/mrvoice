@@ -11,7 +11,7 @@
 	<key>CFBundleIconFile</key>
 	<string>appIcon.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.minter.Mr.Voice</string>
+	<string>org.lunenburg.Mr.Voice</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
@@ -19,6 +19,8 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
+	<string>$Id$</string>
+	<key>CFBundleShortVersionString</key>
 	<string>2.0.2</string>
 </dict>
 </plist>
