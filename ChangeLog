@@ -1,3 +1,17 @@
+Mon  Jul 21 2003        H. Wade Minter (minter@lunenburg.org)
+     * Added a check to prevent duplicate categories.
+       Suggested by Alan C. in Dallas.
+
+Thu  Jul 17 2003	H. Wade Minter (minter@lunenburg.org)
+     * Added a confirmation to exit the program.
+       Suggested by Steve L. in Greensboro.
+
+Fri  Jul 11 2003	H. Wade Minter (minter@lunenburg.org)
+     * New logo, courtesy of Photoshop.  ;-)
+
+Tue  Jun 24 2003	H. Wade Minter (minter@lunenburg.org)
+     * Fixed weird spacing issues with the ProgressBar.
+
 Mon  Apr 29 2003        H. Wade Minter (minter@lunenburg.org)
      * Use a Tk::ProgressBar in the update_times subroutine.
      * Display the full category name, not the code, in the search window
@@ -435,4 +449,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.87 2003/04/29 20:18:34 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.88 2003/07/21 19:21:00 minter Exp $
