@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.165 2002/11/06 19:33:03 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.166 2002/11/06 21:27:29 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1089,7 +1089,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.165 $';
+  $rev = '$Revision: 1.166 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -1588,18 +1588,6 @@ sub do_search
     $startdate = $_[1];
     $enddate = $_[2];
   }
-  elsif ( (! $anyfield) && (! $title) && (! $artist) && (! $cattext) && ($category eq "Any") )
-  {
-    my $box = $mw->DialogBox(-title=>"Confirm full search", -buttons=>["Ok","Cancel"],-default_button=>"Cancel");
-    $box->Icon(-image=>$icon);
-    $box->Label(-text=>"This search will display everything in your database.\nAre you sure you want to do this?")->pack();
-    my $button = $box->Show;
-    if ($button ne "Ok")
-    {
-      $status = "Cancelling full database search";
-      return;
-    }
-  }
   if ($anyfield)
   {
     $anyfield_box->insert(0,$anyfield);
@@ -1619,6 +1607,18 @@ sub do_search
   {
     $cattext_box->insert(0,$cattext);
     $cattext =~ s/^\s*(.*?)\s*$/$1/;
+  }
+  elsif ( (! $anyfield) && (! $title) && (! $artist) && (! $cattext) && ($category eq "Any") )
+  {
+    my $box = $mw->DialogBox(-title=>"Confirm full search", -buttons=>["Ok","Cancel"],-default_button=>"Cancel");
+    $box->Icon(-image=>$icon);
+    $box->Label(-text=>"This search will display everything in your database.\nAre you sure you want to do this?")->pack();
+    my $button = $box->Show;
+    if ($button ne "Ok")
+    {
+      $status = "Cancelling full database search";
+      return;
+    }
   }
   $status="Starting search...";
   $mw->Busy(-recurse=>1);
