@@ -35,7 +35,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.314 2004/03/01 01:17:24 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.315 2004/03/01 01:27:47 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2217,7 +2217,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.314 $';
+    my $rev = '$Revision: 1.315 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -4014,13 +4014,13 @@ sub helpmenu_items
 
 #####
 # The search frame
-$searchframe = $mw->Frame()->pack(
+$category_frame = $mw->Frame()->pack(
     -side   => 'top',
     -anchor => 'n',
     -fill   => 'x'
 );
 
-$catmenubutton = $searchframe->Menubutton(
+$catmenubutton = $category_frame->Menubutton(
     -text        => "Choose Category",
     -relief      => 'raised',
     -indicatoron => 1
@@ -4032,11 +4032,11 @@ $catmenu = $catmenubutton->menu();
 $catmenubutton->configure( -menu                => $catmenu );
 $catmenubutton->menu()->configure( -postcommand => \&build_categories_menu );
 
-$searchframe->Label( -text => "Currently Selected: " )->pack(
+$category_frame->Label( -text => "Currently Selected: " )->pack(
     -side   => 'left',
     -anchor => 'n'
 );
-$searchframe->Label( -textvariable => \$longcat )->pack(
+$category_frame->Label( -textvariable => \$longcat )->pack(
     -side   => 'left',
     -anchor => 'n'
 );
@@ -4046,63 +4046,63 @@ $searchframe->Label( -textvariable => \$longcat )->pack(
 
 #####
 # Extra Info
-$searchframe1 = $mw->Frame()->pack(
+$extrainfo_frame = $mw->Frame()->pack(
     -side   => 'top',
     -fill   => 'x',
     -anchor => 'n'
 );
-$searchframe1->Label(
+$extrainfo_frame->Label(
     -text   => "where extra info contains",
     -width  => 25,
     -anchor => 'w'
 )->pack( -side => 'left' );
-$searchframe1->Entry( -textvariable => \$cattext )->pack( -side => 'left' );
+$extrainfo_frame->Entry( -textvariable => \$cattext )->pack( -side => 'left' );
 
 #####
 # Artist
-$searchframe2 = $mw->Frame()->pack(
+$artist_frame = $mw->Frame()->pack(
     -side   => 'top',
     -fill   => 'x',
     -anchor => 'n'
 );
-$searchframe2->Label(
+$artist_frame->Label(
     -text   => "Artist contains",
     -width  => 25,
     -anchor => "w"
 )->pack( -side => 'left' );
-$searchframe2->Entry( -textvariable => \$artist )->pack( -side => 'left' );
+$artist_frame->Entry( -textvariable => \$artist )->pack( -side => 'left' );
 
 #
 #####
 
 #####
 # Title
-$searchframe3 = $mw->Frame()->pack(
+$title_frame = $mw->Frame()->pack(
     -side => 'top',
     -fill => 'x'
 );
-$searchframe3->Label(
+$title_frame->Label(
     -text   => "Title contains",
     -width  => 25,
     -anchor => 'w'
 )->pack( -side => 'left' );
-$searchframe3->Entry( -textvariable => \$title )->pack( -side => 'left' );
+$title_frame->Entry( -textvariable => \$title )->pack( -side => 'left' );
 
 #
 #####
 
 #####
 # Any Field
-$searchframe4 = $mw->Frame()->pack(
+$anyfield_frame = $mw->Frame()->pack(
     -side => 'top',
     -fill => 'x'
 );
-$searchframe4->Label(
+$anyfield_frame->Label(
     -text   => "OR any field contains",
     -width  => 25,
     -anchor => 'w'
 )->pack( -side => 'left' );
-$searchframe4->Entry( -textvariable => \$anyfield )->pack( -side => 'left' );
+$anyfield_frame->Entry( -textvariable => \$anyfield )->pack( -side => 'left' );
 #####
 
 #####
