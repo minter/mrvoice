@@ -9,6 +9,7 @@ use File::Basename;
 use File::Copy;
 use DBI;
 use MPEG::MP3Info;
+use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_items helpmenu_items/;
 
 #########
 # AUTHOR: H. Wade Minter <minter@lunenburg.org>
@@ -16,7 +17,7 @@ use MPEG::MP3Info;
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.97 2002/02/01 18:30:28 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.98 2002/02/04 21:18:29 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -299,7 +300,7 @@ sub backup_hotkeys
   $old_f10 = $f10;
   $old_f11 = $f11;
   $old_f12 = $f12;
-  $hotmenu->menu->entryconfigure("Restore Hotkeys", -state=>"normal");
+  $hotkeysmenu->menu->entryconfigure("Restore Hotkeys", -state=>"normal");
 }
 
 sub restore_hotkeys
@@ -319,7 +320,7 @@ sub restore_hotkeys
   $f11 = $old_f11;
   $f12 = $old_f12;
   $status = "Previous hotkeys restored.";
-  $hotmenu->menu->entryconfigure("Restore Hotkeys", -state=>"disabled");
+  $hotkeysmenu->menu->entryconfigure("Restore Hotkeys", -state=>"disabled");
 }
 
 sub add_category
@@ -1320,6 +1321,7 @@ sub Tank_Drop
 # MAIN PROGRAM
 #########
 $mw = MainWindow->new;
+$mw->configure(-menu=>$menubar = $mw->Menu);
 $mw->geometry("+0+0");
 $mw->title("Mr. Voice");
 $mw->minsize(67,2);
@@ -1391,69 +1393,76 @@ else
 }
 
 
-$menuframe=$mw->Frame(-relief=>'ridge',
-                      -borderwidth=>2)->pack(-side=>'top',
-                                            -fill=>'x',
-                                            -anchor=>'n');
-$filemenu = $menuframe->Menubutton(-text=>"File",
-                                   -tearoff=>0)->pack(-side=>'left');
-$dynamicmenu=$filemenu->menu->Menu(-tearoff=>0);
-$filemenu->AddItems(["command"=>"Open Hotkey File",
-                    -command=>\&open_file,
-		    -accelerator=>"Ctrl-O"]); 
-$filemenu->AddItems(["command"=>"Save Hotkeys To A File",
-                    -command=>\&save_file,
-		    -accelerator=>"Ctrl-S"]); 
-$filemenu->AddItems("-");
-$filemenu->AddItems(["command"=>"Preferences",
-                    -command=>\&edit_preferences]);
-$filemenu->cascade(-label=>"Recent Files");
-$filemenu->entryconfigure("Recent Files", -menu=>$dynamicmenu);
-$filemenu->AddItems("-");
-$exititem = $filemenu->AddItems(["command"=>"Exit", 
-                                -command=>\&do_exit,
-				-accelerator=>"Ctrl-X"]);
-$hotmenu = $menuframe->Menubutton(-text=>"Hotkeys",
-                                  -tearoff=>0)->pack(-side=>'left');
-$hotmenu->AddItems(["command"=>"Show Hotkeys",
-                    -command=>\&list_hotkeys,
-		    -accelerator=>"Ctrl-H"]);
-$hotmenu->AddItems(["command"=>"Clear All Hotkeys",
-                    -command=>\&clear_hotkeys]);
-$hotmenu->AddItems(["command"=>"Show Holding Tank",
-                    -command=>\&holding_tank]);
+# Menu bar
+# Using the new-style menubars from "Mastering Perl/Tk"
+$filemenu = $menubar->cascade(-label=>'~File',
+                              -tearoff=>0,
+                              -menuitems=> filemenu_items);
+$dynamicmenu=$menubar->entrycget('File', -menu)->entrycget('Recent Files', -menu);
+$hotkeysmenu = $menubar->cascade(-label=>'~Hotkeys',
+                                 -tearoff=>0,
+                                 -menuitems=> hotkeysmenu_items);
+$hotkeysmenu->menu->entryconfigure("Restore Hotkeys", -state=>"disabled");
+$categoriesmenu = $menubar->cascade(-label=>'~Categories',
+                                    -tearoff=>0,
+                                    -menuitems=> categoriesmenu_items);
+$songsmenu = $menubar->cascade(-label=>'~Songs',
+                               -tearoff=>0,
+                               -menuitems=> songsmenu_items);
+$helpmenu = $menubar->cascade(-label=>'~Help',
+                              -tearoff=>0,
+                              -menuitems=> helpmenu_items);
+
+sub filemenu_items
+{
+  [
+    ['command', 'Open Hotkey File', -command=>\&open_file],
+    ['command', 'Save Hotkeys To A File', -command=>\&save_file, -accelerator=>"Ctrl-S"],
+    ['command', 'Preferences', -command=>\&edit_preferences],
+    ['cascade', 'Recent Files', -tearoff=>0],
+    '',
+    ['command', 'Exit', -command=>\&do_exit],
+  ];
+}
+
+sub hotkeysmenu_items
+{
+  [
+    ['command', 'Show Hotkeys', -command=>\&list_hotkeys, -accelerator=>'Ctrl-H'],
+    ['command', 'Clear All Hotkeys', -command=>\&clear_hotkeys],
+    ['command', 'Show Holding Tank', -command=>\&holding_tank],
 #STARTCSZ
-#$hotmenu->AddItems(["command"=>"Show Predefined Hotkeys",
-#                    -command=>\&show_predefined_hotkeys]);
+#    ['command', 'Show Predefined Hotkeys', -command=>\&show_predefined_hotkeys],
 #ENDCSZ
-$hotmenu->AddItems("-");
-$hotmenu->AddItems(["command"=>"Restore Hotkeys",
-                   -command=>\&restore_hotkeys]);
-$hotmenu->menu->entryconfigure("Restore Hotkeys", -state=>"disabled");
-$catmenu = $menuframe->Menubutton(-text=>"Categories",
-                                  -tearoff=>0)->pack(-side=>'left');
-$catmenu->AddItems(["command"=>"Add Category",
-                   -command=>\&add_category]);
-# Holding off on this feature for a bit.
-#$catmenu->AddItems(["command"=>"Edit Category",
-#                   -command=>\&edit_category]);
-$catmenu->AddItems(["command"=>"Delete Category",
-                   -command=>\&delete_category]);
+    "",
+    ['command', 'Restore Hotkeys', -command=>\&restore_hotkeys],
+  ];
+}
 
-$songmenu = $menuframe->Menubutton(-text=>"Songs",
-                                   -tearoff=>0)->pack(-side=>'left');
-$songmenu->AddItems(["command"=>"Add New Song",
-                    -command=>\&add_new_song]);
-$songmenu->AddItems(["command"=>"Edit Currently Selected Song",
-                    -command=>\&edit_song]);
-$songmenu->AddItems(["command"=>"Delete Currently Selected Song",
-                    -command=>\&delete_song]);
+sub categoriesmenu_items
+{
+  [
+    ['command', 'Add Category', -command=>\&add_category],
+    ['command', 'Delete Category', -command=>\&delete_category],
+  ];
+}
 
-$helpmenu = $menuframe->Menubutton(-text=>"Help",
-                                   -tearoff=>0)->pack(-side=>'right');
-$helpmenu->AddItems(["command"=>"About",
-                     -command=>\&show_about]);
+sub songsmenu_items
+{
+  [
+    ['command', 'Add New Song', -command=>\&add_new_song],
+    ['command', 'Edit Currently Selected Song', -command=>\&edit_song],
+    ['command', 'Delete Currently Selected Song', -command=>\&delete_song],
+  ];
+}
 
+sub helpmenu_items
+{
+  [
+    ['command', 'About', -command=>\&show_about],
+  ];
+}
+			      
 #####
 # The search frame
 $searchframe=$mw->Frame()->pack(-side=>'top',
