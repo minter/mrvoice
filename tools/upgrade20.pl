@@ -161,51 +161,6 @@ sub read_rcfile
 
 }
 
-sub check_17
-{
-
-    # This checks to see if the Mr. Voice database is at least at the
-    # 1.7 level (song time column)
-
-    my $query_17 = "SELECT time FROM mrvoice LIMIT 1";
-    if ( !$mysql_dbh->do($query_17) )
-    {
-        die
-          "FATAL ERROR - Your database does not have the song time column.  You need to upgrade your installation of Mr. Voice to at least version 1.10 before you can perform this upgrade\n\n";
-        return (0);
-    }
-    else
-    {
-        print $wrapper->wrap(
-            "OK - Your database has the song time column, so it is at least at the 1.7 level\n\n"
-        );
-        return (1);
-    }
-
-}
-
-sub check_110
-{
-
-    # This checks to see if the Mr. Voice database is at least at the
-    # 1.10 level (publisher column)
-
-    my $query_110 = "SELECT publisher FROM mrvoice LIMIT 1";
-    if ( !$mysql_dbh->do($query_110) )
-    {
-        die
-          "FATAL ERROR - Your database does not have the publisher column.  You need to upgrade your installation of Mr. Voice to at least version 1.10 before you can perform this upgrade\n\n";
-        return (0);
-    }
-    else
-    {
-        print $wrapper->wrap(
-            "OK - Your database has the publisher column, so it is at least at the 1.10 level\n\n"
-        );
-        return (1);
-    }
-}
-
 sub upgrade_20
 {
 
@@ -242,13 +197,15 @@ sub upgrade_20
         my $artist   = $sqlite_dbh->quote( $in->{artist} );
         my $category = $sqlite_dbh->quote( $in->{category} );
         my $info     = $sqlite_dbh->quote( $in->{info} );
+        my $time     = $in->{time} ? $in->{time} : "[??:??]";
+        my $pub      = $in->{publisher} ? $in->{publisher} : "OTHER";
 
         $in->{modtime} =~ /(\d\d)(\d\d)(\d\d)/;
         my ( $year, $month, $day ) = ( $1, $2, $3 );
         my $epoch = UnixDate( ParseDate("20$year-$month-$day 12:00"), "%s" );
 
         my $outquery =
-          "INSERT INTO mrvoice VALUES ($in->{id}, $title, $artist, $category, $info, '$in->{filename}', '$in->{time}', $epoch, '$in->{publisher}')";
+          "INSERT INTO mrvoice VALUES ($in->{id}, $title, $artist, $category, $info, '$in->{filename}', '$time', $epoch, '$pub')";
         my $sqlite_sth = $sqlite_dbh->prepare($outquery);
         $sqlite_sth->execute or die "Died on query -->$outquery<-- $!";
         if ( ( $insert_count % 500 ) == 0 )
@@ -297,9 +254,6 @@ $mysql_dbh =
   "Could not connect to your current MySQL database.  Using Database Name $config{db_name}, User $config{db_username}, Password $config{db_pass}.  MySQL error returned: $DBI::errstr\n\n";
 
 # Check to see if we're at the minimum database levels
-die if ( !check_17 );
-
-die if ( !check_110 );
 
 my $dbdir = get_dbdir;
 $config{db_file} = "$dbdir/mrvoice.db";
