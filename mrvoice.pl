@@ -30,7 +30,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.132 2002/06/28 18:10:26 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.133 2002/06/28 20:48:28 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -966,7 +966,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.132 $';
+  $rev = '$Revision: 1.133 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -1426,22 +1426,22 @@ sub do_search
   if ($anyfield)
   {
     $anyfield_box->insert(0,$anyfield);
-    $anyfield =~ s/^ *//;
+    $anyfield =~ s/^\s*(.*?)\s*$/$1/;
   }
   if ($title)
   {
     $title_box->insert(0,$title);
-    $title =~ s/^ *//;
+    $title =~ s/^\s*(.*?)\s*$/$1/;
   }
   if ($artist)
   {
     $artist_box->insert(0,$artist);
-    $artist =~ s/^ *//;
+    $artist =~ s/^\s*(.*?)\s*$/$1/;
   }
   if ($cattext)
   {
     $cattext_box->insert(0,$cattext);
-    $cattext =~ s/^ *//;
+    $cattext =~ s/^\s*(.*?)\s*$/$1/;
   }
   $status="Starting search...";
   $mw->Busy(-recurse=>1);
