@@ -13,6 +13,7 @@ use Tk::DropSite;
 use Tk::NoteBook;
 use Tk::ProgressBar::Mac;
 use Tk::DirTree;
+use Tk::PNG;
 use File::Basename;
 use File::Copy;
 use File::Spec::Functions;
@@ -35,7 +36,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.312 2004/03/01 01:01:20 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.313 2004/03/01 01:07:01 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -210,301 +211,6 @@ static char * mrvoice_3232_xpm[] = {
 "..................];;;^........."};
 end-of-icon-data
 
-our $sound_pixmap_data = <<'end_of_data';
-/* XPM */
-static char * soundicon2_xpm[] = {
-"25 32 257 2",
-"  	c None",
-". 	c #FFFFFF",
-"+ 	c #FFFFFF",
-"@ 	c #FFFFFF",
-"# 	c #FFFFFF",
-"$ 	c #FFFFFF",
-"% 	c #FFFFFF",
-"& 	c #FFFFFF",
-"* 	c #FFF7FF",
-"= 	c #FFF7FF",
-"- 	c #FFF7FF",
-"; 	c #FFF7FF",
-"> 	c #FFF7FF",
-", 	c #FFF7FF",
-"' 	c #F7F7FF",
-") 	c #F7F7FF",
-"! 	c #F7F7FF",
-"~ 	c #F7F7FF",
-"{ 	c #F7F7FF",
-"] 	c #F7F7F7",
-"^ 	c #F7F7F7",
-"/ 	c #F7F7F7",
-"( 	c #F7F7F7",
-"_ 	c #F7F7F7",
-": 	c #F7F7F7",
-"< 	c #F7EFF7",
-"[ 	c #F7EFF7",
-"} 	c #F7EFF7",
-"| 	c #F7EFF7",
-"1 	c #F7EFF7",
-"2 	c #EFEFF7",
-"3 	c #EFEFF7",
-"4 	c #EFEFF7",
-"5 	c #EFEFF7",
-"6 	c #EFEFF7",
-"7 	c #EFEFEF",
-"8 	c #EFEFEF",
-"9 	c #EFEFEF",
-"0 	c #EFEFEF",
-"a 	c #EFEFEF",
-"b 	c #E7E7E7",
-"c 	c #E7E7E7",
-"d 	c #E7E7E7",
-"e 	c #E7E7E7",
-"f 	c #E7E7E7",
-"g 	c #DEDEDE",
-"h 	c #DEDEDE",
-"i 	c #DEDEDE",
-"j 	c #DEDEDE",
-"k 	c #DEDEDE",
-"l 	c #DEDEDE",
-"m 	c #CECEFF",
-"n 	c #CECEFF",
-"o 	c #CECEFF",
-"p 	c #CECEFF",
-"q 	c #CECEFF",
-"r 	c #CECEFF",
-"s 	c #CECECE",
-"t 	c #CECECE",
-"u 	c #CECECE",
-"v 	c #CECECE",
-"w 	c #CECECE",
-"x 	c #C6C6C6",
-"y 	c #C6C6C6",
-"z 	c #C6C6C6",
-"A 	c #C6C6C6",
-"B 	c #C6C6C6",
-"C 	c #BDBDBD",
-"D 	c #BDBDBD",
-"E 	c #BDBDBD",
-"F 	c #BDBDBD",
-"G 	c #BDBDBD",
-"H 	c #B5B5B5",
-"I 	c #B5B5B5",
-"J 	c #B5B5B5",
-"K 	c #B5B5B5",
-"L 	c #B5B5B5",
-"M 	c #ADB5B5",
-"N 	c #ADB5B5",
-"O 	c #ADB5B5",
-"P 	c #ADB5B5",
-"Q 	c #ADB5B5",
-"R 	c #ADADAD",
-"S 	c #ADADAD",
-"T 	c #ADADAD",
-"U 	c #ADADAD",
-"V 	c #ADADAD",
-"W 	c #ADADAD",
-"X 	c #ADA5A5",
-"Y 	c #ADA5A5",
-"Z 	c #ADA5A5",
-"` 	c #ADA5A5",
-" .	c #ADA5A5",
-"..	c #A5A5A5",
-"+.	c #A5A5A5",
-"@.	c #A5A5A5",
-"#.	c #A5A5A5",
-"$.	c #A5A5A5",
-"%.	c #A5A5A5",
-"&.	c #9C9CFF",
-"*.	c #9C9CFF",
-"=.	c #9C9CFF",
-"-.	c #9C9CFF",
-";.	c #9C9CFF",
-">.	c #9C9CFF",
-",.	c #949494",
-"'.	c #949494",
-").	c #949494",
-"!.	c #949494",
-"~.	c #949494",
-"{.	c #8C8C8C",
-"].	c #8C8C8C",
-"^.	c #8C8C8C",
-"/.	c #8C8C8C",
-"(.	c #8C8C8C",
-"_.	c #848484",
-":.	c #848484",
-"<.	c #848484",
-"[.	c #848484",
-"}.	c #848484",
-"|.	c #7B7B7B",
-"1.	c #7B7B7B",
-"2.	c #7B7B7B",
-"3.	c #7B7B7B",
-"4.	c #7B7B7B",
-"5.	c #737373",
-"6.	c #737373",
-"7.	c #737373",
-"8.	c #737373",
-"9.	c #737373",
-"0.	c #737373",
-"a.	c #6363CE",
-"b.	c #6363CE",
-"c.	c #6363CE",
-"d.	c #6363CE",
-"e.	c #6363CE",
-"f.	c #6363CE",
-"g.	c #636363",
-"h.	c #636363",
-"i.	c #636363",
-"j.	c #636363",
-"k.	c #636363",
-"l.	c #5A5A5A",
-"m.	c #5A5A5A",
-"n.	c #5A5A5A",
-"o.	c #5A5A5A",
-"p.	c #5A5A5A",
-"q.	c #5A5A5A",
-"r.	c #525252",
-"s.	c #525252",
-"t.	c #525252",
-"u.	c #525252",
-"v.	c #525252",
-"w.	c #4A5252",
-"x.	c #4A5252",
-"y.	c #4A5252",
-"z.	c #4A5252",
-"A.	c #4A5252",
-"B.	c #4A4A4A",
-"C.	c #4A4A4A",
-"D.	c #4A4A4A",
-"E.	c #4A4A4A",
-"F.	c #4A4A4A",
-"G.	c #424A4A",
-"H.	c #424A4A",
-"I.	c #424A4A",
-"J.	c #424A4A",
-"K.	c #424A4A",
-"L.	c #424A4A",
-"M.	c #424242",
-"N.	c #424242",
-"O.	c #424242",
-"P.	c #424242",
-"Q.	c #424242",
-"R.	c #393939",
-"S.	c #393939",
-"T.	c #393939",
-"U.	c #393939",
-"V.	c #393939",
-"W.	c #313163",
-"X.	c #313163",
-"Y.	c #313163",
-"Z.	c #313163",
-"`.	c #313163",
-" +	c #313131",
-".+	c #313131",
-"++	c #313131",
-"@+	c #313131",
-"#+	c #313131",
-"$+	c #312929",
-"%+	c #312929",
-"&+	c #312929",
-"*+	c #312929",
-"=+	c #312929",
-"-+	c #293129",
-";+	c #293129",
-">+	c #293129",
-",+	c #293129",
-"'+	c #293129",
-")+	c #292929",
-"!+	c #292929",
-"~+	c #292929",
-"{+	c #292929",
-"]+	c #292929",
-"^+	c #212921",
-"/+	c #212921",
-"(+	c #212921",
-"_+	c #212921",
-":+	c #212921",
-"<+	c #212129",
-"[+	c #212129",
-"}+	c #212129",
-"|+	c #212129",
-"1+	c #212129",
-"2+	c #212129",
-"3+	c #212121",
-"4+	c #212121",
-"5+	c #212121",
-"6+	c #212121",
-"7+	c #212121",
-"8+	c #182121",
-"9+	c #182121",
-"0+	c #182121",
-"a+	c #182121",
-"b+	c #182121",
-"c+	c #181818",
-"d+	c #181818",
-"e+	c #181818",
-"f+	c #181818",
-"g+	c #181818",
-"h+	c #101010",
-"i+	c #101010",
-"j+	c #101010",
-"k+	c #101010",
-"l+	c #101010",
-"m+	c #080810",
-"n+	c #080810",
-"o+	c #080810",
-"p+	c #080810",
-"q+	c #080810",
-"r+	c #080808",
-"s+	c #080808",
-"t+	c #080808",
-"u+	c #080808",
-"v+	c #080808",
-"w+	c #080000",
-"x+	c #080000",
-"y+	c #080000",
-"z+	c #080000",
-"A+	c #080000",
-"B+	c #000000",
-"C+	c #000000",
-"D+	c #000000",
-"E+	c #000000",
-"F+	c #000000",
-"G+	c #000000",
-"H+	c #000000",
-". . . . . g g.g.l.l.l.l.l.l.B.l.B.B.B.B.B.R.B.R.R.",
-". . . . 7 g.g.7 . . . 2 . 7 . 7 < 7 7 7 7 . 7 g $+",
-". . . 7 g.s l.7 7 . 7 7 7 7 g 7 7 7 g 7 g g g C R.",
-". . g g.C 7 g.g . 7 7 7 7 7 7 g 7 g 7 g g g g R )+",
-". 7 g.C 7 . l.7 7 7 . 7 7 7 7 7 g 7 g g 7 g g M R.",
-"g g.C g 7 . l.7 7 7 7 7 7 7 7 7 7 g 7 g g g g C )+",
-"l.l.B.l.w.l.l.g 7 . 7 7 7 7 g 7 g 7 g g g 7 g R )+",
-"l.,.R ,.R ,.C 7 7 7 . 7 7 7 7 7 7 g 7 g 7 g g R R.",
-"B.. g 7 7 g 7 g . 7 7 7 7 7 7 7 g 7 g 7 g g g R )+",
-"l.7 . . 7 . 7 . 7 . 7 g W.7 g 7 7 g.7 g g g g R )+",
-"B.7 . . . . . 7 . 7 g W.W.7 7 7 g 7 |.g 7 g g R )+",
-"w.7 . . . 7 . 7 7 g W.a.W.7 7 B.7 g 7 g.7 g g R )+",
-"B.7 . . . . 7 . g W.a.&.a.7 7 7 B.7 g 7 |.g g R c+",
-"B.7 . . 7 . . g W.a.&.m a.7 7 7 7 B.7 g g.7 g R )+",
-"B.7 . . . . g W.a.&.m . a.7 R.g 7 l.g g |.g g R c+",
-"B.2 . . W.W.W.a.&.m . m a.7 B.7 g l.7 g 7 g.7 R c+",
-"B.7 . . W.&.&.C . . m m a.7 7 R.7 7 B.g g |.g R c+",
-"B.7 . . &.. . . . m m &.W.7 7 R.7 g l.7 g |.g R c+",
-"B.7 . . W.&.&.a.&.&.&.&.W.7 7 B.g 7 l.g 7 g.g R c+",
-"R.. . . H+a.a.a.&.&.&.&.W.7 7 R.7 g B.7 g |.g ,.c+",
-"B.7 . . H+H+H+a.a.&.&.&.W.7 R.7 7 l.7 g g |.g R c+",
-"R.. . . . C C H+a.a.&.&.W.7 R.7 g l.g 7 |.g g R H+",
-"R.7 . . . . . C H+a.a.&.W.7 7 7 7 l.g 7 g.g g R c+",
-"B.2 . . 7 . 7 . C H+a.a.W.7 7 g B.7 7 g |.g g ,.c+",
-")+. . . . 7 . . 7 C H+a.H+g 7 l.7 g 7 g.7 g g R H+",
-"R.. . . . . 7 7 . 7 C H+H+7 7 7 g 7 g.7 g g g R H+",
-"R.7 . . . 7 . . 7 . 7 C H+7 7 7 7 g.7 g 7 g g R H+",
-"R.. . . . . 7 7 . 7 7 7 C 7 7 g 7 7 g 7 g g g ,.c+",
-")+. . . . 7 . . 7 7 < 7 7 7 g 7 7 g 7 g g g g R H+",
-"R.. . . < . 7 . 7 . 7 7 7 7 7 7 g 7 g 7 g g g ,.H+",
-")+7 C R C M R R R R R R R R R ,.R R ,.R ,.R ,.R H+",
-"R.)+)+)+)+)+)+8+c+c+c+c+c+c+c+c+H+c+c+H+c+H+H+H+H+"};
-end_of_data
-
 our $logo_photo_data = <<end_of_data;
 R0lGODlhqwGzAMYAAP+bm3h4ePn5+XEAAP+oqOrq6lVVVePj4//IyKR/f0IAAP+5ueYAAMvLy9XV
 1To6Ov7+/v/X19zc3P+Kiv+Dg/9cXGtra66QkNcAAMLCwv9jY7UAAIODg5qamv97e6CgoP80NLu7
@@ -675,6 +381,31 @@ p7SwBjvGBvPXXl60izw0C3TlBiXmcXdqBnmKTDlUTXOwRrWQBnFASE+0brFUpoEKX5rac5kgR7hJ
 fHqFe2AqS30kpzKJCarHUmt0pir0XLNqGDBkqwEHqnizqx3YZ6lgppjKVR2GUN9Jq8eKQcaKrMvK
 rM3qrM8KrdEqrdNKrdVqrdeKrdmqre8TCAA7
 end_of_data
+
+sub soundicon_png
+{
+
+    # FILENAME: /Users/minter/soundicon.png
+    # THIS FUNCTION RETURNS A BASE64 ENCODED
+    # REPRESENTATION OF THE ABOVE FILE.
+    # SUITABLE FOR USE BY THE -data PROPERTY.
+    # OF A Perl/Tk PHOTO.
+    my $binary_data = <<EOD;
+iVBORw0KGgoAAAANSUhEUgAAABkAAAAgCAYAAADnnNMGAAAAB3RJTUUH1AMBADo2UHSizAAAAAZi
+S0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEgAACxIB0t1+/AAAAgtJREFUSMellr2xwjAQhF2G0xcS
+EtICISGpy6ANQlogJKQFl0ALhA79vGJWs16fpHk8zdycsM192jv9dXPQXq/XPAxDsvP5HNrxeMze
+7XA4ZA/rHPB+vzMA/fW7KX9DPy3P4NX4DoPd73ZrCAHjOKZR+p/UECD6DU97Pp9rJUwRXhCGZxEg
+CuwA2P1+n3dUwqAEoKmSkpoIoP374/FRogr4UQSpWUkJYiYlm9lyOuUZpNC/pIq/c7oQ7Hq9pgfq
+mbpWumpAxErpggIWPvpTLXhL0UqJrgcdtfs07/fDZgpzTRVnF5T4oouABBDiSi6XS5iuD2Qp9HZl
+r2tAwDCMKwgHyOCuqKmEzxRwu83JqxIHUREhfd9vIdp3wLLbbCAOUjVNJREAjRBMTY6eawpWUTLl
+4CxuBFAlOnrOUK9NMV0IjsAwLEg2ADxdUKMpczVFCIJ7IwDvdHYR4mqaEFXCdKn5FPa66DGRIRiN
+tq7rUnBaDaJKtEZUgj0wVAIILQIRovXQVIXpciVoKDgsAjmE9SgtxjRgfhy1COR7V6ke1XXiu6+D
+FKK18HqsaoJlX9q32FcQvM6o1gaZ01Xa5lUVQbBoq4/OlGpNSocYQV4TBfxLCU3P/tKR/VVNouto
+C1BVMgX33W9vkVCSIFDCNICc/HLzQ79lvEL5dUp9VgJQZP3PT8ppzRDE+7o1wX4BQWzxshBv4lAA
+AAAASUVORK5CYII=
+EOD
+    return ($binary_data);
+}    # END soundicon_png...
 
 # This function is redefined due to evilness that keeps the focus on
 # the dragged token.  Thanks to Slaven Rezic <slaven.rezic@berlin.de>
@@ -2490,7 +2221,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.312 $';
+    my $rev = '$Revision: 1.313 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3545,7 +3276,7 @@ sub StartDrag
 {
 
     # Starts the drag for the hotkey drag-and-drop.
-    $sound_icon = $mw->Pixmap( -data => $sound_pixmap_data );
+    $sound_icon = $mw->Photo( -data => soundicon_png(), -format => 'png' );
 
     my ($token) = @_;
     $current_token = $token;
