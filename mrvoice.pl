@@ -15,8 +15,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/03/04 15:38:38 $
-#	CVS REVISION NUMBER:    $Revision: 1.16 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/05 00:11:47 $
+#	CVS REVISION NUMBER:    $Revision: 1.17 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -26,21 +26,21 @@ use MPEG::MP3Info;
 #####
 # CONFIGURATION VARIABLES
 #####
-my $db_name = "";			# In the form DBNAME:HOSTNAME:PORT
-my $db_username = "";                   # The username used to connect
+my $db_name = "comedysportz";			# In the form DBNAME:HOSTNAME:PORT
+my $db_username = "root";                   # The username used to connect
                                         # to the database.
-my $db_pass = "";                       # The password used to connect
+my $db_pass = "rangers";                       # The password used to connect
                                         # to the database.
 $category = "Any";			# The default category to search
                                         # Initial status message
 
-$mp3player = "/usr/bin/xmms";		# Full path to MP3 player
-$filepath = "";				# Path that will be prepended onto
+$mp3player = "/usr/X11R6/bin/xmms";		# Full path to MP3 player
+$filepath = "/mp3/";				# Path that will be prepended onto
 					# the filename retrieved from the
 					# database, to find the actual
 					# MP3 on the local system.
 					# MUST END WITH TRAILING /
-$savedir = "";				# The default directory where 
+$savedir = "/tmp/";				# The default directory where 
                                         # hotkey save files will live.
 
 #####
@@ -57,7 +57,7 @@ $savedir = "";				# The default directory where
 
 #####
 
-my $version = "0.9";			# Program version
+my $version = "0.9devel";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
 
 $filepath = "$filepath/" unless ($filepath =~ "/.*\/$/");
@@ -170,12 +170,59 @@ sub save_file
   }
 }
 
+sub infobox
+{
+  $box = $mw->DialogBox(-title=>"$_[0]", -buttons=>["OK"]);
+  $box->add("Label",-text=>"$_[1]")->pack();
+  $box->Show;
+}
+
+sub add_category
+{
+  $box = $mw->DialogBox(-title=>"Add a category", -buttons=>["Ok","Cancel"]);
+  $acframe1 = $box->add("Frame")->pack(-fill=>'x');
+  $acframe1->Label(-text=>"Category Code:  ")->pack(-side=>'left');
+  $acframe1->Entry(-width=>6,
+                  -textvariable=>\$addcat_code)->pack(-side=>'left');
+  $acframe2 = $box->add("Frame")->pack(-fill=>'x');
+  $acframe2->Label(-text=>"Category Description:  ")->pack(-side=>'left');
+  $acframe2->Entry(-width=>25,
+                  -textvariable=>\$addcat_desc)->pack(-side=>'left');
+  $button = $box->Show;
+  if ($button eq "Ok")
+  {
+    if (($addcat_code) && ($addcat_desc))
+    {
+      $query = "INSERT INTO categories VALUES ('$addcat_code','$addcat_desc')";
+      my $sth=$dbh->prepare($query);
+      if (! $sth->execute)
+      {
+        $error_message = $sth->errstr();
+        infobox("Database Error","Database returned error: $error_message\non query $query");
+      }
+      else
+      {
+        infobox("Success","Category successfully added.\nYou will need to restart to see the change");
+      }
+    }
+    else 
+    {
+      infobox("Error","You must enter both a category code and a description");
+    }
+  }
+  else
+  {
+    $status = "Cancelled adding category.";
+  }
+}
+
+sub delete_category
+{
+}
+
 sub show_about
 {
-  $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["Close"]);
-  $box->add("Label",-text=>"Mr. Voice version $version")->pack();
-  $box->add("Label",-text=>"By H. Wade Minter <minter\@lunenburg.org>")->pack();
-  $box->Show;
+  infobox("About Mr. Voice","Mr. Voice Version $version\n\nBy H. Wade Minter <minter\@lunenburg.org");
 }
 
 #sub show_predefined_hotkeys
@@ -509,6 +556,12 @@ $hotmenu->AddItems(["command"=>"Clear All Hotkeys",
                     -command=>\&clear_hotkeys]);
 #$hotmenu->AddItems(["command"=>"Show Predefined Hotkeys",
 #                    -command=>\&show_predefined_hotkeys]);
+$catmenu = $menuframe->Menubutton(-text=>"Categories",
+                                  -tearoff=>0)->pack(-side=>'left');
+$catmenu->AddItems(["command"=>"Add Category",
+                   -command=>\&add_category]);
+$catmenu->AddItems(["command"=>"Delete Category",
+                   -command=>\&delete_category]);
 $helpmenu = $menuframe->Menubutton(-text=>"Help",
                                    -tearoff=>0)->pack(-side=>'right');
 $helpmenu->AddItems(["command"=>"About",
