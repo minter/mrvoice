@@ -46,7 +46,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.297 2004/01/13 18:32:38 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.298 2004/01/13 22:26:27 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1384,12 +1384,11 @@ sub bulk_add
             -value    => $code,
             -variable => \$db_cat,
             -command  => sub {
-                $longcat = "(" . return_longcat($db_cat) . ")";
+                $menu->configure( -text => return_longcat($db_cat) );
             }
         );
     }
     $sth->finish;
-    $box1frame2->Label( -textvariable => \$longcat )->pack( -side => 'left' );
     my $box1frame3 = $box1->add("Frame")->pack( -fill => 'x' );
     $box1frame3->Label( -text => "Choose Directory: " )
       ->pack( -side => 'left' );
@@ -2521,7 +2520,7 @@ sub delete_song
 
 sub show_about
 {
-    $rev = '$Revision: 1.297 $';
+    $rev = '$Revision: 1.298 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
