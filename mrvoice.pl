@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.158 2002/10/20 23:27:10 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.159 2002/10/21 16:08:16 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -752,6 +752,13 @@ sub add_new_song
                     -command=>sub { 
       $addsong_filename = $mw->getOpenFile(-title=>'Select File',
                                            -filetypes=>$mp3types);
+      if ($addsong_filename =~ /.mp3$/i)
+      {
+        $addsong_filename = Win32::GetShortPathName($addsong_filename) if ($^O eq "MSWin32");
+        my $tag = get_mp3tag($addsong_filename);
+        $addsong_title = $tag->{TITLE};
+        $addsong_artist = $tag->{ARTIST};
+      }
                                   })->pack(-side=>'right');
     $songentry = $frame5->Entry(-width=>30,
                    -textvariable=>\$addsong_filename)->pack(-side=>'right');
@@ -1057,7 +1064,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.158 $';
+  $rev = '$Revision: 1.159 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
