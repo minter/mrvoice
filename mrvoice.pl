@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.345 2004/03/11 16:24:07 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.346 2004/03/12 14:29:16 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -548,7 +548,7 @@ sub bind_hotkeys
                   HTTP::Request->new( GET =>
                       "http://localhost:4800/fadeoutandstop?p=$config{'httpq_pw'}"
                   );
-                $res = $agent->request($req);
+                $agent->request($req);
             }
         );
     }
@@ -2199,7 +2199,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.345 $';
+    my $rev = '$Revision: 1.346 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -2769,7 +2769,7 @@ sub update_time
             $updated++;
         }
         $count++;
-        $percent_done = int( ( $count / $numrows ) * 100 );
+        my $percent_done = int( ( $count / $numrows ) * 100 );
         $pb->set($percent_done);
         $progressbox->update();
     }
@@ -2928,9 +2928,9 @@ sub get_songlength
 
         # It's an MP3 file
         my $info = get_mp3info("$file");
-        $minute = $info->{MM};
+        my $minute = $info->{MM};
         $minute = "0$minute" if ( $minute < 10 );
-        $second = $info->{SS};
+        my $second = $info->{SS};
         $second = "0$second" if ( $second < 10 );
         $time   = "[$minute:$second]";
     }
@@ -2944,9 +2944,9 @@ sub get_songlength
         if ( !$@ )
         {
             my $audio_seconds = int( $read->length_seconds() );
-            $minute = int( $audio_seconds / 60 );
+            my $minute = int( $audio_seconds / 60 );
             $minute = "0$minute" if ( $minute < 10 );
-            $second = $audio_seconds % 60;
+            my $second = $audio_seconds % 60;
             $second = "0$second" if ( $second < 10 );
             $time   = "[$minute:$second]";
         }
@@ -2963,9 +2963,9 @@ sub get_songlength
 
         #my $audio_seconds = %{$ogg->info}->{length};
         my $audio_seconds = $ogg->info->{length};
-        $minute = int( $audio_seconds / 60 );
+        my $minute = int( $audio_seconds / 60 );
         $minute = "0$minute" if ( $minute < 10 );
-        $second = $audio_seconds % 60;
+        my $second = $audio_seconds % 60;
         $second = "0$second" if ( $second < 10 );
         $time   = "[$minute:$second]";
     }
@@ -3053,7 +3053,7 @@ sub do_search
 
         if ( -e catfile( $config{'filepath'}, $row_hashref->{filename} ) )
         {
-            $string = "$row_hashref->{id}:($row_hashref->{description}";
+            my $string = "$row_hashref->{id}:($row_hashref->{description}";
             $string = $string . " - $row_hashref->{info}"
               if ( $row_hashref->{info} );
             $string = $string . ") - \"$row_hashref->{title}\"";
@@ -3402,7 +3402,7 @@ if ( !-W $config{'savedir'} )
 $query = "SELECT time FROM mrvoice LIMIT 1";
 if ( !$dbh->do($query) )
 {
-    $box = $mw->DialogBox(
+    my $box = $mw->DialogBox(
         -title   => "Database Update Needed",
         -buttons => [ "Continue", "Quit" ]
     );
@@ -3543,7 +3543,7 @@ if ( !$dbh->do($query) )
 {
     $mw->deiconify();
     $mw->raise();
-    $box = $mw->DialogBox(
+    my $box = $mw->DialogBox(
         -title   => "Database Update Needed",
         -buttons => [ "Continue", "Backup", "Quit" ]
     );
@@ -3563,7 +3563,7 @@ if ( !$dbh->do($query) )
         -text =>
           "Continuing or backing up will add a new Publisher field to the database."
     )->pack();
-    $result = $box->Show();
+    my $result = $box->Show();
 
     if ( $result eq "Continue" )
     {
@@ -4266,11 +4266,11 @@ if ( $^O eq "MSWin32" )
         [ $stopbutton, ref($stopbutton), $stopbutton->toplevel, 'all' ] );
     $stopbutton->bind(
         "<Shift-ButtonRelease-1>" => sub {
-            $req =
+            my $req =
               HTTP::Request->new( GET =>
                   "http://localhost:4800/fadeoutandstop?p=$config{'httpq_pw'}"
               );
-            $res = $agent->request($req);
+            $agent->request($req);
         }
     );
 }
