@@ -1,3 +1,7 @@
+Tue  Nov 12 2002	H. Wade Minter (minter@lunenburg.org)
+     * Changed the status bar display for playing a song from
+       the filename to a title/artist view.
+
 Sat  Nov  9 2002        H. Wade Minter (minter@lunenburg.org)
      * Changed the Drag and Drop code to display an icon when
        dragging a song, instead of the title.
@@ -360,4 +364,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.68 2002/11/11 02:08:09 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.69 2002/11/12 21:02:58 minter Exp $
