@@ -41,7 +41,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.244 2003/07/24 19:27:54 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.245 2003/07/25 17:21:11 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1920,7 +1920,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.244 $';
+  $rev = '$Revision: 1.245 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2124,9 +2124,9 @@ EOF
   my $buttonframe = $holdingtank->Frame()->pack(-side=>'bottom',
                                              -fill=>'x');
   $holdingtank->Button(-image=>$arrowup,
-                       -command=>[\&move_tank,"up"])->pack(-side=>'left');
+                       -command=>[\&move_tank,"-1"])->pack(-side=>'left');
   $holdingtank->Button(-image=>$arrowdown,
-                       -command=>[\&move_tank,"down"])->pack(-side=>'right');
+                       -command=>[\&move_tank,"1"])->pack(-side=>'right');
   $tankbox = $holdingtank->Scrolled('Listbox',
                          -scrollbars=>'osoe',
 			 -width=>50,
@@ -2159,30 +2159,21 @@ EOF
 
 sub move_tank
 {
-  $direction = $_[0];
-  @selected = $tankbox->curselection();
-  $index = $selected[0];
+  # Blatantly cribbed from Mastering Perl/Tk's Tk::NavListbox example
+  my $lb = $tankbox;
+  my $direction = $_[0];
+  my $index = $lb->curselection;
 
-  if ($index >= 0)
-  {
-    if ( ($direction eq "up") && ($index > 0) )
-    {
-      my $topindex = ($index - 1);
-      my $bottomindex = ($index + 1);
-      my $line = $tankbox->get($index);
-      $tankbox->insert($topindex,$line);
-      $tankbox->delete($bottomindex);
-      $tankbox->selectionSet($topindex);
-    }
-    elsif ( ($direction eq "down") && ($index < ($tankbox->index('end')-1)) )
-    {
-      my $bottomindex = ($index + 2);
-      my $line = $tankbox->get($index);
-      $tankbox->insert($bottomindex,$line);
-      $tankbox->delete($index);
-      $tankbox->selectionSet($index + 1);
-    }
-  }
+  # Sanity checks
+  return if ($index == 0 && $direction == -1);
+  return if ($index == $lb->size()-1 && $direction == 1);
+
+  my $newindex = $index + $direction;
+
+  my $item = $lb->get($index);
+  $lb->delete($index);
+  $lb->insert($newindex, $item);
+  $lb->selectionSet($newindex);
 }
 
 sub clear_tank
