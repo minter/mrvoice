@@ -1,6 +1,7 @@
 Mon  Jul 28 2003        H. Wade Minter (minter@lunenburg.org)
      * The Holding Tank will now retain its entries when it's closed and
        reopened.
+     * The Holding Tank now has its own accelerator hotkey, Ctrl-T
 
 Fri  Jul 25 2003	H. Wade Minter (minter@lunenburg.org)
      * MUCH cleaner code for the up/down in the tankbox, courtesy
@@ -471,4 +472,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.94 2003/07/28 13:52:47 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.95 2003/07/28 14:09:04 minter Exp $
