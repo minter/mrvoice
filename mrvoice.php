@@ -1,3 +1,27 @@
+<? #CONFIGURATION
+   # Set the following variables for your particular configuration.
+   # NOTE: This script is hardcoded to use MySQL.  If you use another
+   # database supported by PHP, change the mysql_* calls to match your
+   # database.
+
+   # $path is the path to the directory on your filesystem that contains
+   # the Mr. Voice mp3s.  It must be writable by the user that your
+   # web server is running as.  This will be prepended to the value
+   # of the filename from the database result, so plan accordingly.
+   $path = "/home/minter/html/csz";
+
+   # These four options set the name, hostname, username, and password for
+   # your database.
+   # $database_username must have INSERT access on the mrvoice
+   # database/tables.
+   $database = "comedysportz";
+   $database_host = "localhost";
+   $database_username = "howie";
+   $database_password = "HumorDome";
+ 
+   # CVS ID: $Id: mrvoice.php,v 1.2 2001/02/16 21:45:28 minter Exp $
+?>
+
 <TITLE>Mr. Voice MP3 Database</TITLE>
 <BODY BGCOLOR=#FFFFFF>
 <CENTER><H1>Online Mr. Voice MP3 Database</H1></CENTER>
@@ -11,18 +35,18 @@
 ?>
 <HR>
   
-<FORM ACTION=mrvoice.php METHOD=POST>
+<FORM ACTION=<? print $PHP_SELF ?> METHOD=POST>
 <TABLE BORDER=0>
 <TR><TD>Category</TD> <TD><SELECT NAME=category>
 
 <?
   include ("class.id3.php");
-  if (!($dblink = mysql_connect("localhost","howie","HumorDome")))
+  if (!($dblink = mysql_connect($database_host,$database_username,$database_password)))
   { 
     print "mysql_connect failed\n";
   }
 
-  if (!(mysql_select_db("comedysportz",$dblink)))
+  if (!(mysql_select_db($database,$dblink)))
   {
     print "mysql_select_db failed\n";
   }
@@ -84,14 +108,12 @@
 ?>
 </SELECT>
 
-(<a href=mrvoice.php?action=Search&timespan=today>Modified Today</A>) (<a href=mrvoice.php?action=Search&timespan=week>Modified In Past 7 Days</A>)</TD></TR>
+(<a href=<? print $PHP_SELF ?>?action=Search&timespan=today>Modified Today</A>) (<a href=<? print $PHP_SELF ?>?action=Search&timespan=week>Modified In Past 7 Days</A>)</TD></TR>
 </TABLE>
 <INPUT TYPE=submit NAME=action VALUE=Search>  
 </FORM>
   
 <?
-  $path = "/home/minter/html/csz";	# Raw filesystem path to files
-					# will have /mp3/ appended.
   if ($action == "Search")
   {
  
@@ -184,4 +206,3 @@
 
 <HR>
 <I>Designed and maintained by H. Wade Minter &lt<a href="mailto:minter@lunenburg.org?subject=Mr. Voice Database">minter@lunenburg.org</A>&gt.  Did you like this database?  Find it useful?  Drop me a line!</I>
-<P><I>Disclaimer: This is an online verison of my voice kit.  There are no guarantees as to quality/usefulness/correctness/etc.  Void where prohibited.</I>
