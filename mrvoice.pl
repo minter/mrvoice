@@ -2304,7 +2304,7 @@ sub show_about
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::SQLite->VERSION;
-    $rev =~ s/.*(\d+).*/$1/;
+    $rev =~ s/.*: (\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\nTk Version: $tkver\nDBI Version: $dbiver\nDBD Version: $dbdver\n\n(c)2001-2004, Released under the GNU General Public License";
     my $box = $mw->DialogBox(
