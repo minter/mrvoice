@@ -1,3 +1,6 @@
+Fri  Mar 25 2005	H. Wade Minter (minter@lunenburg.org)
+     * Fixed a bug in reporting during the local online comparison.
+
 Thu  Mar 24 2005	H. Wade Minter (minter@lunenburg.org)
      * Add a preference entry to check the app version.
      * Fix the Return key binding in Online Search.
