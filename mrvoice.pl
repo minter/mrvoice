@@ -30,7 +30,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.131 2002/06/24 21:34:32 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.132 2002/06/28 18:10:26 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -966,7 +966,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.131 $';
+  $rev = '$Revision: 1.132 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -1423,10 +1423,26 @@ sub do_search
       return;
     }
   }
-  $anyfield_box->insert(0,$anyfield) if ($anyfield);
-  $title_box->insert(0,$title) if ($title);
-  $artist_box->insert(0,$artist) if ($artist);
-  $cattext_box->insert(0,$cattext) if ($cattext);
+  if ($anyfield)
+  {
+    $anyfield_box->insert(0,$anyfield);
+    $anyfield =~ s/^ *//;
+  }
+  if ($title)
+  {
+    $title_box->insert(0,$title);
+    $title =~ s/^ *//;
+  }
+  if ($artist)
+  {
+    $artist_box->insert(0,$artist);
+    $artist =~ s/^ *//;
+  }
+  if ($cattext)
+  {
+    $cattext_box->insert(0,$cattext);
+    $cattext =~ s/^ *//;
+  }
   $status="Starting search...";
   $mw->Busy(-recurse=>1);
   $mainbox->delete(0,'end');
