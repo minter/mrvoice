@@ -1,0 +1,7 @@
+If you're upgrading from version 8.1.1 or earlier, there is a new module
+required.  You'll need to install Tk::FileDialog from:
+
+http://www.cpan.org/modules/by-module/Tk/
+
+This replaces the native Tk::FileSelect module that had some problems
+under Linux.
