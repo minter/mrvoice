@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.367 2004/04/19 17:33:43 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.368 2004/04/19 17:37:25 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1034,6 +1034,7 @@ sub get_title_artist
     }
     elsif ( $filename =~ /.wma/i )
     {
+        $filename = Win32::GetShortPathName($filename) if ( $^O eq "MSWin32" );
         my $wma     = Audio::WMA->new($filename);
         my $comment = $wma->comment();
         $title  = $comment->{TITLE};
@@ -2266,7 +2267,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.367 $';
+    my $rev    = '$Revision: 1.368 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::mysql->VERSION;
@@ -3126,7 +3127,6 @@ sub get_songlength
         #It's an Ogg Vorbis file.
         my $ogg = Ogg::Vorbis::Header::PurePerl->new($file);
 
-        #my $audio_seconds = %{$ogg->info}->{length};
         my $audio_seconds = $ogg->info->{length};
         my $minute        = int( $audio_seconds / 60 );
         $minute = "0$minute" if ( $minute < 10 );
