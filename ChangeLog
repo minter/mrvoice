@@ -1,3 +1,6 @@
+Tue  Apr 15 2003        H. Wade Minter (minter@lunenburg.org)
+     * Use the directory selector for the MP3/Hotkey directory preferences.
+
 Sat  Apr 12 2003        H. Wade Minter (minter@lunenburg.org)
      * Fixed bug in Win32 path handling for Bulk-Add.
 
@@ -427,4 +430,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.83 2003/04/12 13:18:29 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.84 2003/04/15 20:41:12 minter Exp $
