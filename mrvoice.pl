@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.comedyworx.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/11/02 01:25:08 $
-#	CVS REVISION NUMBER:    $Revision: 1.77 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/11/03 13:07:22 $
+#	CVS REVISION NUMBER:    $Revision: 1.78 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -321,9 +321,7 @@ sub add_category
       }
       else
       {
-	clear_categories_menu();
-	build_categories_menu();
-	$status = "Added category";
+	$status = "Added category $addcat_desc";
         infobox("Success","Category successfully added.");
       }
     }
@@ -381,9 +379,7 @@ sub delete_category
       my $sth=$dbh->prepare($query);
       if ($sth->execute)
       {
-        clear_categories_menu();
-        build_categories_menu();
-        $status = "Deleted category";
+        $status = "Deleted category $del_cat";
         infobox ("Success","Category $del_cat has been deleted.");
       }
     }
@@ -1039,6 +1035,10 @@ sub do_search
 
 sub build_categories_menu
 {
+  # Remove old entries
+  $catmenu->delete(0,'end');
+
+  # Query the database for new ones.
   $catmenu->configure(-tearoff=>1);
   $catmenu->radiobutton(-label=>"Any category",
                         -value=>"Any",
@@ -1055,11 +1055,6 @@ sub build_categories_menu
                           -variable=>\$category);
   }
   $sth->finish;
-}
-
-sub clear_categories_menu
-{
-  $catmenu->delete(0,'end');
 }
 
 sub do_exit
@@ -1277,7 +1272,7 @@ $catmenubutton=$searchframe->Menubutton(-text=>"Choose Category",
                                                                -anchor=>'n');
 $catmenu = $catmenubutton->menu();
 $catmenubutton->configure(-menu=>$catmenu);
-build_categories_menu();
+$catmenubutton->menu()->configure(-postcommand=>\&build_categories_menu);
 
 $searchframe->Label(-text=>"Currently Selected: ")->pack(-side=>'left',
                                                          -anchor=>'n');
