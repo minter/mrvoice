@@ -45,7 +45,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.290 2003/12/31 18:57:41 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.291 2003/12/31 19:57:14 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1815,15 +1815,10 @@ sub edit_preferences
   $display_page->Label(-text=>'Display publisher in search results?')->pack(-side=>'left');
   $display_page->Checkbutton(-variable=>\$config{'show_publisher'})->pack(-side=>'left');
   $search_page->Label(-text=>'Allow searches of music published by:')->pack(-side=>'top');
-  my $ascap_frame = $search_page->Frame()->pack(-fill=>'x');
-  $ascap_frame->Label(-text=>'ASCAP',-width=>10)->pack(-side=>'left');
-  $ascap_frame->Checkbutton(-variable=>\$config{'search_ascap'})->pack(-side=>'left');
-  my $bmi_frame = $search_page->Frame()->pack(-fill=>'x');
-  $bmi_frame->Label(-text=>'BMI',-width=>10)->pack(-side=>'left');
-  $bmi_frame->Checkbutton(-variable=>\$config{'search_bmi'})->pack(-side=>'left');
-  my $other_frame = $search_page->Frame()->pack(-fill=>'x');
-  $other_frame->Label(-text=>'Other',-width=>10)->pack(-side=>'left');
-  $other_frame->Checkbutton(-variable=>\$config{'search_other'})->pack(-side=>'left');
+  my $checkbox_frame = $search_page->Frame()->pack(-fill=>'x');
+  $checkbox_frame->Checkbutton(-text=>'ASCAP',-variable=>\$config{'search_ascap'})->pack(-side=>'left',-expand=>1);
+  $checkbox_frame->Checkbutton(-text=>'BMI',-variable=>\$config{'search_bmi'})->pack(-side=>'left',-expand=>1);
+  $checkbox_frame->Checkbutton(-text=>'Other',-variable=>\$config{'search_other'})->pack(-side=>'left',-expand=>1);
 
   my $mp3frame = $other_page->Frame()->pack(-fill=>'x');
   $mp3frame->Label(-text=>"MP3 Player")->pack(-side=>'left');
@@ -2160,7 +2155,7 @@ sub show_docs
   
 sub show_about
 {
-  $rev = '$Revision: 1.290 $';
+  $rev = '$Revision: 1.291 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
