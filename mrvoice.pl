@@ -15,6 +15,7 @@ use MPEG::MP3Info;
 use Audio::Wav;
 use Date::Manip;
 use Time::Local;
+use Ogg::Vorbis;
 
 # These modules need to be hardcoded into the script for perl2exe to 
 # find them.
@@ -33,7 +34,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.142 2002/07/15 17:10:14 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.143 2002/08/13 01:25:30 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1062,7 +1063,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.142 $';
+  $rev = '$Revision: 1.143 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -1494,6 +1495,19 @@ sub get_songlength
     my $read = $wav -> read( "$file" );
     my $audio_seconds = int ( $read -> length_seconds() );
     $minute = int ($audio_seconds / 60);
+    $minute = "0$minute" if ($minute < 10);
+    $second = $audio_seconds % 60;
+    $second = "0$second" if ($second < 10);
+    $time = " [$minute:$second]";
+  }
+  elsif ($file =~ /\.ogg$/i)
+  {
+    #It's an Ogg Vorbis file
+    my $ogg = Ogg::Vorbis->new;
+    open (OGG_IN,$file);
+    $ogg->open(OGG_IN);
+    my $audio_seconds = $ogg->time_total;
+    $minute = int($audio_seconds / 60);
     $minute = "0$minute" if ($minute < 10);
     $second = $audio_seconds % 60;
     $second = "0$second" if ($second < 10);
