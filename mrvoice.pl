@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.155 2002/09/16 21:44:35 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.156 2002/10/17 14:47:29 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -61,6 +61,7 @@ our $mp3types = [
     ['MP3 Files', ['*.mp3', '*.MP3']],
     ['WAV Files', ['*.wav', '*.WAV']],
     ['Vorbis Files', ['*.ogg', '*.OGG']],
+    ['Playlists', ['*.m3u', '*.M3U', '*.pls', '*.PLS']],
     ['All Files', '*'],
   ];
 
@@ -1051,7 +1052,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.155 $';
+  $rev = '$Revision: 1.156 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -1506,6 +1507,11 @@ sub get_songlength
     $time = " [$minute:$second]";
     close (OGG_IN);
   }
+  elsif ( ($file =~ /\.m3u$/i) || ($file =~ /\.pls$/i) )
+  {
+    #It's a playlist 
+    $time = "PLAYLIST";
+  }
   else
   {
     # Unsupported file type
@@ -1866,21 +1872,21 @@ our $advancedmenu;
 our $helpmenu;
 our $filemenu;
 
-$filemenu = $menubar->cascade(-label=>'File',
+$filemenu = $menubar->cascade(-label=>'~File',
                               -tearoff=>0,
                               -menuitems=> filemenu_items);
 $dynamicmenu=$menubar->entrycget('File', -menu)->entrycget('Recent Files', -menu);
-$hotkeysmenu = $menubar->cascade(-label=>'Hotkeys',
+$hotkeysmenu = $menubar->cascade(-label=>'~Hotkeys',
                                  -tearoff=>0,
                                  -menuitems=> hotkeysmenu_items);
 $hotkeysmenu->menu->entryconfigure("Restore Hotkeys", -state=>"disabled");
-$categoriesmenu = $menubar->cascade(-label=>'Categories',
+$categoriesmenu = $menubar->cascade(-label=>'~Categories',
                                     -tearoff=>0,
                                     -menuitems=> categoriesmenu_items);
-$songsmenu = $menubar->cascade(-label=>'Songs',
+$songsmenu = $menubar->cascade(-label=>'~Songs',
                                -tearoff=>0,
                                -menuitems=> songsmenu_items);
-$advancedmenu = $menubar->cascade(-label=>'Advanced Search',
+$advancedmenu = $menubar->cascade(-label=>'~Advanced Search',
                                   -tearoff=>0,
 				  -menuitems=> advancedmenu_items);
 $helpmenu = $menubar->cascade(-label=>'Help',
