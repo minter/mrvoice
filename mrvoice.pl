@@ -908,6 +908,7 @@ sub dump_database
         -title            => 'Choose Database Export File',
         -defaultextension => ".sql",
         -initialfile      => $defaultfilename,
+        -initialdir       => ( $^O eq "MSWin32" ) ? "C:\\" : get_homedir(),
         -filetypes        => $databasefiles
     );
     my $dirname = dirname($dumpfile);
@@ -987,6 +988,7 @@ sub import_database
     my $dumpfile = $mw->getOpenFile(
         -title            => 'Choose Database Export File',
         -defaultextension => ".sql",
+        -initialdir       => ( $^O eq "MSWin32" ) ? "C:\\" : get_homedir(),
         -filetypes        => $databasefiles
     );
 
@@ -1265,7 +1267,9 @@ sub bulk_add
     $box1frame3->Button(
         -text    => "Select Source Directory",
         -command => sub {
-            $directory = $box1->chooseDirectory;
+            $directory =
+              $box1->chooseDirectory(
+                -initialdir => ( $^O eq "MSWin32" ) ? "C:\\" : get_homedir() );
         }
     )->pack( -side => 'left' );
 
@@ -1733,8 +1737,9 @@ sub add_new_song
             -text    => "Select File",
             -command => sub {
                 $addsong_filename = $mw->getOpenFile(
-                    -title     => 'Select File',
-                    -filetypes => $mp3types
+                    -title      => 'Select File',
+                    -initialdir => ( $^O eq "MSWin32" ) ? "C:/" : get_homedir(),
+                    -filetypes  => $mp3types
                 );
                 ( $addsong_title, $addsong_artist ) =
                   get_title_artist($addsong_filename);
@@ -1871,11 +1876,10 @@ sub edit_preferences
     $dbfile_frame->Button(
         -text    => "Select Database Location",
         -command => sub {
-            my $initialdir = ( $^O eq "MSWin32" ) ? "C:/" : get_homedir();
             if (
                 my $dbdir = $box->chooseDirectory(
                     -title      => "Choose directory for the mrvoice.db file",
-                    -initialdir => $initialdir
+                    -initialdir => ( $^O eq "MSWin32" ) ? "C:\\" : get_homedir()
                 )
               )
             {
@@ -1896,7 +1900,11 @@ sub edit_preferences
     $mp3dir_frame->Button(
         -text    => "Select MP3 Directory",
         -command => sub {
-            if ( my $filepath = $box->chooseDirectory )
+            if (
+                my $filepath = $box->chooseDirectory(
+                    -initialdir => ( $^O eq "MSWin32" ) ? "C:/" : get_homedir()
+                )
+              )
             {
                 $filepath = Win32::GetShortPathName($filepath)
                   if ( $^O eq "MSWin32" );
@@ -1916,7 +1924,11 @@ sub edit_preferences
     $hotkeydir_frame->Button(
         -text    => "Select Hotkey Directory",
         -command => sub {
-            if ( my $savedir = $box->chooseDirectory )
+            if (
+                my $savedir = $box->chooseDirectory(
+                    -initialdir => ( $^O eq "MSWin32" ) ? "C:\\" : get_homedir()
+                )
+              )
             {
                 $savedir = Win32::GetShortPathName($savedir)
                   if ( $^O eq "MSWin32" );
@@ -1957,7 +1969,10 @@ sub edit_preferences
     $mp3frame->Button(
         -text    => "Choose",
         -command => sub {
-            $config{'mp3player'} = $mw->getOpenFile( -title => 'Select File' );
+            $config{'mp3player'} = $mw->getOpenFile(
+                -title      => 'Select File',
+                -initialdir => ( $^O eq "MSWin32" ) ? "C:/" : get_homedir()
+            );
         }
     )->pack( -side => 'right' );
     $mp3frame->Entry(
