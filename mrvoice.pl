@@ -45,7 +45,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.286 2003/12/30 19:17:17 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.287 2003/12/31 16:17:41 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -63,6 +63,11 @@ our $savefile_max = 4;			# The maximum number of files to
 					# keep in the "recently used" list.
     $category = 'Any';			# The default category to search
     $longcat  = 'Any';			# The default category to search
+
+# Allow searches of all music publishers by default.
+$config{'search_ascap'} = 1;
+$config{'search_bmi'} = 1;
+$config{'search_other'} = 1;
 
 our $hotkeytypes = [
     ['Mr. Voice Hotkey Files', '.mrv'],
@@ -1046,13 +1051,13 @@ sub dump_database
         $filename = basename($dumpfile);
         $shortdumpfile = catfile ($dirname, $filename);
         my $rc = system ("C:\\mysql\\bin\\mysqldump.exe --add-drop-table --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} > $shortdumpfile");
-        infobox($mw, "Database Dumped", "The contents of your database have been dumped to the file:\n$dumpfile\n\nNote: In order to have a full backup, you must also\nback up the files from the directory:\n$config{'filepath'}\nas well as $rcfile and, optionally, the hotkeys from $config{'savedir'}");
+        infobox($mw, "Database Dumped", "The contents of your database have been dumped to the file: $dumpfile\n\nNote: In order to have a full backup, you must also back up the files from the directory: $config{'filepath'} as well as $rcfile and, optionally, the hotkeys from $config{'savedir'}");
         $status = "Database dumped to $dumpfile";
       }
       else
       {
         my $rc = system ("mysqldump --add-drop-table --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} > $dumpfile");
-        infobox($mw, "Database Dumped", "The contents of your database have been dumped to the file:\n$dumpfile\n\nNote: In order to have a full backup, you must also\nback up the files from the directory:\n$config{'filepath'}\nas well as $rcfile");
+        infobox($mw, "Database Dumped", "The contents of your database have been dumped to the file: $dumpfile\n\nNote: In order to have a full backup, you must also back up the files from the directory: $config{'filepath'} as well as $rcfile");
         $status = "Database dumped to $dumpfile";
       }
     }
@@ -1753,6 +1758,9 @@ sub edit_preferences
   my $filepath_page = $notebook->add("filepath",
                                      -label=>"File Paths",
 				     -underline=>0);
+  my $search_page = $notebook->add("search",
+                                   -label=>"Search Options",
+                                   -underline=>0);
   my $other_page = $notebook->add("other",
                                   -label=>"Other",
 				  -underline=>0);
@@ -1809,6 +1817,17 @@ sub edit_preferences
   $hotkeydir_frame->Entry(-width=>30,
 	                  -textvariable=>\$config{'savedir'})->pack(-side=>'right');
 
+  $search_page->Label(-text=>'Allow searches of music published by:')->pack(-side=>'top');
+  my $ascap_frame = $search_page->Frame()->pack(-fill=>'x');
+  $ascap_frame->Label(-text=>'ASCAP',-width=>10)->pack(-side=>'left');
+  $ascap_frame->Checkbutton(-variable=>\$config{'search_ascap'})->pack(-side=>'left');
+  my $bmi_frame = $search_page->Frame()->pack(-fill=>'x');
+  $bmi_frame->Label(-text=>'BMI',-width=>10)->pack(-side=>'left');
+  $bmi_frame->Checkbutton(-variable=>\$config{'search_bmi'})->pack(-side=>'left');
+  my $other_frame = $search_page->Frame()->pack(-fill=>'x');
+  $other_frame->Label(-text=>'Other',-width=>10)->pack(-side=>'left');
+  $other_frame->Checkbutton(-variable=>\$config{'search_other'})->pack(-side=>'left');
+
   my $mp3frame = $other_page->Frame()->pack(-fill=>'x');
   $mp3frame->Label(-text=>"MP3 Player")->pack(-side=>'left');
   $mp3frame->Button(-text=>"Choose",
@@ -1856,6 +1875,9 @@ sub edit_preferences
       print RCFILE "mp3player::$config{'mp3player'}\n";
       print RCFILE "savefile_max::$config{'savefile_max'}\n";
       print RCFILE "httpq_pw::$config{'httpq_pw'}\n";
+      print RCFILE "search_ascap::$config{'search_ascap'}\n";
+      print RCFILE "search_bmi::$config{'search_bmi'}\n";
+      print RCFILE "search_other::$config{'search_other'}\n";
       close(RCFILE);
     }
   }
@@ -2113,7 +2135,7 @@ sub show_docs
   
 sub show_about
 {
-  $rev = '$Revision: 1.286 $';
+  $rev = '$Revision: 1.287 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2818,9 +2840,12 @@ sub do_search
   $status="Starting search...";
   $mw->Busy(-recurse=>1);
   $mainbox->delete(0,'end');
-  my $query = "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.filename,mrvoice.time from mrvoice,categories where mrvoice.category=categories.code ";
-  $query = $query . "AND modtime >= '$datestring'" if ( ($_[0]) && ($_[0] eq "timespan"));
-  $query = $query . "AND modtime >= '$startdate' AND modtime <= '$enddate'" if (($_[0]) && ($_[0] eq "range"));
+  my $query = "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.filename,mrvoice.time FROM mrvoice,categories WHERE mrvoice.category=categories.code ";
+  $query = $query . "AND publisher != 'ASCAP' " if ($config{'search_ascap'} == 0);
+  $query = $query . "AND publisher != 'BMI' " if ($config{'search_bmi'} == 0);
+  $query = $query . "AND publisher != 'OTHER' " if ($config{'search_other'} == 0);
+  $query = $query . "AND modtime >= '$datestring' " if ( ($_[0]) && ($_[0] eq "timespan"));
+  $query = $query . "AND modtime >= '$startdate' AND modtime <= '$enddate' " if (($_[0]) && ($_[0] eq "range"));
   $query = $query . "AND category='$category' " if ($category ne "Any");
   if ($anyfield)
   {
@@ -3253,6 +3278,34 @@ if (! $dbh->do($query))
   }
 }
 
+
+# Check to see if the database is compatible with version 1.10+
+$query = "SELECT publisher FROM mrvoice LIMIT 1";
+if (! $dbh->do($query))
+{
+  $box = $mw->DialogBox(-title=>"Database Update Needed", -buttons=>["Continue","Quit"]);
+  $box->Icon(-image=>$icon);
+  $box->add("Label",-text=>"Your database is not compatible with Mr. Voice 1.10")->pack();
+  $box->add("Label",-text=>"With the 1.10 release, some database changes were introduced.\nPress the Continue button to automatically update your database, or Quit to exit.")->pack();
+  $box->add("Label",-text=>"Continuing will add a new Publisher field to the database.")->pack();
+  $result = $box->Show();
+  if ($result eq "Continue")
+  {
+    $query = "ALTER TABLE mrvoice ADD COLUMN publisher VARCHAR(16) DEFAULT 'OTHER'";
+    my $sth=$dbh->prepare($query);
+    $sth->execute;
+    if ($DBI::err)
+    {
+      $string = "$DBI::errstr";
+      $box->add("Label",-text=>"FAILED: $string")->pack();
+    }
+    else
+    {
+      $box->add("Label",-text=>"SUCCEEDED")->pack();
+    }
+    $sth->finish;
+  }
+}
 
 # We use the following statement to open the MP3 player asynchronously
 # when the Mr. Voice app starts.
