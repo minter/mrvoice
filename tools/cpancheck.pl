@@ -9,7 +9,7 @@ use CPAN;
 # Cribbed from http://netfactory.dk/technology/perl/misc/
 
 my @mods =
-  qw(DBI DBD::SQLite MPEG::MP3Info MP4::Info Audio::Wav Date::Manip Time::Local Time::HiRes Ogg::Vorbis::Header::PurePerl Tk Tk::ProgressBar::Mac Getopt::Long Cwd );
+  qw(DBI DBD::SQLite MPEG::MP3Info MP4::Info Audio::Wav Date::Manip Time::Local Time::HiRes Ogg::Vorbis::Header::PurePerl Tk Tk::ProgressBar::Mac Getopt::Long Cwd File::Temp );
 
 my $count = 0;
 
