@@ -1865,17 +1865,11 @@ sub edit_preferences
     $dbfile_frame->Button(
         -text    => "Select Database Location",
         -command => sub {
-            if (
-                my $dbfile = $box->getOpenFile(
-                    -title            => 'Select Database File',
-                    -defaultextension => '.db',
-                    -initialfile      => 'mrvoice.db',
-                    -filetypes        => [ [ 'SQLite Database Files', '*.db' ] ]
-                )
-              )
+            if ( my $dbdir = $box->chooseDirectory() )
             {
-                $dbfile = Win32::GetShortPathName($dbfile)
+                $dbdir = Win32::GetShortPathName($dbdir)
                   if ( $^O eq "MSWin32" );
+                my $dbfile = catfile ($dbdir, "mrvoice.db");
                 $config{'db_file'} = $dbfile;
             }
         }
