@@ -1,5 +1,6 @@
 #!/usr/bin/perl 
 use warnings;
+no warnings 'redefine';
 use diagnostics;
 #use strict; # Yeah right
 use Tk;
@@ -34,7 +35,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.192 2003/01/03 16:55:03 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.193 2003/03/17 02:55:13 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -111,8 +112,8 @@ else
                      )
               }ex;
   our $rcfile = "$homedir/.mrvoicerc";
-  require Ogg::Vorbis;
-  Ogg::Vorbis->import();
+#  require Ogg::Vorbis;
+#  Ogg::Vorbis->import();
 }
 
 #STARTCSZ
@@ -1263,7 +1264,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.192 $';
+  $rev = '$Revision: 1.193 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -1544,12 +1545,13 @@ sub update_time
     if ($newtime ne $time)
     {
       $query = "UPDATE mrvoice SET time='$newtime' WHERE id='$id'";
-      my $sth=$dbh->prepare($query);
-      $sth->execute;
-      $sth->finish;
+      my $sth2=$dbh->prepare($query);
+      $sth2->execute;
+      $sth2->finish;
       $count++;
     }
   }
+  $sth->finish;
   $mw->Unbusy(-recurse=>1);
   $box = $mw->DialogBox(-title=>"Updating Song Times", -buttons=>["Ok"]);
   $box->Icon(-image=>$icon);
@@ -2080,8 +2082,8 @@ if (! $sth->execute)
    modtime timestamp(6),
    PRIMARY KEY (id))";
 
-    my $sth=$dbh->prepare($query);
-    $sth->execute;
+    my $sth2=$dbh->prepare($query);
+    $sth2->execute;
     if ($DBI::err)
     {
       $string = "$DBI::errstr";
@@ -2091,7 +2093,7 @@ if (! $sth->execute)
     {
       $box->add("Label",-text=>"SUCCEEDED")->pack();
     }
-    $sth->finish;
+    $sth2->finish;
  
     $query = "SELECT * from mrvoice";
     
@@ -2116,11 +2118,11 @@ if (! $sth->execute)
     $progressbox->deiconify();
     $progressbox->raise();
 
-    $sth=$dbh->prepare($query);
-    $sth->execute;
-    $numrows = $sth->rows;
+    $sth3=$dbh->prepare($query);
+    $sth3->execute;
+    $numrows = $sth3->rows;
     $rowcount = 0;
-    while (@table_row = $sth->fetchrow_array)
+    while (@table_row = $sth3->fetchrow_array)
     {
       $tmpid = $dbh->quote($table_row[0]);
       $tmptitle = $dbh->quote($table_row[1]);
@@ -2151,13 +2153,14 @@ if (! $sth->execute)
       $query .= "$tmpfilename,";
       $length = get_songlength("$filepath$table_row[5]");
       $query .= "'$length',$tmpmodtime)";
-      $sth2=$dbh->prepare($query);
-      $sth2->execute;
-      $sth2->finish;
+      $sth4=$dbh->prepare($query);
+      $sth4->execute;
+      $sth4->finish;
       $rowcount++;
       $percent_done = int ( ($rowcount / $numrows) * 100);
       $progressbox->update();
     }
+    $sth3->finish;
     $donebutton->configure(-state=>'active');
     $progressbox->update();
     while (Exists($progressbox))
@@ -2165,7 +2168,6 @@ if (! $sth->execute)
       $progressbox->update();
     }
     $box->add("Label",-text=>"Building new table...SUCCEEDED")->pack();
-    $sth->finish;
     $dbh->do("RENAME TABLE mrvoice TO oldmrvoice");
     $dbh->do("RENAME TABLE mrvoice2 TO mrvoice");
     $box->add("Label",-text=>"Renaming tables...SUCCEEDED")->pack();
