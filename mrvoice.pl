@@ -41,7 +41,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.259 2003/08/01 20:17:06 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.260 2003/08/04 19:40:16 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1961,7 +1961,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.259 $';
+  $rev = '$Revision: 1.260 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2821,13 +2821,6 @@ sub rightclick_menu
                                         -command => \&delete_song]
                                         ],
                             -tearoff=>0);
-
-  my $w=shift;
-  my $ev=$w->XEvent;
-  my $index=$w->nearest($ev->y);
-
-  $w->selectionClear(0,'end');
-  $w->selectionSet($index);
 
   $rightmenu->Popup(-popover=>'cursor',
                     -popanchor=>'nw');
