@@ -18,6 +18,7 @@ use Tk::NoteBook;
 use Tk::ProgressBar::Mac;
 use Tk::DirTree;
 use Tk::ItemStyle;
+use Tk::ErrorDialog;
 use File::Basename;
 use File::Copy;
 use File::Spec::Functions;
@@ -33,6 +34,9 @@ use File::Glob qw(:globally :nocase);
 use File::Temp qw/ tempfile tempdir /;
 use Cwd 'abs_path';
 use Getopt::Long;
+use XMLRPC::Lite;
+use MIME::Base64 qw(encode_base64);
+use Digest::MD5 qw(md5_hex);
 
 use subs
   qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_items advancedmenu_items helpmenu_items/;
@@ -86,6 +90,7 @@ our $artist;                    # The "Artist" search entry field
 our $anyfield;                  # The "Any Field" search entry field
 our $cattext;                   # The "Extra Info" search entry field
 our $authenticated = 0;         # Has the user provided the proper password?
+our $xmlrpc_url = 'http://www.lunenburg.org/mrvoice-online/xmlrpc/mrvoice.cgi';
 ##########
 
 # Allow searches of all music publishers by default.
@@ -2291,10 +2296,15 @@ sub edit_preferences
         -label     => "Search Options",
         -underline => 0
     );
+    my $online_page = $notebook->add(
+        "online",
+        -label     => "Online Options",
+        -underline => 0
+    );
     my $other_page = $notebook->add(
         "other",
         -label     => "Other",
-        -underline => 0
+        -underline => 1
     );
 
     my $dbfile_frame = $database_page->Frame()->pack( -fill => 'x' );
@@ -2394,6 +2404,22 @@ sub edit_preferences
         -text     => 'Other',
         -variable => \$config{'search_other'}
     )->pack( -side => 'left', -expand => 1 );
+
+    my $online_enable_frame = $online_page->Frame()->pack( -fill => 'x' );
+    $online_page->Checkbutton(
+        -text     => 'Enable online functionality',
+        -variable => \$config{'enable_online'}
+    )->pack( -side => 'top' );
+
+    my $keyframe = $online_page->Frame()->pack( -fill => 'x' );
+    $keyframe->Label( -text =>
+          "Enter your Mr. Voice Online key in\norder to use the online features."
+    )->pack( -side => 'left' );
+    my $keyentry = $keyframe->Entry(
+        -background   => 'white',
+        -width        => 30,
+        -textvariable => \$config{'online_key'}
+    )->pack( -side => 'right' );
 
     my $mp3frame = $other_page->Frame()->pack( -fill => 'x' );
     $mp3frame->Label( -text => "MP3 Player" )->pack( -side => 'left' );
@@ -3881,6 +3907,91 @@ sub do_exit
     }
 }
 
+sub upload_xmlrpc
+{
+    my @selection = $mainbox->info('selection');
+    my $xmlrpc;
+    if ( scalar @selection == 0 )
+    {
+        $status = "No song selected to upload";
+        return;
+    }
+    my $index = $selection[0];
+    my $id    = $mainbox->info( 'data', $index );
+    my $info  = get_info_from_id($id);
+
+    unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
+    {
+        $status = "Could not initialize XMLRPC";
+        return;
+    }
+
+    my $path = catfile( $config{filepath}, $info->{filename} );
+    unless ( -r $path )
+    {
+        $status = "Could not read file $path";
+        return;
+    }
+
+    my $bindata;
+
+    {
+        open( my $in_fh, "<", $path ) or die;
+        binmode($in_fh);
+        local $/ = undef;
+        $bindata = <$in_fh>;
+    }
+
+    my $md5 = md5_hex($bindata);
+
+    my $check_call = $xmlrpc->call(
+        'check_upload',
+        {
+            online_key => $config{online_key},
+            title      => $info->{title},
+            artist     => $info->{artist},
+            info       => $info->{info},
+            filename   => $info->{filename},
+            md5sum     => $md5,
+        }
+    );
+
+    my $encoded_file = encode_base64($bindata);
+
+    if ( !$check_call->result )
+    {
+        chomp( my $error = $check_call->faultstring );
+        $status = "RPC check error: $error";
+        return;
+    }
+
+    $mw->Busy( -recurse => 1 );
+    my $call = $xmlrpc->call(
+        'upload_song',
+        {
+            online_key   => $config{online_key},
+            title        => $info->{title},
+            artist       => $info->{artist},
+            info         => $info->{info},
+            filename     => $info->{filename},
+            md5sum       => $md5,
+            encoded_file => $encoded_file
+        }
+    );
+    $mw->Unbusy( -recurse => 1 );
+
+    if ( my $online_id = $call->result )
+    {
+        $status = "Uploaded with ID $online_id";
+    }
+    else
+    {
+        chomp( my $error = $call->faultstring );
+        $status = "Upload error: $error";
+    }
+
+}
+
 sub rightclick_menu
 {
 
@@ -3908,6 +4019,13 @@ sub rightclick_menu
         ],
         -tearoff => 0
     );
+
+    $rightmenu->add(
+        'command',
+        -label   => 'Upload to Mr. Voice Online',
+        -command => \&upload_xmlrpc
+      )
+      if $config{enable_online};
 
     print "Created menu, setting Popup\n" if $debug;
     $rightmenu->Popup(
