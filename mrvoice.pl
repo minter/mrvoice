@@ -4,6 +4,7 @@ no warnings 'redefine';
 
 #use diagnostics;
 #use strict; # Yeah right
+use Encode::Unicode;
 use Tk;
 use Tk::DialogBox;
 use Tk::Dialog;
@@ -26,17 +27,6 @@ use File::Glob qw(:globally :nocase);
 use File::Temp qw/ tempfile tempdir /;
 use Cwd 'abs_path';
 
-# These modules need to be hardcoded into the script for perl2exe to
-# find them.
-use Tk::Photo;
-use Tk::Bitmap;
-use Tk::Scrollbar;
-use Tk::Menu;
-use Tk::Menubutton;
-use Tk::Checkbutton;
-use DBD::mysql;
-use Carp::Heavy;
-
 use subs
   qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_items advancedmenu_items helpmenu_items/;
 
@@ -46,7 +36,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.308 2004/02/24 21:41:01 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.309 2004/02/25 21:15:31 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2501,7 +2491,7 @@ sub delete_song
 
 sub show_about
 {
-    $rev = '$Revision: 1.308 $';
+    $rev = '$Revision: 1.309 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
