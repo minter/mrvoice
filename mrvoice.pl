@@ -30,7 +30,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.136 2002/07/09 02:47:51 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.137 2002/07/09 11:52:34 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -86,13 +86,14 @@ if ("$^O" eq "MSWin32")
   $rcfile = "C:\\mrvoice.cfg";
   BEGIN 
   {
-    require Win32::Process; 
-    Win32::Process->import();
-    require Win32::GUI; 
-    Win32::GUI->import();
+    if ($^O eq "MSWin32")
+    {
+      require Win32::Process; 
+      Win32::Process->import();
+      require Win32::GUI; 
+      Win32::GUI->import();
+    }
   }
-  use Win32::Process;
-  use Win32::GUI;
   use constant WM_USER => 1024;
 
   # You have to manually set the time zone for Windows.
@@ -1040,7 +1041,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.136 $';
+  $rev = '$Revision: 1.137 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
