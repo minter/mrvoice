@@ -15,8 +15,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/03/05 00:11:47 $
-#	CVS REVISION NUMBER:    $Revision: 1.17 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/05 00:46:47 $
+#	CVS REVISION NUMBER:    $Revision: 1.18 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -34,7 +34,7 @@ my $db_pass = "rangers";                       # The password used to connect
 $category = "Any";			# The default category to search
                                         # Initial status message
 
-$mp3player = "/usr/X11R6/bin/xmms";		# Full path to MP3 player
+$mp3player = "/usr/bin/xmms";		# Full path to MP3 player
 $filepath = "/mp3/";				# Path that will be prepended onto
 					# the filename retrieved from the
 					# database, to find the actual
@@ -193,6 +193,7 @@ sub add_category
   {
     if (($addcat_code) && ($addcat_desc))
     {
+      $addcat_code =~ tr/a-z/A-Z/;
       $query = "INSERT INTO categories VALUES ('$addcat_code','$addcat_desc')";
       my $sth=$dbh->prepare($query);
       if (! $sth->execute)
@@ -214,15 +215,60 @@ sub add_category
   {
     $status = "Cancelled adding category.";
   }
+  $addcat_code="";
+  $addcat_desc="";
 }
 
 sub delete_category
 {
+  $box = $mw->DialogBox(-title=>"Delete a category",-buttons=>["Ok","Cancel"]);
+  $box->add("Label",-text=>"Choose a category to delete.")->pack();
+
+  $query="SELECT * from categories ORDER BY description";
+  my $sth=$dbh->prepare($query);
+  $sth->execute or die "can't execute the query: $DBI::errstr\n";
+  while (@table_row = $sth->fetchrow_array)
+  {
+    $code=$table_row[0];
+    $name=$table_row[1];
+    $box->add("Radiobutton",-text=>$name,
+                            -value=>$code,
+                            -variable=>\$del_cat)->pack(-expand=>"x",
+                                                        -anchor=>"w");
+  }
+  $sth->finish;
+  $choice = $box->Show();
+  
+  if ($choice ne "Cancel")
+  {
+    $query = "SELECT * FROM mrvoice WHERE category='$del_cat'";
+    my $sth=$dbh->prepare($query);
+    $sth->execute;
+    $rows = $sth->rows;
+    if ($rows > 0)
+    {
+      infobox("Error","Could not delete category $del_cat because\nthere are still entries in the database\nusing it.  Delete all entries using\nthis category before deleting the category");
+      $status = "Category not deleted";
+    }
+    else
+    {
+      $query = "DELETE FROM categories WHERE code='$del_cat'";
+      my $sth=$dbh->prepare($query);
+      infobox ("Success","Category $del_cat has been deleted.\n\nYou will need to restart Mr. Voice after\nyou finish deleting categories.") if ($sth->execute);
+      $status = "Deleted category";
+    }
+  }
+  else
+  {
+    $status = "Category deletion cancelled";
+  }
+
+  $del_cat="";
 }
 
 sub show_about
 {
-  infobox("About Mr. Voice","Mr. Voice Version $version\n\nBy H. Wade Minter <minter\@lunenburg.org");
+  infobox("About Mr. Voice","Mr. Voice Version $version\n\nBy H. Wade Minter <minter\@lunenburg.org>");
 }
 
 #sub show_predefined_hotkeys
