@@ -4179,7 +4179,7 @@ print "Starting Mr. Voice version $version at " . scalar(localtime) . "\n"
 $|  = 1;
 $mw = MainWindow->new;
 $mw->withdraw();
-my $menubar = $mw->Menu;
+our $menubar = $mw->Menu;
 $mw->configure( -menu => $menubar );
 $mw->geometry("+0+0");
 $mw->title("Mr. Voice");
@@ -5150,6 +5150,12 @@ print "Deiconifying and raising MainWindow\n" if $debug;
 $mw->deiconify();
 $mw->raise();
 print "Deiconified and raised, running MainLoop now\n" if $debug;
+
+foreach my $file ( glob( catfile( $config{plugin_dir}, "*.pl" ) ) )
+{
+    require $file;
+}
+
 MainLoop;
 
 __DATA__
