@@ -11,7 +11,6 @@ use Tk::Dialog;
 use Tk::DragDrop;
 use Tk::DropSite;
 use Tk::NoteBook;
-use Tk::BrowseEntry;
 use Tk::ProgressBar::Mac;
 use Tk::DirTree;
 use File::Basename;
@@ -36,7 +35,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.309 2004/02/25 21:15:31 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.310 2004/02/28 03:37:02 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2491,7 +2490,7 @@ sub delete_song
 
 sub show_about
 {
-    $rev = '$Revision: 1.309 $';
+    $rev = '$Revision: 1.310 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3301,26 +3300,10 @@ sub do_search
         $startdate = $_[1];
         $enddate   = $_[2];
     }
-    if ($anyfield)
-    {
-        $anyfield_box->insert( 0, $anyfield );
-        $anyfield =~ s/^\s*(.*?)\s*$/$1/;
-    }
-    if ($title)
-    {
-        $title_box->insert( 0, $title );
-        $title =~ s/^\s*(.*?)\s*$/$1/;
-    }
-    if ($artist)
-    {
-        $artist_box->insert( 0, $artist );
-        $artist =~ s/^\s*(.*?)\s*$/$1/;
-    }
-    if ($cattext)
-    {
-        $cattext_box->insert( 0, $cattext );
-        $cattext =~ s/^\s*(.*?)\s*$/$1/;
-    }
+    $anyfield =~ s/^\s*(.*?)\s*$/$1/ if ($anyfield);
+    $title    =~ s/^\s*(.*?)\s*$/$1/ if ($title);
+    $artist   =~ s/^\s*(.*?)\s*$/$1/ if ($artist);
+    $cattext  =~ s/^\s*(.*?)\s*$/$1/ if ($cattext);
     $status = "Starting search...";
     $mw->Busy( -recurse => 1 );
     $mainbox->delete( 0, 'end' );
@@ -3350,6 +3333,7 @@ sub do_search
         $query = $query . "AND artist LIKE '%$artist%' " if ($artist);
     }
     $query = $query . "ORDER BY category,info,title";
+    print "DEBUG: The query is $query\n";
     my $starttime = timelocal( localtime() );
     my $sth       = $dbh->prepare($query);
     $sth->execute or die "can't execute the query: $DBI::errstr\n";
@@ -4349,8 +4333,7 @@ $searchframe1->Label(
     -width  => 25,
     -anchor => 'w'
 )->pack( -side => 'left' );
-$cattext_box =
-  $searchframe1->BrowseEntry( -variable => \$cattext )->pack( -side => 'left' );
+$searchframe1->Entry( -textvariable => \$cattext )->pack( -side => 'left' );
 
 #####
 # Artist
@@ -4364,8 +4347,7 @@ $searchframe2->Label(
     -width  => 25,
     -anchor => "w"
 )->pack( -side => 'left' );
-$artist_box =
-  $searchframe2->BrowseEntry( -variable => \$artist )->pack( -side => 'left' );
+$searchframe2->Entry( -textvariable => \$artist )->pack( -side => 'left' );
 
 #
 #####
@@ -4381,8 +4363,7 @@ $searchframe3->Label(
     -width  => 25,
     -anchor => 'w'
 )->pack( -side => 'left' );
-$title_box =
-  $searchframe3->BrowseEntry( -variable => \$title )->pack( -side => 'left' );
+$searchframe3->Entry( -textvariable => \$title )->pack( -side => 'left' );
 
 #
 #####
@@ -4398,9 +4379,7 @@ $searchframe4->Label(
     -width  => 25,
     -anchor => 'w'
 )->pack( -side => 'left' );
-$anyfield_box =
-  $searchframe4->BrowseEntry( -variable => \$anyfield )
-  ->pack( -side => 'left' );
+$searchframe4->Entry( -textvariable => \$anyfield )->pack( -side => 'left' );
 #####
 
 #####
