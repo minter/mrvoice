@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/26 02:54:14 $
-#	CVS REVISION NUMBER:    $Revision: 1.68 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/26 20:47:20 $
+#	CVS REVISION NUMBER:    $Revision: 1.69 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -97,6 +97,25 @@ else
 
 my $version = "1.2.1";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
+
+# This function is redefined due to evilness that keeps the focus on 
+# the dragged token.  Thanks to Slaven Rezic <slaven.rezic@berlin.de>
+sub Tk::DragDrop::Mapped
+{
+ my ($token) = @_;
+ my $e = $token->parent->XEvent;
+ $token = $token->toplevel;
+ $token->grabGlobal;
+ #$token->focus;
+ if (defined $e)
+  {
+   my $X = $e->X;
+   my $Y = $e->Y;
+   $token->MoveToplevelWindow($X+3,$Y+3);
+   $token->NewDrag;
+   $token->FindSite($X,$Y,$e);
+  }
+}
 
 sub bind_hotkeys
 {
