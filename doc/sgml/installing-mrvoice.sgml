@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.7 2001/09/28 00:23:55 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.8 2001/10/08 14:17:47 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
@@ -36,9 +36,6 @@
       </listitem>
       <listitem>
         <para>A relational database that is supported by a perl DBI module.  <ulink url="http://www.mysql.com/">MySQL</ulink> has been tested and is recommended.</para>
-      </listitem>
-      <listitem>
-        <para>TCL/Tk version 8 (Unix should provide it, Windows version available through <ulink url="http://aspn.activestate.com/ASPN/Downloads/ActiveTcl/">ActiveState</ulink>).</para>
       </listitem>
       <listitem>
         <para>An MP3 player.  <ulink url="http://www.xmms.org/">xmms</ulink> and <ulink url="http://www.winamp.com/">WinAmp</ulink> are recommended.</para>
