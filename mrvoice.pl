@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.369 2004/04/22 17:26:56 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.370 2004/04/22 18:18:05 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -58,6 +58,8 @@ our $agent;          # LWP agent for Win32
 our $holdingtank;    # Holding Tank window
 our $tankbox;        # Holding tank listbox
 our %fkeys;          # Function keys
+our %oldfkeys;       # Used when restoring hotkeys
+our @current;        # Array holding the dynamic documents
 ##########
 
 our $current_token;
@@ -111,8 +113,8 @@ if ( $^O eq "MSWin32" )
 # Check to see if we're on Windows or Linux, and set the RC file accordingly.
 if ( "$^O" eq "MSWin32" )
 {
-    $rcfile  = "C:\\mrvoice.cfg";
-    $logfile = "C:\\mrvoice.log";
+    $rcfile = "C:\\mrvoice.cfg";
+    my $logfile = "C:\\mrvoice.log";
     open( STDOUT, ">$logfile" );
     open( STDERR, ">&STDOUT" );
 
@@ -156,8 +158,8 @@ else
                         || (getpwuid($>))[7]
                      )
               }ex;
-    $rcfile  = "$homedir/.mrvoicerc";
-    $logfile = "$homedir/mrvoice.log";
+    $rcfile = "$homedir/.mrvoicerc";
+    my $logfile = "$homedir/mrvoice.log";
     open( STDOUT, ">$logfile" );
     open( STDERR, ">&STDOUT" );
 }
@@ -506,7 +508,7 @@ sub BindMouseWheel
 
 sub update_110
 {
-    $query =
+    my $query =
       "ALTER TABLE mrvoice ADD COLUMN publisher VARCHAR(16) NOT NULL DEFAULT 'OTHER'";
     my $sth = $dbh->prepare($query);
     $sth->execute;
@@ -517,7 +519,7 @@ sub update_110
             -buttons => ["Exit"]
         );
         $errorbox->Icon( -image => $icon );
-        $string = "$DBI::errstr";
+        my $string = "$DBI::errstr";
         $errorbox->add( "Label", -text => "FAILED: $string" )->pack();
         $errorbox->add( "Label",
             -text =>
@@ -2267,7 +2269,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.369 $';
+    my $rev    = '$Revision: 1.370 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::mysql->VERSION;
@@ -2525,6 +2527,9 @@ sub list_hotkeys
 {
     if ( !Exists($hotkeysbox) )
     {
+        my %fkeys_frame;
+        my %fkeys_chkb;
+        my %fkeys_label;
         $hotkeysbox = $mw->Toplevel();
         $hotkeysbox->withdraw();
         $hotkeysbox->Icon( -image => $icon );
@@ -2532,6 +2537,7 @@ sub list_hotkeys
         $hotkeysbox->bind( "<Control-Key-p>", [ \&play_mp3, "Current" ] );
         $hotkeysbox->title("Hotkeys");
         $hotkeysbox->Label( -text => "Currently defined hotkeys:" )->pack;
+
         foreach my $num ( 1 .. 12 )
         {
             my $fkey = "f$num";
@@ -3355,7 +3361,7 @@ if ( !$dbh->do($query_17) )
         $sth3->execute;
         $numrows  = $sth3->rows;
         $rowcount = 0;
-        while ( @table_row = $sth3->fetchrow_array )
+        while ( my @table_row = $sth3->fetchrow_array )
         {
             $tmpid       = $dbh->quote( $table_row[0] );
             $tmptitle    = $dbh->quote( $table_row[1] );
@@ -3978,7 +3984,7 @@ sub helpmenu_items
 
 #####
 # The search frame
-$category_frame = $mw->Frame()->pack(
+my $category_frame = $mw->Frame()->pack(
     -side   => 'top',
     -anchor => 'n',
     -fill   => 'x'
@@ -4011,7 +4017,7 @@ $category_frame->Label( -textvariable => \$longcat )->pack(
 
 #####
 # Extra Info
-$extrainfo_frame = $mw->Frame()->pack(
+my $extrainfo_frame = $mw->Frame()->pack(
     -side   => 'top',
     -fill   => 'x',
     -anchor => 'n'
@@ -4025,7 +4031,7 @@ $extrainfo_frame->Entry( -textvariable => \$cattext )->pack( -side => 'left' );
 
 #####
 # Artist
-$artist_frame = $mw->Frame()->pack(
+my $artist_frame = $mw->Frame()->pack(
     -side   => 'top',
     -fill   => 'x',
     -anchor => 'n'
@@ -4042,7 +4048,7 @@ $artist_frame->Entry( -textvariable => \$artist )->pack( -side => 'left' );
 
 #####
 # Title
-$title_frame = $mw->Frame()->pack(
+my $title_frame = $mw->Frame()->pack(
     -side => 'top',
     -fill => 'x'
 );
@@ -4058,7 +4064,7 @@ $title_frame->Entry( -textvariable => \$title )->pack( -side => 'left' );
 
 #####
 # Any Field
-$anyfield_frame = $mw->Frame()->pack(
+my $anyfield_frame = $mw->Frame()->pack(
     -side => 'top',
     -fill => 'x'
 );
@@ -4072,7 +4078,7 @@ $anyfield_frame->Entry( -textvariable => \$anyfield )->pack( -side => 'left' );
 
 #####
 # Search Button
-$searchbuttonframe = $mw->Frame()->pack(
+my $searchbuttonframe = $mw->Frame()->pack(
     -side => 'top',
     -fill => 'x'
 );
@@ -4122,7 +4128,7 @@ $dnd_token->withdraw;
 #####
 # Status Frame
 
-$statusframe = $mw->Frame()->pack(
+my $statusframe = $mw->Frame()->pack(
     -side   => 'bottom',
     -anchor => 's',
     -fill   => 'x'
