@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.8 2001/10/08 14:17:47 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.9 2001/10/11 16:14:34 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
@@ -41,6 +41,7 @@
         <para>An MP3 player.  <ulink url="http://www.xmms.org/">xmms</ulink> and <ulink url="http://www.winamp.com/">WinAmp</ulink> are recommended.</para>
       </listitem>  
     </itemizedlist>
+    <important><para>Further verification is needed, but it appears that Windows users need to have networking set up for MySQL to work.  So if you don't have a modem or a network card in your computer, you may need to add one (you can find cheap network cards for $10-$15).</para></important>
   </sect1>
 
   <sect1><title>Installation Steps</title>
