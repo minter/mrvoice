@@ -14,7 +14,7 @@ use MPEG::MP3Info;
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.87 2001/11/15 12:54:26 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.88 2001/11/15 17:42:40 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1091,6 +1091,7 @@ sub build_categories_menu
 
   # Remove old entries
   $catmenu->delete(0,'end');
+  $catmenu->configure(-tearoff=>0);
 
   # Query the database for new ones.
   $catmenu->radiobutton(-label=>"Any category",
