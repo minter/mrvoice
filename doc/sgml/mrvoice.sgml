@@ -4,7 +4,7 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.24 2002/03/14 16:58:21 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.25 2002/05/03 16:59:44 minter Exp $ 
 -->
 <book status="draft">
 
@@ -50,8 +50,17 @@
 <preface>
   <title>What's New</title>
   <para>A quick reference to what's changed between versions.</para>
-  <sect1>
-    <title>What's New In Version 1.4</title>
+  <sect1><title>What's New In Version 1.5</title>
+    <para>
+      <itemizedlist>
+        <listitem><para>There is a requirement for a new perl module - Audio::Wav.  This module lets the program handle WAV files better.</para></listitem>
+        <listitem><para>The Windows version of the software now contains the <filename>mrvoice.exe</filename> file.  This is an experimental binary build of the software using perl2exe.  If it works like it's supposed to, that one file replaces the need to have ActivePerl and all of the perl modules, which should make installation easier.</para></listitem>
+        <listitem><para>If a hotkey file named <filename>default.mrv</filename> exists in your hotkey save directory, Mr. Voice will automatically load those hotkeys when the program starts.</para></listitem>
+        <listitem><para>Fixed a bug where the count of items returned might not agree with the number of items in the search box.</para></listitem>
+      </itemizedlist>
+    </para>
+  </sect1>
+  <sect1><title>What's New In Version 1.4</title>
     <para>
       <itemizedlist>
         <listitem><para>There are now keyboard shortcuts to open (Control-O) or save (Control-S) hotkey files, exit Mr. Voice (Control-X), and open the Hotkeys listing (Control-H).</para></listitem>

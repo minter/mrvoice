@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.15 2002/04/23 21:15:54 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.16 2002/05/03 16:59:44 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
@@ -15,6 +15,7 @@
       </listitem>
       <listitem>
         <para><ulink url="http://www.perl.com/">Perl</ulink> version 5 (Unix version should be provided with most modern Unix systems, or get the Windows version from <ulink url="http://aspn.activestate.com/ASPN/Downloads/ActivePerl/">ActiveState</ulink>), plus the following perl modules (available from <ulink url="http://www.cpan.org/">CPAN</ulink> or for Windows via ActivePerl's PPM):
+	  <note><para>If you're running on Windows, you can use the <filename>mrvoice.exe</filename> instead of downloading ActivePerl and the following modules.  The .exe file has everything built in.  See "Installing on Windows - The Easy Way" below.</para></note>
           <itemizedlist>
             <listitem>
               <para><ulink url="http://www.cpan.org/modules/by-module/DBI/">DBI</ulink></para>
@@ -28,9 +29,12 @@
             <listitem>
               <para><ulink url="http://www.cpan.org/modules/by-module/MPEG/">MPEG::MP3-Info</ulink></para>
             </listitem>
+            <listitem>
+              <para><ulink url="http://www.cpan.org/modules/by-module/Audio/">Audio::Wav</ulink></para>
+            </listitem>
           </itemizedlist>
         </para>
-	<para>If you are planning to install Mr. Voice onto a Windows computer without internet access, you will need to grab the PPM bundle I've built from <ulink url="http://www.lunenburg.org/mrvoice/ppm.zip">http://www.lunenburg.org/mrvoice/ppm.zip</ulink>.  Details on how to use it will be covered later.</para>
+	<para>If you are planning to install Mr. Voice onto a Windows computer (The Hard Way) without internet access, you will need to grab the PPM bundle I've built from <ulink url="http://www.lunenburg.org/mrvoice/ppm.zip">http://www.lunenburg.org/mrvoice/ppm.zip</ulink>.  Details on how to use it will be covered later.</para>
       </listitem>
       <listitem>
         <para>A relational database that is supported by a perl DBI module.  <ulink url="http://www.mysql.com/">MySQL</ulink> has been tested and is recommended.</para>
@@ -85,7 +89,7 @@ mysql>
     </sect2>
 
     <sect2><title>Windows Installation Instructions</title>
-      <para>First, download WinAmp, ActivePerl, and MySQL from their respective websites.  Install WinAmp and ActivePerl the normal way, by double-clicking the installer icons and using the defaults provided.</para>
+      <para>First, download WinAmp and MySQL from their respective websites.  Install WinAmp the normal way, by double-clicking the installer icons and using the defaults provided.</para>
       <sect3><title>Installing and Setting Up MySQL</title>
         <itemizedlist>
           <listitem>
@@ -109,26 +113,34 @@ mysql>
           </listitem>
         </itemizedlist>
       </sect3>
-      <sect3><title>Installing the Perl Modules</title>
-      <para>The next step is to install the needed Perl modules.  Thanks to the great PPM system that ActiveState provides for their ActivePerl distribution, this is a snap. To start PPM, open a Command Prompt/DOS Window.  Type <userinput>ppm</userinput> and hit enter.  You should see "PPM Interactive Shell" and a <prompt>PPM></prompt> prompt. From that prompt, we'll install the modules. <note><para>If you are not connected to the internet, skip to the section entitled "Manually Installing the Perl Modules"</para></note></para>
-        <itemizedlist>
-          <listitem>
-            <para>Enter <userinput>search DBI</userinput>.  You should see a list of packages returned.  At the <prompt>PPM></prompt> prompt, enter <userinput>install DBI</userinput> to install the DBI module.</para>
-          </listitem>
-          <listitem>
-            <para>Enter <userinput>search mysql</userinput>.  At the <prompt>PPM></prompt> prompt, enter <userinput>install mysql</userinput> to install the MySQL module.</para>
-          </listitem>
-          <listitem>
-            <para>Enter <userinput>search Tk</userinput>.  At the <prompt>PPM></prompt> prompt, enter <userinput>install Tk</userinput> to install the Tk module.</para>
-          </listitem>
-          <listitem>
-            <para>Enter <userinput>search MP3</userinput>.  At the <prompt>PPM></prompt> prompt, enter <userinput>install MP3-Info</userinput> to install the MPEG::MP3-Info module.</para>
-          </listitem>
-          <listitem>
-            <para>You're now done with the Perl install!  Enter <userinput>quit</userinput> at the <prompt>PPM></prompt> prompt to exit back to the DOS shell.  Close the DOS shell.</para>
-          </listitem>
-        </itemizedlist>
-	  <sect4><title>Manually Installing the Perl Modules</title>
+      <sect3><title>Installing on Windows - The Easy Way</title>
+        <para>New in Version 1.5 is an all-in-one version of Mr. Voice that does <emphasis>not</emphasis> require you to install ActivePerl or any of the perl modules that are discussed in this section.  It's still in a testing phase, but I recommend trying to use this method before going through the trouble of installing ActivePerl and the perl modules.</para>
+	<para>To use this method, double-click on the <filename>mrvoice.exe</filename> instead of the <filename>mrvoice.pl</filename> file after you unzip the Mr. Voice .zip file that you download.  Skip down to the "Installing the Mr. Voice software" section to finish up.</para>
+      </sect3>
+      <sect3><title>Installing on Windows - The Hard Way</title>
+        <sect4><title>Installing ActivePerl</title>
+	 <para>Download ActivePerl and install it by double-clicking the installer file that you downloaded.  Accept the defaults on where to install it and what to install.</para>
+	</sect4>
+        <sect4><title>Installing the Perl Modules</title>
+          <para>The next step is to install the needed Perl modules.  Thanks to the great PPM system that ActiveState provides for their ActivePerl distribution, this is a snap. To start PPM, open a Command Prompt/DOS Window.  Type <userinput>ppm</userinput> and hit enter.  You should see "PPM Interactive Shell" and a <prompt>PPM></prompt> prompt. From that prompt, we'll install the modules. <note><para>If you are not connected to the internet, skip to the section entitled "Manually Installing the Perl Modules"</para></note></para>
+          <itemizedlist>
+            <listitem>
+              <para>Enter <userinput>search DBI</userinput>.  You should see a list of packages returned.  At the <prompt>PPM></prompt> prompt, enter <userinput>install DBI</userinput> to install the DBI module.</para>
+            </listitem>
+            <listitem>
+              <para>Enter <userinput>search mysql</userinput>.  At the <prompt>PPM></prompt> prompt, enter <userinput>install mysql</userinput> to install the MySQL module.</para>
+            </listitem>
+            <listitem>
+              <para>Enter <userinput>search Tk</userinput>.  At the <prompt>PPM></prompt> prompt, enter <userinput>install Tk</userinput> to install the Tk module.</para>
+            </listitem>
+            <listitem>
+              <para>Enter <userinput>search MP3</userinput>.  At the <prompt>PPM></prompt> prompt, enter <userinput>install MP3-Info</userinput> to install the MPEG::MP3-Info module.</para>
+            </listitem>
+            <listitem>
+              <para>You're now done with the Perl install!  Enter <userinput>quit</userinput> at the <prompt>PPM></prompt> prompt to exit back to the DOS shell.  Close the DOS shell.</para>
+            </listitem>
+          </itemizedlist>
+      	  <sect5><title>Manually Installing the Perl Modules (on systems without an internet connection)</title>
 	    <para>If the Windows computer that you are installing on does not have internet access, you will not be able to download the proper Perl modules on-the-fly.  If this is the case, you will need to get the modules manually. I have created a zip file that will hopefully make this easy.</para>
 	    <para>
 	      <itemizedlist>
@@ -158,9 +170,9 @@ mysql>
 		</listitem>
               </itemizedlist>
 	    </para>
-	  </sect4>
-      </sect3>
-      <sect3><title>Installing the Mr. Voice Software</title>
+	  </sect5>
+	</sect4>
+        <sect4><title>Installing the Mr. Voice Software</title>
         <para>Now we will install the Mr. Voice software itself, and set up its environment.</para>
         <itemizedlist>
           <listitem>
@@ -173,7 +185,12 @@ mysql>
              <para>You will need a directory to store your MP3 files, and a directory to store your hotkey save files.  I suggest <filename>C:\MP3\</filename> for the MP3 directory and <filename>C:\mrvoice-hotkeys\</filename> for the save files, but you can pick anything.  Go ahead and create the directories now.
              </para>
            </listitem>
+	   <listitem>
+	     <para>Finally, to actually run the software, double-click on the file <filename>mrvoice.pl</filename> (if you are running on Unix, or if you are on Windows and have installed ActivePerl and the Perl modules), or <filename>mrvoice.exe</filename> (if you haven't, and you're running on Windows "The Easy Way").  The program should start up!
+	     </para>
+	   </listitem>
          </itemizedlist>
+        </sect4>
       </sect3>
     </sect2>
   </sect1>
