@@ -45,7 +45,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.287 2003/12/31 16:17:41 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.288 2003/12/31 16:23:39 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -948,7 +948,7 @@ sub open_file
         my ($key,$id) = split(/::/);
         if ( (not ($id =~ /^\d+$/)) && (not ($id =~ /^\w*$/)) )
         {
-          infobox ($mw, "Invalid Hotkey File","This hotkey file, $selectedfile, is from an old version of Mr. Voice.\nAfter upgrading to Version 1.8, you need to run the converthotkeys utility in the\ntools subdirectory to convert to the new format.  This only has to be done once."); 
+          infobox ($mw, "Invalid Hotkey File","This hotkey file, $selectedfile, is from an old version of Mr. Voice. After upgrading to Version 1.8, you need to run the converthotkeys utility in the tools subdirectory to convert to the new format.  This only has to be done once."); 
           return(1);
         }
         elsif ( ($id) && (validate_id($id)) )
@@ -1078,14 +1078,14 @@ sub import_database
   {
     if (! -r $dumpfile)
     {
-      infobox($mw, "File Error", "Could not open file $dumpfile for reading.\nCheck permissions and try again.");
+      infobox($mw, "File Error", "Could not open file $dumpfile for reading. Check permissions and try again.");
     }
     else
     {
       # We can read the file - pop up a warning before continuing.
       my $box = $mw->Dialog(-title=>"Warning", 
                             -bitmap=>'warning',
-                            -text=>"Warning!\nImporting this database dumpfile will completely\noverwrite your current Mr. Voice database.\n\nIf you are certain that you want to do this,\npress Ok.  Otherwise, press Cancel.",
+                            -text=>"Warning!\nImporting this database dumpfile will completely overwrite your current Mr. Voice database.\n\nIf you are certain that you want to do this, press Ok.  Otherwise, press Cancel.",
                             -buttons=>["Ok","Cancel"],
                             -default_button=>"Cancel");  
       $box->Icon(-image=>$icon);
@@ -1099,13 +1099,13 @@ sub import_database
           $filename = basename($dumpfile);
           $shortdumpfile = catfile ($dirname, $filename);
           my $rc = system ("C:\\mysql\\bin\\mysql.exe --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} < $shortdumpfile");
-          infobox($mw, "Database Imported", "The database backup file $dumpfile\nhas been imported.");
+          infobox($mw, "Database Imported", "The database backup file $dumpfile has been imported.");
           $status = "Database imported from $dumpfile";
         }
         else
         {
           my $rc = system ("mysql --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} < $dumpfile");
-          infobox($mw, "Database Imported", "The database backup file $dumpfile\nhas been imported.");
+          infobox($mw, "Database Imported", "The database backup file $dumpfile has been imported.");
           $status = "Database imported from $dumpfile";
         }
       }
@@ -1251,7 +1251,7 @@ sub bulk_add
                             -buttons=>["Continue","Cancel"]);
   $box1->Icon(-image=>$icon);
   my $box1frame1 = $box1->add("Frame")->pack(-fill=>'x');
-  $box1frame1->Label(-text=>"This will allow you to add all songs in a directory to a particular\ncategory, using the information stored in MP3 or OGG files to fill in\nthe title and artist.  You will have to go back after the fact to add Extra Info or do any\nediting.  If a file does not have at least a title embedded in it, it will not be added.\n\nChoose your directory and category below.\n\n")->pack(-side=>'top');
+  $box1frame1->Label(-text=>"This will allow you to add all songs in a directory to a particular category, using the information stored in MP3 or OGG files to fill in the title and artist.  You will have to go back after the fact to add Extra Info or do any editing.  If a file does not have at least a title embedded in it, it will not be added.\n\nChoose your directory and category below.\n\n")->pack(-side=>'top');
   my $box1frame2 = $box1->add("Frame")->pack(-fill=>'x');
   $box1frame2->Label(-text=>"Add To Category: ")->pack(-side=>'left');
   my $menu = $box1frame2->Menubutton(-text=>"Choose Category",
@@ -1428,7 +1428,7 @@ sub add_category
         if (! $sth->execute)
         {
           my $error_message = $sth->errstr();
-          infobox($mw, "Database Error","Database returned error: $error_message\non query $query");
+          infobox($mw, "Database Error","Database returned error: $error_message on query $query");
         }
         else
         {
@@ -1456,7 +1456,7 @@ sub edit_category
   my $edit_cat;
   my $box = $mw->DialogBox(-title=>"Choose a category to edit", -buttons=>["Ok","Cancel"]);
   $box->Icon(-image=>$icon);
-  $box->add("Label",-text=>"You may currently edit the long name,\nbut not the code, of a category.\n\nChoose the category to edit below.")->pack(); 
+  $box->add("Label",-text=>"You may currently edit the long name, but not the code, of a category.\n\nChoose the category to edit below.")->pack(); 
   my $query="SELECT * from categories ORDER BY description";
   my $sth=$dbh->prepare($query);
   $sth->execute or die "can't execute the query: $DBI::errstr\n";
@@ -1496,8 +1496,7 @@ sub edit_category
       if (! $sth->execute)
       {
         my $error_message = $sth->errstr();
-        infobox($mw, "Database Error","Database returned error: $error_message\n
-on query $query");
+        infobox($mw, "Database Error","Database returned error: $error_message on query $query");
       }
       else
       {
@@ -1547,7 +1546,7 @@ sub delete_category
     $sth->finish;
     if ($rows > 0)
     {
-      infobox($mw, "Error","Could not delete category $del_cat because\nthere are still entries in the database\nusing it.  Delete all entries using\nthis category before deleting the category");
+      infobox($mw, "Error","Could not delete category $del_cat because there are still entries in the database using it.  Delete all entries using this category before deleting the category");
       $status = "Category not deleted";
     }
     else
@@ -1615,7 +1614,7 @@ sub add_new_song
     $box = $mw->DialogBox(-title=>"Add New Song", -buttons=>["OK","Cancel"]);
     $box->bind("<Key-Escape>", [\&stop_mp3]);
     $box->Icon(-image=>$icon);
-    $box->add("Label",-text=>"Enter the following information for the new song,\nand choose the file to add.")->pack();
+    $box->add("Label",-text=>"Enter the following information for the new song, and choose the file to add.")->pack();
     $box->add("Label",-text=>"Items in red are required.\n")->pack();
     $frame1 = $box->add("Frame")->pack(-fill=>'x');
     $frame1->Label(-text=>"Song Title",
@@ -1679,7 +1678,7 @@ sub add_new_song
       }
       elsif (! -r $addsong_filename)
       {
-        infobox ($mw, "File Error","Could not open input file $addsong_filename\nfor reading.  Check file permissions"); 
+        infobox ($mw, "File Error","Could not open input file $addsong_filename for reading.  Check file permissions"); 
       }
       elsif (! $addsong_title)
       {
@@ -1730,7 +1729,7 @@ sub add_new_song
   if ($dbh->do($query))
   {
     $addsong_filename = Win32::GetLongPathName($addsong_filename) if ($^O eq "MSWin32");
-    infobox ($mw, "File Added Successfully","Successfully added new song into database.\n\nYou may now delete/move/etc. the file:\n$addsong_filename\nas it is no longer needed by Mr. Voice");
+    infobox ($mw, "File Added Successfully","Successfully added new song into database.\n\nYou may now delete/move/etc. the file: $addsong_filename as it is no longer needed by Mr. Voice");
     $status = "File added";
   }
   else
@@ -1863,7 +1862,7 @@ sub edit_preferences
     }
     if (! open(RCFILE,">$rcfile"))
     {
-      infobox($mw, "Warning","Could not open $rcfile for writing.\nYour preferences will not be saved\n");
+      infobox($mw, "Warning","Could not open $rcfile for writing. Your preferences will not be saved\n");
     }
     else
     {
@@ -1898,7 +1897,7 @@ sub edit_song
     $box = $mw->DialogBox(-title=>"Edit Song", -buttons=>["Edit","Cancel"],
                                                -default_button=>"Edit");
     $box->Icon(-image=>$icon);
-    $box->add("Label",-text=>"You may use this form to modify information about\na song that is already in the database\n")->pack();
+    $box->add("Label",-text=>"You may use this form to modify information about a song that is already in the database\n")->pack();
     $frame1 = $box->add("Frame")->pack(-fill=>'x');
     $frame1->Label(-text=>"Song Title")->pack(-side=>'left');
     $frame1->Entry(-width=>30,
@@ -1945,7 +1944,7 @@ sub edit_song
       }
       else
       {
-        infobox ($mw, "Error","There was an error editing the song.\nNo changes made.");
+        infobox ($mw, "Error","There was an error editing the song. No changes made.");
         $status = "Error editing song - no changes made";
       }
     }
@@ -2135,7 +2134,7 @@ sub show_docs
   
 sub show_about
 {
-  $rev = '$Revision: 1.287 $';
+  $rev = '$Revision: 1.288 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2155,7 +2154,7 @@ sub show_predefined_hotkeys
 {
   $box = $mw->DialogBox(-title=>"Predefined Hotkeys", -buttons=>["Close"]);
   $box->Icon(-image=>$icon);
-  $box->add("Label",-text=>"The following hotkeys are always available\nand may not be changed")->pack();
+  $box->add("Label",-text=>"The following hotkeys are always available and may not be changed")->pack();
   $box->add("Label",-text=>"<Escape> - Stop the currently playing MP3",-anchor=>'nw')->pack(-fill=>'x');
   $box->add("Label",-text=>"<Control-P> - Play the currently selected song",-anchor=>'nw')->pack(-fill=>'x');
   $box->add("Label",-text=>"<Enter> - Perform the currently entered search",-anchor=>'nw')->pack(-fill=>'x');
@@ -3119,9 +3118,9 @@ if (! ($dbh = DBI->connect("DBI:mysql:$config{'db_name'}",$config{'db_username'}
   $box = $mw->DialogBox(-title=>"Fatal Error", -buttons=>["Ok"]);
   $box->Icon(-image=>$icon);
   $box->add("Label",-text=>"Could not connect to database.")->pack();
-  $box->add("Label",-text=>"Make sure your database configuration is correct,\nand that your database is running.")->pack();
-  $box->add("Label",-text=>"The preferences menu will now pop up for you to\ncheck or set any configuration options.")->pack();
-  $box->add("Label",-text=>"After you set the preferences, Mr. Voice will exit.\nYou will need to restart to test your changes.")->pack();
+  $box->add("Label",-text=>"Make sure your database configuration is correct, and that your database is running.")->pack();
+  $box->add("Label",-text=>"The preferences menu will now pop up for you to check or set any configuration options.")->pack();
+  $box->add("Label",-text=>"After you set the preferences, Mr. Voice will exit. You will need to restart to test your changes.")->pack();
   $box->add("Label",-text=>"Database returned error: $DBI::errstr")->pack();
   $result = $box->Show();
   if ($result)
@@ -3136,9 +3135,9 @@ if (! -W $config{'filepath'})
   $box = $mw->DialogBox(-title=>"Fatal Error", -buttons=>["Exit"]);
   $box->Icon(-image=>$icon);
   $box->add("Label",-text=>"MP3 Directory unavailable")->pack();
-  $box->add("Label",-text=>"The MP3 directory that you set is unavailable.  Check\nto make sure the directory is correct, and you have\npermission to access it.")->pack();
-  $box->add("Label",-text=>"The preferences menu will now pop up for you to\ncheck or set any configuration options.")->pack();
-  $box->add("Label",-text=>"After you set the preferences, Mr. Voice will exit.\nYou will need to restart to test your changes.")->pack();
+  $box->add("Label",-text=>"The MP3 directory that you set is unavailable.  Check to make sure the directory is correct, and you have permission to access it.")->pack();
+  $box->add("Label",-text=>"The preferences menu will now pop up for you to check or set any configuration options.")->pack();
+  $box->add("Label",-text=>"After you set the preferences, Mr. Voice will exit. You will need to restart to test your changes.")->pack();
   $box->add("Label",-text=>"Current MP3 Directory: $config{'filepath'}")->pack();
   $result = $box->Show();
   if ($result)
@@ -3153,8 +3152,8 @@ if (! -W $config{'savedir'})
   $box = $mw->DialogBox(-title=>"Warning", -buttons=>["Continue"]);
   $box->Icon(-image=>$icon);
   $box->add("Label",-text=>"Hotkey save directory unavailable")->pack();
-  $box->add("Label",-text=>"The hotkey save directory is unset or you do not\nhave permission to write to it.")->pack();
-  $box->add("Label",-text=>"While this will not impact the operation of Mr. Voice,\nyou should probably fix it in the File->Preferences menu.")->pack();
+  $box->add("Label",-text=>"The hotkey save directory is unset or you do not have permission to write to it.")->pack();
+  $box->add("Label",-text=>"While this will not impact the operation of Mr. Voice, you should probably fix it in the File->Preferences menu.")->pack();
   $box->add("Label",-text=>"Current Hotkey Directory: $config{'savedir'}")->pack();
   $result = $box->Show();
 }
@@ -3166,8 +3165,8 @@ if (! $dbh->do($query))
   $box = $mw->DialogBox(-title=>"Database Update Needed", -buttons=>["Continue","Quit"]);
   $box->Icon(-image=>$icon);
   $box->add("Label",-text=>"Your database is not compatible with Mr. Voice 1.7")->pack();
-  $box->add("Label",-text=>"With the 1.7 release, some database changes were introduced.\nPress the Continue button to automatically update your database, or Quit to exit.")->pack();
-  $box->add("Label",-text=>"Continuing will update your tables and record the song times into the database\nThis process may take upwards of a few minutes, depending on the number of songs in your database.")->pack();
+  $box->add("Label",-text=>"With the 1.7 release, some database changes were introduced. Press the Continue button to automatically update your database, or Quit to exit.")->pack();
+  $box->add("Label",-text=>"Continuing will update your tables and record the song times into the database This process may take upwards of a few minutes, depending on the number of songs in your database.")->pack();
   $result = $box->Show();
   if ($result eq "Continue")
   {
@@ -3269,7 +3268,7 @@ if (! $dbh->do($query))
     $dbh->do("RENAME TABLE mrvoice TO oldmrvoice");
     $dbh->do("RENAME TABLE mrvoice2 TO mrvoice");
     $box->add("Label",-text=>"Renaming tables...SUCCEEDED")->pack();
-    $box->add("Label",-text=>"The database has been updated - song times are now stored in the database itself\nIn the future, if you modify a file in $config{'filepath'} directly,\nyou will need to run the Update Song Times function from the Songs menu.")->pack();
+    $box->add("Label",-text=>"The database has been updated - song times are now stored in the database itself\nIn the future, if you modify a file in $config{'filepath'} directly, you will need to run the Update Song Times function from the Songs menu.")->pack();
     $box->Show();
   }
   else
