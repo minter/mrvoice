@@ -1,3 +1,8 @@
+Tue  Sep 25 2001	H. Wade Minter (minter@lunenburg.org)
+     * Switched from Tk::FileDialog to getOpenFile/getSaveFile.  This 
+       has the benefit of removing a module dependency, and also using
+       the native file dialog boxes on Windows.  Sweeeeet....
+
 Tue  Sep 18 2001	H. Wade Minter (minter@lunenburg.org)
      * Fixed minor bug where clearing hotkeys wouldn't save old keys
        for later restoration.
@@ -70,4 +75,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.14 2001/09/19 01:29:20 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.15 2001/09/25 20:31:16 minter Exp $
