@@ -68,6 +68,8 @@ $filepath - The path information that will be prepended to the filename
 	    on the local system.  If a directory, it MUST contain a trailing
             "/".  (ie. "/usr/local/mp3/" is valid, but "/usr/local/mp3"
             is not).
+$savepath - This will be the default directory that hotkey save files
+            will go into.  
 
 CONFIGURING THE PHP FRONTENDS:
 To configure the PHP frontends, edit the file config.php.  It sets
@@ -144,4 +146,4 @@ guarantee that I'll do it, but I'm glad to listen to any suggestions.  Check
 the TODO file to see stuff I'm currently working on.
 
 --
-CVS ID: $Id: README,v 1.6 2001/02/25 23:07:28 minter Exp $
+CVS ID: $Id: README,v 1.7 2001/03/04 14:45:13 minter Exp $

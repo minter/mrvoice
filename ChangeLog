@@ -1,6 +1,7 @@
 Sat  Mar 03 2001	H. Wade Minter (minter@lunenburg.org)
      * Added a test for the MP3 player.  Pops up an error box if
        the player isn't found.
+     * Switched to Tk::FileDialog for the file dialogs.
 
 Thu  Mar 01 2001	H. Wade Minter (minter@lunenburg.org)
      * Got most of the save/load functions working.
@@ -41,4 +42,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.6 2001/03/04 00:29:35 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.7 2001/03/04 14:45:13 minter Exp $
