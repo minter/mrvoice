@@ -3961,7 +3961,8 @@ sub upload_xmlrpc
     if ( !$check_call->result )
     {
         chomp( my $error = $check_call->faultstring );
-        $status = "RPC check error: $error";
+        infobox($mw,"XMLRPC upload check error", $error);
+        $status = "XMLRPC upload check error";
         return;
     }
 
@@ -3990,7 +3991,9 @@ sub upload_xmlrpc
     else
     {
         chomp( my $error = $call->faultstring );
-        $status = "Upload error: $error";
+        infobox($mw,"XMLRPC upload error", $error);
+        $status = "XMLRPC upload error";
+        return;
     }
 
 }
