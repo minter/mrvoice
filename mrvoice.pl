@@ -27,7 +27,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.118 2002/05/09 15:12:59 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.119 2002/05/13 18:40:17 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -867,7 +867,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.118 $';
+  $rev = '$Revision: 1.119 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   infobox($mw, "About Mr. Voice","Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License");
 }
@@ -1283,6 +1283,18 @@ sub get_songlength
 
 sub do_search
 {
+  if ( (! $anyfield) && (! $title) && (! $artist) && (! $cattext) && ($category eq "Any") )
+  {
+    my $box = $mw->DialogBox(-title=>"Confirm full search", -buttons=>["Ok","Cancel"],-default_button=>"Cancel");
+    $box->Icon(-image=>$icon);
+    $box->Label(-text=>"This search will display everything in your database.\nAre you sure you want to do this?")->pack();
+    my $button = $box->Show;
+    if ($button ne "Ok")
+    {
+      $status = "Cancelling full database search";
+      return;
+    }
+  }
   $anyfield_box->insert(0,$anyfield) if ($anyfield);
   $title_box->insert(0,$title) if ($title);
   $artist_box->insert(0,$artist) if ($artist);
