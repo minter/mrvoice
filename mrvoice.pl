@@ -17,7 +17,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.104 2002/02/06 22:13:55 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.105 2002/02/07 12:31:30 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -490,9 +490,10 @@ sub add_new_song
   $box = $mw->DialogBox(-title=>"Add New Song", -buttons=>["OK","Cancel"]);
   $box->Icon(-image=>$mw->Pixmap(-data=>$icon_data));
   $box->add("Label",-text=>"Enter the following information for the new song,\nand choose the file to add.")->pack();
-  $box->add("Label",-text=>"Items marked with a * are required.\n")->pack();
+  $box->add("Label",-text=>"Items in red are required.\n")->pack();
   $frame1 = $box->add("Frame")->pack(-fill=>'x');
-  $frame1->Label(-text=>"* Song Title")->pack(-side=>'left');
+  $frame1->Label(-text=>"Song Title",
+                 -foreground=>"#cdd226132613")->pack(-side=>'left');
   $frame1->Entry(-width=>30,
                  -textvariable=>\$addsong_title)->pack(-side=>'right');
   $frame2 = $box->add("Frame")->pack(-fill=>'x');
@@ -500,7 +501,8 @@ sub add_new_song
   $frame2->Entry(-width=>30,
                  -textvariable=>\$addsong_artist)->pack(-side=>'right');
   $frame3 = $box->add("Frame")->pack(-fill=>'x');
-  $frame3->Label(-text=>"* Category")->pack(-side=>'left');
+  $frame3->Label(-text=>"Category",
+                 -foreground=>"#cdd226132613")->pack(-side=>'left');
   $menu=$frame3->Menubutton(-text=>"Choose Category",
                             -relief=>'raised',
                             -tearoff=>0,
@@ -522,7 +524,8 @@ sub add_new_song
   $frame4->Entry(-width=>30,
                  -textvariable=>\$addsong_info)->pack(-side=>'right');
   $frame5 = $box->add("Frame")->pack(-fill=>'x');
-  $frame5->Label(-text=>"* File to add")->pack(-side=>'left');
+  $frame5->Label(-text=>"File to add",
+                 -foreground=>"#cdd226132613")->pack(-side=>'left');
   $frame6 = $box->add("Frame")->pack(-fill=>'x');
   $frame6->Button(-text=>"Select File",
                   -command=>sub { 
