@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: config-mrvoice.sgml,v 1.14 2001/12/19 20:23:19 minter Exp $
+  CVS ID: $Id: config-mrvoice.sgml,v 1.15 2002/02/07 19:44:29 minter Exp $
 -->
 
 <chapter><title>Configuring Mr. Voice</title>
@@ -9,10 +9,7 @@
       <title>The Preferences window</title>
       <mediaobject>
         <imageobject>
-          <imagedata fileref="../images/preferences.jpg" format="jpg">
-        </imageobject>
-        <imageobject>
-          <imagedata fileref="../images/preferences.eps" format="eps">
+          <imagedata fileref="../images/preferences.png" format="png">
         </imageobject>
         <textobject>
           <phrase>Screenshot of the Preferences window</phrase>
