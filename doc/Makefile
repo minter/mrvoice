@@ -18,9 +18,6 @@ html:	check
 pdf:	check 
 	@cd pdf; make all
 
-rtf:	check $(BOOK).sgml
-	openjade -t rtf -d $(STYLESHEET_DIR)/print/docbook.dsl $(BOOK).sgml
-
 clean:
 	-rm pdf/$(BOOK).pdf
 	-rm html/$(BOOK).html
