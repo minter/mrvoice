@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.171 2002/11/08 00:04:56 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.172 2002/11/09 13:57:05 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1198,7 +1198,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.171 $';
+  $rev = '$Revision: 1.172 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -1721,7 +1721,7 @@ sub do_search
     $cattext_box->insert(0,$cattext);
     $cattext =~ s/^\s*(.*?)\s*$/$1/;
   }
-  elsif ( (! $anyfield) && (! $title) && (! $artist) && (! $cattext) && ($category eq "Any") )
+  elsif ( (! $anyfield) && (! $title) && (! $artist) && (! $cattext) && ($category eq "Any") && (! $_[0]) )
   {
     my $box = $mw->DialogBox(-title=>"Confirm full search", -buttons=>["Ok","Cancel"],-default_button=>"Cancel");
     $box->Icon(-image=>$icon);
