@@ -1,10 +1,10 @@
 <!--
-  CVS ID: $Id: using-mrvoice.sgml,v 1.4 2001/09/25 16:46:15 minter Exp $
+  CVS ID: $Id: using-mrvoice.sgml,v 1.5 2001/09/25 19:10:24 minter Exp $
 -->
 
 <chapter><title>Using Mr. Voice</title>
 
-  <para>Now that you have Mr. Voice and other required software set up and configured, it's time to actually use it.  First you have to populate the database with songs.  Then you can do useful things with them.
+  <para>Now that you have Mr. Voice and other required software set up and configured, it's time to actually use it.  First you have to populate the database with songs.  Then you can do useful things with them.  Look at the following diagram of the main Mr. Voice window for definitions of terms that will be used: <screenshot> <graphic fileref="../images/mainwindow.png"> </screenshot>
   </para>
 
   <sect1><title>Adding, Deleting, and Editing Songs and Categories</title>
@@ -29,7 +29,7 @@
         <listitem><para><guilabel>Artist</guilabel>: The artist responsible for the song.  This is an <emphasis>optional</emphasis> item.</para></listitem>
         <listitem><para><guilabel>Category</guilabel>:  Pressing the <guilabel>Choose Category</guilabel> button beside this entry will give you a list of the categories that you currently have defined.  You must choose one of these categories to place the song into.</para></listitem>
         <listitem><para><guilabel>Category Extra Info</guilabel>: Kind of a "hodgepodge" entry, this information can be whatever you want.  At ComedyWorx, we use it as a modifier for the category.  So if the category is "Game", the Extra Info is the name of the game.  If the category is for Player Intros, the Extra Info will tell us whether it's specifically for a referee, dimwit, or whatnot.  So, basically it's just free-form for whatever you need, and is an <emphasis>optional</emphasis> field.</para></listitem>
-        <listitem><para><guilabel>File To Add</guilabel>:  This is where you give Mr. Voice the path to the actual MP3 file that you want to add.  Clicking the <guibutton>Select File</guibutton> button will bring up a familiar "file chooser" box.  <screenshot> <graphic fileref="../images/addsong-files.jpg" scale="75"> </screenshot> Use this to go to the location of your file, left-click on the name of the file, then click <guibutton>Ok</guibutton>.  The name of the file should now be listed in the <guilabel>File To Add</guilabel> box.</para></listitem>
+        <listitem><para><guilabel>File To Add</guilabel>:  This is where you give Mr. Voice the path to the actual MP3 file that you want to add.  Clicking the <guibutton>Select File</guibutton> button will bring up a familiar "file chooser" box.  <screenshot> <graphic fileref="../images/addsong-files.jpg" scale="75"> </screenshot> Use this to go to the location of your file, left-click on the name of the file, then click <guibutton>Open</guibutton>.  The name of the file should now be listed in the <guilabel>File To Add</guilabel> box.</para></listitem>
       </itemizedlist> 
       <para>You can now press the <guibutton>Ok</guibutton> button to add the song.  If all goes well, you should see a message that the file was added to the database.  If not, Mr. Voice should tell you what went wrong.</para>
       <note><para>Mr. Voice actually makes a copy of the file that you select, renames it to a standard form, and places the new copy in the location given by the <varname>$filepath</varname> variable that you defined in the setup.  Your original MP3 file is not used after the copy is made.</para></note>
