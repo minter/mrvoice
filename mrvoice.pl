@@ -34,7 +34,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.188 2002/12/12 18:43:10 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.189 2002/12/14 19:39:32 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -125,7 +125,7 @@ else
 
 #####
 
-my $version = "1.7";			# Program version
+my $version = "1.7.1";			# Program version
 our $status = "Welcome to Mr. Voice version $version";		
 
 # Define 32x32 XPM icon data
@@ -349,18 +349,18 @@ sub bind_hotkeys
   # in as the first argument.
 
   my $window = $_[0];
-  $window->bind("<Key-F1>", [\&play_mp3,"F1"]);
-  $window->bind("<Key-F2>", [\&play_mp3,"F2"]);
-  $window->bind("<Key-F3>", [\&play_mp3,"F3"]);
-  $window->bind("<Key-F4>", [\&play_mp3,"F4"]);
-  $window->bind("<Key-F5>", [\&play_mp3,"F5"]);
-  $window->bind("<Key-F6>", [\&play_mp3,"F6"]);
-  $window->bind("<Key-F7>", [\&play_mp3,"F7"]);
-  $window->bind("<Key-F8>", [\&play_mp3,"F8"]);
-  $window->bind("<Key-F9>", [\&play_mp3,"F9"]);
-  $window->bind("<Key-F10>", [\&play_mp3,"F10"]);
-  $window->bind("<Key-F11>", [\&play_mp3,"F11"]);
-  $window->bind("<Key-F12>", [\&play_mp3,"F12"]);
+  $window->bind("all","<Key-F1>", [\&play_mp3,"F1"]);
+  $window->bind("all","<Key-F2>", [\&play_mp3,"F2"]);
+  $window->bind("all","<Key-F3>", [\&play_mp3,"F3"]);
+  $window->bind("all","<Key-F4>", [\&play_mp3,"F4"]);
+  $window->bind("all","<Key-F5>", [\&play_mp3,"F5"]);
+  $window->bind("all","<Key-F6>", [\&play_mp3,"F6"]);
+  $window->bind("all","<Key-F7>", [\&play_mp3,"F7"]);
+  $window->bind("all","<Key-F8>", [\&play_mp3,"F8"]);
+  $window->bind("all","<Key-F9>", [\&play_mp3,"F9"]);
+  $window->bind("all","<Key-F10>", [\&play_mp3,"F10"]);
+  $window->bind("all","<Key-F11>", [\&play_mp3,"F11"]);
+  $window->bind("all","<Key-F12>", [\&play_mp3,"F12"]);
   $window->bind("<Key-Escape>", [\&stop_mp3]);
   $window->bind("<Key-Return>", \&do_search);
   $window->bind("<Control-Key-x>", \&do_exit);
@@ -1261,7 +1261,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.188 $';
+  $rev = '$Revision: 1.189 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2199,21 +2199,21 @@ our $advancedmenu;
 our $helpmenu;
 our $filemenu;
 
-$filemenu = $menubar->cascade(-label=>'~File',
+$filemenu = $menubar->cascade(-label=>'File',
                               -tearoff=>0,
                               -menuitems=> filemenu_items);
 $dynamicmenu=$menubar->entrycget('File', -menu)->entrycget('Recent Files', -menu);
-$hotkeysmenu = $menubar->cascade(-label=>'~Hotkeys',
+$hotkeysmenu = $menubar->cascade(-label=>'Hotkeys',
                                  -tearoff=>0,
                                  -menuitems=> hotkeysmenu_items);
 $hotkeysmenu->menu->entryconfigure("Restore Hotkeys", -state=>"disabled");
-$categoriesmenu = $menubar->cascade(-label=>'~Categories',
+$categoriesmenu = $menubar->cascade(-label=>'Categories',
                                     -tearoff=>0,
                                     -menuitems=> categoriesmenu_items);
-$songsmenu = $menubar->cascade(-label=>'~Songs',
+$songsmenu = $menubar->cascade(-label=>'Songs',
                                -tearoff=>0,
                                -menuitems=> songsmenu_items);
-$advancedmenu = $menubar->cascade(-label=>'~Advanced Search',
+$advancedmenu = $menubar->cascade(-label=>'Advanced Search',
                                   -tearoff=>0,
 				  -menuitems=> advancedmenu_items);
 $helpmenu = $menubar->cascade(-label=>'Help',
