@@ -1,3 +1,6 @@
+Tue  Mar  2 2004	H. Wade Minter (minter@lunenburg.org)
+     * More switching to fetchrow_hashref to improve readability.
+
 Sun  Feb 29 2004	H. Wade Minter (minter@lunenburg.org)
      * Lots of minor cleanup while working on the TPJ article.
      * Switched the XPM of the sound icon over to a GIF for a space 
@@ -567,4 +570,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.119 2004/03/01 03:58:22 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.120 2004/03/02 17:53:10 minter Exp $
