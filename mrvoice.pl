@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 use Tk;
 use Tk::DialogBox;
-use Tk::FileDialog;
 use File::Basename;
 use File::Copy;
 use DBI;
@@ -15,8 +14,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/09/19 01:28:14 $
-#	CVS REVISION NUMBER:    $Revision: 1.42 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/09/25 16:35:50 $
+#	CVS REVISION NUMBER:    $Revision: 1.43 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -50,6 +49,15 @@ $savedir = "";				# The default directory where
 $savefile_count = 0;			# Counter variables
 $savefile_max = 4;			# The maximum number of files to
 					# keep in the "recently used" list.
+$hotkeytypes = [
+    ['Mr. Voice Hotkey Files', '.mrv'],
+    ['All Files', '*'],
+  ];
+
+$mp3types = [
+    ['MP3 Files', '*.mp3'],
+    ['All Files', '*'],
+  ];
 
 #####
 
@@ -64,11 +72,9 @@ sub open_file
   $selectedfile = $_[0];
   if (!$selectedfile)
   {
-    $fileselectw = $mw->FileDialog(-Title=>'Open a File',
-                                   -FPat=>"*.mrv",
-                                   -OKButtonLabel=>"Open File",
-                                   -Path=>$savedir);
-    $selectedfile = $fileselectw->Show;
+     $selectedfile = $mw->getOpenFile(-filetypes=>$hotkeytypes,
+                                      -initialdir=>$savedir,
+                                      -title=>'Open a File');
   }
                       
   if ($selectedfile)
@@ -102,11 +108,10 @@ sub open_file
 
 sub save_file
 {
-  $fileselectw = $mw->FileDialog(-Title=>'Save a File',
-                                 -FPat=>"*.mrv",
-                                 -OKButtonLabel=>"Save File",
-                                 -Path=>$savedir);
-  $selectedfile = $fileselectw->Show;
+   $selectedfile = $mw->getSaveFile(-title=>'Save a File',
+                                    -defaultextension=>".mrv",
+                                    -filetypes=>$hotkeytypes,
+                                    -initialdir=>"$savedir");
 
   if ($selectedfile)
   {
@@ -338,9 +343,8 @@ sub add_new_song
   $frame6 = $box->add("Frame")->pack(-fill=>'x');
   $frame6->Button(-text=>"Select File",
                   -command=>sub { 
-                     $fileselectw = $mw->FileDialog(-Title=>'Select a File',
-                                                    -FPat=>"*.mp3");
-                     $addsong_filename = $fileselectw->Show;
+                     $addsong_filename = $mw->getOpenFile(-title=>'Select File',
+                                                          -filetypes=>$mp3types);
 
                                 })->pack(-side=>'right');
   $frame5->Entry(-width=>30,
