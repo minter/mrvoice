@@ -2,9 +2,10 @@
   <!ENTITY chapter1 SYSTEM "installing-mrvoice.sgml">
   <!ENTITY chapter2 SYSTEM "config-mrvoice.sgml">
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
+  <!ENTITY epilogue SYSTEM "troubleshooting.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.32 2002/08/14 18:26:11 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.33 2002/08/15 01:56:29 minter Exp $ 
 -->
 <book status="draft">
 
@@ -113,6 +114,8 @@
 &chapter2
 
 &chapter3
+
+&epilogue
 
 <appendix><title>Known Bugs and Issues</title>
   <para>The following items are known as bugs that need to be fixed and/or enhancements that should be made:
