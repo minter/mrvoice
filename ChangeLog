@@ -1,3 +1,7 @@
+Sat  Nov  2 2002        H. Wade Minter (minter@lunenburg.org)
+     * Fixed a bug I introduced that would lead to the $filepath
+       variable getting overwritten.
+
 Fri  Nov  1 2002	H. Wade Minter (minter@lunenburg.org)
      * Auto-populate on Oggs, too.
 
@@ -343,4 +347,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.63 2002/11/01 15:40:33 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.64 2002/11/02 18:32:09 minter Exp $
