@@ -40,7 +40,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.222 2003/04/12 13:18:19 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.223 2003/04/15 20:41:05 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1485,11 +1485,38 @@ sub edit_preferences
 
   my $mp3dir_frame = $filepath_page->Frame()->pack(-fill=>'x');
   $mp3dir_frame->Label(-text=>"MP3 Directory")->pack(-side=>'left');
+  $mp3dir_frame->Button(-text=>"Select MP3 Directory",
+                        -command=>sub {
+                          if ($^O eq "MSWin32")
+                          {
+                            $filepath = BrowseForFolder("Choose Directory", CSIDL_DESKTOP);
+                            $filepath =~ s|\\|/|g;
+                            $filepath = Win32::GetShortPathName($filepath);
+                          }
+                          else
+                          {
+                            $filepath = $box->DirSelect(-width=>'50')->Show;
+                          }
+                        })->pack(-side=>'right');
+
   $mp3dir_frame->Entry(-width=>30,
 	               -textvariable=>\$filepath)->pack(-side=>'right');
 
   my $hotkeydir_frame = $filepath_page->Frame()->pack(-fill=>'x');
   $hotkeydir_frame->Label(-text=>"Hotkey Save Directory")->pack(-side=>'left');
+  $hotkeydir_frame->Button(-text=>"Select Hotkey Directory",
+                        -command=>sub {
+                          if ($^O eq "MSWin32")
+                          {
+                            $savedir = BrowseForFolder("Choose Directory", CSIDL_DESKTOP);
+                            $savedir =~ s|\\|/|g;
+                            $savedir = Win32::GetShortPathName($savedir);
+                          }
+                          else
+                          {
+                            $savedir = $box->DirSelect(-width=>'50')->Show;
+                          }
+                        })->pack(-side=>'right');
   $hotkeydir_frame->Entry(-width=>30,
 	                  -textvariable=>\$savedir)->pack(-side=>'right');
 
@@ -1663,7 +1690,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.222 $';
+  $rev = '$Revision: 1.223 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
