@@ -3965,6 +3965,7 @@ sub upload_xmlrpc
         return;
     }
 
+    my $starttime = time();
     $mw->Busy( -recurse => 1 );
     my $call = $xmlrpc->call(
         'upload_song',
@@ -3979,10 +3980,12 @@ sub upload_xmlrpc
         }
     );
     $mw->Unbusy( -recurse => 1 );
+    my $endtime = time();
+    my $elapsed = $endtime - $starttime;
 
     if ( my $online_id = $call->result )
     {
-        $status = "Uploaded with ID $online_id";
+        $status = "Uploaded with ID $online_id in $elapsed seconds";
     }
     else
     {
