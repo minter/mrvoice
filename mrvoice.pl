@@ -35,7 +35,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.311 2004/02/28 03:39:54 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.312 2004/03/01 01:01:20 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2490,7 +2490,7 @@ sub delete_song
 
 sub show_about
 {
-    $rev = '$Revision: 1.311 $';
+    my $rev = '$Revision: 1.312 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3097,11 +3097,9 @@ sub get_info_from_id
 
 sub validate_id
 {
-    my $id    = $_[0];
-    my $query = "SELECT * FROM mrvoice WHERE id=$id";
-    my $sth   = $dbh->prepare($query);
-    $sth->execute;
-    $numrows = $sth->rows;
+    my $id      = $_[0];
+    my $query   = "SELECT * FROM mrvoice WHERE id=$id";
+    my $numrows = $dbh->do($query);
     if ( $numrows == 1 )
     {
         return (1);
@@ -3110,7 +3108,6 @@ sub validate_id
     {
         return (0);
     }
-    $sth->finish;
 }
 
 sub stop_mp3
@@ -3155,7 +3152,7 @@ sub play_mp3
     elsif ( $_[0] eq "addsong" )
     {
 
-        # if we're playin from the "add new song dialog, the full path
+        # if we're playing from the "add new song" dialog, the full path
         # will already be set.
         $filename = $_[1];
         if ( $^O eq "MSWin32" )
@@ -3219,7 +3216,7 @@ sub get_songlength
 {
 
     #Generic function to return the length of a song in mm:ss format.
-    #Currently supports MP3 and WAV, with the appropriate modules.
+    #Currently supports OGG, MP3 and WAV, with the appropriate modules.
 
     $file = $_[0];
     my $time = "";
