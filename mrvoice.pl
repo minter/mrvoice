@@ -488,8 +488,8 @@ EOD
 # The extra brackets are suggested by the debugging code
 sub Tk::DragDrop::Mapped
 {
-    my ($token) = @_;
-    my $e = $token->parent->XEvent;
+    my $token = shift;
+    my $e     = $token->parent->XEvent;
     $token = $token->toplevel;
     $token->grabGlobal;
 
@@ -518,7 +518,7 @@ sub Tk::HList::Button1Motion
 sub BindMouseWheel
 {
 
-    my ($w) = @_;
+    my $w = shift;
 
     if ( $^O eq 'MSWin32' )
     {
@@ -2843,7 +2843,7 @@ sub play_mp3
 
         # if we're playing from the "add new song" dialog, the full path
         # will already be set.
-        $filename = shift @_;
+        $filename = shift;
         if ( $^O eq "MSWin32" )
         {
             $filename = Win32::GetShortPathName($filename);
@@ -3385,7 +3385,7 @@ sub StartDrag
     # Starts the drag for the hotkey drag-and-drop.
     my $sound_icon = $mw->Photo( -data => soundicon_gif() );
 
-    my ($token) = @_;
+    my $token = shift;
     $current_token = $token;
     my $widget = $current_token->parent;
     my $event  = $widget->XEvent;
@@ -3410,12 +3410,12 @@ sub Hotkey_Drop
         $status = "Can't drop hotkey - hotkeys locked";
         return;
     }
-    my ($fkey_var)  = @_;
+    my $fkey_var    = shift;
     my $widget      = $current_token->parent;
     my (@selection) = $widget->info('selection');
-    my $id       = $widget->info( 'data', $selection[0] );
-    my $filename = get_info_from_id($id)->{filename};
-    my $title    = get_info_from_id($id)->{fulltitle};
+    my $id          = $widget->info( 'data', $selection[0] );
+    my $filename    = get_info_from_id($id)->{filename};
+    my $title       = get_info_from_id($id)->{fulltitle};
     $fkeys{$fkey_var}->{id}       = $id;
     $fkeys{$fkey_var}->{filename} = $filename;
     $fkeys{$fkey_var}->{title}    = $title;
@@ -3423,9 +3423,9 @@ sub Hotkey_Drop
 
 sub Tank_Drop
 {
-    my ($dnd_source) = @_;
-    my $parent       = $dnd_source->parent;
-    my (@indices)    = $parent->info('selection');
+    my $dnd_source = shift;
+    my $parent     = $dnd_source->parent;
+    my (@indices)  = $parent->info('selection');
     foreach my $index (@indices)
     {
         my $text = $parent->itemCget( $index, 0, '-text' );
