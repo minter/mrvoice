@@ -1,8 +1,8 @@
 Things I'm currently working on:
 
 * General cleanup and pretty-fication.
-* An editable GUI "preferences" dialog to configure the software.
 * And "Edit Category" feature.
+* A "holding tank" to store songs.
 
 --
-CVS ID: $Id: TODO,v 1.12 2001/09/28 16:18:12 minter Exp $
+CVS ID: $Id: TODO,v 1.13 2001/10/29 17:56:51 minter Exp $
