@@ -1,3 +1,11 @@
+Tue  Mar  9 2004	H. Wade Minter (minter@lunenburg.org)
+     * Win32 path cleanups for the dump_database and import_database
+       functions.
+
+Mon  Mar  8 2004	H. Wade Minter (minter@lunenburg.org)
+     * Win32 path fix for bulk_add function, that prevented the addition
+       of files with spaces in the path names.
+
 Fri  Mar  5 2004	H. Wade Minter (minter@lunenburg.org)
      * Rework the 1.10 database update to be a little nicer, including
        giving the user a chance to back up their database.
@@ -584,4 +592,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.123 2004/03/05 16:43:09 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.124 2004/03/09 17:56:06 minter Exp $
