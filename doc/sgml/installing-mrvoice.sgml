@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.11 2001/12/03 18:16:22 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.12 2002/02/11 14:14:54 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
@@ -87,7 +87,7 @@ mysql>
     </sect2>
 
     <sect2><title>Windows Installation Instructions</title>
-      <para>First, install all of the supporting software.  Install WinAmp, ActivePerl, and ActiveTCL the normal way, by double-clicking the installer icons and using the defaults provided.</para>
+      <para>First, install all of the supporting software.  Install WinAmp and ActivePerl the normal way, by double-clicking the installer icons and using the defaults provided.</para>
       <sect3><title>Installing and Setting Up MySQL</title>
         <itemizedlist>
           <listitem>
