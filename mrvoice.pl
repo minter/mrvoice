@@ -45,7 +45,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.293 2003/12/31 20:15:35 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.294 2004/01/02 22:12:58 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2122,39 +2122,10 @@ sub delete_song
   $delete_file_cb = 0;
 }
 
-sub show_docs
-{
-  my $basedir = dirname(abs_path($0));
-  $docbase = catfile($basedir,"doc","html");
-  if (! -r catfile($docbase,"index.html"))
-  {
-    $status = "Could not find HTML documentation in $docbase";
-    return;
-  }
-
-  use Tk::Web;
-  use URI::URL;
-
-  $docsbox=$mw->Toplevel();
-  $docsbox->withdraw();
-  $docsbox->Icon(-image=>$icon);
-  my $web = Tk::Web->new($docsbox);
-  $web->configure(-background=>'white');
-  $web->pack(-expand => 1, -fill => 'both');
-  $web->url("/home/minter/mrvoice/doc/html/index.html");
-  $docsbox->AddScrollbars($web);
-  $docsbox->configure(-scrollbars => 'e');
-
-
-  $docsbox->update();
-  $docsbox->deiconify();
-  $docsbox->raise();
-}
-
   
 sub show_about
 {
-  $rev = '$Revision: 1.293 $';
+  $rev = '$Revision: 1.294 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -3614,7 +3585,6 @@ sub helpmenu_items
 {
   [
     ['command', 'About', -command=>\&show_about],
-    ['command', 'View Simple HTML Documentation', -command=>\&show_docs],
   ];
 }
 			      
