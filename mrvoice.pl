@@ -39,7 +39,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.205 2003/04/02 23:12:45 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.206 2003/04/03 21:06:46 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1010,7 +1010,7 @@ sub bulk_add
     $name=$table_row[1];
     $menu->radiobutton(-label=>$name,
                        -value=>$code,
-                       -variable=>\$addsong_cat);
+                       -variable=>\$db_cat);
   }
   $sth->finish;
   my $box1frame3 = $box1->add("Frame")->pack(-fill=>'x');
@@ -1032,7 +1032,7 @@ sub bulk_add
   } 
 
   print "The directory chosen is $directory\n";
-  print "The category is $addsong_cat\n";
+  print "The category is $db_cat\n";
 
   my $mp3glob = File::Spec->catfile($directory, "*.mp3");
   my $oggglob = File::Spec->catfile($directory, "*.ogg");
@@ -1045,12 +1045,26 @@ sub bulk_add
     if ($title)
     {
       # Valid title, all we need
-      push (my @accepted, $file);
+      my $time = get_songlength($file);
+      my $db_title = $dbh->quote($title);
+      my $db_artist;
+      if ( ($artist) && ($artist !~ /^\w*$/) )
+      {
+        $db_artist = $dbh->quote($artist);
+      }  
+      else
+      {
+        $db_artist = "NULL";
+      }
+      $db_filename = move_file($file,$title,$artist);
+      my $query = "INSERT INTO mrvoice (id,title,artist,category,filename,time,modtime) VALUES (NULL, $db_title, $db_artist, '$db_cat', '$db_filename', '$time', NULL)";
+      push (my @accepted, basename($file));
+      print "Running the query: $query\n";
     }
     else
     {
       # No title, no go.
-      push (my @rejected, $file);
+      push (my @rejected, basename($file));
     }
   }
 
@@ -1210,6 +1224,45 @@ sub delete_category
   $del_cat="";
 }
 
+sub move_file
+{
+  my ($oldfilename, $title, $artist) = @_;
+
+  if ($artist)
+  {
+    $newfilename = "$artist-$title";
+  }
+  else
+  {
+    $newfilename = $title;
+  }
+  $newfilename =~ s/[^a-zA-Z0-9\-]//g;
+ 
+  our $path; # Only mentioned once
+  my ($name,$path,$extension) = fileparse($oldfilename,'\.\w+');
+  $extension=lc($extension);
+
+  if ( -e File::Spec->catfile($filepath, "$newfilename$extension") ) 
+  {
+    $i=0;
+    while (1 == 1)
+    {
+      if (! -e File::Spec->catfile($filepath, "$newfilename-$i$extension"))
+      {
+        $newfilename = "$newfilename-$i";
+        last;
+      }
+      $i++;
+    }
+  }
+
+  $newfilename = "$newfilename$extension";
+
+  copy ($oldfilename, File::Spec->catfile($filepath, "$newfilename"));
+
+  return ($newfilename);
+}
+
 sub add_new_song
 {
   my $continue = 0;
@@ -1305,34 +1358,9 @@ sub add_new_song
       return (1);
     }
   } # End while continue loop
-  if ($addsong_artist)
-  {
-    $newfilename = "$addsong_artist-$addsong_title";
-  }
-  else
-  {
-    $newfilename = $addsong_title;
-  }
-  $newfilename =~ s/[^a-zA-Z0-9\-]//g;
 
-  our $path; # Only mentioned once
-  ($name,$path,$extension) = fileparse($addsong_filename,'\.\w+');
-  $extension=lc($extension);
+  $newfilename = move_file ($addsong_filename, $addsong_title, $addsong_artist);
 
-  if ( -e "$filepath$newfilename$extension")
-  {
-    $i=0;
-    while (1 == 1)
-    {
-      if (! -e "$filepath$newfilename-$i$extension")
-      {
-        $newfilename = "$newfilename-$i";
-        last;
-      }
-      $i++;
-    }
-  }
-  $newfilename = "$newfilename$extension";
   $addsong_title = $dbh->quote($addsong_title);
   if ($addsong_info eq "")
   {
@@ -1352,7 +1380,6 @@ sub add_new_song
   }
   $time = get_songlength($addsong_filename);
   $query = "INSERT INTO mrvoice VALUES (NULL,$addsong_title,$addsong_artist,'$addsong_cat',$addsong_info,'$newfilename','$time',NULL)";
-  copy ($addsong_filename,"$filepath$newfilename");
   if ($dbh->do($query))
   {
     $addsong_filename = Win32::GetLongPathName($addsong_filename) if ($^O eq "MSWin32");
@@ -1582,7 +1609,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.205 $';
+  $rev = '$Revision: 1.206 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
