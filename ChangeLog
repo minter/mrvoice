@@ -5,6 +5,7 @@ Sat  Sep 18  2004	H. Wade Minter (minter@lunenburg.org)
      * Add a tool, cpancheck.pl, to check CPAN for updates of the modules
        that Mr. Voice uses.
      * Removed obsolete tools.
+     * Make it so that the top item in a search is always selected AND visible.
 
 Fri  Sep 17  2004	H. Wade Minter (minter@lunenburg.org)
      * Get the move_tank function working with the HList.  Thanks to 
