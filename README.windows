@@ -127,7 +127,7 @@ $db_password="YOUR_PASSWORD"; - This is set to the password you defined above.
 $category="Any"; - Can be used to change the default category that searches
 look in.  Leave alone unless you have need to change it.
 
-$mp3player="C:\\PROGRA~1\WINAMP\WINAMP.EXE"; - This defines the path to your
+$mp3player="C:\\PROGRA~1\\WINAMP\\WINAMP.EXE"; - This defines the path to your
 MP3 player.  If you're using WinAMP in its default install, this path will
 work.  If not, you need to use "\\" to separate the parts of the path,
 and instead of spaces, you need to use the "short" version of the directory.
@@ -156,4 +156,4 @@ If you run into Windows issues, feel free to drop me an email, and I'll
 try to solve it for you.
 
 --
-CVS ID: $Id: README.windows,v 1.6 2001/05/11 23:45:56 minter Exp $
+CVS ID: $Id: README.windows,v 1.7 2001/09/20 01:27:36 minter Exp $
