@@ -15,8 +15,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/05/11 00:18:55 $
-#	CVS REVISION NUMBER:    $Revision: 1.38 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/05/15 17:50:35 $
+#	CVS REVISION NUMBER:    $Revision: 1.39 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -815,13 +815,21 @@ sub do_search
       $mainbox->insert('end',$string); 
     }
   }
+  $numrows = $sth->rows;
   $sth->finish;
   $cattext="";
   $title="";
   $artist="";
   $anyfield="";
   $category="Any";
-  $status="Displaying search results";
+  if ($numrows == 1)
+  {
+    $status="Displaying $numrows search result";
+  }
+  else
+  {
+    $status="Displaying $numrows search results";
+  }
 }
 
 sub do_exit
