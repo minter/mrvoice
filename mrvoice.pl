@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.167 2002/11/07 15:34:38 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.168 2002/11/07 16:26:20 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -460,10 +460,10 @@ sub dump_database
   $year += 1900;
   $mon += 1;
   $defaultfilename = "database-$year-$mon-$mday.sql";
-  $dumpfile = $mw->getSaveFile(-title=>'Choose Database Export File',
-                               -defaultextension=>".sql",
-                               -initialfile=>$defaultfilename,
-                               -filetypes=>$databasefiles);
+  my $dumpfile = $mw->getSaveFile(-title=>'Choose Database Export File',
+                                 -defaultextension=>".sql",
+                                 -initialfile=>$defaultfilename,
+                                 -filetypes=>$databasefiles);
 
   if ($dumpfile)
   {
@@ -502,6 +502,55 @@ sub dump_database
 
 sub import_database
 {
+  my $dumpfile = $mw->getOpenFile(-title=>'Choose Database Export File',
+                                 -defaultextension=>".sql",
+                                 -filetypes=>$databasefiles);
+
+  if ($dumpfile)
+  {
+    if (! -r $dumpfile)
+    {
+      infobox($mw, "File Error", "Could not open file $dumpfile for reading.\nCheck permissions and try again.");
+    }
+    else
+    {
+      # We can read the file - pop up a warning before continuing.
+      my $box = $mw->DialogBox(-title=>"Warning", 
+                               -buttons=>["Ok","Cancel"],
+                               -default_button=>"Cancel");  
+      $box->Icon(-image=>$icon);
+      my $frame1 = $box->add("Frame")->pack(-fill=>'x');
+      $frame1->Label(-text=>"Warning!\nImporting this database dumpfile will completely\noverwrite your current Mr. Voice database.\n\nIf you are certain that you want to do this,\npress Ok.  Otherwise, press Cancel.")->pack(); 
+      my $button = $box->Show;
+      
+      if ($button eq "Ok")
+      {
+        if ($^O eq "MSWin32")
+        {
+          $dumpfile = Win32::GetShortPathName($dumpfile);
+          my $rc = system ("C:/mysql/bin/mysql --user=$db_username --password=$db_pass $db_name < $dumpfile");
+          infobox($mw, "Database Imported", "The database backup file $dumpfile\nhas been imported.");
+          $status = "Database imported from $dumpfile";
+        }
+        else
+        {
+          my $rc = system ("mysql --user=$db_username --password=$db_pass $db_name < $dumpfile");
+          infobox($mw, "Database Imported", "The database backup file $dumpfile\nhas been imported.");
+          $status = "Database imported from $dumpfile";
+        }
+      }
+      else
+      {
+        $status = "Database import cancelled";
+      }
+    }
+  
+  }
+  else
+  {
+    $status = "Database import cancelled";
+  }
+
 }
 
 sub dynamic_documents
@@ -1145,7 +1194,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.167 $';
+  $rev = '$Revision: 1.168 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
