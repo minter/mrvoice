@@ -1,3 +1,7 @@
+Mon  Apr 19 2004	H. Wade Minter (minter@lunenburg.org)
+     * Tagged Release 1.10.6 (real release incorporating WMA support
+       and D&D Bugfixes)
+
 Sun  Apr 18 2004	H. Wade Minter (minter@lunenburg.org)
      * Added WMA support under MSWin32 (suggested by kprobbins)
      * Removed obsolete $bulkaddtypes definition.
@@ -627,4 +631,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.132 2004/04/19 00:18:05 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.133 2004/04/19 19:56:24 minter Exp $
