@@ -1,9 +1,9 @@
 <!--
-  CVS ID: $Id: config-mrvoice.sgml,v 1.8 2001/10/29 17:26:38 minter Exp $
+  CVS ID: $Id: config-mrvoice.sgml,v 1.9 2001/10/29 17:28:23 minter Exp $
 -->
 
 <chapter><title>Configuring Mr. Voice</title>
-  <para>This section will take you through configuring the Mr. Voice software.  Mr. Voice isconfigured via an external configuration file - this provides the most flexibility in keeping your configuration sane from one version to the next.  On Unix, the config file is named <filename>.mrvoicerc</filename>, and lives in your home directory.  On Windows, the filename is <filename>C:\mrvoice.cfg</filename>.  <important>Editing the configuration variables directly in <filename>mrvoice.pl</filename> is no longer the recommended way to configure Mr. Voice.  The functionality is still there, but will be removed in a future version.</important></para>
+  <para>This section will take you through configuring the Mr. Voice software.  Mr. Voice isconfigured via an external configuration file - this provides the most flexibility in keeping your configuration sane from one version to the next.  On Unix, the config file is named <filename>.mrvoicerc</filename>, and lives in your home directory.  On Windows, the filename is <filename>C:\mrvoice.cfg</filename>.  <important><para>Editing the configuration variables directly in <filename>mrvoice.pl</filename> is no longer the recommended way to configure Mr. Voice.  The functionality is still there, but will be removed in a future version.</para></important></para>
   <para>If you start Mr. Voice without a configuration file, or if there is an error in your configuration, Mr. Voice will pop up the preferences box, allowing you to enter and edit the configuration information.  Changes are then written out to the appropriate configuration file.  The configuration options are detailed below.
   <sect1><title>Configuration Options and Variables</title>
     <para>The options that you can set in the <guimenu>Preferences</guimenu> menu are listed below.  After the name of each option, the actual variable name is given in parenthesis, in case you need to edit the configuration files manually.</para>
