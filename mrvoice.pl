@@ -1751,13 +1751,17 @@ sub add_new_song
             -textvariable => \$addsong_filename
         )->pack( -side => 'right' );
         my $frame7 = $box->add("Frame")->pack( -fill => 'x' );
-        $frame7->Button(
+        my $previewbutton = $frame7->Button(
             -text    => "Preview song",
             -command => sub {
                 my $tmpsong = $songentry->cget( -textvariable );
                 play_mp3( $box, "addsong", $$tmpsong );
             }
         )->pack( -side => 'right' );
+        $previewbutton->configure(
+            -bg               => 'green',
+            -activebackground => 'SpringGreen2'
+        );
 
         my $result = $box->Show();
 
