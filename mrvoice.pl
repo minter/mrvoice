@@ -17,7 +17,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.105 2002/02/07 12:31:30 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.106 2002/02/07 15:14:39 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -651,7 +651,7 @@ sub edit_preferences
 	               -textvariable=>\$filepath)->pack(-side=>'right');
 
   my $hotkeydir_frame = $filepath_page->Frame()->pack(-fill=>'x');
-  $hotkeydir_frame->Label(-text=>"MP3 Directory")->pack(-side=>'left');
+  $hotkeydir_frame->Label(-text=>"Hotkey Save Directory")->pack(-side=>'left');
   $hotkeydir_frame->Entry(-width=>30,
 	                  -textvariable=>\$savedir)->pack(-side=>'right');
 
