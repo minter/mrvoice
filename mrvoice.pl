@@ -46,7 +46,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.304 2004/02/06 18:14:30 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.305 2004/02/23 20:47:03 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2501,7 +2501,7 @@ sub delete_song
 
 sub show_about
 {
-    $rev = '$Revision: 1.304 $';
+    $rev = '$Revision: 1.305 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3888,6 +3888,8 @@ if ( !$dbh->do($query) )
 $query = "SELECT publisher FROM mrvoice LIMIT 1";
 if ( !$dbh->do($query) )
 {
+    $mw->deiconify();
+    $mw->raise();
     $box = $mw->DialogBox(
         -title   => "Database Update Needed",
         -buttons => [ "Continue", "Quit" ]
