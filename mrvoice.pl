@@ -41,7 +41,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.248 2003/07/25 18:11:10 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.249 2003/07/25 19:54:55 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1882,7 +1882,14 @@ sub delete_song
                           -default_button=>"Cancel",
                           -buttons=>["Delete","Cancel"]);
     $box->Icon(-image=>$icon);
-    $box->add("Label",-text=>"About to delete $count songs from the database.\nBe sure this is what you want to do!")->pack();
+    if ($count == 1)
+    {
+      $box->add("Label",-text=>"About to delete $count song from the database.\nBe sure this is what you want to do!")->pack();
+    }
+    else
+    {
+      $box->add("Label",-text=>"About to delete $count songs from the database.\nBe sure this is what you want to do!")->pack();
+    }
     $box->add("Checkbutton",-text=>"Delete file on disk",
                             -variable=>\$delete_file_cb)->pack();
     $result = $box->Show();
@@ -1921,7 +1928,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.248 $';
+  $rev = '$Revision: 1.249 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
