@@ -1974,9 +1974,7 @@ sub edit_preferences
 
     if ( $result eq "Ok" )
     {
-        if (   ( !$config{'db_name'} )
-            || ( !$config{'db_username'} )
-            || ( !$config{'db_pass'} )
+        if (   ( !$config{'db_file'} )
             || ( !$config{'filepath'} )
             || ( !$config{'savedir'} )
             || ( !$config{'mp3player'} ) )
