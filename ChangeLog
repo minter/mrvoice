@@ -1,3 +1,32 @@
+Fri  Mar 25 2005	H. Wade Minter (minter@lunenburg.org)
+     * Merged 896:918 from trunk.
+     * Fixed a bug in reporting during the local online comparison.
+
+Thu  Mar 24 2005	H. Wade Minter (minter@lunenburg.org)
+     * Add a preference entry to check the app version.
+     * Fix the Return key binding in Online Search.
+     * Move the config file writing into its own subroutine to it can
+       be used by the version check.
+     * Add some prepackaged online searches.
+     * Fix an inconsistency in the get_md5 subroutine.
+     * Pop up an infobox on OS X if Audion isn't found.  Thanks to Tim Klein.
+     * Handle a missing Audion better.
+
+Wed  Mar 23 2005	H. Wade Minter (minter@lunenburg.org)
+     * Add code to do an XML-RPC version check on start.
+
+Fri  Mar 18 2005	H. Wade Minter (minter@lunenburg.org)
+     * Don't change the modtime on an upgrade.
+
+Mon  Mar 14 2005	H. Wade Minter (minter@lunenburg.org)
+     * Add the framework for the "bundle" import/export.
+
+Fri  Mar 11 2005	H. Wade Minter (minter@lunenburg.org)
+     * Add uploader person and category modifiers for the online search.
+
+Thu  Mar 10 2005	H. Wade Minter (minter@lunenburg.org)
+     * Get most XML-RPC stuff working in the basic case.
+
 Tue  Mar  8 2005        H. Wade Minter (minter@lunenburg.org)
      * Merge trunk changes 861:895
 
