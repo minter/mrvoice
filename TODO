@@ -3,7 +3,8 @@ Things I'm currently working on:
 * Debug mode - log stuff to a file with the proper switch.
 * Save/load holding tank.
 * Fix DirSelect problem on first run.
+* HTML user guide displayed in-app via Tk::HTML?
 * General cleanup and pretty-fication.
 
 --
-CVS ID: $Id: TODO,v 1.28 2003/12/07 20:00:46 minter Exp $
+CVS ID: $Id: TODO,v 1.29 2003/12/29 19:51:42 minter Exp $
