@@ -2,7 +2,8 @@ Things I'm currently working on:
 
 * Debug mode - log stuff to a file with the proper switch.
 * Investigate switching to an HList, to get the -data option
-* General cleanup and pretty-fication.
+* General code cleanup and pretty-fication.
+* Get code to compile under "use strict"
 
 --
-CVS ID: $Id: TODO,v 1.35 2004/03/04 14:31:14 minter Exp $
+CVS ID: $Id: TODO,v 1.36 2004/03/10 21:00:38 minter Exp $

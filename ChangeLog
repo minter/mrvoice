@@ -1,3 +1,8 @@
+Wed  Mar 10 2004	H. Wade Minter (minter@lunenburg.org)
+     * Fixed "y3k" bug in the Advanced Search, where you couldn't select
+       a year greater than 2003, thanks to hardcoded values.  Oops.
+     * Fixed some scoping issues in a quest to "use strict".
+
 Tue  Mar  9 2004	H. Wade Minter (minter@lunenburg.org)
      * Win32 path cleanups for the dump_database and import_database
        functions.
@@ -592,4 +597,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.124 2004/03/09 17:56:06 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.125 2004/03/10 20:58:49 minter Exp $
