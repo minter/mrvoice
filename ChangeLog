@@ -1,3 +1,11 @@
+Thu  Dec 21 2001        H. Wade Minter (minter@lunenburg.org)
+     * Moved the PHP frontend file into the tools subdirectory.
+
+Wed  Dec 20 2001	H. Wade Minter (minter@lunenburg.org)
+     * Created a "tools" subdirectory to hold useful utilities.
+     * Added orphans.pl - a utility to report on and delete orphaned
+       MP3 files.
+
 Fri  Dec  8 2001	H. Wade Minter (minter@lunenburg.org)
      * Changed preferences menu to use a tabbed-notebook-style widget,
        instead of just displaying everything on one window.
@@ -161,4 +169,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.28 2001/12/09 20:32:26 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.29 2001/12/20 15:30:45 minter Exp $
