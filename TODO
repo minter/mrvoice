@@ -1,7 +1,8 @@
 Things I'm currently working on:
 
 * Debug mode - log stuff to a file with the proper switch.
+* Investigate switching to an HList, to get the -data option
 * General cleanup and pretty-fication.
 
 --
-CVS ID: $Id: TODO,v 1.32 2003/12/31 20:11:49 minter Exp $
+CVS ID: $Id: TODO,v 1.33 2004/03/01 15:37:59 minter Exp $
