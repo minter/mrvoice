@@ -19,7 +19,7 @@
    $database_username = "";
    $database_password = "";
  
-   # CVS ID: $Id: mrvoice.php,v 1.9 2001/03/07 01:21:10 minter Exp $
+   # CVS ID: $Id: mrvoice.php,v 1.10 2001/03/07 23:12:40 minter Exp $
 ?>
 
 <TITLE>Mr. Voice MP3 Database</TITLE>
@@ -170,7 +170,7 @@
 
       $row[1] == "" ? print "<BR>" : print "$row[1]";
 
-      print "</TD> <TD><a href=/csz$row[4]>$row[0]</A></TD> <TD>";
+      print "</TD> <TD><a href=$path$row[4]>$row[0]</A></TD> <TD>";
     
       $file_size = filesize("$path/$row[4]");     
       if ($file_size >= 1073741824) {
