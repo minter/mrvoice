@@ -3,7 +3,7 @@
 # DESCRIPTION: A little tool to identify or delete "orphaned" Mr. Voice
 #              files (files that exist on disk but are not referenced 
 #              in the database.
-# CVS ID: $Id: orphans.pl,v 1.3 2003/04/09 18:02:30 minter Exp $
+# CVS ID: $Id: orphans.pl,v 1.4 2003/04/09 18:45:50 minter Exp $
 
 use DBI;
 use DBD::mysql;
@@ -81,11 +81,11 @@ else
 $dbh = DBI->connect("DBI:mysql:$db_name",$db_username,$db_pass) or die ("Could not connect to database.  Exiting...");
 print "-->Connected to database\n" if ( ($dbh) && ($opt_v) );
 
-@mp3files = glob( catfile($filepath, "*.mp3") ) or die;
-@oggfiles = glob( catfile($filepath, "*.ogg") ) or die;
-@wavfiles = glob( catfile($filepath, "*.wav") ) or die;
-@m3ufiles = glob( catfile($filepath, "*.m3u") ) or die;
-@plsfiles = glob( catfile($filepath, "*.pls") ) or die;
+@mp3files = glob( catfile($filepath, "*.mp3") );
+@oggfiles = glob( catfile($filepath, "*.ogg") );
+@wavfiles = glob( catfile($filepath, "*.wav") );
+@m3ufiles = glob( catfile($filepath, "*.m3u") );
+@plsfiles = glob( catfile($filepath, "*.pls") );
 @files = (@mp3files, @oggfiles, @wavfiles, @m3ufiles, @plsfiles);
 
 foreach $file (@files)
