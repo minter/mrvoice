@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: using-mrvoice.sgml,v 1.9 2001/09/28 16:09:53 minter Exp $
+  CVS ID: $Id: using-mrvoice.sgml,v 1.10 2001/10/17 22:22:14 minter Exp $
 -->
 
 <chapter><title>Using Mr. Voice</title>
@@ -37,6 +37,7 @@
       <para>Once you have some songs displayed, left-click once on the name of the song that you want to delete, then choose <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Delete Currently Selected Song</guimenuitem> </menuchoice>.  A box will pop up asking you to confirm the deletion, and also presenting a checkbox labeled <guilabel>Delete File On Disk</guilabel>.   <screenshot> <graphic fileref="../images/delsong.jpg" scale="75"> </screenshot> If you do not select this, the song will be removed from the database, but the actual MP3 file on disk, located at <varname>$filepath</varname>, will remain.  If you do select this option, the song will be removed from the database AND the MP3 file on disk will be deleted.</para>
       <note><para>If you do not have a song selected in the main display box and choose <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Delete Currently Selected Song</guimenuitem> </menuchoice> or <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Edit Currently Selected Song</guimenuitem> </menuchoice>, then nothing will happen.  This is normal.  If you are trying to edit or delete a song and don't get the repective boxes showing up on-screen, make sure that you have a song highlighted.</para></note>
       <para>Finally, if you want to edit a song in the database, left-click a song in the main display window, and choose <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Edit Currently Selected Song</guimenuitem> </menuchoice>.  A box will pop up that is similar to the one for <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Add New Song</guimenuitem> </menuchoice>, except without the file selector option.  You can make any needed changes to the song, then press <guibutton>Ok</guibutton> to commit them.</para>
+      <note><title>Shortcut!</title><para>You can also right-click a song in the main display box to bring up a shortcut menu.  From this menu, you can choose to edit or delete the selected song.</para></note>
     </sect2>
   </sect1>
 
