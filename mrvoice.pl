@@ -14,8 +14,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/09/28 01:09:40 $
-#	CVS REVISION NUMBER:    $Revision: 1.49 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/09/28 16:16:38 $
+#	CVS REVISION NUMBER:    $Revision: 1.50 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -92,6 +92,35 @@ else
 
 my $version = "1.2";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
+
+sub bind_hotkeys
+{
+  # This will set up hotkeybindings for the window that is passed
+  # in as the first argument.
+
+  $window = $_[0];
+  $window->bind("<Key-F1>", [\&play_mp3,"F1"]);
+  $window->bind("<Key-F2>", [\&play_mp3,"F2"]);
+  $window->bind("<Key-F3>", [\&play_mp3,"F3"]);
+  $window->bind("<Key-F4>", [\&play_mp3,"F4"]);
+  $window->bind("<Key-F5>", [\&play_mp3,"F5"]);
+  $window->bind("<Key-F6>", [\&play_mp3,"F6"]);
+  $window->bind("<Key-F7>", [\&play_mp3,"F7"]);
+  $window->bind("<Key-F8>", [\&play_mp3,"F8"]);
+  $window->bind("<Key-F9>", [\&play_mp3,"F9"]);
+  $window->bind("<Key-F10>", [\&play_mp3,"F10"]);
+  $window->bind("<Key-F11>", [\&play_mp3,"F11"]);
+  $window->bind("<Key-F12>", [\&play_mp3,"F12"]);
+  $window->bind("<Key-Return>", [\&do_search]);
+  $window->bind("<Key-Escape>", [\&stop_mp3]);
+  #STARTCSZ
+  #$window->bind("<Alt-Key-t>", [\&play_mp3,"ALT-T"]);
+  #$window->bind("<Alt-Key-y>", [\&play_mp3,"ALT-Y"]);
+  #$window->bind("<Alt-Key-b>", [\&play_mp3,"ALT-B"]);
+  #$window->bind("<Alt-Key-g>", [\&play_mp3,"ALT-G"]);
+  #$window->bind("<Alt-Key-v>", [\&play_mp3,"ALT-V"]);
+  #ENDCSZ
+}
 
 sub open_file
 {
@@ -633,6 +662,7 @@ sub clear_selected
 sub list_hotkeys
 {
   $hotkeysbox=$mw->Toplevel();
+  bind_hotkeys($hotkeysbox);
   $hotkeysbox->title("Hotkeys");
   $hotkeysbox->Label(-text=>"Currently defined hotkeys:")->pack;
   $hotkeysbox->Checkbutton(-text=>"F1:",
@@ -1052,39 +1082,16 @@ $mainbox->bind("<Double-Button-1>", \&play_mp3);
 #
 #####
 
-$mw->Button(-text=>"Play now",
+$mw->Button(-text=>"Play Now",
             -command=>[\&play_mp3,"play"])->pack(-side=>'left');
-$mw->Button(-text=>"Stop now",
+$mw->Button(-text=>"Stop Now",
             -command=>[\&stop_mp3])->pack(-side=>'left');
 $mw->Button(-text=>"Assign Hotkey",
             -command=>[\&set_hotkey])->pack(-side=>'right');
 
 $mw->Label(-textvariable=>\$status)->pack(-side=>'bottom');
 
-#####
-# Bind hotkeys
-$mw->bind("<Key-F1>", [\&play_mp3,"F1"]);
-$mw->bind("<Key-F2>", [\&play_mp3,"F2"]);
-$mw->bind("<Key-F3>", [\&play_mp3,"F3"]);
-$mw->bind("<Key-F4>", [\&play_mp3,"F4"]);
-$mw->bind("<Key-F5>", [\&play_mp3,"F5"]);
-$mw->bind("<Key-F6>", [\&play_mp3,"F6"]);
-$mw->bind("<Key-F7>", [\&play_mp3,"F7"]);
-$mw->bind("<Key-F8>", [\&play_mp3,"F8"]);
-$mw->bind("<Key-F9>", [\&play_mp3,"F9"]);
-$mw->bind("<Key-F10>", [\&play_mp3,"F10"]);
-$mw->bind("<Key-F11>", [\&play_mp3,"F11"]);
-$mw->bind("<Key-F12>", [\&play_mp3,"F12"]);
-$mw->bind("<Key-Return>", [\&do_search]);
-$mw->bind("<Key-Escape>", [\&stop_mp3]);
-#STARTCSZ
-#$mw->bind("<Alt-Key-t>", [\&play_mp3,"ALT-T"]);
-#$mw->bind("<Alt-Key-y>", [\&play_mp3,"ALT-Y"]);
-#$mw->bind("<Alt-Key-b>", [\&play_mp3,"ALT-B"]);
-#$mw->bind("<Alt-Key-g>", [\&play_mp3,"ALT-G"]);
-#$mw->bind("<Alt-Key-v>", [\&play_mp3,"ALT-V"]);
-#ENDCSZ
-#####
+bind_hotkeys($mw);
 
 if (! -x $mp3player)
 {
