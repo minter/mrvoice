@@ -34,7 +34,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.184 2002/12/11 15:49:20 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.185 2002/12/11 21:07:55 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1261,7 +1261,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.184 $';
+  $rev = '$Revision: 1.185 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2163,7 +2163,7 @@ if (! $sth->execute)
     $progressbox->withdraw();
     $progressbox->Icon(-image=>$icon);
     $progressbox->title("Song Conversion Status");
-    $progress = $progressbox->ProgressBar(
+    $progressbox->ProgressBar(
       -width => 20,
       -length => 200,
       -from => 0,
