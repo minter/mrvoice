@@ -12,6 +12,16 @@ our $menubar;
 our $mw;
 our $icon;
 
+my $font;
+if ( $^O eq "darwin" )
+{
+    $font = "charter";
+}
+else
+{
+    $font = "times new roman";
+}
+
 if ( !$pluginmenu )
 {
     $pluginmenu = $menubar->cascade(
@@ -46,7 +56,7 @@ sub scoreboard_plugin
     $vis_side->Label(
         -fg           => 'blue',
         -textvariable => \$vis_score,
-        -font         => [ -family => 'times new roman', -size => 50 ]
+        -font         => [ -family => $font, -size => 70 ]
     )->pack( -side => 'top' );
     my $vis_plus = $vis_side->Frame()->pack( -side => 'top' );
     $vis_plus->Button( -text => '+1', -command => sub { $vis_score += 1 } )
@@ -67,7 +77,7 @@ sub scoreboard_plugin
     $home_side->Label(
         -fg           => 'red',
         -textvariable => \$home_score,
-        -font         => [ -family => 'times new roman', -size => 50 ]
+        -font         => [ -family => $font, -size => 70 ]
     )->pack( -side => 'top' );
     my $home_plus = $home_side->Frame()->pack( -side => 'top' );
     $home_plus->Button( -text => '+1', -command => sub { $home_score += 1 } )
