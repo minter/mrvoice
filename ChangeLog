@@ -1,3 +1,8 @@
+Thu  May  2 2002	H. Wade Minter (minter@lunenburg.org)
+     * Added some hardcoded "use" lines at the top of the script.  This
+       is required by perl2exe, which I am investigating using for
+       the Windows builds.
+
 Wed  Apr 24 2002	H. Wade Minter (minter@lunenburg.org)
      * More documentation work between 4/15 and now.
      * Placed requirement on new module to show length of WAV files 
@@ -220,4 +225,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.39 2002/04/24 19:40:17 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.40 2002/05/02 19:26:07 minter Exp $
