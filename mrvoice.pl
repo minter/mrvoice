@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/25 19:33:05 $
-#	CVS REVISION NUMBER:    $Revision: 1.67 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/26 02:54:14 $
+#	CVS REVISION NUMBER:    $Revision: 1.68 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -224,11 +224,13 @@ sub dynamic_documents
   $filemenu->command(-label=>"$file",
                      -command => [\&open_file, $file]);
 
+  #FIXME
   if ($#current >= $savefile_max)
   {
-    $filemenu->menu->delete(5);
+    $filemenu->menu->delete(7);
     shift (@current);
   }
+  #FIXME
 }
 
 sub infobox
