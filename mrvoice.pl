@@ -41,7 +41,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.249 2003/07/25 19:54:55 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.250 2003/07/28 13:52:08 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1928,7 +1928,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.249 $';
+  $rev = '$Revision: 1.250 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2081,13 +2081,9 @@ sub clear_selected
 
 sub holding_tank
 {
-  if (Exists($holdingtank))
+  if (!Exists($holdingtank))
   {
-    # Only once copy on the screen at a time
-    return;
-  }
-
-  my $arrowdown = $mw->Photo(-data => <<'EOF');
+    my $arrowdown = $mw->Photo(-data => <<'EOF');
 #define downarrow_width 28
 #define downarrow_height 32
 static unsigned char downarrow_bits[] = {
@@ -2104,7 +2100,7 @@ static unsigned char downarrow_bits[] = {
    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 EOF
 
-  my $arrowup = $mw->Photo(-data => <<'EOF');
+    my $arrowup = $mw->Photo(-data => <<'EOF');
 #define uparrow_width 28
 #define uparrow_height 32
 static unsigned char uparrow_bits[] = {
@@ -2121,48 +2117,54 @@ static unsigned char uparrow_bits[] = {
    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 EOF
 
-  $holdingtank = $mw->Toplevel();
-  $holdingtank->withdraw();
-  $holdingtank->Icon(-image=>$icon);
-  bind_hotkeys($holdingtank);              
-  $holdingtank->bind("<Control-Key-p>", [\&play_mp3,"Holding"]);
-  $holdingtank->title("Holding Tank");
-  $holdingtank->Label(-text=>"A place to store songs for later use")->pack;
-  $holdingtank->Label(-text=>"Drag a song here from the main search box to store it")->pack;
-  my $buttonframe = $holdingtank->Frame()->pack(-side=>'bottom',
-                                             -fill=>'x');
-  $holdingtank->Button(-image=>$arrowup,
-                       -command=>[\&move_tank,"-1"])->pack(-side=>'left');
-  $holdingtank->Button(-image=>$arrowdown,
-                       -command=>[\&move_tank,"1"])->pack(-side=>'right');
-  $tankbox = $holdingtank->Scrolled('Listbox',
-                         -scrollbars=>'osoe',
-			 -width=>50,
-			 -setgrid=>1,
-			 -selectmode=>'extended')->pack(-fill=>'both',
-			                              -expand=>1,
-						      -padx=>2,
-						      -side=>'top');
-  $tankbox->DropSite(-droptypes=>['Local'],
-                     -dropcommand=>[\&Tank_Drop, $dnd_token ]);
-  $tankbox->bind("<Double-Button-1>", \&play_mp3);
+    $holdingtank = $mw->Toplevel();
+    $holdingtank->withdraw();
+    $holdingtank->Icon(-image=>$icon);
+    bind_hotkeys($holdingtank);              
+    $holdingtank->bind("<Control-Key-p>", [\&play_mp3,"Holding"]);
+    $holdingtank->title("Holding Tank");
+    $holdingtank->Label(-text=>"A place to store songs for later use")->pack;
+    $holdingtank->Label(-text=>"Drag a song here from the main search box to store it")->pack;
+    my $buttonframe = $holdingtank->Frame()->pack(-side=>'bottom',
+                                                  -fill=>'x');
+    $holdingtank->Button(-image=>$arrowup,
+                         -command=>[\&move_tank,"-1"])->pack(-side=>'left');
+    $holdingtank->Button(-image=>$arrowdown,
+                         -command=>[\&move_tank,"1"])->pack(-side=>'right');
+    $tankbox = $holdingtank->Scrolled('Listbox',
+                           -scrollbars=>'osoe',
+                           -width=>50,
+                           -setgrid=>1,
+                           -selectmode=>'extended')->pack(-fill=>'both',
+			                                  -expand=>1,
+                                                          -padx=>2,
+                                                          -side=>'top');
+    $tankbox->DropSite(-droptypes=>['Local'],
+                       -dropcommand=>[\&Tank_Drop, $dnd_token ]);
+    $tankbox->bind("<Double-Button-1>", \&play_mp3);
 #  $tankbox->bind("<Control-Key-p>", [\&play_mp3, "Holding"]);
-  &BindMouseWheel($tankbox);
-  my $playbutton = $buttonframe->Button(-text=>"Play Now",
-                                        -command=>[\&play_mp3,$tankbox])->pack(-side=>'left');
-  $playbutton->configure(-bg=>'green',
-                       -activebackground=>'SpringGreen2');
-  my $stopbutton = $buttonframe->Button(-text=>"Stop Now",
-                                        -command=>\&stop_mp3)->pack(-side=>'left');
-  $stopbutton->configure(-bg=>'red',
-                       -activebackground=>'tomato3');
-  $buttonframe->Button(-text=>"Close",
-                       -command=>sub {$holdingtank->destroy})->pack(-side=>'right');
-  $buttonframe->Button(-text=>"Clear Selected",
-                       -command=>\&clear_tank)->pack(-side=>'right');
-  $holdingtank->update();
-  $holdingtank->deiconify();
-  $holdingtank->raise();
+    &BindMouseWheel($tankbox);
+    my $playbutton = $buttonframe->Button(-text=>"Play Now",
+                                          -command=>[\&play_mp3,$tankbox])->pack(-side=>'left');
+    $playbutton->configure(-bg=>'green',
+                           -activebackground=>'SpringGreen2');
+    my $stopbutton = $buttonframe->Button(-text=>"Stop Now",
+                                          -command=>\&stop_mp3)->pack(-side=>'left');
+    $stopbutton->configure(-bg=>'red',
+                         -activebackground=>'tomato3');
+    $buttonframe->Button(-text=>"Close",
+                       -command=>sub {$holdingtank->withdraw})->pack(-side=>'right');
+    $buttonframe->Button(-text=>"Clear Selected",
+                         -command=>\&clear_tank)->pack(-side=>'right');
+    $holdingtank->update();
+    $holdingtank->deiconify();
+    $holdingtank->raise();
+  }
+  else
+  {
+    $holdingtank->deiconify();
+    $holdingtank->raise();
+  }
 }
 
 sub move_tank
