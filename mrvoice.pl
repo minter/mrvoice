@@ -13,7 +13,6 @@ use Tk::NoteBook;
 use Tk::BrowseEntry;
 use Tk::ProgressBar::Mac;
 use Tk::DirTree;
-use Tk::Splashscreen;
 use File::Basename;
 use File::Copy;
 use File::Spec::Functions;
@@ -47,7 +46,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.303 2004/01/25 02:32:05 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.304 2004/02/06 18:14:30 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2502,7 +2501,7 @@ sub delete_song
 
 sub show_about
 {
-    $rev = '$Revision: 1.303 $';
+    $rev = '$Revision: 1.304 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3663,13 +3662,6 @@ $mw->protocol( 'WM_DELETE_WINDOW', \&do_exit );
 $icon = $mw->Pixmap( -data => $icon_data );
 $mw->Icon( -image => $icon );
 
-my $splash = $mw->Splashscreen( -milliseconds => 5000 );
-my $splashlogo = $mw->Photo( -data => $logo_photo_data );
-$splash->Label( -image => $splashlogo )->pack;
-$splash->Splash;    # show Splashscreen
-$splash->update;
-$splash->repeat( 100, sub { $splash->raise } );
-
 read_rcfile();
 
 if (
@@ -4559,8 +4551,6 @@ if ( -r catfile( $config{'savedir'}, "default.mrv" ) )
 {
     open_file( $mw, catfile( $config{'savedir'}, "default.mrv" ) );
 }
-
-$splash->Destroy;    # tear down Splashscreen
 
 $mw->deiconify();
 $mw->raise();
