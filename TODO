@@ -1,8 +1,7 @@
 Things I'm currently working on:
 
 * General cleanup and pretty-fication.
-* Tighter integration with WinAmp for Windows version.  Win32::GUI?
 * Reporting tools within the GUI
 
 --
-CVS ID: $Id: TODO,v 1.18 2002/07/02 20:55:11 minter Exp $
+CVS ID: $Id: TODO,v 1.19 2002/07/08 20:04:22 minter Exp $

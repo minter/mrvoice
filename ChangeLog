@@ -1,3 +1,11 @@
+Sun  Jul  7 2002	H. Wade Minter (minter@lunenburg.org)
+     * Big update from my Long Island trip. 
+     * Fixed a bug that was preventing date-based searching from working
+       under Windows.
+     * Added hooks into WinAmp for stopping MP3s.  Also, shift-clicking
+       on the stop button, or shift-escape, will activate WinAmp's
+       "fade out to stop" function.  (Suggested by Randy in KC)
+
 Tue  Jul  2 2002	H. Wade Minter (minter@lunenburg.org)
      * Added (finally) the code to edit a category's description.
 
@@ -282,4 +290,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.55 2002/07/02 20:55:11 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.56 2002/07/08 20:04:22 minter Exp $
