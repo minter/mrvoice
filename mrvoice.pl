@@ -3,6 +3,7 @@ use Tk;
 use Tk::DialogBox;
 use Tk::DragDrop;
 use Tk::DropSite;
+use Tk::NoteBook;
 use File::Basename;
 use File::Copy;
 use DBI;
@@ -14,7 +15,7 @@ use MPEG::MP3Info;
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.91 2001/12/05 02:29:02 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.92 2001/12/08 19:44:58 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -542,40 +543,62 @@ sub edit_preferences
   my $box = $mw->DialogBox(-title=>"Edit Preferences",
                            -buttons=>["Ok","Cancel"],
                            -default_button=>"Ok");
-  $box->add("Label",-text=>"You may use this form to modify the operating\npreferences for the Mr. Voice software.\n")->pack();
-  my $frame1 = $box->add("Frame")->pack(-fill=>'x');
-  $frame1->Label(-text=>"Database Name")->pack(-side=>'left');
-  $frame1->Entry(-width=>30,
-                 -textvariable=>\$db_name)->pack(-side=>'right'); 
-  my $frame2 = $box->add("Frame")->pack(-fill=>'x');
-  $frame2->Label(-text=>"Database User Name")->pack(-side=>'left');
-  $frame2->Entry(-width=>30,
-                 -textvariable=>\$db_username)->pack(-side=>'right'); 
-  my $frame3 = $box->add("Frame")->pack(-fill=>'x');
-  $frame3->Label(-text=>"Database Password")->pack(-side=>'left');
-  $frame3->Entry(-width=>30,
-                 -textvariable=>\$db_pass)->pack(-side=>'right'); 
-  my $frame4 = $box->add("Frame")->pack(-fill=>'x');
-  $frame4->Label(-text=>"MP3 Directory")->pack(-side=>'left');
-  $frame4->Entry(-width=>30,
-                 -textvariable=>\$filepath)->pack(-side=>'right'); 
-  my $frame5 = $box->add("Frame")->pack(-fill=>'x');
-  $frame5->Label(-text=>"Hotkey Directory")->pack(-side=>'left');
-  $frame5->Entry(-width=>30,
-                 -textvariable=>\$savedir)->pack(-side=>'right'); 
-  my $frame6 = $box->add("Frame")->pack(-fill=>'x');
-  $frame6->Label(-text=>"MP3 Player")->pack(-side=>'left');
-  $frame6->Button(-text=>"Choose",
+
+  my $notebook = $box->add('NoteBook', -ipadx=>6, -ipady=>6);
+  my $database_page = $notebook->add("database", 
+                                     -label=>"Database Options", 
+				     -underline=>0);
+  my $filepath_page = $notebook->add("filepath",
+                                     -label=>"File Paths",
+				     -underline=>0);
+  my $other_page = $notebook->add("other",
+                                  -label=>"Other",
+				  -underline=>0);
+
+  my $db_name_frame = $database_page->Frame()->pack(-fill=>'x');
+  $db_name_frame->Label(-text=>"Database Name")->pack(-side=>'left');
+  $db_name_frame->Entry(-width=>30,
+	                -textvariable=>\$db_name)->pack(-side=>'right');
+
+  my $db_user_frame = $database_page->Frame()->pack(-fill=>'x');
+  $db_user_frame->Label(-text=>"Database Username")->pack(-side=>'left');
+  $db_user_frame->Entry(-width=>30,
+	                -textvariable=>\$db_username)->pack(-side=>'right');
+
+  my $db_pass_frame = $database_page->Frame()->pack(-fill=>'x');
+  $db_pass_frame->Label(-text=>"Database Password")->pack(-side=>'left');
+  $db_pass_frame->Entry(-width=>30,
+	                -textvariable=>\$db_pass)->pack(-side=>'right');
+
+  my $mp3dir_frame = $filepath_page->Frame()->pack(-fill=>'x');
+  $mp3dir_frame->Label(-text=>"MP3 Directory")->pack(-side=>'left');
+  $mp3dir_frame->Entry(-width=>30,
+	               -textvariable=>\$filepath)->pack(-side=>'right');
+
+  my $hotkeydir_frame = $filepath_page->Frame()->pack(-fill=>'x');
+  $hotkeydir_frame->Label(-text=>"MP3 Directory")->pack(-side=>'left');
+  $hotkeydir_frame->Entry(-width=>30,
+	                  -textvariable=>\$savedir)->pack(-side=>'right');
+
+  my $mp3frame = $other_page->Frame()->pack(-fill=>'x');
+  $mp3frame->Label(-text=>"MP3 Player")->pack(-side=>'left');
+  $mp3frame->Button(-text=>"Choose",
                   -command=>sub { 
                      $mp3player = $mw->getOpenFile(-title=>'Select File');
                                 })->pack(-side=>'right');
-  $frame6->Entry(-width=>30,
+  $mp3frame->Entry(-width=>30,
                  -textvariable=>\$mp3player)->pack(-side=>'right'); 
-  my $frame7 = $box->add("Frame")->pack(-fill=>'x');
-  $frame7->Label(-text=>"Number of Dynamic Documents To Show")->pack(-side=>'left');
-  $frame7->Entry(-width=>2,
+
+  my $numdyn_frame = $other_page->Frame()->pack(-fill=>'x');
+  $numdyn_frame->Label(-text=>"Number of Dynamic Documents To Show")->pack(-side=>'left');
+  $numdyn_frame->Entry(-width=>2,
                  -textvariable=>\$savefile_max)->pack(-side=>'right');
 
+  $notebook->pack(-expand=>"yes",
+                  -fill=>"both",
+		  -padx=>5,
+		  -pady=>5,
+		  -side=>"top");
   my $result = $box->Show();
 
   if ($result eq "Ok")
