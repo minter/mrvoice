@@ -1,3 +1,8 @@
+Thu  Sep 27 2001	H. Wade Minter (minter@lunenburg.org)
+     * Cleaned up the path handling for Windows and Unix.
+     * Pretty much finished the documentation.
+     * Upped version number to 1.2 in preparation for release.
+
 Wed  Sep 26 2001	H. Wade Minter (minter@lunenburg.org)
      * Added the ability to have a C:\mrvoice.cfg file, the equivalent
        of ~/.mrvoicerc under Unix.
@@ -81,4 +86,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.16 2001/09/26 17:56:16 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.17 2001/09/27 15:48:31 minter Exp $
