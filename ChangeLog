@@ -1,3 +1,8 @@
+Tues Feb 27 2001	H. Wade Minter (minter@lunenburg.org)
+     * Fixed a couple of fairly serious bugs that would prevent
+       MP3s from playing.
+     * Released version 0.8.1 (Bugfix)
+
 Sun Feb 25 2001		H. Wade Minter (minter@lunenburg.org)
      * Added a category-modification PHP script.
      * Added delete/modify to the mrvoice PHP script.
@@ -28,4 +33,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.4 2001/02/26 03:05:44 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.5 2001/02/28 02:54:36 minter Exp $
