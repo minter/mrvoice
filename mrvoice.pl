@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.379 2004/04/26 14:55:04 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.380 2004/04/26 20:20:49 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -559,7 +559,7 @@ sub bind_hotkeys
     # This will set up hotkeybindings for the window that is passed
     # in as the first argument.
 
-    my $window = $_[0];
+    my $window = shift;
     foreach my $num ( 1 .. 12 )
     {
         $window->bind( "all", "<Key-F$num>", [ \&play_mp3, "f$num" ] );
@@ -737,8 +737,8 @@ sub open_file
         return;
     }
 
-    my $parentwidget = $_[0];
-    my $selectedfile = $_[1];
+    my $parentwidget = shift;
+    my $selectedfile = shift;
 
     # UGLY HACK
     my $initialdir = $config{'savedir'};
@@ -1025,7 +1025,7 @@ sub get_title_artist
 {
 
     # Returns the title and artist of an MP3 or OGG file
-    my $filename = $_[0];
+    my $filename = shift;
     my $title;
     my $artist;
 
@@ -1066,7 +1066,7 @@ sub dynamic_documents
     # It adds the file to the "Recent Files" menu off of Files, and if we're
     # over the user-specified limit, removes the oldest file from the list.
 
-    my $file = $_[0];
+    my $file = shift;
 
     my $fileentry;
     my $counter = 0;
@@ -1164,8 +1164,8 @@ sub restore_hotkeys
 
 sub build_category_menubutton
 {
-    my $parent  = $_[0];
-    my $var_ref = $_[1];
+    my $parent  = shift;
+    my $var_ref = shift;
     my $menu    = $parent->Menubutton(
         -text        => "Choose Category",
         -relief      => 'raised',
@@ -2278,7 +2278,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.379 $';
+    my $rev    = '$Revision: 1.380 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::mysql->VERSION;
@@ -2544,7 +2544,7 @@ sub move_tank
 
     # Blatantly cribbed from Mastering Perl/Tk's Tk::NavListbox example
     my $lb          = $tankbox;
-    my $direction   = $_[0];
+    my $direction   = shift;
     my (@selection) = $lb->curselection;
     my $index       = $selection[0];
 
@@ -2705,7 +2705,7 @@ sub get_info_from_id
 
     # Returns a hash reference containing all the info for a specified ID
 
-    my $id = $_[0];
+    my $id = shift;
     my %info;
     my $query          = "SELECT * FROM mrvoice WHERE id=$id";
     my $result_hashref = $dbh->selectrow_hashref($query);
@@ -2726,7 +2726,7 @@ sub get_info_from_id
 
 sub validate_id
 {
-    my $id      = $_[0];
+    my $id      = shift;
     my $query   = "SELECT * FROM mrvoice WHERE id=$id";
     my $numrows = $dbh->do($query);
     return $numrows == 1 ? 1 : 0;
@@ -2841,7 +2841,7 @@ sub get_songlength
     #Generic function to return the length of a song in mm:ss format.
     #Currently supports OGG, MP3 and WAV, with the appropriate modules.
 
-    my $file = $_[0];
+    my $file = shift;
     my $time = "";
     if ( $file =~ /.*\.mp3$/i )
     {
@@ -3027,7 +3027,7 @@ sub do_search
 
 sub return_longcat
 {
-    my $category = $_[0];
+    my $category = shift;
     my $query    = "SELECT description FROM categories WHERE code='$category'";
     my $longcat_ref = $dbh->selectrow_hashref($query);
     return ( $longcat_ref->{description} );
