@@ -11,6 +11,13 @@ use CPAN;
 my @mods =
   qw(DBI DBD::SQLite MPEG::MP3Info MP4::Info Audio::Wav Date::Manip Time::Local Time::HiRes Ogg::Vorbis::Header::PurePerl Tk Tk::ProgressBar::Mac Getopt::Long Cwd File::Temp );
 
+push(
+    @mods,
+    qw/LWP::UserAgent HTTP::Request Win32::Process Win32::FileOp Audio::WMA/
+  )
+  if ( $^O eq "MSWin32" );
+push( @mods, "Mac::AppleScript" ) if ( $^O eq "darwin" );
+
 my $count = 0;
 
 # list all modules on my disk that have newer versions on CPAN

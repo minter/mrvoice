@@ -10,6 +10,9 @@ use Tk '804.026';
 use Tk::DialogBox;
 use Tk::Dialog;
 use Tk::DragDrop;
+use Tk::DragDrop::XDNDSite;
+use Tk::DragDrop::SunSite;
+use Tk::Bitmap;
 use Tk::DropSite;
 use Tk::NoteBook;
 use Tk::ProgressBar::Mac;
@@ -82,6 +85,7 @@ our $title;                     # The "Title" search entry field
 our $artist;                    # The "Artist" search entry field
 our $anyfield;                  # The "Any Field" search entry field
 our $cattext;                   # The "Extra Info" search entry field
+our $authenticated = 0;         # Has the user provided the proper password?
 ##########
 
 # Allow searches of all music publishers by default.
@@ -135,6 +139,7 @@ my $result = GetOptions(
     'debug'     => \$debug,
     'help'      => \$help
 );
+$debug = 1 if ( $^O eq "darwin" );
 
 if ($help)
 {
@@ -164,9 +169,10 @@ EOL
 # Check to see if we're on Windows or Linux, and set the RC file accordingly.
 if ( "$^O" eq "MSWin32" )
 {
-    $rcfile = ( $userrcfile eq "" ) ? "C:\\mrvoice.cfg" : $userrcfile;
+    $rcfile =
+      ( $userrcfile eq "" ) ? catfile( "C:", "mrvoice.cfg" ) : $userrcfile;
     $logfile = "" if !defined($logfile);
-    $logfile = ( $logfile eq "" ) ? "C:/mrvoice.log" : $logfile;
+    $logfile = ( $logfile eq "" ) ? catfile( "C:", "mrvoice.log" ) : $logfile;
     open( STDOUT, ">$logfile" );
     open( STDERR, ">&STDOUT" );
     print "Using Windows logfile $logfile\n" if $debug;
@@ -203,14 +209,24 @@ if ( "$^O" eq "MSWin32" )
 }
 else
 {
+
+    BEGIN
+    {
+        if ( $^O eq "darwin" )
+        {
+            require Mac::AppleScript;
+            Mac::AppleScript->import('RunAppleScript');
+        }
+    }
     my $homedir = get_homedir();
     $rcfile = ( $userrcfile eq "" ) ? "$homedir/.mrvoicerc" : $userrcfile;
-    if ( defined($logfile) )
+    if ( ( defined($logfile) ) || ( $^O eq "darwin" ) )
     {
         $logfile = ( $logfile eq "" ) ? "$homedir/mrvoice.log" : $logfile;
-        open( STDOUT, ">$logfile" );
-        open( STDERR, ">&STDOUT" );
-        print "Using Unix logfile $logfile\n" if $debug;
+        open( STDOUT, ">$logfile" ) or die;
+        open( STDERR, ">&STDOUT" )  or die;
+        print "Using Unix logfile $logfile\n"
+          if ( $debug || ( $^O eq "darwin" ) );
     }
 }
 
@@ -224,7 +240,7 @@ our $altv = "PriceIsRightTheme.mp3";
 
 #####
 
-my $version = "2.0.2";    # Program version
+my $version = "2.0.4";    # Program version
 our $status = "Welcome to Mr. Voice version $version";
 
 sub get_rows
@@ -1409,7 +1425,18 @@ sub build_category_menubutton
 
 sub bulk_add
 {
-    print "Using bulk add\n";
+    print "Using bulk add\n" if $debug;
+    if ( ( $config{write_password} ) && ( !$authenticated ) )
+    {
+        print "There is a write_password of $config{write_password}\n"
+          if $debug;
+        if ( !authenticate_user() )
+        {
+            print "User authentication failed\n" if $debug;
+            $status = "You do not have permission to bulk-add songs";
+            return;
+        }
+    }
     my ( @accepted, @rejected, $directory, $longcat, $db_cat );
     my $bulkadd_publisher = "OTHER";
     my $box1              = $mw->DialogBox(
@@ -1614,6 +1641,17 @@ sub bulk_add
 sub add_category
 {
     print "Adding new category\n" if $debug;
+    if ( ( $config{write_password} ) && ( !$authenticated ) )
+    {
+        print "There is a write_password of $config{write_password}\n"
+          if $debug;
+        if ( !authenticate_user() )
+        {
+            print "User authentication failed\n" if $debug;
+            $status = "You do not have permission to add categories";
+            return;
+        }
+    }
     my ( $addcat_code, $addcat_desc );
     my $box = $mw->DialogBox(
         -title   => "Add a category",
@@ -1700,6 +1738,17 @@ sub add_category
 sub edit_category
 {
     print "Editing category\n" if $debug;
+    if ( ( $config{write_password} ) && ( !$authenticated ) )
+    {
+        print "There is a write_password of $config{write_password}\n"
+          if $debug;
+        if ( !authenticate_user() )
+        {
+            print "User authentication failed\n" if $debug;
+            $status = "You do not have permission to edit categories";
+            return;
+        }
+    }
     my $edit_cat;
     my $box = $mw->DialogBox(
         -title   => "Choose a category to edit",
@@ -1793,6 +1842,17 @@ sub edit_category
 sub delete_category
 {
     print "Deleting category\n" if $debug;
+    if ( ( $config{write_password} ) && ( !$authenticated ) )
+    {
+        print "There is a write_password of $config{write_password}\n"
+          if $debug;
+        if ( !authenticate_user() )
+        {
+            print "User authentication failed\n" if $debug;
+            $status = "You do not have permission to delete categories";
+            return;
+        }
+    }
     my $box = $mw->DialogBox(
         -title   => "Delete a category",
         -buttons => [ "Ok", "Cancel" ]
@@ -1909,9 +1969,60 @@ sub move_file
     return ($newfilename);
 }
 
+sub accept_songdrop
+{
+
+    # Thanks to the.noonings for the code
+    my ( $widget, $selection ) = @_;
+
+    my $string_dropped;
+    eval {
+        if ( $^O eq 'MSWin32' )
+        {
+            $string_dropped = $widget->SelectionGet(
+                -selection => $selection,
+                'STRING'
+            );
+        }
+        else
+        {
+            $string_dropped = $widget->SelectionGet(
+                -selection => $selection,
+                'STRING'
+            );
+        }
+    };
+
+    if ( defined $string_dropped )
+    {
+        $string_dropped =~ s/^file:// if ( $^O ne "MSWin32" );
+        if ( ( -f $string_dropped ) && ( -r $string_dropped ) )
+        {
+            $string_dropped = Win32::GetShortPathName($string_dropped)
+              if ( $^O eq "MSWin32" );
+            add_new_song($string_dropped);
+        }
+        else
+        {
+            $status = "$string_dropped is not a readable file";
+        }
+    }
+}
+
 sub add_new_song
 {
     print "Adding new song\n" if $debug;
+    if ( ( $config{write_password} ) && ( !$authenticated ) )
+    {
+        print "There is a write_password of $config{write_password}\n"
+          if $debug;
+        if ( !authenticate_user() )
+        {
+            print "User authentication failed\n" if $debug;
+            $status = "You do not have permission to add new songs";
+            return;
+        }
+    }
     my (
         $addsong_title, $addsong_artist,   $addsong_info,
         $addsong_cat,   $addsong_filename, $addsong_publisher
@@ -2120,9 +2231,53 @@ sub add_new_song
     }
 }
 
+sub authenticate_user
+{
+    print "Attempting to authenticate user\n" if $debug;
+    my $password;
+    my $authbox = $mw->DialogBox(
+        -title   => "Please Enter The Password",
+        -buttons => [ "Authenticate", "Cancel" ]
+    );
+    $authbox->Icon( -image => $icon );
+    $authbox->Label( -text =>
+          "You must provide a password in order to access this function.\n\nPlease enter it below."
+    )->pack( -side => 'top' );
+    $authbox->Entry(
+        -background   => 'white',
+        -width        => 8,
+        -textvariable => \$password,
+        -show         => '*'
+    )->pack( -side => 'top' );
+    my $choice = $authbox->Show;
+    return if ( $choice eq "Cancel" );
+
+    if ( $password eq $config{write_password} )
+    {
+        $authenticated = 1;
+        $status        = "Successfully authenticated for write access";
+        return $authenticated;
+    }
+    else
+    {
+        return;
+    }
+}
+
 sub edit_preferences
 {
     print "Editing preferences\n" if $debug;
+    if ( ( $config{write_password} ) && ( !$authenticated ) )
+    {
+        print "There is a write_password of $config{write_password}\n"
+          if $debug;
+        if ( !authenticate_user() )
+        {
+            print "User authentication failed\n" if $debug;
+            $status = "You do not have permission to edit the Preferences";
+            return;
+        }
+    }
     my $box = $mw->DialogBox(
         -title          => "Edit Preferences",
         -buttons        => [ "Ok", "Cancel" ],
@@ -2251,7 +2406,7 @@ sub edit_preferences
 
     my $mp3frame = $other_page->Frame()->pack( -fill => 'x' );
     $mp3frame->Label( -text => "MP3 Player" )->pack( -side => 'left' );
-    $mp3frame->Button(
+    my $mp3button = $mp3frame->Button(
         -text    => "Choose",
         -command => sub {
             $config{'mp3player'} = $mw->getOpenFile(
@@ -2260,11 +2415,13 @@ sub edit_preferences
             );
         }
     )->pack( -side => 'right' );
-    $mp3frame->Entry(
+    $mp3button->configure( -state => 'disabled' ) if ( $^O eq "darwin" );
+    my $mp3entry = $mp3frame->Entry(
         -background   => 'white',
         -width        => 30,
         -textvariable => \$config{'mp3player'}
     )->pack( -side => 'right' );
+    $mp3entry->configure( -state => 'disabled' ) if ( $^O eq "darwin" );
 
     my $numdyn_frame = $other_page->Frame()->pack( -fill => 'x' );
     $numdyn_frame->Label( -text => "Number of Dynamic Documents To Show" )
@@ -2282,6 +2439,16 @@ sub edit_preferences
         -background   => 'white',
         -width        => 8,
         -textvariable => \$config{'httpq_pw'}
+    )->pack( -side => 'right' );
+
+    my $writepass_frame = $other_page->Frame()->pack( -fill => 'x' );
+    $writepass_frame->Label( -text => "Write Access Password (empty for none)" )
+      ->pack( -side => 'left' );
+    $writepass_frame->Entry(
+        -background   => 'white',
+        -width        => 8,
+        -show         => '*',
+        -textvariable => \$config{'write_password'}
     )->pack( -side => 'right' );
 
     $notebook->pack(
@@ -2331,6 +2498,17 @@ sub edit_preferences
 sub edit_song
 {
     print "Editing song\n" if $debug;
+    if ( ( $config{write_password} ) && ( !$authenticated ) )
+    {
+        print "There is a write_password of $config{write_password}\n"
+          if $debug;
+        if ( !authenticate_user() )
+        {
+            print "User authentication failed\n" if $debug;
+            $status = "You do not have permission to edit songs";
+            return;
+        }
+    }
     my (@selected) = $mainbox->info('selection');
     print "Selected items are " . join( ", ", @selected ) . "\n" if $debug;
     my ( $edit_title, $edit_artist, $edit_category, $edit_publisher,
@@ -2580,6 +2758,17 @@ sub edit_song
 sub delete_song
 {
     print "Deleting song\n" if $debug;
+    if ( ( $config{write_password} ) && ( !$authenticated ) )
+    {
+        print "There is a write_password of $config{write_password}\n"
+          if $debug;
+        if ( !authenticate_user() )
+        {
+            print "User authentication failed\n" if $debug;
+            $status = "You do not have permission to delete songs";
+            return;
+        }
+    }
     my (@selection) = $mainbox->info('selection');
     print "Deleting songs " . join( ", ", @selection ) . "\n" if $debug;
     my $count = scalar @selection;
@@ -2662,14 +2851,20 @@ sub delete_song
 
 sub show_about
 {
+    my @modules =
+      qw/Tk DBI DBD::SQLite MPEG::MP3Info MP4::Info Audio::Wav Ogg::Vorbis::Header::PurePerl Date::Manip Time::Local Time::HiRes File::Glob File::Temp File::Basename File::Copy/;
+    push(
+        @modules,
+        qw/LWP::UserAgent HTTP::Request Win32::Process Win32::FileOp Audio::WMA/
+      )
+      if ( $^O eq "MSWin32" );
+    push( @modules, "Mac::AppleScript" ) if ( $^O eq "darwin" );
+
     print "Showing about box\n" if $debug;
-    my $rev    = '$LastChangedRevision$';
-    my $tkver  = Tk->VERSION;
-    my $dbiver = DBI->VERSION;
-    my $dbdver = DBD::SQLite->VERSION;
+    my $rev = '$LastChangedRevision$';
     $rev =~ s/.*: (\d+).*/$1/;
     my $string =
-      "Mr. Voice Version ${version}CWX (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\nTk Version: $tkver\nDBI Version: $dbiver\nSQLite DBD Version: $dbdver\n\n(c)2001-2004, Released under the GNU General Public License";
+      "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001-2005, Released under the GNU General Public License.\n\n\nTechnical information below:";
     my $box = $mw->DialogBox(
         -title      => "About Mr. Voice",
         -buttons    => ["OK"],
@@ -2687,6 +2882,25 @@ sub show_about
         -text       => "$string",
         -background => 'white'
     )->pack();
+    my $about_lb = $box->Scrolled(
+        "Listbox",
+        -scrollbars => "osoe",
+        -background => 'white',
+        -setgrid    => 1,
+        -width      => 40,
+        -height     => 8,
+        -selectmode => "single"
+    )->pack();
+
+    $about_lb->insert( 'end', "Perl Version: $]" );
+    $about_lb->insert( 'end', "Operating System: $^O" );
+    foreach my $module (@modules)
+    {
+        no strict 'refs';
+        my $versionstring = "${module}::VERSION";
+        $about_lb->insert( 'end', "$module Version: $$versionstring" );
+    }
+
     $box->Show;
 }
 
@@ -2842,7 +3056,17 @@ sub launch_tank_playlist
     }
     close($fh) or die;
     print "Sending playlist command to MP3 player\n" if $debug;
-    system("$config{'mp3player'} $filename");
+    if ( $^O eq "darwin" )
+    {
+        RunAppleScript(
+            qq( set unixFile to \"$filename\"\nset macFile to POSIX file unixFile\nset fileRef to (macFile as alias)\ntell application "Audion 3"\nplay fileRef in control window 1\nend tell)
+          )
+          or die "Can't play: $@";
+    }
+    else
+    {
+        system("$config{'mp3player'} $filename");
+    }
 }
 
 sub holding_tank
@@ -2880,6 +3104,8 @@ EOF
             -bg               => 'dodgerblue',
             -activebackground => 'royalblue'
         );
+        $playlistbutton->configure( -state => 'disabled' )
+          if ( $^O eq "darwin" );
         my $buttonframe = $holdingtank->Frame()->pack(
             -side => 'bottom',
             -fill => 'x'
@@ -3233,7 +3459,15 @@ sub stop_mp3
     # Sends a stop command to the MP3 player.  Works for both xmms and WinAmp,
     # though not particularly cleanly.
 
-    system("$config{'mp3player'} --stop");
+    if ( $^O eq "darwin" )
+    {
+        RunAppleScript(
+            qq( tell application "Audion 3" to stop in control window 1));
+    }
+    else
+    {
+        system("$config{'mp3player'} --stop");
+    }
     $status = "Playing Stopped";
 
     # Manually give the mainbox focus
@@ -3314,7 +3548,17 @@ sub play_mp3
     if ( $action eq "addsong" )
     {
         $status = "Previewing file $filename";
-        system("$config{'mp3player'} $filename");
+        if ( $^O eq "darwin" )
+        {
+            RunAppleScript(
+                qq( set unixFile to \"$filename\"\nset macFile to POSIX file unixFile\nset fileRef to (macFile as alias)\ntell application "Audion 3"\nplay fileRef in control window 1\nend tell)
+              )
+              or die "Can't play: $@";
+        }
+        else
+        {
+            system("$config{'mp3player'} $filename");
+        }
     }
     elsif ($filename)
     {
@@ -3338,7 +3582,17 @@ sub play_mp3
         print "Playing file $filename\n" if $debug;
         $status = "Playing $songstatusstring";
         my $file = catfile( $config{'filepath'}, $filename );
-        system("$config{'mp3player'} $file");
+        if ( $^O eq "darwin" )
+        {
+            RunAppleScript(
+                qq( set unixFile to \"$file\"\nset macFile to POSIX file unixFile\nset fileRef to (macFile as alias)\ntell application "Audion 3"\nplay fileRef in control window 1\nend tell)
+              )
+              or die "Can't play: $@";
+        }
+        else
+        {
+            system("$config{'mp3player'} $file");
+        }
     }
 }
 
@@ -3464,12 +3718,13 @@ sub do_search
         my $date;
         if ( $span eq "0" )
         {
-            $date = DateTime->now;
+            $date = ParseDate("today midnight");
         }
         else
         {
-            $date = DateCalc( "today", "- $span" );
+            $date = DateCalc( "today midnight", "- $span" );
         }
+        print "Date is $date\n" if $debug;
         $datestring = UnixDate( $date, "%s" );
         print "Datestring is $datestring\n" if $debug;
 
@@ -3671,14 +3926,18 @@ sub do_exit
 
     if ( $choice =~ /yes/i )
     {
-        print "Disconnecting from $dbh\n" if $debug;
+        print "Disconnecting from dbh\n" if $debug;
         $dbh->disconnect;
-        if ( "$^O" eq "MSWin32" )
+        if ( $^O eq "MSWin32" )
         {
 
             # Close the MP3 player on a Windows system
             print "Killing process $mp3_pid on Win32\n" if $debug;
             Win32::Process::KillProcess( $mp3_pid, 1 );
+        }
+        elsif ( $^O eq "darwin" )
+        {
+            RunAppleScript(qq (tell application "Audion 3" to quit));
         }
         else
         {
@@ -3776,7 +4035,7 @@ sub read_rcfile
             print "Performing default configuration\n" if $debug;
             $config{filepath} =
               ( $^O eq "MSWin32" )
-              ? "C:\\mp3"
+              ? catfile( "C:",          "mp3" )
               : catfile( get_homedir(), "mp3" );
             print "Filepath is $config{filepath}\n" if $debug;
             my $string =
@@ -3798,7 +4057,7 @@ sub read_rcfile
 
             $config{savedir} =
               ( $^O eq "MSWin32" )
-              ? "C:\\hotkeys"
+              ? catfile( "C:",          "hotkeys" )
               : catfile( get_homedir(), "hotkeys" );
             print "Savedir is $config{savedir}\n" if $debug;
             $string .= "Creating hotkey directory $config{savedir}...";
@@ -3818,7 +4077,7 @@ sub read_rcfile
 
             $config{db_file} =
               ( $^O eq "MSWin32" )
-              ? "C:\\mrvoice.db"
+              ? catfile( "C:",          "mrvoice.db" )
               : catfile( get_homedir(), "mrvoice.db" );
             print "DB File is $config{db_file}\n" if $debug;
             $string .= "Setting database file $config{db_file}...";
@@ -3843,7 +4102,7 @@ sub read_rcfile
             }
             elsif ( $^O eq "darwin" )
             {
-                $config{mp3player} = "/sw/bin/xmms";
+                $config{mp3player} = "Audion";
             }
             else
             {
@@ -3851,8 +4110,17 @@ sub read_rcfile
             }
             print "MP3 player is $config{mp3player}\n" if $debug;
             $string .= "Looking for MP3 player in $config{mp3player}...";
-            $string .=
-              ( -f $config{mp3player} ) ? "found it\n\n" : "nothing there!\n\n";
+            if ( $^O eq "darwin" )
+            {
+                $string .= "Skipping\n\n";
+            }
+            else
+            {
+                $string .=
+                  ( -f $config{mp3player} )
+                  ? "found it\n\n"
+                  : "nothing there!\n\n";
+            }
 
             $string .=
               "Now, we will launch the preferences so that you can doublecheck everything.";
@@ -4012,7 +4280,7 @@ print "Starting Mr. Voice version $version at " . scalar(localtime) . "\n"
 $|  = 1;
 $mw = MainWindow->new;
 $mw->withdraw();
-my $menubar = $mw->Menu;
+our $menubar = $mw->Menu;
 $mw->configure( -menu => $menubar );
 $mw->geometry("+0+0");
 $mw->title("Mr. Voice");
@@ -4025,6 +4293,7 @@ print "Reading rcfile\n" if $debug;
 read_rcfile();
 print "Read rcfile\n" if $debug;
 
+print "Checking if db_file is set\n" if $debug;
 if ( !defined $config{db_file} )
 {
     print "db_file not defined, doing database configuration\n" if $debug;
@@ -4050,6 +4319,7 @@ if ( !defined $config{db_file} )
     }
 }
 
+print "Checking if db_file exists\n" if $debug;
 if ( !( -e $config{db_file} ) )
 {
     print "db_file $config{db_file} configured, but file does not exist\n"
@@ -4085,6 +4355,7 @@ if ( !( -e $config{db_file} ) )
     }
 }
 
+print "Checking if db_file is writable\n" if $debug;
 if ( !( -w $config{db_file} ) )
 {
     print "Could not write to db_file $config{db_file}\n" if $debug;
@@ -4107,6 +4378,7 @@ if ( !( -w $config{db_file} ) )
     }
 }
 
+print "Connecting via DBI\n" if $debug;
 if ( !( $dbh = DBI->connect( "dbi:SQLite:dbname=$config{db_file}", "", "" ) ) )
 {
     print
@@ -4140,6 +4412,7 @@ if ( !( $dbh = DBI->connect( "dbi:SQLite:dbname=$config{db_file}", "", "" ) ) )
     }
 }
 
+print "Checking if filepath is writable\n" if $debug;
 if ( !-W $config{'filepath'} )
 {
     print "Could not write to MP3 directory $config{'filepath'}\n" if $debug;
@@ -4176,6 +4449,7 @@ if ( !-W $config{'filepath'} )
     }
 }
 
+print "Checking if savedir is writable\n" if $debug;
 if ( !-W $config{'savedir'} )
 {
     print "Could not write to hotkey directory $config{savedir}\n" if $debug;
@@ -4200,7 +4474,8 @@ if ( !-W $config{'savedir'} )
 # We use the following statement to open the MP3 player asynchronously
 # when the Mr. Voice app starts.
 
-if ( !-x $config{'mp3player'} )
+print "Starting MP3 Player\n" if $debug;
+if ( ( !-x $config{'mp3player'} ) && ( $^O ne "darwin" ) )
 {
     print "Could not execute MP3 player $config{'mp3player'}\n" if $debug;
     infobox(
@@ -4223,6 +4498,12 @@ else
         $mp3_pid = $object->GetProcessID();
         print "Got Win32::Process id $mp3_pid\n" if $debug;
         sleep(1);
+    }
+    elsif ( $^O eq "darwin" )
+    {
+        print "Starting AppleScript\n" if $debug;
+        RunAppleScript(qq( tell application "Audion 3" to activate)) or die;
+        print "Finished AppleScript\n" if $debug;
     }
     else
     {
@@ -4328,6 +4609,7 @@ sub hotkeysmenu_items
             -command     => \&holding_tank,
             -accelerator => 'Ctrl-T'
         ],
+        [ 'command', 'Flush the Holding Tank', -command => \&wipe_tank ],
 
         [
             'command',
@@ -4411,6 +4693,7 @@ sub orphans
 
     # Cycle through each file and check whether or not a database entry
     # references it.
+    my $numfiles = scalar(@files);
     foreach my $file (@files)
     {
         print "Checking file $file\n" if $debug;
@@ -4422,7 +4705,7 @@ sub orphans
             print "File $file is an orphan\n" if $debug;
         }
         $file_count++;
-        $percent_done = int( ( $file_count / $#files ) * 100 );
+        $percent_done = int( ( $file_count / $numfiles ) * 100 );
         $pb->set($percent_done);
         $progressbox->update();
     }
@@ -4882,6 +5165,10 @@ $mainbox = $searchboxframe->Scrolled(
 $mainbox->bind( "<Double-Button-1>", \&play_mp3 );
 $mainbox->bind( "<Button-1>", sub { $mainbox->focus(); } );
 $mainbox->bind( "<Button-3>", [ \&rightclick_menu ] );
+$mainbox->DropSite(
+    -dropcommand => [ \&accept_songdrop, $mainbox ],
+    -droptypes => ( $^O eq 'MSWin32' ? 'Win32' : [ 'XDND', 'Sun' ] )
+);
 
 $dnd_token = $mainbox->DragDrop(
     -event        => '<B1-Motion>',
@@ -4980,6 +5267,12 @@ print "Deiconifying and raising MainWindow\n" if $debug;
 $mw->deiconify();
 $mw->raise();
 print "Deiconified and raised, running MainLoop now\n" if $debug;
+
+foreach my $file ( glob( catfile( $config{plugin_dir}, "*.pl" ) ) )
+{
+    require $file;
+}
+
 MainLoop;
 
 __DATA__

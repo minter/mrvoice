@@ -1,3 +1,35 @@
+Tue  Mar  8 2005        H. Wade Minter (minter@lunenburg.org)
+     * Merge trunk changes 861:895
+
+Wed  Mar  2 2005        H. Wade Minter (minter@lunenburg.org)
+     * Better reporting of module versions in the About box.
+
+Mon  Jan 17 2005	H. Wade Minter (minter@lunenburg.org)
+     * Add the beginnings of a basic plugin architecture
+
+Wed  Jan  5 2005	H. Wade Minter (minter@lunenburg.org)
+     * Change some hardcoded paths into File::Spec calls to hopefully help things
+       out on Win98.
+
+Tue  Jan  4 2005	H. Wade Minter (minter@lunenburg.org)
+     * Commit the framework for the Mac application bundle.
+
+Mon  Jan  3 2005	H. Wade Minter (minter@lunenburg.org)
+     * Make things much more MacOS X friendly.  Use the now-free Audion
+       instead of XMMS under X11, and use Mac::AppleScript to send AppleScript
+       commands to it.
+
+Sun  Jan  2 2005	H. Wade Minter (minter@lunenburg.org)
+     * Add password protection for Randy in KC.  You can now set a write
+       access password in the Preferences that will cause any attempt to
+       modify things (add/edit/delete songs and categories) to ask for that
+       password before proceeding.
+
+Sat  Jan  1 2005	H. Wade Minter (minter@lunenburg.org)
+     * Make the mainbox a DropSite so that if you drop a file onto it,
+       the add_song dialog comes up.  Should be handy for Windows users.
+       Thanks to the.noonings on the PAR list for the code.
+
 Mon  Dec 20 2004	H. Wade Minter (minter@lunenburg.org)
      * Merge trunk changes 851:859
 

@@ -1,0 +1,6 @@
+#!/bin/sh
+#
+# Author: Aaron Voisine <aaron@voisine.org>
+
+export "DISPLAY=`cat /tmp/display.$UID`"
+exec "`dirname \"$0\"`/bin/gimp-remote" "$@"
