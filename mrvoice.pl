@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.380 2004/04/26 20:20:49 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.381 2004/04/26 20:39:04 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2278,7 +2278,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.380 $';
+    my $rev    = '$Revision: 1.381 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::mysql->VERSION;
@@ -2919,19 +2919,21 @@ sub get_songlength
 sub do_search
 {
     my ( $datestring, $startdate, $enddate );
-    if ( ( $_[0] ) && ( $_[0] eq "timespan" ) )
+    my $modifier = shift;
+    if ( $modifier eq "timespan" )
     {
-        my $date = DateCalc( "today", "- $_[1]" );
+        my $span = shift;
+        my $date = DateCalc( "today", "- $span" );
         $date =~ /^(\d{4})(\d{2})(\d{2}).*?/;
         my $year  = $1;
         my $month = $2;
         my $day   = $3;
         $datestring = "$year-$month-$day";
     }
-    elsif ( ( $_[0] ) && ( $_[0] eq "range" ) )
+    elsif ( ( $modifier eq "range" ) )
     {
-        $startdate = $_[1];
-        $enddate   = $_[2];
+        $startdate = shift;
+        $enddate   = shift;
     }
     $anyfield =~ s/^\s*(.*?)\s*$/$1/ if ($anyfield);
     $title    =~ s/^\s*(.*?)\s*$/$1/ if ($title);
@@ -2949,9 +2951,9 @@ sub do_search
     $query = $query . "AND publisher != 'OTHER' "
       if ( $config{'search_other'} == 0 );
     $query = $query . "AND modtime >= '$datestring' "
-      if ( ( $_[0] ) && ( $_[0] eq "timespan" ) );
+      if ( $modifier eq "timespan" );
     $query = $query . "AND modtime >= '$startdate' AND modtime <= '$enddate' "
-      if ( ( $_[0] ) && ( $_[0] eq "range" ) );
+      if ( $modifier eq "range" );
     $query = $query . "AND category='$category' " if ( $category ne "Any" );
 
     if ($anyfield)
