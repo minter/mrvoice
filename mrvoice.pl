@@ -1221,7 +1221,8 @@ sub build_category_menubutton
 sub bulk_add
 {
     my ( @accepted, @rejected, $directory, $longcat, $db_cat );
-    my $box1 = $mw->DialogBox(
+    my $bulkadd_publisher = "OTHER";
+    my $box1              = $mw->DialogBox(
         -title   => "Add all songs in directory",
         -buttons => [ "Continue", "Cancel" ]
     );
@@ -1234,6 +1235,27 @@ sub bulk_add
     $box1frame2->Label( -text => "Add To Category: " )->pack( -side => 'left' );
     my $menu = build_category_menubutton( $box1frame2, \$db_cat );
     $menu->pack( -side => 'left' );
+
+    my $pubframe = $box1->add("Frame")->pack( -fill => 'x' );
+    $pubframe->Label( -text => 'Publisher: ' )->pack( -side => 'left' );
+    my $pubmenu = $pubframe->Menubutton(
+        -relief      => 'raised',
+        -tearoff     => 0,
+        -indicatoron => 1
+    )->pack( -side => 'left' );
+
+    foreach my $item (@publishers)
+    {
+        $pubmenu->radiobutton(
+            -label    => $item,
+            -value    => $item,
+            -variable => \$bulkadd_publisher,
+            -command  => sub {
+                $pubmenu->configure( -text => $bulkadd_publisher );
+            }
+        );
+    }
+    $pubmenu->configure( -text => $bulkadd_publisher );
 
     my $box1frame3 = $box1->add("Frame")->pack( -fill => 'x' );
     $box1frame3->Label( -text => "Choose Directory: " )
@@ -1292,6 +1314,9 @@ sub bulk_add
     push( @list, @wmaglob ) if ( $^O eq "MSWin32" );
 
     $mw->Busy( -recurse => 1 );
+    my $query =
+      "INSERT INTO mrvoice (id,title,artist,category,filename,time,modtime,publisher) VALUES (NULL, ?, ?, ?, ?, ?, (SELECT strftime('%s','now')),?)";
+    my $sth = $dbh->prepare($query);
     foreach my $file (@list)
     {
         $file = Win32::GetShortPathName($file) if ( $^O eq "MSWin32" );
@@ -1312,10 +1337,9 @@ sub bulk_add
                 $db_artist = "NULL";
             }
             my $db_filename = move_file( $file, $title, $artist );
-            my $query =
-              "INSERT INTO mrvoice (id,title,artist,category,filename,time,modtime) VALUES (NULL, $db_title, $db_artist, '$db_cat', '$db_filename', '$time', (SELECT strftime('%s','now')))";
-            my $sth = $dbh->prepare($query);
-            $sth->execute or die "can't execute the query: $DBI::errstr\n";
+            $sth->execute( $db_title, $db_artist, $db_cat, $db_filename, $time,
+                $bulkadd_publisher )
+              or die "can't execute the query: $DBI::errstr\n";
             $sth->finish;
             if ( $^O eq "MSWin32" )
             {
@@ -1687,7 +1711,6 @@ sub add_new_song
         my $pubframe = $box->add("Frame")->pack( -fill => 'x' );
         $pubframe->Label( -text => 'Publisher' )->pack( -side => 'left' );
         my $pubmenu = $pubframe->Menubutton(
-            -text        => "Choose Publisher",
             -relief      => 'raised',
             -tearoff     => 0,
             -indicatoron => 1
@@ -1704,6 +1727,7 @@ sub add_new_song
                 }
             );
         }
+        $pubmenu->configure( -text => $addsong_publisher );
         my $frame5 = $box->add("Frame")->pack( -fill => 'x' );
         $frame5->Label(
             -text       => "File to add",
@@ -2277,6 +2301,8 @@ sub delete_song
         my $result = $box->Show();
         if ( $result eq "Delete" )
         {
+            my $query = "DELETE FROM mrvoice WHERE id=?";
+            my $sth   = $dbh->prepare($query);
             foreach my $id (@ids)
             {
                 my $filename;
@@ -2285,9 +2311,7 @@ sub delete_song
                     my $filequery = "SELECT filename FROM mrvoice WHERE id=$id";
                     ($filename) = $dbh->selectrow_array($filequery);
                 }
-                my $query = "DELETE FROM mrvoice WHERE id=$id";
-                my $sth   = $dbh->prepare($query);
-                $sth->execute;
+                $sth->execute($id);
                 $sth->finish;
                 if ( $delete_file_cb == 1 )
                 {
