@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: troubleshooting.sgml,v 1.2 2002/12/11 22:17:27 minter Exp $
+  CVS ID: $Id: troubleshooting.sgml,v 1.3 2004/03/12 20:55:14 minter Exp $
 -->
 
 <chapter><title>Troubleshooting and FAQs</title>
@@ -8,15 +8,19 @@
     <itemizedlist>
       <listitem>
         <para><emphasis>I double-click the Mr. Voice icon under Windows, and the program doesn't come up.  What's wrong?</emphasis></para>
-        <para>To diagnose a problem like this, open a DOS/Command prompt, cd to the Mr. Voice directory, and enter "mrvoice.exe".  This will run the program, but send all output to the screen.  You can use that output to figure out what's going wrong, or send it to me so I can debug the problem.</para>
+        <para>To diagnose a problem like this, Mr. Voice sends debugging output to a file.  That file is <filename>C:/mrvoice.log</filename> under Windows or <filename>~/mrvoice.log</filename> under Unix.  You can use that file to figure out what's going wrong, or send it to me so I can debug the problem.</para>
       </listitem>
       <listitem>
         <para><emphasis>My computer crashed while I was using Mr. Voice, and now it won't start!</emphasis></para>
-        <para>First, run Mr. Voice from a DOS prompt to look at the output.  You may see some error messages, ending with a note about "Got error 127 from the table handler."  This indicates that the MySQL database got corrupted when the crash happened.</para>
+        <para>Mr. Voice writes its error messages to a file, either <filename>C:/mrvoice.log</filename> under Windows or <filename>~/mrvoice.log</filename> under Unix.  Open that file and look for any error messages, especially ones referencing "Got error 127 from the table handler."  If you see that error, you've got a common problem that pops up when the database crashes.</para>
         <para>To fix it, cd to the directory C:\mysql\bin, and run the following commands:</para>
         <para><userinput>myisamchk -r c:\mysql\data\<replaceable>YOUR_DATABASE</replaceable>\categories</userinput></para>
         <para><userinput>myisamchk -r c:\mysql\data\<replaceable>YOUR_DATABASE</replaceable>\mrvoice</userinput></para>
         <para>Where <replaceable>YOUR_DATABASE</replaceable> is the name of your Mr. Voice database (check <filename>C:\mrvoice.cfg</filename>, or do run "dir C:\mysql\data" to see the name to use).  This should repair any damage to your database, and you should be able to run Mr. Voice again after those commands have finished.</para>
+      </listitem>
+      <listitem>
+        <para><emphasis>When I try to fade-stop a song, I get a "pop" of volume at the end.  How do I fix that?</emphasis></para>
+        <para>Randy in KC has written up steps that he used to solve this problem.  He recommends doing the following.  Right mouse click on Winamp.  Choose Options->Preferences->Plug Ins->Output.  Highlight DirectSound Output v 2.2.10.  Click Configure.  Choose Fading Tab.  Select "Old Style Fade on pause".  Hit Apply.</para>
       </listitem>
       <listitem>
         <para><emphasis>Now that I've got all this stuff in my database, how do I back it up?</emphasis></para>
