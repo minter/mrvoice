@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.331 2004/03/09 17:03:26 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.332 2004/03/09 17:34:37 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -809,17 +809,19 @@ sub dump_database
         -initialfile      => $defaultfilename,
         -filetypes        => $databasefiles
     );
-    $dumpfile = Win32::GetShortPathName($dumpfile) if ( $^O eq "MSWin32" );
+    my $dirname = dirname($dumpfile);
+    $dirname = Win32::GetShortPathName($dirname) if ( $^O eq "MSWin32" );
+    my $shortdumpfile = basename($dumpfile);
+    $shortdumpfile = catfile( $dirname, $shortdumpfile );
 
     if ($dumpfile)
     {
-        my $dirname = dirname($dumpfile);
-        if ( ( !-w $dumpfile ) && ( -e $dumpfile ) )
+        if ( ( !-w $shortdumpfile ) && ( -e $shortdumpfile ) )
         {
             infobox( $mw, "File Error!",
                 "Could not open file $dumpfile for writing" );
         }
-        elsif ( !-w dirname($dirname) )
+        elsif ( !-w $dirname )
         {
             infobox(
                 $mw,
@@ -833,18 +835,27 @@ sub dump_database
             # Run the MySQL Dump
             if ( $^O eq "MSWin32" )
             {
-                $filename = basename($dumpfile);
-                $shortdumpfile = catfile( $dirname, $filename );
-                my $rc =
-                  system(
-                    "C:\\mysql\\bin\\mysqldump.exe --add-drop-table --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} > $shortdumpfile"
-                  );
-                infobox(
-                    $mw,
-                    "Database Dumped",
-                    "The contents of your database have been dumped to the file: $dumpfile\n\nNote: In order to have a full backup, you must also back up the files from the directory: $config{'filepath'} as well as $rcfile and, optionally, the hotkeys from $config{'savedir'}"
-                );
-                $status = "Database dumped to $dumpfile";
+                my $cmd =
+                  "C:\\mysql\\bin\\mysqldump.exe --add-drop-table --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} > $shortdumpfile";
+                my $rc = system($cmd );
+                if ( $rc == 0 )
+                {
+                    infobox(
+                        $mw,
+                        "Database Dumped",
+                        "The contents of your database have been dumped to the file: $dumpfile\n\nNote: In order to have a full backup, you must also back up the files from the directory: $config{'filepath'} as well as $rcfile and, optionally, the hotkeys from $config{'savedir'}"
+                    );
+                    $status = "Database dumped to $dumpfile";
+                }
+                else
+                {
+                    infobox(
+                        $mw,
+                        "Database Dump Failed",
+                        "The database export to $dumpfile\nfailed with a status code $rc\n"
+                    );
+                    $status = "Failed database dump to $dumpfile";
+                }
             }
             else
             {
@@ -2188,7 +2199,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.331 $';
+    my $rev = '$Revision: 1.332 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
