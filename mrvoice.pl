@@ -15,7 +15,7 @@ use MPEG::MP3Info;
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.93 2001/12/20 02:09:32 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.94 2001/12/20 19:32:09 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1082,7 +1082,6 @@ sub play_mp3
   else
   {
     # If not, find the selected song.
-    #@list = $mainbox->curselection();
     $box = $_[0];
     my $id = get_song_id($box);
     if ($id)
@@ -1215,7 +1214,7 @@ sub rightclick_menu
 
   my $rightmenu = $mw->Menu(-menuitems=>[
                                         ["command" => "Play This Song",
-                                        -command => \&play_mp3],
+                                        -command => [\&play_mp3,$mainbox]],
                                         ["command" => "Edit This Song",
                                         -command => \&edit_song],
                                         ["command" => "Delete This Song",
