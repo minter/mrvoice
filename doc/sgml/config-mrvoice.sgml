@@ -1,81 +1,49 @@
 <!--
-  CVS ID: $Id: config-mrvoice.sgml,v 1.7 2001/09/28 00:23:55 minter Exp $
+  CVS ID: $Id: config-mrvoice.sgml,v 1.8 2001/10/29 17:26:38 minter Exp $
 -->
 
 <chapter><title>Configuring Mr. Voice</title>
-  <para>This section will take you through configuring the Mr. Voice software for Unix and Windows.</para>
-  <sect1><title>Unix Configuration</title>
-    <para> The following configuration settings can/should be adjusted in the mrvoice.pl file itself.  You can also create a file named <filename>.mrvoicerc</filename> in your home directory for this information - that will keep your settings from getting overwritten during upgrades.  The <filename>.mrvoicerc</filename> file is the <emphasis>preferred</emphasis> way to configure Mr. Voice, and is described later in this section.</para>
-    <para>First, make sure that the first line of the file points to your perl binary.  It is set up by default to look for <filename>/usr/bin/perl</filename>.</para>
-    <para>The following variables should be altered to reflect your setup:</para>
+  <para>This section will take you through configuring the Mr. Voice software.  Mr. Voice isconfigured via an external configuration file - this provides the most flexibility in keeping your configuration sane from one version to the next.  On Unix, the config file is named <filename>.mrvoicerc</filename>, and lives in your home directory.  On Windows, the filename is <filename>C:\mrvoice.cfg</filename>.  <important>Editing the configuration variables directly in <filename>mrvoice.pl</filename> is no longer the recommended way to configure Mr. Voice.  The functionality is still there, but will be removed in a future version.</important></para>
+  <para>If you start Mr. Voice without a configuration file, or if there is an error in your configuration, Mr. Voice will pop up the preferences box, allowing you to enter and edit the configuration information.  Changes are then written out to the appropriate configuration file.  The configuration options are detailed below.
+  <sect1><title>Configuration Options and Variables</title>
+    <para>The options that you can set in the <guimenu>Preferences</guimenu> menu are listed below.  After the name of each option, the actual variable name is given in parenthesis, in case you need to edit the configuration files manually.</para>
     <itemizedlist>
       <listitem>
-        <para><varname>$db_name</varname> - This should be set to the name of the database containing the mrvoice and categories tables.  If the database is local to the machine that you are running mrvoice on, you simply need to supply the database name.  If it is on a remote server, the variable takes the form of "DATABASENAME:HOSTNAME:PORT".</para>
+        <para><varname>Databases Name (db_name)</varname> - This should be set to the name of the database containing the mrvoice and categories tables.  If the database is local to the machine that you are running mrvoice on (as is normally the case), you simply need to supply the database name.  If it is on a remote server, the variable takes the form of "DATABASENAME:HOSTNAME:PORT".</para>
       </listitem>
       <listitem>
-        <para><varname>$db_username</varname> - Set to a username that has SELECT access on the tables.</para>
+        <para><varname>Database User Name (db_username)</varname> - Set to a username that has SELECT access on the tables.</para>
       </listitem>
       <listitem>
-        <para><varname>$db_pass</varname> - The password in the database for user <varname>$db_username</varname></para>
+        <para><varname>Database Password (db_pass)</varname> - The password in the database for user <varname>db_username</varname></para>
       </listitem>
       <listitem>
-        <para><varname>$mp3player</varname> - The path to your MP3 player.  Set to <filename>/usr/bin/xmms</filename> by default, which is where a normal Red Hat Linux RPM will put it.</para>
+        <para><varname>MP3 Player (mp3player)</varname> - The path to your MP3 player.  Likely options are <filename>/usr/bin/xmms</filename> for Unix systems, and <filename>C:\Program Files\WinAmp\WinAmp.exe</filename> for Windows systems.</para>
       </listitem>
       <listitem>
-        <para><varname>$category</varname> - The default category to search.  Set to "Any" by default, a meta-category that means, shockingly enough, any category.  This string must match a category code as set up in the categories database, or "Any".  Most people will want to leave this like it is.</para>
+        <para><varname>MP3 Directory (filepath)</varname> - The path information that will be prepended to the filename retrieved from the database or, in other words, the directory where you store your MP3 files.  Used to find the actual MP3 files on the local system.  The user who is running Mr. Voice must have write permission into this directory.</para>
       </listitem>
       <listitem>
-        <para><varname>$filepath</varname> - The path information that will be prepended to the filename retrieved from the database or, in other words, the directory where you store your MP3 files.  Used to find the actual MP3 files on the local system.  It MUST contain a trailing "/".  (ie. <filename>/usr/local/mp3/</filename> is valid, but <filename>/usr/local/mp3</filename> is not).  The user who is running Mr. Voice must have write permission into this directory.</para>
+        <para><varname>Hotkey Directory (savepath)</varname> - This will be the default directory that hotkey save files will go into.  The user you're running the program as must have write permission into that directory. Recommended to be different than the Mr. Voice install directory.</para>
       </listitem>
       <listitem>
-        <para><varname>$savepath</varname> - This will be the default directory that hotkey save files will go into.  The user you're running the program as must have write permission into that directory.</para>
+        <para><varname>Number of Dynamic Documents To Show (savefile_max)</varname> - The number of "most recently accessed hotkey files" to keep available under the <guimenu>File</guimenu> menu.  Defaults to 4.</para>
       </listitem>
     </itemizedlist>
-    <sect2><title>The <filename>.mrvoicerc</filename> File</title>
-      <para>If the file <filename>.mrvoicerc</filename> exists in your home directory, any variables that you define in that file will <emphasis>override</emphasis> the ones in the <filename>mrvoice.pl</filename> script itself.  The variables take the form:</para>
-      <para>variable_name::value</para>
-      <para>So, for example, to define a <varname>$savepath</varname> of <filename>/tmp/</filename> in the <filename>.mrvoicerc</filename> file, you would include the line:</para>
-      <para>savepath::/tmp/</para>
-      <para>You can define any of the variables listed above in the <filename>.mrvoicerc</filename> file, and I would encourage you to do so for all of them, with the possible exception of the <varname>$category</varname> variable, which you should probably leave alone.</para>
+    <sect2><title>Manual Configuratino</title>
+      <para>To troubleshoot, fine-tune changes, or skip the GUI alltogether, you can manually set up the configuration file.  The configuration file consists of lines in the following format:</para>
+      <para><computeroutput>variable_name::value</computeroutput></para>
+      <para>Where variable_name is the name in parenthesis in the configuration listing above, followed by two colons, followed by the value you want to set the variable to.  A sample file would look like this:
+        <screen>
+db_name::comedysportz
+db_username::myuser
+db_pass::mypassword
+filepath::/mp3/
+savedir::/tmp/
+mp3player::/usr/bin/xmms
+savefile_max::4
+        </screen>
+      </para>
     </sect2>
   </sect1>
-
-  <sect1><title>Windows Configuration</title>
-    <para>The Windows configuration is slightly more complex than the Unix installation, since most Windows users are used to a GUI config tool, and Mr. Voice requires you to edit a config file by hand.  However, it's not insurmountable.</para>
-    <para>Like the Unix version, you can configure Mr. Voice by editing the <filename>mrvoice.pl</filename> file directly, or by creating a file named <filename>C:\mrvoice.cfg</filename>, which will hold configuration values.  Like in the Unix instructions above, we will discuss editing <filename>mrvoice.pl</filename> directly first, but using <filename>C:\mrvoice.cfg</filename> is the <emphasis>preferred</emphasis> way to configure Mr. Voice, as it lets you easily keep your configuration when you upgrade.</para>
-    <para>Open a DOS window and cd to <filename>C:\mrvoice-x.x\</filename>.  From there, run:  "edit mrvoice.pl".  This will bring up the DOS editor with the Mr. Voice source code in it.  Editors like Notepad seem to have trouble with the source code at the moment - I'm working on a fix.  Until then, DOS Edit is your best bet.</para>
-    <para>Due to some Windows weirdness, the way you enter paths will be kind of odd in the configuration section.  So we'll go through the variables now, with Windows-specific notes.</para>
-    <itemizedlist>
-      <listitem>
-        <para><varname>$db_name</varname>='<replaceable>DATABSE_NAME</replaceable>'; - set this variable equal to the <replaceable>DATABASE_NAME</replaceable> you defined earlier.</para>
-      </listitem>
-      <listitem>
-        <para><varname>$db_username</varname>='<replaceable>root</replaceable>'; - This is your superuser name.  If you're comfortable with MySQL, you can set up a user that just has access to the Mr. Voice database, but root will do for most people.</para>
-       </listitem>
-       <listitem>
-         <para><varname>$db_password</varname>='<replaceable>YOUR_PASSWORD</replaceable>'; - This is set to the password you defined earlier.</para>
-       </listitem>
-       <listitem>
-         <para><varname>$category</varname>='<replaceable>Any</replaceable>'; - Can be used to change the default category that searches look in.  Leave alone unless you know what you're doing by changing it.</para>
-       </listitem>
-       <listitem>
-         <para><varname>$mp3player</varname>='<replaceable>C:\PROGRA~1\WINAMP\WINAMP.EXE</replaceable>'; - This defines the path to your MP3 player.  If you're using WinAMP in its default install, this path will work.  If not, be aware that you need to use "\" to separate the parts of the path, and instead of spaces, you need to use the "short" version of the directory. See the appendix for more information.</para>
-       </listitem>
-       <listitem>
-         <para><varname>$filepath</varname>='<replaceable>C:\MP3\</replaceable>'; - This is the directory on your system where Mr. Voice will store the MP3 files after you add them.  Again, due to syntax differences between Windows and Unix, you must use "\" to separate parts of the path.
-       </listitem>
-       <listitem>
-         <para><varname>$savepath</varname>='<replaceable>C:\mrvoice-hotkeys\</replaceable>'; - This is the default location that Mr. Voice will store your saved hotkeys.</para>
-       </listitem>
-     </itemizedlist>
-     <para>Nothing else should need to be edited for normal operation.  Save the file and exit out of the DOS editor.</para>
-    <sect2><title>The <filename>C:\mrvoice.cfg</filename> File</title>
-      <para>If the file <filename>C:\mrvoice.cfg</filename> exists on your computer, any variables that you define in that file will <emphasis>override</emphasis> the ones in the <filename>mrvoice.pl</filename> script itself.  The variables take the form:</para>
-      <para>variable_name::value</para>
-      <para>So, for example, to define a <varname>$savepath</varname> of <filename>C:\hotkeys</filename> in the <filename>C:\mrvoice.cfg</filename> file, you would include the line:</para>
-      <para>savepath::C:\\hotkeys\\</para>
-    </sect2>
-  </sect1>
-
-
 </chapter>
