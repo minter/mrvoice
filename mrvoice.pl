@@ -12,7 +12,6 @@ use MPEG::MP3Info;
 use Audio::Wav;
 use Date::Manip;
 use Time::Local;
-#use Patch::SREZIC::Tk::Wm;
 
 # These modules need to be hardcoded into the script for perl2exe to 
 # find them.
@@ -31,7 +30,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.128 2002/06/14 17:09:59 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.129 2002/06/14 20:39:46 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -226,6 +225,22 @@ EDi4aGVr188f+dJTHoGjYUz0N/+VuowV712h/2Iqi9zALPZ4hVHwaoMbePL0JnoJqO1x0443wYa+
 +AM8r2X0QprO/DbCXBNsfV5XQ7a3gdVa1tdkJRBYH2cC/cd0dwVbvkVXJmBs+TcCBKgCjxWBf+WA
 0seAEghbsEV9I/Bq2ZZ9meVnjnV+cTUFCXiCKriCLNiCLviCMBiDMjiDNFiDNniDOJiDLhgCADs=
 end_of_data
+
+if ($^O ne "MSWin32")
+{
+  sub Tk::Wm::Post
+  {
+    my ($w,$X,$Y) = @_;
+    $X = int($X);
+    $Y = int($Y);
+    $w->positionfrom('user');
+    # $w->geometry("+$X+$Y");
+    $w->MoveToplevelWindow($X,$Y);
+    $w->deiconify;
+    # $w->idletasks; # to prevent problems with KDE's kwm etc.
+    # $w->raise;
+  }
+}
 
 # This function is redefined due to evilness that keeps the focus on 
 # the dragged token.  Thanks to Slaven Rezic <slaven.rezic@berlin.de>
@@ -923,7 +938,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.128 $';
+  $rev = '$Revision: 1.129 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
