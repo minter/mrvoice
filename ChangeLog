@@ -1,6 +1,6 @@
 Wed  Sep 8  2004	H. Wade Minter (minter@lunenburg.org)
-     * Work around the lack of $dbh->numrows in SQLite for the 
-       validate_id function and the orphan checker.
+     * Work around the lack of $dbh->rows in SQLite by implementing 
+       a hand-rolled row counter.
 
 Tue  Sep 7  2004	H. Wade Minter (minter@lunenburg.org)
      * Fixed a bug in the "Select new location for DB file" dialog in
