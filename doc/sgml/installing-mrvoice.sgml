@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.10 2001/10/29 19:25:43 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.11 2001/12/03 18:16:22 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
@@ -51,6 +51,7 @@
       <itemizedlist>
         <listitem>
           <para>Unpack the <filename>mrvoice-x.x.tar.gz</filename> archive.  It will create a <filename>mrvoice-x.x</filename> directory.  The <filename>mrvoice.pl</filename> file is the only one needed to run the program (meaning that you can move <filename>mrvoice.pl</filename> to another location after you're done configuring it), but there are other files in the archive, such as the <filename>dbinit.sql</filename> database initilization script, documentation, licenses, etc.</para>
+	</listitem>
         <listitem>
           <para>Compile and/or install any required software from above (perl modules, etc.).  This configuration is currently beyond the scope of this documentation - if you run into issues, feel free to email me or check the software's website. </para>
         <para>Set up your database properly (set up a superuser account, etc.) and start it.  Some further tips are available in the Windows installation section.</para>
@@ -110,7 +111,7 @@ mysql>
         </itemizedlist>
       </sect3>
       <sect3><title>Installing the Perl Modules</title>
-      <para>The next step is to install the needed Perl modules.  Thanks to the great PPM system that ActiveState provides for their ActivePerl distribution, this is a snap. To start PPM, open a Command Prompt/DOS Window.  Type <userinput>ppm</userinput> and hit enter.  You should see "PPM Interactive Shell" and a <prompt>PPM></prompt> prompt. From that prompt, we'll install the modules. <note><para>You must be connected to the internet to download and install these modules.</para></note>
+      <para>The next step is to install the needed Perl modules.  Thanks to the great PPM system that ActiveState provides for their ActivePerl distribution, this is a snap. To start PPM, open a Command Prompt/DOS Window.  Type <userinput>ppm</userinput> and hit enter.  You should see "PPM Interactive Shell" and a <prompt>PPM></prompt> prompt. From that prompt, we'll install the modules. <note><para>You must be connected to the internet to download and install these modules.</para></note></para>
         <itemizedlist>
           <listitem>
             <para>Enter <userinput>search DBI</userinput>.  You should see a list of packages returned.  At the <prompt>PPM></prompt> prompt, enter <userinput>install DBI</userinput> to install the DBI module.</para>
