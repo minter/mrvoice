@@ -39,4 +39,4 @@ system, and also remember to create the directory to use for backup
 files.  OBSOLETE - Replaced by the File->Backup Database menu option.
 
 ###### END ######
-# CVS ID: $Id: README,v 1.5 2003/09/01 20:32:05 minter Exp $
+# SVN ID: $Id$
