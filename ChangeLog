@@ -1,3 +1,6 @@
+Fri  Nov  1 2002	H. Wade Minter (minter@lunenburg.org)
+     * Auto-populate on Oggs, too.
+
 Mon  Oct 21 2002	H. Wade Minter (minter@lunenburg.org)
      * Auto-populate the Title/Artist if the ID3 tags exist on 
        the file that you're adding.
@@ -340,4 +343,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.62 2002/10/21 16:40:06 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.63 2002/11/01 15:40:33 minter Exp $
