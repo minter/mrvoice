@@ -1,3 +1,8 @@
+Mon  Feb  4 2002	H. Wade Minter (minter@lunenburg.org)
+     * Celebrated the Patriots' Super Bowl win.
+     * Changed the main menubar to use the new-style system
+       described in Mastering Perl/Tk, Chapter 12.
+
 Fri  Feb  2 2002	H. Wade Minter (minter@lunenburg.org)
      * Changed the Entry widgets to BrowseEntry widgets in the search
        area, so now you have a quick-reference to things you have
@@ -182,4 +187,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.32 2002/02/01 18:41:14 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.33 2002/02/04 21:19:51 minter Exp $
