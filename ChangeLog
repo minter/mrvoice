@@ -1,3 +1,7 @@
+Fri  Dec  8 2001	H. Wade Minter (minter@lunenburg.org)
+     * Changed preferences menu to use a tabbed-notebook-style widget,
+       instead of just displaying everything on one window.
+
 Tue  Dec  4 2001        H. Wade Minter (minter@lunenburg.org)
      * Fixed bug with Dynamic Documents menu.
      * Added screenshots for documentation.
@@ -157,4 +161,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.27 2001/12/05 18:56:36 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.28 2001/12/09 20:32:26 minter Exp $
