@@ -4,7 +4,7 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.31 2002/08/14 17:27:41 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.32 2002/08/14 18:26:11 minter Exp $ 
 -->
 <book status="draft">
 
@@ -76,7 +76,7 @@
       <itemizedlist>
         <listitem><para>The scroll-wheel on scroll-wheel mice is now supported in the main search box.  (Suggested by Bling-Bling in Raleigh).</para></listitem>
 	<listitem><para>Added a warning popup when you do a blank search, which would display the entire database and could take quite a bit of time.  (Suggested by Randy in KC)</para></listitem>
-	<listitem><para>Added a hotkey (Control-P) that will play the currently-selected song.  (Suggested by Randy in KC and Bill in Portland)</para></listitem>
+	<listitem><para>Added a hotkey (<keycombo action='simul'> <keycap>Control</keycap> <keycap>P</keycap></keycombo>) that will play the currently-selected song.  (Suggested by Randy in KC and Bill in Portland)</para></listitem>
       </itemizedlist>
     </para>
   </sect1>
@@ -94,7 +94,7 @@
   <sect1><title>What's New In Version 1.4</title>
     <para>
       <itemizedlist>
-        <listitem><para>There are now keyboard shortcuts to open (Control-O) or save (Control-S) hotkey files, exit Mr. Voice (Control-X), and open the Hotkeys listing (Control-H).</para></listitem>
+        <listitem><para>There are now keyboard shortcuts to open (<keycombo action='simul'><keycap>Control</keycap> <keycap>O</keycap></keycombo>) or save (<keycombo action='simul'><keycap>Control</keycap> <keycap>S</keycap></keycombo>) hotkey files, exit Mr. Voice (<keycombo action='simul'><keycap>Control</keycap> <keycap>X</keycap></keycombo>), and open the Hotkeys listing (<keycombo action='simul'><keycap>Control</keycap> <keycap>H</keycap></keycombo>).</para></listitem>
         <listitem><para>The <guimenu>Recent Files</guimenu> menu is now a sub-menu off of the <guimenu>File</guimenu> menu, instead of just hanging off the end of <guimenu>File</guimenu>.</para></listitem>
         <listitem><para>Exiting Mr. Voice now also closes the MP3 player.</para></listitem>
 	<listitem><para>There is a "holding tank" to store songs for later use.</para></listitem>
