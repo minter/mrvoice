@@ -1,5 +1,6 @@
 #!/usr/bin/perl 
 use warnings;
+use diagnostics;
 use Tk;
 use Tk::DialogBox;
 use Tk::DragDrop;
@@ -31,7 +32,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.139 2002/07/11 19:05:18 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.140 2002/07/11 19:16:05 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -246,37 +247,44 @@ end_of_data
 
 if ($^O ne "MSWin32")
 {
-  sub Tk::Wm::Post
   {
-    my ($w,$X,$Y) = @_;
-    $X = int($X);
-    $Y = int($Y);
-    $w->positionfrom('user');
-    # $w->geometry("+$X+$Y");
-    $w->MoveToplevelWindow($X,$Y);
-    $w->deiconify;
-    # $w->idletasks; # to prevent problems with KDE's kwm etc.
-    # $w->raise;
+    no warnings;
+    eval "sub Tk::Wm::Post
+    {
+      my ($w,$X,$Y) = @_;
+      $X = int($X);
+      $Y = int($Y);
+      $w->positionfrom('user');
+      # $w->geometry('+$X+$Y');
+      $w->MoveToplevelWindow($X,$Y);
+      $w->deiconify;
+      # $w->idletasks; # to prevent problems with KDE's kwm etc.
+      # $w->raise;
+    }";
   }
 }
 
 # This function is redefined due to evilness that keeps the focus on 
 # the dragged token.  Thanks to Slaven Rezic <slaven.rezic@berlin.de>
-sub Tk::DragDrop::Mapped
+# The extra brackets are suggested by the debugging code
 {
- my ($token) = @_;
- my $e = $token->parent->XEvent;
- $token = $token->toplevel;
- $token->grabGlobal;
- #$token->focus;
- if (defined $e)
+  no warnings;
+  eval "sub Tk::DragDrop::Mapped
   {
-   my $X = $e->X;
-   my $Y = $e->Y;
-   $token->MoveToplevelWindow($X+3,$Y+3);
-   $token->NewDrag;
-   $token->FindSite($X,$Y,$e);
-  }
+    my ($token) = @_;
+    my $e = $token->parent->XEvent;
+    $token = $token->toplevel;
+    $token->grabGlobal;
+    #$token->focus;
+    if (defined $e)
+    {
+      my $X = $e->X;
+      my $Y = $e->Y;
+      $token->MoveToplevelWindow($X+3,$Y+3);
+      $token->NewDrag;
+      $token->FindSite($X,$Y,$e);
+    }
+  }";
 }
 
 sub BindMouseWheel {
@@ -381,7 +389,7 @@ sub open_file
   {
     if (! -r $selectedfile)
     {
-      infobox($window, "File Error", "Could not open file $selectedfile for reading");
+      infobox($mw, "File Error", "Could not open file $selectedfile for reading");
     }
     else
     {
@@ -791,6 +799,7 @@ sub add_new_song
       }
       $newfilename =~ s/[^a-zA-Z0-9\-]//g;
 
+      our $path; # Only mentioned once
       ($name,$path,$extension) = fileparse($addsong_filename,'\.\w+');
       $extension=lc($extension);
 
@@ -1041,7 +1050,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.139 $';
+  $rev = '$Revision: 1.140 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -1828,6 +1837,13 @@ else
 
 # Menu bar
 # Using the new-style menubars from "Mastering Perl/Tk"
+# Define the menus we don't reference later to stop warnings.
+our $categoriesmenu;
+our $songsmenu;
+our $advancedmenu;
+our $helpmenu;
+our $filemenu;
+
 $filemenu = $menubar->cascade(-label=>'File',
                               -tearoff=>0,
                               -menuitems=> filemenu_items);
