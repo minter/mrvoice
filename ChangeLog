@@ -1,3 +1,8 @@
+Wed  Feb 25 2004	H. Wade Minter (minter@lunenburg.org)
+     * Module cleanup - PAR/Win32 needs the inclusion of Encode::Unicode,
+       but doesn't need all of the explicit module calls that Perl2EXE
+       needed.
+
 Tue  Feb 24 2004	H. Wade Minter (minter@lunenburg.org)
      * Consolidate various get_ functions into one - much simpler that way.
      * Refactor some simple database select statements to use 
@@ -552,4 +557,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.116 2004/02/24 21:42:19 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.117 2004/02/25 21:16:22 minter Exp $
