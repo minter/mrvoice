@@ -41,7 +41,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.239 2003/07/22 16:19:48 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.240 2003/07/22 20:52:06 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -57,6 +57,7 @@ our $savefile_count = 0;		# Counter variables
 our $savefile_max = 4;			# The maximum number of files to
 					# keep in the "recently used" list.
     $category = 'Any';			# The default category to search
+    $longcat  = 'Any';			# The default category to search
                                         # Initial status message
 our $hotkeytypes = [
     ['Mr. Voice Hotkey Files', '.mrv'],
@@ -1912,7 +1913,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.239 $';
+  $rev = '$Revision: 1.240 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
