@@ -1,3 +1,8 @@
+Mon  Jun 24 2002	H. Wade Minter (minter@lunenburg.org)
+     * Fixed the dynamic documents menu so that, if a file is already in
+       the list, it just moves it to the front of the line, rather
+       than adding it twice.
+
 Fri  Jun 14 2002	H. Wade Minter (minter@lunenburg.org)
      * Got the arbitrary-date searching working well enough.
      * Incorporated a Tk::Wm patch from c.l.p.tk to compensate for
@@ -270,4 +275,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.52 2002/06/14 20:40:19 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.53 2002/06/24 21:22:44 minter Exp $
