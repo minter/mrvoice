@@ -4,12 +4,12 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.27 2002/05/08 20:11:09 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.28 2002/05/08 20:30:14 minter Exp $ 
 -->
 <book status="draft">
 
 <bookinfo>
-  <title>Mr. Voice 1.4 Installation and Reference Manual</title>
+  <title>Mr. Voice 1.5 Installation and Reference Manual</title>
   <author>
     <firstname>H. Wade</firstname><surname>Minter</surname>
     <affiliation>
