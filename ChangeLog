@@ -1,3 +1,6 @@
+Mon  Sep  1 2003	H. Wade Minter (minter@lunenburg.org)
+     * Tagged Release Version 1.9
+
 Mon  Aug  4 2003	H. Wade Minter (minter@lunenburg.org)
      * Fix the right-click popup menu so that it can handle multiple
        songs.
@@ -480,4 +483,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.97 2003/08/05 13:30:09 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.98 2003/09/01 20:29:44 minter Exp $
