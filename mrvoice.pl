@@ -13,12 +13,14 @@ use Tk::ProgressBar;
 use Tk::DirTree;
 use File::Basename;
 use File::Copy;
+use File::Spec;
 use DBI;
 use MPEG::MP3Info;
 use Audio::Wav;
 use Date::Manip;
 use Time::Local;
 use Ogg::Vorbis::Header::PurePerl;
+use File::Glob qw(:globally :nocase);
 
 # These modules need to be hardcoded into the script for perl2exe to 
 # find them.
@@ -37,7 +39,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.202 2003/03/31 16:11:32 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.203 2003/03/31 18:00:41 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -66,7 +68,12 @@ our $databasefiles = [
     ['All Files', '*'],
   ];
 
+our $bulkaddtypes = [
+    ['MP3 and OGG files', ['*.mp3', '*.MP3', '*.ogg', '*.OGG']]
+  ];
+
 our $mp3types = [
+    ['All Valid Audio Files', ['*.mp3', '*.MP3', '*.ogg', '*.OGG', '*.wav', '*.WAV', '*.m3u', '*.M3U', '*.pls', '*.PLS']],
     ['MP3 Files', ['*.mp3', '*.MP3']],
     ['WAV Files', ['*.wav', '*.WAV']],
     ['Vorbis Files', ['*.ogg', '*.OGG']],
@@ -689,7 +696,6 @@ sub open_file
       {
         chomp;
         my ($key,$id) = split(/::/);
-        print "The ID is $id\n";
         if ( (not ($id =~ /^\d+$/)) && (not ($id =~ /^\w*$/)) )
         {
           infobox ($mw, "Invalid Hotkey File","This hotkey file, $selectedfile, is from an old version of Mr. Voice.\nAfter upgrading to Version 1.8, you need to run the converthotkey.pl utility in the\ntools subdirectory to convert to the new format.  This only has to be done once."); 
@@ -867,6 +873,30 @@ sub import_database
 
 }
 
+sub get_title_artist
+{
+  # Returns the title and artist of an MP3 or OGG file
+  my $filename = $_[0];
+  my $title;
+  my $artist;
+
+  if ($filename =~ /.mp3$/i)
+  {
+    $filename = Win32::GetShortPathName($filename) if ($^O eq "MSWin32");
+    my $tag = get_mp3tag($filename);
+    $title = $tag->{TITLE};
+    $artist = $tag->{ARTIST};
+  }
+  elsif ($filename =~ /.ogg/i)
+  {
+    my $ogg = Ogg::Vorbis::Header::PurePerl->new($filename);
+    ($title) = $ogg->comment('title');
+    ($artist) = $ogg->comment('artist');
+  }
+
+  return ($title,$artist);
+}
+
 sub dynamic_documents
 {
   # This function takes a filename as an argument.  It then increments
@@ -986,11 +1016,12 @@ sub bulk_add
   my $box1frame3 = $box1->add("Frame")->pack(-fill=>'x');
   $box1frame3->Label(-text=>"Choose Directory: ")->pack(-side=>'left');
   $box1frame3->Entry(-textvariable=>\$directory)->pack(-side=>'left');
-  $box1frame3->Button(-text=>"Select Directory",
+  $box1frame3->Button(-text=>"Select One File From Target Directory",
                     -command=>sub { 
-      $XXXdirectory = $box1->Scrolled('DirTree')->pack(-expand=>1, -fill=>'both');
+                     my $filename = $mw->getOpenFile(-title=>'Select File',
+                                                     -filetypes=>$bulkaddtypes);
+                      $directory = dirname($filename);
   })->pack(-side=>'left');
-
 
   my $firstbutton = $box1->Show;
 
@@ -999,6 +1030,29 @@ sub bulk_add
     $status = "Bulk-Add Cancelled";
     return;
   } 
+
+  print "The directory chosen is $directory\n";
+  print "The category is $addsong_cat\n";
+
+  my $mp3glob = File::Spec->catfile($directory, "*.mp3");
+  my $oggglob = File::Spec->catfile($directory, "*.ogg");
+
+  my @list = <$mp3glob $oggglob>;
+
+  foreach $file (@list)
+  {
+    my ($title, $artist) = get_title_artist($file);
+    if ($title)
+    {
+      # Valid title, all we need
+      push (my @accepted, $file);
+    }
+    else
+    {
+      # No title, no go.
+      push (my @rejected, $file);
+    }
+  }
 
 }
 
@@ -1206,19 +1260,7 @@ sub add_new_song
                     -command=>sub { 
       $addsong_filename = $mw->getOpenFile(-title=>'Select File',
                                            -filetypes=>$mp3types);
-      if ($addsong_filename =~ /.mp3$/i)
-      {
-        $addsong_filename = Win32::GetShortPathName($addsong_filename) if ($^O eq "MSWin32");
-        my $tag = get_mp3tag($addsong_filename);
-        $addsong_title = $tag->{TITLE};
-        $addsong_artist = $tag->{ARTIST};
-      }
-      elsif ($addsong_filename =~ /.ogg/i)
-      {
-        my $ogg = Ogg::Vorbis::Header::PurePerl->new($addsong_filename);
-        ($addsong_title) = $ogg->comment('title');
-        ($addsong_artist) = $ogg->comment('artist');
-      }
+      ($addsong_title,$addsong_artist) = get_title_artist($addsong_filename);
                                   })->pack(-side=>'right');
     $songentry = $frame5->Entry(-width=>30,
                    -textvariable=>\$addsong_filename)->pack(-side=>'right');
@@ -1540,7 +1582,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.202 $';
+  $rev = '$Revision: 1.203 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2020,7 +2062,8 @@ sub play_mp3
   {
     if ($_[1] =~ /^F.*/)
     {
-      $songstatusstring = $filename;
+      $fkey = lc($_[1]);
+      $songstatusstring = $fkeys{$fkey}->{title};
     }
     elsif ($statusartist)
     {
