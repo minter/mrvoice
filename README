@@ -22,6 +22,7 @@ REQUIRED COMPONENTS:
 * Relational database, with available perl DBI module (Tested with MySQL)
 * TCL/TK
 * xmms, or other MP3 player that plays songs from the command line.
+* class.id3.php (http://leknor.com/code/)
 
 INSTALLING:
 1) Compile and install any required software from above (perl modules, etc.)
@@ -33,6 +34,8 @@ INSTALLING:
    mysql -u DATABASE_USER -p DATABASE < dbinit.sql
    For other databases (Postgres, etc.), adjust to taste.
    This creates two tables in DATABASE_NAME: mrvoice and categories.
+4) If you will be using the PHP frontends, install class.id3.php3 
+   (available from the URL above) into your PHP include path.
 
 CONFIGURING:
 The following configuration settings can/should be adjusted in the mrvoice.pl
@@ -63,6 +66,9 @@ If you want to use the PHP-based frontends for searching and adding songs,
 you must copy mrvoice.php and mrvoice-add.php to a directory in your webroot.
 Your web server must also be set up to use PHP.  See http://www.php.net/ for
 more information on PHP.
+ 
+The top of both .php files contains configuration information that should be
+self-explanatory.  Be sure you install class.id3.php, or stuff won't work.
 
 POPULATING THE DATABASE:
 Before you can use mrvoice, you must populate two tables in the database. 
@@ -71,11 +77,15 @@ The first is the categories table, the second is the mrvoice table itself.
 The categories table has two fields: the "code" field and the "description" 
 field.  To populate it, use the mysql tool to log into the database 
 that contains the categories table, and run:
+
 "INSERT INTO categories VALUES ('CODE','The description of the code');"
+
 where CODE is an 8-letter-or-less code, and the description is the more
 verbose description.  For example, if I had a category for general games
 stuff, I may use:
+
 "INSERT INTO categories VALUES ('GAMES','General Games');"
+
 Note that the description is what you will actually see in all of the 
 frontends, so don't make it too long.
 
@@ -114,4 +124,4 @@ guarantee that I'll do it, but I'm glad to listen to any suggestions.  Check
 the TODO file to see stuff I'm currently working on.
 
 --
-CVS ID: $Id: README,v 1.3 2001/02/16 21:46:45 minter Exp $
+CVS ID: $Id: README,v 1.4 2001/02/21 03:24:17 minter Exp $
