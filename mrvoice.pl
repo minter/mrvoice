@@ -35,7 +35,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.318 2004/03/01 15:30:32 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.319 2004/03/01 20:56:43 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2218,7 +2218,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.318 $';
+    my $rev = '$Revision: 1.319 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -2778,7 +2778,7 @@ sub update_time
     my $update_sth   = $dbh->prepare($update_query);
     while ( @table_row = $get_rows_sth->fetchrow_array )
     {
-        ( $id, $filename, $time ) = @table_row;
+        my ( $id, $filename, $time ) = @table_row;
         my $newtime =
           get_songlength( catfile( $config{'filepath'}, $filename ) );
         if ( $newtime ne $time )
