@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.365 2004/04/19 00:02:21 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.366 2004/04/19 00:11:54 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -85,14 +85,6 @@ our $holdingtanktypes =
 
 our $databasefiles =
   [ [ 'Database Dump Files', '.sql' ], [ 'All Files', '*' ], ];
-
-our $bulkaddtypes =
-  [ [ 'Audio Files', [ '*.mp3', '*.MP3', '*.ogg', '*.OGG' ] ] ];
-
-if ( $^O eq "MSWin32" )
-{
-    push @{ $bulkaddtypes->[0][1] }, ( "*.wma", "*.WMA" );
-}
 
 our $mp3types = [
     [
@@ -2274,7 +2266,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.365 $';
+    my $rev    = '$Revision: 1.366 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::mysql->VERSION;
