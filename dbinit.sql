@@ -15,6 +15,7 @@ CREATE TABLE mrvoice (
    filename varchar(255) NOT NULL,
    time varchar(10),
    modtime timestamp(6),
+   publisher varchar(16),
    PRIMARY KEY (id)
 );
 
@@ -28,4 +29,4 @@ CREATE TABLE categories (
 INSERT INTO categories VALUES ('GEN','General Category');
 
 #--
-# CVS ID: $Id: dbinit.sql,v 1.7 2002/12/10 21:37:02 minter Exp $
+# CVS ID: $Id: dbinit.sql,v 1.8 2004/03/05 20:14:43 minter Exp $
