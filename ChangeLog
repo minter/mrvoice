@@ -1,3 +1,11 @@
+Thu  Mar  4 2004	H. Wade Minter (minter@lunenburg.org)
+     * Give the main or Tank listboxes focus() when they're clicked on. 
+       Allows for keyboard navigation.
+     * Use Time::HiRes for reporting search times - sub-second accuracy.
+     * Reimplement the build_category_menubutton to make proper use of
+       variable references in the -variable option.  Failure to do so 
+       broke the whole system.
+
 Tue  Mar  2 2004	H. Wade Minter (minter@lunenburg.org)
      * More switching to fetchrow_hashref to improve readability.
      * Consolidate a bunch of repeated category menubutton code into
@@ -572,4 +580,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.121 2004/03/02 19:47:11 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.122 2004/03/04 22:19:28 minter Exp $
