@@ -39,7 +39,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.207 2003/04/04 01:28:27 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.208 2003/04/04 02:33:29 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1248,7 +1248,6 @@ sub move_file
   }
   $newfilename =~ s/[^a-zA-Z0-9\-]//g;
  
-  our $path; # Only mentioned once
   my ($name,$path,$extension) = fileparse($oldfilename,'\.\w+');
   $extension=lc($extension);
 
@@ -1619,7 +1618,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.207 $';
+  $rev = '$Revision: 1.208 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
