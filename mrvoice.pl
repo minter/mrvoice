@@ -22,6 +22,7 @@ use Date::Manip;
 use Time::Local;
 use Ogg::Vorbis::Header::PurePerl;
 use File::Glob qw(:globally :nocase);
+use File::Temp qw/ tempfile tempdir /;
 
 # These modules need to be hardcoded into the script for perl2exe to 
 # find them.
@@ -42,7 +43,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.278 2003/12/15 18:49:45 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.279 2003/12/29 19:50:28 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1978,7 +1979,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.278 $';
+  $rev = '$Revision: 1.279 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2129,6 +2130,23 @@ sub clear_selected
   $status="Selected hotkeys cleared";
 }
 
+sub launch_tank_playlist
+{
+  # Launch an m3u playlist from the contents of the holding tank
+  my ($fh, $filename) = tempfile(SUFFIX => '.m3u',UNLINK => 1);
+  print $fh "#EXTM3U\n";
+  my @indices = $tankbox->get(0,'end');
+  foreach my $item (@indices)
+  {
+    my ($id,$description) = split(/:/,$item);
+    $file = get_filename($id);
+    my $path = catfile($config{filepath},$file);
+    print $fh "$path\n";
+  }
+  close ($fh) or die;
+  system ("$config{'mp3player'} $filename");
+}
+
 sub holding_tank
 {
   if (!Exists($holdingtank))
@@ -2150,6 +2168,10 @@ EOF
     $holdingtank->title("Holding Tank");
     $holdingtank->Label(-text=>"I'm Mr. Holding Tank - you put your songs in me.")->pack;
     $holdingtank->Label(-text=>"Drag a song here from the main search box to store it")->pack;
+    $playlistbutton = $holdingtank->Button(-text=>"Launch Playlist",
+                                           -command=>\&launch_tank_playlist)->pack();
+    $playlistbutton->configure(-bg=>'dodgerblue',
+                               -activebackground=>'royalblue');
     my $buttonframe = $holdingtank->Frame()->pack(-side=>'bottom',
                                                   -fill=>'x');
     $holdingtank->Button(-image=>$arrowup,
