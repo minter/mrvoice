@@ -1,3 +1,6 @@
+Fri  Mar 11 2005	H. Wade Minter (minter@lunenburg.org)
+     * Add uploader person and category modifiers for the online search.
+
 Thu  Mar 10 2005	H. Wade Minter (minter@lunenburg.org)
      * Get most XML-RPC stuff working in the basic case.
 
