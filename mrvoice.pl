@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.363 2004/04/18 14:59:30 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.364 2004/04/18 15:12:45 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -86,8 +86,20 @@ our $holdingtanktypes =
 our $databasefiles =
   [ [ 'Database Dump Files', '.sql' ], [ 'All Files', '*' ], ];
 
-our $bulkaddtypes =
-  [ [ 'MP3 and OGG files', [ '*.mp3', '*.MP3', '*.ogg', '*.OGG' ] ] ];
+if ( $^O eq "MSWin32" )
+{
+    our $bulkaddtypes = [
+        [
+            'MP3/WMA/Ogg files',
+            [ '*.mp3', '*.MP3', '*.ogg', '*.OGG', '*.wma', '*.WMA' ]
+        ]
+    ];
+}
+else
+{
+    our $bulkaddtypes =
+      [ [ 'MP3 and OGG files', [ '*.mp3', '*.MP3', '*.ogg', '*.OGG' ] ] ];
+}
 
 our $mp3types = [
     [
@@ -126,6 +138,8 @@ if ( "$^O" eq "MSWin32" )
             Tk::Radiobutton->import();
             require Win32::FileOp;
             Win32::FileOp->import();
+            require Audio::WMA;
+            Audio::WMA->import();
         }
     }
     $agent = LWP::UserAgent->new;
@@ -1026,7 +1040,13 @@ sub get_title_artist
         ($title)  = $ogg->comment('title');
         ($artist) = $ogg->comment('artist');
     }
-
+    elsif ( $filename =~ /.wma/i )
+    {
+        my $wma     = Audio::WMA->new($filename);
+        my $comment = $wma->comment();
+        $title  = $comment->{TITLE};
+        $artist = $comment->{AUTHOR};
+    }
     $title  =~ s/^\s*// if $title;
     $artist =~ s/^\s*// if $artist;
 
@@ -2251,7 +2271,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.363 $';
+    my $rev    = '$Revision: 1.364 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::mysql->VERSION;
@@ -3113,6 +3133,19 @@ sub get_songlength
 
         #my $audio_seconds = %{$ogg->info}->{length};
         my $audio_seconds = $ogg->info->{length};
+        my $minute        = int( $audio_seconds / 60 );
+        $minute = "0$minute" if ( $minute < 10 );
+        my $second = $audio_seconds % 60;
+        $second = "0$second" if ( $second < 10 );
+        $time = "[$minute:$second]";
+    }
+    elsif ( ( $file =~ /\.wma$/i ) && ( $^O eq "MSWin32" ) )
+    {
+
+        # It's a Windows Media file
+        my $wma           = Audio::WMA->new($file);
+        my $info          = $wma->info();
+        my $audio_seconds = $info->{playtime_seconds};
         my $minute        = int( $audio_seconds / 60 );
         $minute = "0$minute" if ( $minute < 10 );
         my $second = $audio_seconds % 60;
