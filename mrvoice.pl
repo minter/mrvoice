@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.comedyworx.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/11/12 15:57:15 $
-#	CVS REVISION NUMBER:    $Revision: 1.82 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/11/12 22:01:11 $
+#	CVS REVISION NUMBER:    $Revision: 1.83 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1231,6 +1231,7 @@ $mw = MainWindow->new;
 $mw->geometry("+0+0");
 $mw->title("Mr. Voice");
 $mw->minsize(67,2);
+$mw->protocol('WM_DELETE_WINDOW',\&do_exit);
 
 read_rcfile();
 
