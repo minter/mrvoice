@@ -15,8 +15,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/05/08 22:40:32 $
-#	CVS REVISION NUMBER:    $Revision: 1.36 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/05/10 12:07:42 $
+#	CVS REVISION NUMBER:    $Revision: 1.37 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -542,7 +542,7 @@ sub delete_song
 
 sub show_about
 {
-  infobox("About Mr. Voice","Mr. Voice Version $version\n\nBy H. Wade Minter <minter\@lunenburg.org>");
+  infobox("About Mr. Voice","Mr. Voice Version $version\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\n(c)2001, Released under the GNU General Public License");
 }
 
 #sub show_predefined_hotkeys
