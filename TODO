@@ -4,7 +4,6 @@ Things I'm currently working on:
 * Add "Edit Category" feature.
 * Tighter integration with WinAmp for Windows version.  Win32::GUI?
 * Reporting tools within the GUI
-* Wheelmouse support
 
 --
-CVS ID: $Id: TODO,v 1.16 2002/05/08 15:46:05 minter Exp $
+CVS ID: $Id: TODO,v 1.17 2002/05/09 15:11:42 minter Exp $
