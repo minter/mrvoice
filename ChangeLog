@@ -1,3 +1,10 @@
+Wed  Apr 24 2002	H. Wade Minter (minter@lunenburg.org)
+     * More documentation work between 4/15 and now.
+     * Placed requirement on new module to show length of WAV files 
+       (Audio::Wav).
+     * Broke out song-length code into its own function to better
+       abstract that part.
+
 Mon  Apr 15 2002	H. Wade Minter (minter@lunenburg.org)
      * Sent the taxes off.  Yuck.
      * Clarified some stuff in the docs in preparation for shipping
@@ -213,4 +220,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.38 2002/04/16 00:32:44 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.39 2002/04/24 19:40:17 minter Exp $
