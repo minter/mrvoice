@@ -1,3 +1,20 @@
+Mon  Nov 12 2001        H. Wade Minter (minter@lunenburg.org)
+     * Using Win32::Process to start/stop the MP3 player on Windows.  A much
+       cleaner (and working!) solution.
+       Thanks to Jack D.<goodcall@oanet.com> for the tip.
+     * Clicking the "close window" X in the window manager will now call the
+       clean-shutdown "do_exit" function.
+
+Sat  Nov 10 2001        H. Wade Minter (minter@lunenburg.org)
+     * Several changes:
+       + Added Control-key accelerators to quit, load/save hotkeys, and open
+         hotkey box.
+       + Generalized some window functions.
+       + Made sure only one copy of the hotkey box can be open at a time.
+       + Fixed bug in open file status message (spurious newline).
+       + Set the Unix MP3 player start to use fork/exec and kill, while Windows
+         still uses open() and close()
+
 Sat  Nov  3 2001        H. Wade Minter (minter@lunenburg.org)
      * Changed dynamic document menu to be a cascade off of the File
        menu, rather than having the files appear at the bottom of the 
@@ -122,4 +139,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.24 2001/11/08 19:32:02 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.25 2001/11/13 21:09:36 minter Exp $
