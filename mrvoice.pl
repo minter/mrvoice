@@ -2,7 +2,8 @@
 use warnings;
 no warnings 'redefine';
 
-#use diagnostics;
+use diagnostics;
+
 #use strict; # Yeah right
 use Encode::Unicode;
 use Tk;
@@ -35,7 +36,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.320 2004/03/02 15:31:16 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.321 2004/03/02 17:48:00 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1073,13 +1074,11 @@ sub bulk_add
     my $sth   = $dbh->prepare($query);
     $sth->execute or die "can't execute the query: $DBI::errstr\n";
 
-    while ( @table_row = $sth->fetchrow_array )
+    while ( my $cat_hashref = $sth->fetchrow_hashref )
     {
-        $code = $table_row[0];
-        $name = $table_row[1];
         $menu->radiobutton(
-            -label    => $name,
-            -value    => $code,
+            -label    => $cat_hashref->{description},
+            -value    => $cat_hashref->{code},
             -variable => \$db_cat,
             -command  => sub {
                 $menu->configure( -text => return_longcat($db_cat) );
@@ -1319,11 +1318,9 @@ sub edit_category
         -selectmode => "single"
     )->pack();
 
-    while ( @table_row = $sth->fetchrow_array )
+    while ( my $cat_hashref = $sth->fetchrow_hashref )
     {
-        my $code   = $table_row[0];
-        my $name   = $table_row[1];
-        my $string = "$code - $name";
+        my $string = "$cat_hashref->{code} - $cat_hashref->{description}";
         $editbox->insert( 'end', "$string" );
     }
     $sth->finish;
@@ -1401,12 +1398,10 @@ sub delete_category
         -width      => 30,
         -selectmode => "single"
     )->pack();
-    while ( @table_row = $sth->fetchrow_array )
+    while ( my $cat_hashref = $sth->fetchrow_hashref )
     {
-        $code = $table_row[0];
-        $name = $table_row[1];
-        my $string = "$code - $name";
-        $deletebox->insert( 'end', "$string" );
+        $deletebox->insert( 'end',
+            "$cat_hashref->{code} - $cat_hashref->{description}" );
     }
     $sth->finish;
     my $choice = $box->Show();
@@ -1536,13 +1531,11 @@ sub add_new_song
         my $sth = $dbh->prepare($query);
         $sth->execute or die "can't execute the query: $DBI::errstr\n";
 
-        while ( @table_row = $sth->fetchrow_array )
+        while ( my $cat_hashref = $sth->fetchrow_hashref )
         {
-            $code = $table_row[0];
-            $name = $table_row[1];
             $menu->radiobutton(
-                -label    => $name,
-                -value    => $code,
+                -label    => $cat_hashref{description},
+                -value    => $cat_hashref{code},
                 -variable => \$addsong_cat,
                 -command  => sub {
                     $menu->configure( -text => return_longcat($addsong_cat) );
@@ -1929,13 +1922,11 @@ sub edit_song
         my $sth = $dbh->prepare($query);
         $sth->execute or die "can't execute the query: $DBI::errstr\n";
 
-        while ( @table_row = $sth->fetchrow_array )
+        while ( my $cat_hashref = $sth->fetchrow_hashref )
         {
-            $code = $table_row[0];
-            $name = $table_row[1];
             $menu->radiobutton(
-                -label    => $name,
-                -value    => $code,
+                -label    => $cat_hashref->{description},
+                -value    => $cat_hashref->{code},
                 -variable => \$edit_category,
                 -command  => sub {
                     $menu->configure( -text => return_longcat($edit_category) );
@@ -2049,13 +2040,11 @@ sub edit_song
         my $sth = $dbh->prepare($query);
         $sth->execute or die "can't execute the query: $DBI::errstr\n";
 
-        while ( @table_row = $sth->fetchrow_array )
+        while ( my $cat_hashref = $sth->fetchrow_hashref )
         {
-            $code = $table_row[0];
-            $name = $table_row[1];
             $menu->radiobutton(
-                -label    => $name,
-                -value    => $code,
+                -label    => $cat_hashref->{description},
+                -value    => $cat_hashref->{code},
                 -variable => \$edit_category,
                 -command  => sub {
                     $menu->configure( -text => return_longcat($edit_category) );
@@ -2218,7 +2207,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.320 $';
+    my $rev = '$Revision: 1.321 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3062,17 +3051,19 @@ sub do_search
     my $sth       = $dbh->prepare($query);
     $sth->execute or die "can't execute the query: $DBI::errstr\n";
     $numrows = $sth->rows;
-    while ( @table_row = $sth->fetchrow_array )
+    while ( my $row_hashref = $sth->fetchrow_hashref )
     {
 
-        if ( -e catfile( $config{'filepath'}, $table_row[5] ) )
+        if ( -e catfile( $config{'filepath'}, $row_hashref->{filename} ) )
         {
-            $string = "$table_row[0]:($table_row[1]";
-            $string = $string . " - $table_row[2]" if ( $table_row[2] );
-            $string = $string . ") - \"$table_row[4]\"";
-            $string = $string . " by $table_row[3]" if ( $table_row[3] );
-            $string = $string . " $table_row[6]";
-            $string = $string . " ($table_row[7])"
+            $string = "$row_hashref->{id}:($row_hashref->{description}";
+            $string = $string . " - $row_hashref->{info}"
+              if ( $row_hashref->{info} );
+            $string = $string . ") - \"$row_hashref->{title}\"";
+            $string = $string . " by $row_hashref->{artist}"
+              if ( $row_hashref->{artist} );
+            $string = $string . " $row_hashref->{time}";
+            $string = $string . " ($row_hashref->{publisher})"
               if ( $config{'show_publisher'} == 1 );
             $mainbox->insert( 'end', $string );
         }
@@ -3148,13 +3139,11 @@ sub build_categories_menu
     $query = "SELECT * from categories ORDER BY description";
     my $sth = $dbh->prepare($query);
     $sth->execute or die "can't execute the query: $DBI::errstr\n";
-    while ( @table_row = $sth->fetchrow_array )
+    while ( my $cat_hashref = $sth->fetchrow_hashref )
     {
-        $code = $table_row[0];
-        $name = $table_row[1];
         $catmenu->radiobutton(
-            -label    => $name,
-            -value    => $code,
+            -label    => $cat_hashref->{description},
+            -value    => $cat_hashref->{code},
             -variable => \$category,
             -command  => sub {
                 $longcat = return_longcat($category);
