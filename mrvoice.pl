@@ -42,7 +42,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.276 2003/11/26 19:56:35 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.277 2003/12/07 01:07:40 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -53,6 +53,7 @@ our %config;	# Holds the config variables
 # YOU SHOULD NOT NEED TO MODIFY ANYTHING BELOW HERE FOR NORMAL USE
 #####
 
+our $current_token;
 our $lock_hotkeys = 0;
 our $savefile_count = 0;		# Counter variables
 our $savefile_max = 4;			# The maximum number of files to
@@ -1977,7 +1978,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.276 $';
+  $rev = '$Revision: 1.277 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2163,6 +2164,9 @@ EOF
 			                                  -expand=>1,
                                                           -padx=>2,
                                                           -side=>'top');
+    $tank_token = $tankbox->DragDrop(-event => '<B1-Motion>',
+                                -sitetypes => ['Local'],
+                                -startcommand => sub { StartDrag($tank_token) });
     $tankbox->DropSite(-droptypes=>['Local'],
                        -dropcommand=>[\&Tank_Drop, $dnd_token ]);
     $tankbox->bind("<Double-Button-1>", \&play_mp3);
@@ -2236,84 +2240,84 @@ sub list_hotkeys
     $f1_frame->Label(-textvariable=>\$fkeys{f1}->{title}, 
                      -anchor=>'w')->pack(-side=>'left');
     $f1_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, "f1", $dnd_token ]);
+                        -dropcommand=>[\&Hotkey_Drop, "f1"]);
     my $f2_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f2_frame->Checkbutton(-text=>"F2: ",
                            -variable=>\$f2_cb)->pack(-side=>'left');
     $f2_frame->Label(-textvariable=>\$fkeys{f2}->{title},
                      -anchor=>'w')->pack(-side=>'left');
     $f2_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, "f2", $dnd_token ]);
+                        -dropcommand=>[\&Hotkey_Drop, "f2"]);
     my $f3_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f3_frame->Checkbutton(-text=>"F3: ",
                            -variable=>\$f3_cb)->pack(-side=>'left');
     $f3_frame->Label(-textvariable=>\$fkeys{f3}->{title},
                      -anchor=>'w')->pack(-side=>'left');
     $f3_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, "f3", $dnd_token ]);
+                        -dropcommand=>[\&Hotkey_Drop, "f3"]);
     my $f4_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f4_frame->Checkbutton(-text=>"F4: ",
                            -variable=>\$f4_cb)->pack(-side=>'left');
     $f4_frame->Label(-textvariable=>\$fkeys{f4}->{title},
                      -anchor=>'w')->pack(-side=>'left');
     $f4_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, "f4", $dnd_token ]);
+                        -dropcommand=>[\&Hotkey_Drop, "f4"]);
     my $f5_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f5_frame->Checkbutton(-text=>"F5: ",
                            -variable=>\$f5_cb)->pack(-side=>'left');
     $f5_frame->Label(-textvariable=>\$fkeys{f5}->{title},
                      -anchor=>'w')->pack(-side=>'left');
     $f5_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, "f5", $dnd_token ]);
+                        -dropcommand=>[\&Hotkey_Drop, "f5"]);
     my $f6_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f6_frame->Checkbutton(-text=>"F6: ",
                            -variable=>\$f6_cb)->pack(-side=>'left');
     $f6_frame->Label(-textvariable=>\$fkeys{f6}->{title},
                      -anchor=>'w')->pack(-side=>'left');
     $f6_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, "f6", $dnd_token ]);
+                        -dropcommand=>[\&Hotkey_Drop, "f6"]);
     my $f7_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f7_frame->Checkbutton(-text=>"F7: ",
                            -variable=>\$f7_cb)->pack(-side=>'left');
     $f7_frame->Label(-textvariable=>\$fkeys{f7}->{title},
                      -anchor=>'w')->pack(-side=>'left');
     $f7_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, "f7", $dnd_token ]);
+                        -dropcommand=>[\&Hotkey_Drop, "f7"]);
     my $f8_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f8_frame->Checkbutton(-text=>"F8: ",
                            -variable=>\$f8_cb)->pack(-side=>'left');
     $f8_frame->Label(-textvariable=>\$fkeys{f8}->{title},
                      -anchor=>'w')->pack(-side=>'left');
     $f8_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, "f8", $dnd_token ]);
+                        -dropcommand=>[\&Hotkey_Drop, "f8"]);
     my $f9_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f9_frame->Checkbutton(-text=>"F9: ",
                            -variable=>\$f9_cb)->pack(-side=>'left');
     $f9_frame->Label(-textvariable=>\$fkeys{f9}->{title},
                      -anchor=>'w')->pack(-side=>'left');
     $f9_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, "f9", $dnd_token ]);
+                        -dropcommand=>[\&Hotkey_Drop, "f9"]);
     my $f10_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f10_frame->Checkbutton(-text=>"F10:",
                             -variable=>\$f10_cb)->pack(-side=>'left');
     $f10_frame->Label(-textvariable=>\$fkeys{f10}->{title},
                       -anchor=>'w')->pack(-side=>'left');
     $f10_frame->DropSite(-droptypes=>['Local'],
-                         -dropcommand=>[\&Hotkey_Drop, "f10", $dnd_token ]);
+                         -dropcommand=>[\&Hotkey_Drop, "f10"]);
     my $f11_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f11_frame->Checkbutton(-text=>"F11:",
                             -variable=>\$f11_cb)->pack(-side=>'left');
     $f11_frame->Label(-textvariable=>\$fkeys{f11}->{title},
                       -anchor=>'w')->pack(-side=>'left');
     $f11_frame->DropSite(-droptypes=>['Local'],
-                         -dropcommand=>[\&Hotkey_Drop, "f11", $dnd_token ]);
+                         -dropcommand=>[\&Hotkey_Drop, "f11"]);
     my $f12_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f12_frame->Checkbutton(-text=>"F12:",
                             -variable=>\$f12_cb)->pack(-side=>'left');
     $f12_frame->Label(-textvariable=>\$fkeys{f12}->{title},
                       -anchor=>'w')->pack(-side=>'left');
     $f12_frame->DropSite(-droptypes=>['Local'],
-                         -dropcommand=>[\&Hotkey_Drop, "f12", $dnd_token ]);
+                         -dropcommand=>[\&Hotkey_Drop, "f12"]);
     my $buttonframe = $hotkeysbox->Frame()->pack(-side=>'bottom',
                                                  -fill=>'x');
     $buttonframe->Button(-text=>"Close",
@@ -2856,18 +2860,19 @@ sub StartDrag
   $sound_icon = $mw->Pixmap(-data=>$sound_pixmap_data);
 
   my ($token) = @_;
-  my $widget = $token->parent;
+  $current_token = $token;
+  my $widget = $current_token->parent;
   my $event = $widget->XEvent;
   my $index = $widget->nearest($event->y);
   if (defined $index)
   {
     my $text = $widget->get($index);
     $text =~ s/.*?(".*?").*/$1/;
-    $token->configure(-image=>$sound_icon);
+    $current_token->configure(-image=>$sound_icon);
     my ($X, $Y) = ($event->X, $event->Y);
-    $token->raise;
-    $token->deiconify;
-    $token->FindSite($X, $Y, $event);
+    $current_token->raise;
+    $current_token->deiconify;
+    $current_token->FindSite($X, $Y, $event);
   }
 }
 
@@ -2879,9 +2884,10 @@ sub Hotkey_Drop {
     $status = "Can't drop hotkey - hotkeys locked";
     return;
   }
-  my ($fkey_var, $dnd_source) = @_;
-  my @selection=$mainbox->curselection();
-  my $id = get_song_id($mainbox, $selection[0]);
+  my ($fkey_var) = @_;
+  my $widget = $current_token->parent;
+  my @selection=$widget->curselection();
+  my $id = get_song_id($widget, $selection[0]);
   my $filename = get_filename($id);
   my $title = get_title($id);
   $fkeys{$fkey_var}->{id} = $id;
@@ -2892,15 +2898,16 @@ sub Hotkey_Drop {
 sub Tank_Drop 
 {
   my ($dnd_source) = @_;
-  my @indices = $mainbox->curselection();
+  my $parent = $dnd_source->parent;
+  my @indices = $parent->curselection();
   foreach $index (@indices)
   {
-    my $entry = $mainbox->get($index);
+    my $entry = $parent->get($index);
     $tankbox->insert('end',$entry);
   } 
   if ($#indices > 1)
   {
-    $mainbox->selectionClear(0,'end');
+    $parent->selectionClear(0,'end');
   }
 }
 
