@@ -46,7 +46,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.306 2004/02/24 21:13:35 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.307 2004/02/24 21:19:14 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -973,9 +973,10 @@ sub open_file
                 }
                 elsif ( ($id) && ( validate_id($id) ) )
                 {
-                    $fkeys{$key}->{id}       = $id;
-                    $fkeys{$key}->{title}    = get_info_from_id($id)->{fulltitle};
-                    $fkeys{$key}->{filename} = get_info_from_id($id)->{filename};
+                    $fkeys{$key}->{id}    = $id;
+                    $fkeys{$key}->{title} = get_info_from_id($id)->{fulltitle};
+                    $fkeys{$key}->{filename} =
+                      get_info_from_id($id)->{filename};
                 }
             }
             close(HOTKEYFILE);
@@ -2501,7 +2502,7 @@ sub delete_song
 
 sub show_about
 {
-    $rev = '$Revision: 1.306 $';
+    $rev = '$Revision: 1.307 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3084,27 +3085,28 @@ sub update_time
 
 sub get_info_from_id
 {
-   # Returns a hash reference containing all the info for a specified ID
- 
-   my $id = $_[0];
-   my %info;
-   my $query = "SELECT * FROM mrvoice WHERE id=$id";
-   my $result_hashref = $dbh->selectrow_hashref($query);
-   $info{filename} = $result_hashref->{filename};
-   $info{title} = $result_hashref->{title};
-   $info{artist} = $result_hashref->{artist};
-   if ($info{artist})
-   {
-     $info{fulltitle} = "\"$info{title}\" by $info{artist}";
-   }
-   else
-   {
-     $info{fulltitle} = $info{title};
-   }
-   $info{info} = $result_hashref->{info};
-   return \%info;
+
+    # Returns a hash reference containing all the info for a specified ID
+
+    my $id = $_[0];
+    my %info;
+    my $query          = "SELECT * FROM mrvoice WHERE id=$id";
+    my $result_hashref = $dbh->selectrow_hashref($query);
+    $info{filename} = $result_hashref->{filename};
+    $info{title}    = $result_hashref->{title};
+    $info{artist}   = $result_hashref->{artist};
+    if ( $info{artist} )
+    {
+        $info{fulltitle} = "\"$info{title}\" by $info{artist}";
+    }
+    else
+    {
+        $info{fulltitle} = $info{title};
+    }
+    $info{info} = $result_hashref->{info};
+    return \%info;
 }
-  
+
 sub validate_id
 {
     my $id    = $_[0];
@@ -3895,6 +3897,7 @@ if ( !$dbh->do($query) )
         -text => "Continuing will add a new Publisher field to the database." )
       ->pack();
     $result = $box->Show();
+
     if ( $result eq "Continue" )
     {
         $query =
