@@ -18,7 +18,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.113 2002/04/24 20:02:58 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.114 2002/04/25 14:55:59 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -819,7 +819,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.113 $';
+  $rev = '$Revision: 1.114 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   infobox($mw, "About Mr. Voice","Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License");
 }
@@ -829,15 +829,14 @@ sub show_about
 #{
 #  $box = $mw->DialogBox(-title=>"Predefined Hotkeys", -buttons=>["Close"]);
 #  $box->Icon(-image=>$icon);
-#  $box->add("Label",-text=>"The following hotkeys are always available\nand
-#may not be changed")->pack();
-#  $box->add("Label",-text=>"<Escape> - Stop the currently playing MP3")->pack();
-#  $box->add("Label",-text=>"<Enter> - Perform the currently entered search")->pack();
-#  $box->add("Label",-text=>"<ALT-t> - The \"Ta-Da\" MIDI")->pack();
-#  $box->add("Label",-text=>"<ALT-y> - The \"You're Out\" MIDI")->pack();
-#  $box->add("Label",-text=>"<ALT-b> - The Brown Bag MIDI")->pack();
-#  $box->add("Label",-text=>"<ALT-g> - The Groaner MIDI")->pack();
-#  $box->add("Label",-text=>"<ALT-v> - The Price Is Right theme (Volunteer photos)")->pack();
+#  $box->add("Label",-text=>"The following hotkeys are always available\nand may not be changed")->pack();
+#  $box->add("Label",-text=>"<Escape> - Stop the currently playing MP3",-anchor=>'nw')->pack(-fill=>'x');
+#  $box->add("Label",-text=>"<Enter> - Perform the currently entered search",-anchor=>'nw')->pack(-fill=>'x');
+#  $box->add("Label",-text=>"<ALT-t> - The \"Ta-Da\" MIDI",-anchor=>'nw')->pack(-fill=>'x');
+#  $box->add("Label",-text=>"<ALT-y> - The \"You're Out\" MIDI",-anchor=>'nw')->pack(-fill=>'x');
+#  $box->add("Label",-text=>"<ALT-b> - The Brown Bag MIDI",-anchor=>'nw')->pack(-fill=>'x');
+#  $box->add("Label",-text=>"<ALT-g> - The Groaner MIDI",-anchor=>'nw')->pack(-fill=>'x');
+#  $box->add("Label",-text=>"<ALT-v> - The Price Is Right theme (Volunteer photos)",-anchor=>'nw')->pack(-fill=>'x');
 #  $box->Show;
 #}
 #ENDCSZ
