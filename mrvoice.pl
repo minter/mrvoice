@@ -14,8 +14,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/01 22:57:00 $
-#	CVS REVISION NUMBER:    $Revision: 1.52 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/03 17:48:51 $
+#	CVS REVISION NUMBER:    $Revision: 1.53 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -929,7 +929,7 @@ read_rcfile();
 $mw = MainWindow->new;
 $mw->geometry("+0+0");
 $mw->title("Mr. Voice");
-$mw->minsize(68,10);
+#$mw->minsize(730,330);
 
 if (! ($dbh = DBI->connect("DBI:mysql:$db_name",$db_username,$db_pass)))
 {
@@ -1081,18 +1081,21 @@ $mainbox->bind("<Double-Button-1>", \&play_mp3);
 #
 #####
 
-$mw->Button(-text=>"Play Now",
-            -command=>[\&play_mp3,"play"])->pack(-side=>'left');
-$mw->Button(-text=>"Stop Now",
-            -command=>[\&stop_mp3])->pack(-side=>'left');
-$mw->Button(-text=>"Assign Hotkey",
-            -command=>[\&set_hotkey])->pack(-side=>'right');
+$statusframe = $mw->Frame()->pack(-side=>'bottom',
+                                  -fill=>'x');
+$statusframe->Button(-text=>"Play Now",
+                     -command=>[\&play_mp3,"play"])->pack(-side=>'left');
+$statusframe->Button(-text=>"Stop Now",
+                     -command=>[\&stop_mp3])->pack(-side=>'left');
+$statusframe->Button(-text=>"Assign Hotkey",
+                     -command=>[\&set_hotkey])->pack(-side=>'right');
 
-$mw->Label(-textvariable=>\$status,
-           -relief=>'sunken')->pack(-side=>'bottom',
-                                    -expand=>1,
-                                    -padx=>5,
-                                    -fill=>'both');
+$statusframe->Label(-textvariable=>\$status,
+                    -relief=>'sunken')->pack(-side=>'bottom',
+                                             -expand=>1,
+                                             -padx=>5,
+                                             -fill=>'x');
+
 
 bind_hotkeys($mw);
 
