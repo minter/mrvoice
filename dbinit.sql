@@ -1,6 +1,10 @@
 # This initializes the database
 # Import it by running:
+#
 # mysql -u SUPERUSER_NAME -p YOUR_DATABASE < dbinit.sql
+# 
+# where SUPERUSER_NAME is the name of a user that can create tables
+# within your database, and YOUR_DATABASE is the name of that database.
 
 CREATE TABLE mrvoice (
    id int(8) NOT NULL auto_increment,
@@ -21,4 +25,4 @@ CREATE TABLE categories (
 INSERT INTO categories VALUES ('GEN','General Category');
 
 #--
-# CVS ID: $Id: dbinit.sql,v 1.3 2001/02/21 03:01:46 minter Exp $
+# CVS ID: $Id: dbinit.sql,v 1.4 2001/03/07 13:15:14 minter Exp $
