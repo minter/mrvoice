@@ -1,12 +1,12 @@
 This will be the readme file.
 
-REQUIRED SOFTWARE (along with tested versions):
+REQUIRED SOFTWARE
 * Perl 5 
 * Relational database, with available perl DBI module (Tested with MySQL)
 * TCL/TK
 * xmms
 
-REQUIRED PERL MODULES (http://www.cpan.org/):
+REQUIRED PERL MODULES (tested versions in parentheses) (http://www.cpan.org/):
 * DBI (DBI-1.14)
 * DBD driver for your database (Msql-Mysql-modules-1.2215)
 * Data-Dumper (Data-Dumper-2.101)
