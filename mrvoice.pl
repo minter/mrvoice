@@ -1895,6 +1895,46 @@ sub move_file
     return ($newfilename);
 }
 
+sub accept_songdrop
+{
+
+    # Thanks to the.noonings for the code
+    my ( $widget, $selection ) = @_;
+
+    my $string_dropped;
+    eval {
+        if ( $^O eq 'MSWin32' )
+        {
+            $string_dropped = $widget->SelectionGet(
+                -selection => $selection,
+                'STRING'
+            );
+        }
+        else
+        {
+            $string_dropped = $widget->SelectionGet(
+                -selection => $selection,
+                'STRING'
+            );
+        }
+    };
+
+    if ( defined $string_dropped )
+    {
+        print "Dropped file $string_dropped\n";
+        if ( ( -f $string_dropped ) && ( -r $string_dropped ) )
+        {
+            $string_dropped = Win32::GetShortPathName($string_dropped)
+              if ( $^O eq "MSWin32" );
+            add_new_song($string_dropped);
+        }
+        else
+        {
+            $status = "$string_dropped is not a readable file";
+        }
+    }
+}
+
 sub add_new_song
 {
     print "Adding new song\n" if $debug;
@@ -1902,6 +1942,11 @@ sub add_new_song
         $addsong_title, $addsong_artist,   $addsong_info,
         $addsong_cat,   $addsong_filename, $addsong_publisher
     );
+    if ( $addsong_filename = shift )
+    {
+        ( $addsong_title, $addsong_artist ) =
+          get_title_artist($addsong_filename);
+    }
     my $continue = 0;
     $addsong_publisher = "OTHER";
     while ( $continue != 1 )
@@ -4800,6 +4845,11 @@ $mainbox = $searchboxframe->Scrolled(
 $mainbox->bind( "<Double-Button-1>", \&play_mp3 );
 $mainbox->bind( "<Button-1>", sub { $mainbox->focus(); } );
 $mainbox->bind( "<Button-3>", [ \&rightclick_menu ] );
+
+$mainbox->DropSite(
+    -dropcommand => [ \&accept_songdrop, $mainbox ],
+    -droptypes => ( $^O eq 'MSWin32' ? 'Win32' : [ 'XDND', 'Sun' ] )
+);
 
 $dnd_token = $mainbox->DragDrop(
     -event        => '<B1-Motion>',

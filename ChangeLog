@@ -1,3 +1,8 @@
+Sat  Jan  1 2005	H. Wade Minter (minter@lunenburg.org)
+     * Make the mainbox a DropSite so that if you drop a file onto it,
+       the add_song dialog comes up.  Should be handy for Windows users.
+       Thanks to the.noonings on the PAR list for the code.
+
 Mon  Nov 22 2004	H. Wade Minter (minter@lunenburg.org)
      * Fix the logfile routines so that a) logfiles actually work, and
        b) Windows users get logfiles all the time.
