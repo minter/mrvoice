@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.351 2004/03/12 20:25:51 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.352 2004/03/12 20:46:30 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -107,7 +107,10 @@ our $mp3types = [
 # Check to see if we're on Windows or Linux, and set the RC file accordingly.
 if ( "$^O" eq "MSWin32" )
 {
-    $rcfile = "C:\\mrvoice.cfg";
+    $rcfile  = "C:\\mrvoice.cfg";
+    $logfile = "C:\\mrvoice.log";
+    open( STDOUT, ">$logfile" );
+    open( STDERR, ">&STDOUT" );
 
     BEGIN
     {
@@ -147,7 +150,10 @@ else
                         || (getpwuid($>))[7]
                      )
               }ex;
-    $rcfile = "$homedir/.mrvoicerc";
+    $rcfile  = "$homedir/.mrvoicerc";
+    $logfile = "$homedir/mrvoice.log";
+    open( STDOUT, ">$logfile" );
+    open( STDERR, ">&STDOUT" );
 }
 
 #STARTCSZ
@@ -2213,7 +2219,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.351 $';
+    my $rev = '$Revision: 1.352 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3182,6 +3188,8 @@ sub do_exit
             kill( 15, $mp3_pid );
         }
         Tk::exit;
+        close(STDERR);
+        close(STDOUT);
     }
 }
 
