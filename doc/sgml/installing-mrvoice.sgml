@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.1 2001/09/23 20:37:35 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.2 2001/09/25 16:37:52 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
@@ -30,9 +30,6 @@
             </listitem>
             <listitem>
               <para><ulink url="http://www.cpan.org/modules/by-module/MPEG/">MPEG::MP3-Info</ulink></para>
-            </listitem>
-            <listitem>
-              <para><ulink url="http://www.cpan.org/modules/by-module/Tk/">Tk::FileDialog</ulink></para>
             </listitem>
           </itemizedlist>
         </para>
@@ -125,7 +122,7 @@ mysql>
             <para>Enter <userinput>search dump</userinput>.  At the <prompt>PPM></prompt> prompt, enter <userinput>install Data-Dump</userinput> to install the Data::Dumper module.</para>
           </listitem>
           <listitem>
-            <para>Enter <userinput>search Tk</userinput>.  At the <prompt>PPM></prompt> prompt, enter <userinput>install Tk</userinput> to install the Tk module.  Then enter <userinput>install Tk-FileDialog</userinput> to install the Tk::FileDialog module</para>
+            <para>Enter <userinput>search Tk</userinput>.  At the <prompt>PPM></prompt> prompt, enter <userinput>install Tk</userinput> to install the Tk module.</para>
           </listitem>
           <listitem>
             <para>Enter <userinput>search MP3</userinput>.  At the <prompt>PPM></prompt> prompt, enter <userinput>install MP3-Info</userinput> to install the MPEG::MP3-Info module.</para>
