@@ -1,0 +1,19 @@
+Tue Jan 30 2001		H. Wade Minter (minter@lunenburg.org)
+     * Released version 0.7.
+     * Fixed resize bug - resizing will now change the size of the listbox
+       and not much else.
+     * Added static hotkeys for often-used MIDIs.
+
+Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
+     * Released version 0.6.
+     * Started changelog (finally)
+     * Fixed bug that caused searches to crash when a file in the database
+       did not exist on the disk.
+     * Added Escape as a hotkey to stop the currently-playing MP3
+     * Added ability to clear selected hotkeys, instead of having to clear
+       all hotkeys.
+     * Added F11 and F12 as usable hotkeys.  NOTE: F11 and F12 cause
+       problems under WindowMaker by default.
+     * Added more status notes for status line.
+     * Disabled the ability to resize the main box, until I figure out how
+       to get things to resize nicely.

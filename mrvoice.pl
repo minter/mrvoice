@@ -11,32 +11,17 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR: $Author: minter $
-#	LAST COMMIT DATE: $Date: 2001/02/16 16:06:04 $
-#	CVS REVISION NUMBER: $Revision: 1.2 $
+#	LAST COMMIT DATE: $Date: 2001/02/16 18:07:31 $
+#	CVS REVISION NUMBER: $Revision: 1.3 $
 # CHANGELOG:
-#   v0.7 - 1/30/01:
-#     + Fixed resize bug - resizing will now change the size of the listbox
-#       and not much else.
-#     + Added static hotkeys for often-used MIDIs.
-#   v0.6 - 1/29/01: 
-#     + Started changelog (finally)
-#     + Fixed bug that caused searches to crash when a file in the database
-#       did not exist on the disk.
-#     + Added Escape as a hotkey to stop the currently-playing MP3
-#     + Added ability to clear selected hotkeys, instead of having to clear
-#       all hotkeys.
-#     + Added F11 and F12 as usable hotkeys.  NOTE: F11 and F12 cause
-#       problems under WindowMaker by default.
-#     + Added more status notes for status line.
-#     + Disabled the ability to resize the main box, until I figure out how
-#       to get things to resize nicely.
+#   See ChangeLog file
 # CREDITS:
-#   + Jack Spencer, Sam Adams: Testing, feature suggestions
+#   See Credits file
 ##########
 
 #####
 # Set up global variables of some importance
-$version = "0.7";			# Program version
+my $version = "0.7";			# Program version
 my $db_name = "comedysportz";           # In the form DBNAME:HOSTNAME:PORT
 my $db_username = "root";               # The username used to connect
                                         # to the database.
