@@ -1,4 +1,8 @@
-Sun  Apr 10 2004	H. Wade Minter (minter@lunenburg.org)
+Sun  Apr 18 2004	H. Wade Minter (minter@lunenburg.org)
+     * Added WMA support under MSWin32 (suggested by kprobbins)
+     * Removed obsolete $bulkaddtypes definition.
+
+Sun  Apr 11 2004	H. Wade Minter (minter@lunenburg.org)
      * Changed the DropSite behavior to use a DropSite for each part of
        the hotkey area (Frame, Checkbutton, and Label) - needed in 
        804.026-final.
@@ -623,4 +627,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.131 2004/04/12 01:49:35 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.132 2004/04/19 00:18:05 minter Exp $
