@@ -45,7 +45,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.282 2003/12/30 14:46:55 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.283 2003/12/30 17:54:10 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -68,6 +68,12 @@ our $hotkeytypes = [
     ['Mr. Voice Hotkey Files', '.mrv'],
     ['All Files', '*'],
   ];
+
+our $holdingtanktypes = [
+    ['Mr. Voice Holding Tank Files', '.hld'],
+    ['All Files', '*'],
+  ];
+    
 
 our $databasefiles = [
     ['Database Dump Files', '.sql'],
@@ -797,6 +803,47 @@ sub bind_hotkeys
       $req = HTTP::Request->new(GET => "http://localhost:4800/fadeoutandstop?p=$config{'httpq_pw'}");
       $res = $agent->request($req);
     });
+  }
+}
+
+sub open_tank
+{
+  # Opens a saved holding tank file, overwriting the current contents
+  my $selectedfile = $mw->getOpenFile(-filetypes=>$holdingtanktypes,
+                                      -initialdir=>$config{'savedir'},
+                                      -title=>'Open a File');
+  if ($selectedfile)
+  {
+    if (! -r $selectedfile)
+    {
+      infobox($mw, "File Error", "Could not open file $selectedfile for reading");
+    }
+    else
+    {
+      holding_tank() if (!Exists($holdingtank));
+      wipe_tank();
+      open (TANKFILE,$selectedfile);
+      while ($id = <TANKFILE>)
+      {
+        chomp($id);
+        my $query = "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.time from mrvoice,categories where mrvoice.category=categories.code AND mrvoice.id=$id";
+        my $sth=$dbh->prepare($query);
+        $sth->execute or die "can't execute the query: $DBI::errstr\n";
+        @table_row = $sth->fetchrow_array;
+        $sth->finish;
+        $string="$id:($table_row[1]";
+        $string = $string . " - $table_row[2]" if ($table_row[2]);
+        $string = $string . ") - \"$table_row[4]\"";
+        $string = $string. " by $table_row[3]" if ($table_row[3]);
+        $string = $string . " $table_row[5]";
+
+        $tankbox->insert('end',$string);
+      }       
+    } 
+  }
+  else
+  {
+    $status = "Cancelled loading of holding tank file";
   }
 }
 
@@ -2011,7 +2058,7 @@ sub show_docs
   
 sub show_about
 {
-  $rev = '$Revision: 1.282 $';
+  $rev = '$Revision: 1.283 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2043,6 +2090,12 @@ sub show_predefined_hotkeys
   $box->Show;
 }
 #ENDCSZ
+
+sub wipe_tank
+{
+  # Clears the holding tank
+  $tankbox->delete(0,'end');
+}
 
 sub clear_hotkeys
 {
@@ -3210,8 +3263,13 @@ sub filemenu_items
   [
     ['command', 'Open Hotkey File', -command=>\&open_file, -accelerator=>'Ctrl-O'],
     ['command', 'Save Hotkeys To A File', -command=>\&save_file, -accelerator=>'Ctrl-S'],
+    '',
+    ['command', 'Open Holding Tank File', -command=>\&open_tank],
+    ['command', 'Save Holding Tank To A File', -command=>\&save_tank],
+    '',
     ['command', 'Backup Database To A File', -command=>\&dump_database],
     ['command', 'Import Database Backup File', -command=>\&import_database],
+    '',
     ['command', 'Preferences', -command=>\&edit_preferences],
     ['cascade', 'Recent Files', -tearoff=>0],
     '',
