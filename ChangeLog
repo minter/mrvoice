@@ -1,3 +1,7 @@
+Fri  Jun 28 2002	H. Wade Minter (minter@lunenburg.org)
+     * Added code to check for spurious spaces in front of a search
+       term, and delete them if found.
+
 Mon  Jun 24 2002	H. Wade Minter (minter@lunenburg.org)
      * Fixed the dynamic documents menu so that, if a file is already in
        the list, it just moves it to the front of the line, rather
@@ -275,4 +279,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.53 2002/06/24 21:22:44 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.54 2002/06/28 18:11:15 minter Exp $
