@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/03/06 23:08:12 $
-#	CVS REVISION NUMBER:    $Revision: 1.26 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/07 01:44:30 $
+#	CVS REVISION NUMBER:    $Revision: 1.27 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -27,6 +27,7 @@ use MPEG::MP3Info;
 #####
 # CONFIGURATION VARIABLES
 #####
+my $ostype = "unix"			# Valid values are "unix" and "windows"
 my $db_name = "comedysportz";			# In the form DBNAME:HOSTNAME:PORT
 my $db_username = "root";                   # The username used to connect
                                         # to the database.
@@ -61,28 +62,24 @@ $savedir = "/tmp/";				# The default directory where
 my $version = "1.0pre";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
 
-$filepath = "$filepath/" unless ($filepath =~ "/.*\/$/");
-$savedir = "$savedir/" unless ($savedir =~ "/.*\/$/");
+if ($ostype eq "windows")
+{
+  $filepath = "$filepath\\" unless ($filepath =~ "/.*\\\\$/");
+  $savedir = "$savedir\\" unless ($savedir =~ "/.*\\\\$/");
+}
+else
+{
+  $filepath = "$filepath/" unless ($filepath =~ "/.*\/$/");
+  $savedir = "$savedir/" unless ($savedir =~ "/.*\/$/");
+}
 
 sub open_file
 {
-  if ($ostype eq "windows")
-  {
-    $fileselectw = $mw->FileSelect(-directory=>"$savedir",
-                                   -acceptlabel=>"Load File",
-                                   -filelabel=>'The file to open:',
-                                   -defaultextension => "mrv");
-    $fileselectw->configure(-title=>"Open A File...");
-    $selectedfile = $fileselectw->Show;
-  }
-  else
-  {
-    $fileselectw = $mw->FileDialog(-Title=>'Open a File',
-                                   -FPat=>"*.mrv",
-                                   -OKButtonLabel=>"Open File",
-                                   -Path=>$savedir);
-    $selectedfile = $fileselectw->Show;
-  }
+  $fileselectw = $mw->FileDialog(-Title=>'Open a File',
+                                 -FPat=>"*.mrv",
+                                 -OKButtonLabel=>"Open File",
+                                 -Path=>$savedir);
+  $selectedfile = $fileselectw->Show;
                       
   if ($selectedfile)
   {
