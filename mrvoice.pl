@@ -45,7 +45,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.288 2003/12/31 16:23:39 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.289 2003/12/31 18:18:19 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -68,6 +68,9 @@ our $savefile_max = 4;			# The maximum number of files to
 $config{'search_ascap'} = 1;
 $config{'search_bmi'} = 1;
 $config{'search_other'} = 1;
+$config{'show_publisher'} = 0;
+
+our @publishers = ('OTHER','ASCAP','BMI');
 
 our $hotkeytypes = [
     ['Mr. Voice Hotkey Files', '.mrv'],
@@ -1609,6 +1612,7 @@ sub add_new_song
 {
   my $continue = 0;
   my ($longcat,$addsong_cat);
+  my $addsong_publisher="OTHER";
   while ($continue != 1)
   {
     $box = $mw->DialogBox(-title=>"Add New Song", -buttons=>["OK","Cancel"]);
@@ -1644,13 +1648,27 @@ sub add_new_song
                          -value=>$code,
                          -variable=>\$addsong_cat,
                          -command=>sub {
-                                $longcat = "(" . return_longcat($addsong_cat) . ")";});
+                                $menu->configure(-text=>return_longcat($addsong_cat));});
     }
     $sth->finish;
     $frame4 = $box->add("Frame")->pack(-fill=>'x');
     $frame4->Label(-text=>"Category Extra Info")->pack(-side=>'left');
     $frame4->Entry(-width=>30,
                    -textvariable=>\$addsong_info)->pack(-side=>'right');
+    $pubframe = $box->add("Frame")->pack(-fill=>'x');
+    $pubframe->Label(-text=>'Publisher')->pack(-side=>'left');
+    $pubmenu=$pubframe->Menubutton(-text=>"Choose Publisher",
+                                   -relief=>'raised',
+                                   -tearoff=>0,
+                                   -indicatoron=>1)->pack(-side=>'right');
+    foreach my $item (@publishers)
+    {
+      $pubmenu->radiobutton(-label=>$item,
+                            -value=>$item,
+                            -variable=>\$addsong_publisher,
+                            -command=>sub {
+                              $pubmenu->configure(-text=>$addsong_publisher);});
+    }
     $frame5 = $box->add("Frame")->pack(-fill=>'x');
     $frame5->Label(-text=>"File to add",
                    -foreground=>"#cdd226132613")->pack(-side=>'left');
@@ -1665,7 +1683,6 @@ sub add_new_song
                    -textvariable=>\$addsong_filename)->pack(-side=>'right');
     $frame7 = $box->add("Frame")->pack(-fill=>'x');
     $frame7->Button(-text=>"Preview song",
-#                    -command=>[\&play_mp3, "addsong", $songentry->cget(-textvariable)])->pack(-side=>'right');
                     -command=> sub {  my $tmpsong = $songentry->cget(-textvariable); play_mp3("addsong",$$tmpsong);})->pack(-side=>'right');
 
     $result = $box->Show();
@@ -1701,6 +1718,7 @@ sub add_new_song
       $addsong_info="";
       $addsong_cat="";
       $addsong_filename="";
+      $addsong_publisher="";
       return (1);
     }
   } # End while continue loop
@@ -1725,7 +1743,7 @@ sub add_new_song
     $addsong_artist = $dbh->quote($addsong_artist);
   }
   $time = get_songlength($addsong_filename);
-  $query = "INSERT INTO mrvoice VALUES (NULL,$addsong_title,$addsong_artist,'$addsong_cat',$addsong_info,'$newfilename','$time',NULL)";
+  $query = "INSERT INTO mrvoice VALUES (NULL,$addsong_title,$addsong_artist,'$addsong_cat',$addsong_info,'$newfilename','$time',NULL,'$addsong_publisher')";
   if ($dbh->do($query))
   {
     $addsong_filename = Win32::GetLongPathName($addsong_filename) if ($^O eq "MSWin32");
@@ -1816,6 +1834,9 @@ sub edit_preferences
   $hotkeydir_frame->Entry(-width=>30,
 	                  -textvariable=>\$config{'savedir'})->pack(-side=>'right');
 
+  my $display_page = $search_page->Frame(-relief=>'groove',-bd=>1)->pack(-fill=>'x');
+  $display_page->Label(-text=>'Display publisher in search results?')->pack(-side=>'left');
+  $display_page->Checkbutton(-variable=>\$config{'show_publisher'})->pack(-side=>'left');
   $search_page->Label(-text=>'Allow searches of music published by:')->pack(-side=>'top');
   my $ascap_frame = $search_page->Frame()->pack(-fill=>'x');
   $ascap_frame->Label(-text=>'ASCAP',-width=>10)->pack(-side=>'left');
@@ -1877,6 +1898,7 @@ sub edit_preferences
       print RCFILE "search_ascap::$config{'search_ascap'}\n";
       print RCFILE "search_bmi::$config{'search_bmi'}\n";
       print RCFILE "search_other::$config{'search_other'}\n";
+      print RCFILE "show_publisher::$config{'show_publisher'}\n";
       close(RCFILE);
     }
   }
@@ -2134,7 +2156,7 @@ sub show_docs
   
 sub show_about
 {
-  $rev = '$Revision: 1.288 $';
+  $rev = '$Revision: 1.289 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2839,7 +2861,7 @@ sub do_search
   $status="Starting search...";
   $mw->Busy(-recurse=>1);
   $mainbox->delete(0,'end');
-  my $query = "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.filename,mrvoice.time FROM mrvoice,categories WHERE mrvoice.category=categories.code ";
+  my $query = "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.filename,mrvoice.time,mrvoice.publisher FROM mrvoice,categories WHERE mrvoice.category=categories.code ";
   $query = $query . "AND publisher != 'ASCAP' " if ($config{'search_ascap'} == 0);
   $query = $query . "AND publisher != 'BMI' " if ($config{'search_bmi'} == 0);
   $query = $query . "AND publisher != 'OTHER' " if ($config{'search_other'} == 0);
@@ -2870,6 +2892,7 @@ sub do_search
       $string = $string . ") - \"$table_row[4]\"";
       $string = $string. " by $table_row[3]" if ($table_row[3]);
       $string = $string . " $table_row[6]";
+      $string = $string . " ($table_row[7])" if ($config{'show_publisher'} == 1);
       $mainbox->insert('end',$string); 
     }
     else
