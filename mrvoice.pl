@@ -4945,7 +4945,8 @@ sub advanced_search
             -label    => $i,
             -value    => $i,
             -variable => \$end_month,
-            -command  => sub { update_button( $end_month_button, $end_month ); }
+            -command  =>
+              sub { update_button( $end_month_button, $months[$end_month] ); }
         );
     }
     $adv_searchframe_end->Label( -text => "/" )->pack( -side => 'left' );
