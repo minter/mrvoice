@@ -2614,6 +2614,18 @@ sub move_tank
         $direction, $neighbor
     );
 
+    my $info = get_info_from_id($target);
+    if ( !-e catfile( $config{'filepath'}, $info->{filename} ) )
+    {
+        my $style = $tankbox->ItemStyle(
+            'text',
+            -foreground       => 'red',
+            -background       => 'white',
+            -selectforeground => 'red'
+        );
+        $h->entryconfigure( $target, -style => $style );
+    }
+
     #...and assumedly we want the newly re-inserted item to be selected...
     $h->anchorSet($target);
 
@@ -3076,6 +3088,7 @@ sub do_search
             my $style = $mainbox->ItemStyle(
                 'text',
                 -foreground       => 'red',
+                -background       => 'white',
                 -selectforeground => 'red'
             );
             $mainbox->entryconfigure( $row_hashref->{id}, -style => $style );
@@ -3403,6 +3416,17 @@ sub Tank_Drop
         my $text = $parent->itemCget( $index, 0, '-text' );
         my $id = $parent->info( 'data', $index );
         $tankbox->add( $id, -data => $id, -text => $text );
+        my $info = get_info_from_id($id);
+        if ( !-e catfile( $config{'filepath'}, $info->{filename} ) )
+        {
+            my $style = $tankbox->ItemStyle(
+                'text',
+                -foreground       => 'red',
+                -background       => 'white',
+                -selectforeground => 'red'
+            );
+            $tankbox->entryconfigure( $id, -style => $style );
+        }
     }
     if ( $#indices > 1 )
     {
