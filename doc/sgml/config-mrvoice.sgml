@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: config-mrvoice.sgml,v 1.6 2001/09/27 14:09:24 minter Exp $
+  CVS ID: $Id: config-mrvoice.sgml,v 1.7 2001/09/28 00:23:55 minter Exp $
 -->
 
 <chapter><title>Configuring Mr. Voice</title>
@@ -36,6 +36,7 @@
       <para>variable_name::value</para>
       <para>So, for example, to define a <varname>$savepath</varname> of <filename>/tmp/</filename> in the <filename>.mrvoicerc</filename> file, you would include the line:</para>
       <para>savepath::/tmp/</para>
+      <para>You can define any of the variables listed above in the <filename>.mrvoicerc</filename> file, and I would encourage you to do so for all of them, with the possible exception of the <varname>$category</varname> variable, which you should probably leave alone.</para>
     </sect2>
   </sect1>
 

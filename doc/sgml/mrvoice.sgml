@@ -4,7 +4,7 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.11 2001/09/27 15:48:55 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.12 2001/09/28 00:23:55 minter Exp $ 
 -->
 <book status="draft">
 
@@ -24,7 +24,7 @@
   <para>Thanks to my wife, Holly, for encouragement and editorial help.</para>
   <para>Thanks to all of the voices at ComedyWorx-Raleigh, including (but not limited to) Jack Spencer, Sam Adams, Bobby Rathbone, Ross White, Leo DiNapoli, and Bryan Cronk, for testing and feedback.</para>
   <para>Thanks to the ownership and players of ComedyWorx for giving me such a fun place to be a goofball for the past couple of years.</para>
-  <para>Thanks to the authors and publishers of the following books, without whom none of this would have gotten done:
+  <para>Thanks to the authors and publishers of the following books, without which none of this would have gotten done:
     <itemizedlist>
       <listitem><para><citetitle pubwork="book">Learning Perl, 2nd Edition</citetitle>, by Randal Schwartz and Tom Christiansen, published by O'Reilly and Associates.</para></listitem>
       <listitem><para><citetitle pubwork="book">Programming Perl, 2nd Edition</citetitle>, by Larry Wall, Randal Schwartz and Tom Christiansen, published by O'Reilly and Associates.</para></listitem>
