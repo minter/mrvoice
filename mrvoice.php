@@ -19,7 +19,48 @@
    $database_username = "USERNAME";
    $database_password = "PASSWORD";
  
-   # CVS ID: $Id: mrvoice.php,v 1.5 2001/02/25 18:14:08 minter Exp $
+   # CVS ID: $Id: mrvoice.php,v 1.6 2001/02/25 22:11:37 minter Exp $
+?>
+
+<?
+  include ("class.id3.php");
+  if (!($dblink = mysql_connect($database_host,$database_username,$database_password)))
+  { 
+    print "mysql_connect failed\n";
+  }
+
+  if (!(mysql_select_db($database,$dblink)))
+  {
+    print "mysql_select_db failed\n";
+  }
+
+
+  if ($action == "Delete Checked")
+  {
+    $numentries = count($item_delete);
+    if ($numentries == 0)
+    {
+      print "No items checked for deletion.  Doing nothing...<P>\n";
+    }
+    else
+    {
+      for ($i=0; $i<$numentries; $i++)
+      {
+        print "<P>Deleting $item_delete[$i]...";
+        $query = "DELETE FROM mrvoice WHERE id=$item_delete[$i]";
+        if ($dbresult = mysql_query($query,$dblink))
+        {
+          print "<FONT COLOR=#00FF00>Deleted successfully!</FONT>";
+        }
+        else
+        {
+          print "<FONT COLOR=#FF0000>Deletion failed!</FONT>";
+          print "<P>MySQL Error: " . mysql_error();
+          print "<P>Query: $query\n";
+        }
+      }
+    }
+  }
 ?>
 
 <TITLE>Mr. Voice MP3 Database</TITLE>
@@ -39,17 +80,6 @@
 <TR><TD>Category</TD> <TD><SELECT NAME=category>
 
 <?
-  include ("class.id3.php");
-  if (!($dblink = mysql_connect($database_host,$database_username,$database_password)))
-  { 
-    print "mysql_connect failed\n";
-  }
-
-  if (!(mysql_select_db($database,$dblink)))
-  {
-    print "mysql_select_db failed\n";
-  }
-
   $query = "SELECT * FROM categories";
 
   $dbresult = mysql_query($query,$dblink);
@@ -159,11 +189,14 @@
  
     print "<P><I>The search returned " . mysql_num_rows($dbresult) . " match";
     mysql_num_rows($dbresult) != 1 ? print "es</I>\n" : print "</I>\n";
+    print "<FORM METHOD=post ACTION=$PHP_SELF>\n";
     print "<TABLE BORDER=1 CELLPADDING=3>\n";
-    print "<TR><TH>Category</TH> <TH>Extra Info</TH> <TH>Artist</TH> <TH>Title<BR>(Click to download MP3)</TH> <TH>File Size</TH> <TH>MP3<BR>Length</TH> <TH>Modified</TH> <TH>Edit?</TH></TR>\n";
+    print "<TR><TH>Delete?</TH> <TH>Category</TH> <TH>Extra Info</TH> <TH>Artist</TH> <TH>Title<BR>(Click to download MP3)</TH> <TH>File Size</TH> <TH>MP3<BR>Length</TH> <TH>Modified</TH> <TH>Edit?</TH></TR>\n";
     while ($row = mysql_fetch_array($dbresult))
     {
-      print "<TR><TD>$row[2]</TD> <TD>";
+      print "<TR>";
+      print "<TD><INPUT TYPE=checkbox NAME=item_delete[] VALUE=$row[6]></TD>";
+      print "<TD>$row[2]</TD> <TD>";
  
       $row[3] == "" ? print "<BR>" : print "$row[3]";
 
@@ -194,10 +227,12 @@
       $month = substr($rawdate,2,2);
       $day = substr($rawdate,4,2);
       print "$month/$day/$year</TD>";
-      print "<TD><A HREF=mrvoice-add.php?action=Edit&id=$row[6]>Edit</A></TD>";
+      print "<TD><A HREF=mrvoice-add.php?type=Edit&id=$row[6]>Edit</A></TD>";
       print "</TR>\n";
     }
     print "</TABLE>\n";
+    print "<P><INPUT TYPE=submit NAME=action VALUE='Delete Checked'>\n";
+    print "</FORM>\n";
      
   mysql_close($dblink);
 
@@ -206,4 +241,5 @@
 ?>
 
 <HR>
-<I>Designed by <a href=http://www.lunenburg.org/>H. Wade Minter</A> &lt<a href="mailto:minter@lunenburg.org">minter@lunenburg.org</A>&gt.
+<P><A HREF=index.php>Return to Index page</A>
+<P><I>Designed by <a href=http://www.lunenburg.org/>H. Wade Minter</A> &lt<a href="mailto:minter@lunenburg.org">minter@lunenburg.org</A>&gt.
