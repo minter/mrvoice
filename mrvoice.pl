@@ -40,7 +40,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.227 2003/04/30 18:12:08 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.228 2003/06/24 12:16:34 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1693,7 +1693,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.227 $';
+  $rev = '$Revision: 1.228 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2040,6 +2040,7 @@ sub update_time
     -text => "Done",
     -state => 'disabled',
     -command=>sub { $progressbox->destroy})->pack(-side=>'bottom');
+  $progressbox->update();
   $progressbox->deiconify();
   $progressbox->raise();
 
