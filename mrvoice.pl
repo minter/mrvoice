@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.349 2004/03/12 19:16:57 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.350 2004/03/12 19:47:55 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -815,8 +815,8 @@ sub dump_database
       localtime();
     $year += 1900;
     $mon  += 1;
-    $defaultfilename = "database-$year-$mon-$mday.sql";
-    my $dumpfile = $mw->getSaveFile(
+    my $defaultfilename = "database-$year-$mon-$mday.sql";
+    my $dumpfile        = $mw->getSaveFile(
         -title            => 'Choose Database Export File',
         -defaultextension => ".sql",
         -initialfile      => $defaultfilename,
@@ -1008,12 +1008,12 @@ sub dynamic_documents
     # It adds the file to the "Recent Files" menu off of Files, and if we're
     # over the user-specified limit, removes the oldest file from the list.
 
-    $file = $_[0];
+    my $file = $_[0];
 
     my $fileentry;
     my $counter = 0;
     my $success = 0;
-    foreach $fileentry (@current)
+    foreach my $fileentry (@current)
     {
         if ( $fileentry eq $file )
         {
@@ -1080,7 +1080,7 @@ sub backup_hotkeys
     # This saves the contents of the hotkeys to temporary variables, so
     # you can restore them after a file open, etc.
 
-    foreach $key (%fkeys)
+    foreach my $key (%fkeys)
     {
         $oldfkeys{$key}->{title}    = $fkeys{$key}->{title};
         $oldfkeys{$key}->{id}       = $fkeys{$key}->{id};
@@ -1093,7 +1093,7 @@ sub restore_hotkeys
 {
 
     # Replaces the hotkeys with the old ones from backup_hotkeys()
-    foreach $key (%oldfkeys)
+    foreach my $key (%oldfkeys)
     {
         $fkeys{$key}->{title}    = $oldfkeys{$key}->{title};
         $fkeys{$key}->{id}       = $oldfkeys{$key}->{id};
@@ -1199,7 +1199,7 @@ sub bulk_add
     my @list = ( @mp3glob, @oggglob );
 
     $mw->Busy( -recurse => 1 );
-    foreach $file (@list)
+    foreach my $file (@list)
     {
         $file = Win32::GetShortPathName($file) if ( $^O eq "MSWin32" );
         my ( $title, $artist ) = get_title_artist($file);
@@ -1218,7 +1218,7 @@ sub bulk_add
             {
                 $db_artist = "NULL";
             }
-            $db_filename = move_file( $file, $title, $artist );
+            my $db_filename = move_file( $file, $title, $artist );
             my $query =
               "INSERT INTO mrvoice (id,title,artist,category,filename,time,modtime) VALUES (NULL, $db_title, $db_artist, '$db_cat', '$db_filename', '$time', NULL)";
             my $sth = $dbh->prepare($query);
@@ -1262,12 +1262,12 @@ sub bulk_add
         -selectmode => "single"
     )->pack();
     $lb->insert( 'end', "===> The following items were successfully added" );
-    foreach $good (@accepted)
+    foreach my $good (@accepted)
     {
         $lb->insert( 'end', $good );
     }
     $lb->insert( 'end', "", "", "===> The following files were NOT added:" );
-    foreach $bad (@rejected)
+    foreach my $bad (@rejected)
     {
         $lb->insert( 'end', $bad );
     }
@@ -1314,10 +1314,10 @@ sub add_category
 
             # Check to see if there's a duplicate of either entry
 
-            $checkquery =
+            my $checkquery =
               "SELECT * FROM categories WHERE (code='$addcat_code' OR description=$addcat_desc)";
-            my $sth = $dbh->prepare($checkquery);
-            $result = $sth->execute;
+            my $sth    = $dbh->prepare($checkquery);
+            my $result = $sth->execute;
             if ( $sth->rows > 0 )
             {
                 infobox(
@@ -1396,7 +1396,7 @@ sub edit_category
 
         # Throw up another dialog box to do the actual editing
         my ( $code, $desc ) =
-          split( / - /, $editbox->get( $editbox->curselection() ) );
+          split( /-/, $editbox->get( $editbox->curselection() ) );
         my $editbox = $mw->DialogBox(
             -title   => "Edit a category",
             -buttons => [ "Ok", "Cancel" ]
@@ -1455,7 +1455,7 @@ sub delete_category
 
     my $query = "SELECT * from categories ORDER BY description";
     my $sth   = $dbh->prepare($query);
-    $sth->execute or die "can't execute the query: $DBI::errstr\n";
+    $sth->execute or die "Cannot execute the query: $DBI::errstr\n";
     my $deletebox = $box->add(
         "Scrolled", "Listbox",
         -scrollbars => 'osoe',
@@ -1475,11 +1475,11 @@ sub delete_category
     if ( ( $choice ne "Cancel" ) && ( defined( $deletebox->curselection() ) ) )
     {
         my ( $del_cat, $del_desc ) =
-          split( / - /, $deletebox->get( $deletebox->curselection() ) );
+          split( /-/, $deletebox->get( $deletebox->curselection() ) );
         $query = "SELECT * FROM mrvoice WHERE category='$del_cat'";
         my $sth = $dbh->prepare($query);
         $sth->execute;
-        $rows = $sth->rows;
+        my $rows = $sth->rows;
         $sth->finish;
         if ( $rows > 0 )
         {
@@ -1788,7 +1788,7 @@ sub edit_preferences
     $mp3dir_frame->Button(
         -text    => "Select MP3 Directory",
         -command => sub {
-            if ( $filepath = $box->chooseDirectory )
+            if ( my $filepath = $box->chooseDirectory )
             {
                 $config{'filepath'} = $filepath;
             }
@@ -1806,7 +1806,7 @@ sub edit_preferences
     $hotkeydir_frame->Button(
         -text    => "Select Hotkey Directory",
         -command => sub {
-            if ( $savedir = $box->chooseDirectory )
+            if ( my $savedir = $box->chooseDirectory )
             {
                 $config{'savedir'} = $savedir;
             }
@@ -2145,14 +2145,14 @@ sub delete_song
     my (@selection) = $mainbox->curselection();
     my $count = $#selection + 1;
     my @ids;
-    my ( $index, $delete_file_cb );
-    foreach $index (@selection)
+    my $delete_file_cb;
+    foreach my $index (@selection)
     {
         push( @ids, get_song_id( $mainbox, $index ) );
     }
     if ( $count >= 1 )
     {
-        $box = $mw->DialogBox(
+        my $box = $mw->DialogBox(
             -title          => "Confirm Deletion",
             -default_button => "Cancel",
             -buttons        => [ "Delete", "Cancel" ]
@@ -2177,18 +2177,19 @@ sub delete_song
             -text     => "Delete file on disk",
             -variable => \$delete_file_cb
         )->pack();
-        $result = $box->Show();
+        my $result = $box->Show();
         if ( $result eq "Delete" )
         {
             foreach my $id (@ids)
             {
+                my $filename;
                 if ( $delete_file_cb == 1 )
                 {
-                    $filequery = "SELECT filename FROM mrvoice WHERE id=$id";
+                    my $filequery = "SELECT filename FROM mrvoice WHERE id=$id";
                     ($filename) = $dbh->selectrow_array($filequery);
                 }
-                $query = "DELETE FROM mrvoice WHERE id=$id";
-                my $sth = $dbh->prepare($query);
+                my $query = "DELETE FROM mrvoice WHERE id=$id";
+                my $sth   = $dbh->prepare($query);
                 $sth->execute;
                 $sth->finish;
                 if ( $delete_file_cb == 1 )
@@ -2212,7 +2213,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.349 $';
+    my $rev = '$Revision: 1.350 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -2221,7 +2222,7 @@ sub show_about
         -buttons    => ["OK"],
         -background => 'white'
     );
-    $logo_photo = $mw->Photo( -data => $logo_photo_data );
+    my $logo_photo = $mw->Photo( -data => $logo_photo_data );
     $box->Icon( -image => $icon );
     $box->add(
         "Label",
@@ -2239,7 +2240,7 @@ sub show_about
 #STARTCSZ
 #sub show_predefined_hotkeys
 #{
-#  $box = $mw->DialogBox(-title=>"Predefined Hotkeys", -buttons=>["Close"]);
+#  my $box = $mw->DialogBox(-title=>"Predefined Hotkeys", -buttons=>["Close"]);
 #  $box->Icon(-image=>$icon);
 #  $box->add("Label",-text=>"The following hotkeys are always available and may not be changed")->pack();
 #  $box->add("Label",-text=>"<Escape> - Stop the currently playing MP3",-anchor=>'nw')->pack(-fill=>'x');
@@ -2273,9 +2274,9 @@ sub clear_hotkeys
     }
 
     backup_hotkeys();
-    foreach $fkeynum ( 1 .. 12 )
+    foreach my $fkeynum ( 1 .. 12 )
     {
-        $fkey                     = "f$fkeynum";
+        my $fkey = "f$fkeynum";
         $fkeys{$fkey}->{id}       = '';
         $fkeys{$fkey}->{filename} = '';
         $fkeys{$fkey}->{title}    = '';
@@ -2392,7 +2393,7 @@ sub launch_tank_playlist
     foreach my $item (@indices)
     {
         my ( $id, $description ) = split( /:/, $item );
-        $file = get_info_from_id($id)->{filename};
+        my $file = get_info_from_id($id)->{filename};
         my $path = catfile( $config{filepath}, $file );
         print $fh "$path\n";
     }
@@ -2424,7 +2425,7 @@ EOF
         $holdingtank->Label(
             -text => "Drag a song here from the main search box to store it" )
           ->pack;
-        $playlistbutton = $holdingtank->Button(
+        my $playlistbutton = $holdingtank->Button(
             -text    => "Launch Playlist",
             -command => \&launch_tank_playlist
         )->pack();
@@ -2528,7 +2529,7 @@ sub move_tank
 
 sub clear_tank
 {
-    @selected = reverse( $tankbox->curselection() );
+    my @selected = reverse( $tankbox->curselection() );
     foreach my $item (@selected)
     {
         $tankbox->delete($item);
@@ -2731,8 +2732,7 @@ sub get_song_id
     # This gets the current selection for the index passed in, and returns
     # the database ID for that song.
 
-    $box   = $_[0];
-    $index = $_[1];
+    my ( $box, $index ) = @_;
     my $selection = $box->get($index);
     my ($id) = split /:/, $selection;
     return ($id);
@@ -2934,7 +2934,7 @@ sub get_songlength
     #Generic function to return the length of a song in mm:ss format.
     #Currently supports OGG, MP3 and WAV, with the appropriate modules.
 
-    $file = $_[0];
+    my $file = $_[0];
     my $time = "";
     if ( $file =~ /.*\.mp3$/i )
     {
