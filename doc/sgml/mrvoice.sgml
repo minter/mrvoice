@@ -5,7 +5,7 @@
   <!ENTITY epilogue SYSTEM "troubleshooting.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.43 2003/08/31 19:13:26 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.44 2003/09/23 01:02:11 minter Exp $ 
 -->
 <book status="draft">
 
@@ -67,7 +67,7 @@
   <sect1><title>What's new in Version 1.9?</title>
     <para>
       <itemizedlist>
-        <listitem><para>There is a <filename>quickestup.exe</filename> shipped with the Windows version that will do the basic steps to set up a new Mr. Voice installation.  New Windows users should use this instead of the old manual setup.</para></listitem>
+        <listitem><para>There is a <filename>quicksetup.exe</filename> shipped with the Windows version that will do the basic steps to set up a new Mr. Voice installation.  New Windows users should use this instead of the old manual setup.</para></listitem>
         <listitem><para>You can use the <keycap>Control</keycap> and <keycap>Shift</keycap> keys to select multiple songs in the main box.  With multiple songs selected, you can edit or delete songs in bulk.</para></listitem>
         <listitem><para>There is a <menuchoice> <guimenu>Hotkeys</guimenu> <guimenuitem>Lock Hotkeys</guimenuitem> </menuchoice> menu item that will prevent hotkeys from changing while the lock is enabled.</para></listitem>
         <listitem><para>The holding tank now has up-and-down arrows to reorder songs within the tank.</para></listitem>
