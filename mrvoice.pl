@@ -15,8 +15,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/03/04 15:09:08 $
-#	CVS REVISION NUMBER:    $Revision: 1.15 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/04 15:38:38 $
+#	CVS REVISION NUMBER:    $Revision: 1.16 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -34,7 +34,7 @@ my $db_pass = "";                       # The password used to connect
 $category = "Any";			# The default category to search
                                         # Initial status message
 
-$mp3player = "/usr//bin/xmms";		# Full path to MP3 player
+$mp3player = "/usr/bin/xmms";		# Full path to MP3 player
 $filepath = "";				# Path that will be prepended onto
 					# the filename retrieved from the
 					# database, to find the actual
