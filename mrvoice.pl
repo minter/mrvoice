@@ -186,7 +186,7 @@ else
 
 #####
 
-my $version = "2.0";    # Program version
+my $version = "2.0.1";    # Program version
 our $status = "Welcome to Mr. Voice version $version";
 
 sub get_rows
@@ -2459,6 +2459,7 @@ sub return_all_indices
         push( @indexes, $data );
         $curr_entry = $hlist->info( "next", $curr_entry );
     }
+    return (@indexes);
 }
 
 sub launch_tank_playlist
@@ -2472,8 +2473,7 @@ sub launch_tank_playlist
     print $fh "#EXTM3U\n";
     foreach my $item (@indices)
     {
-        my ( $id, $description ) = split( /:/, $item );
-        my $file = get_info_from_id($id)->{filename};
+        my $file = get_info_from_id($item)->{filename};
         my $path = catfile( $config{filepath}, $file );
         print $fh "$path\n";
     }
