@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.141 2002/07/15 14:02:34 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.142 2002/07/15 17:10:14 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -719,26 +719,29 @@ sub delete_category
 
 sub add_new_song
 {
-  $box = $mw->DialogBox(-title=>"Add New Song", -buttons=>["OK","Cancel"]);
-  $box->Icon(-image=>$icon);
-  $box->add("Label",-text=>"Enter the following information for the new song,\nand choose the file to add.")->pack();
-  $box->add("Label",-text=>"Items in red are required.\n")->pack();
-  $frame1 = $box->add("Frame")->pack(-fill=>'x');
-  $frame1->Label(-text=>"Song Title",
-                 -foreground=>"#cdd226132613")->pack(-side=>'left');
-  $frame1->Entry(-width=>30,
-                 -textvariable=>\$addsong_title)->pack(-side=>'right');
-  $frame2 = $box->add("Frame")->pack(-fill=>'x');
-  $frame2->Label(-text=>"Artist")->pack(-side=>'left');
-  $frame2->Entry(-width=>30,
-                 -textvariable=>\$addsong_artist)->pack(-side=>'right');
-  $frame3 = $box->add("Frame")->pack(-fill=>'x');
-  $frame3->Label(-text=>"Category",
-                 -foreground=>"#cdd226132613")->pack(-side=>'left');
-  $menu=$frame3->Menubutton(-text=>"Choose Category",
-                            -relief=>'raised',
-                            -tearoff=>0,
-                            -indicatoron=>1)->pack(-side=>'right');
+  my $continue = 0;
+  while ($continue != 1)
+  {
+    $box = $mw->DialogBox(-title=>"Add New Song", -buttons=>["OK","Cancel"]);
+    $box->Icon(-image=>$icon);
+    $box->add("Label",-text=>"Enter the following information for the new song,\nand choose the file to add.")->pack();
+    $box->add("Label",-text=>"Items in red are required.\n")->pack();
+    $frame1 = $box->add("Frame")->pack(-fill=>'x');
+    $frame1->Label(-text=>"Song Title",
+                   -foreground=>"#cdd226132613")->pack(-side=>'left');
+    $frame1->Entry(-width=>30,
+                   -textvariable=>\$addsong_title)->pack(-side=>'right');
+    $frame2 = $box->add("Frame")->pack(-fill=>'x');
+    $frame2->Label(-text=>"Artist")->pack(-side=>'left');
+    $frame2->Entry(-width=>30,
+                   -textvariable=>\$addsong_artist)->pack(-side=>'right');
+    $frame3 = $box->add("Frame")->pack(-fill=>'x');
+    $frame3->Label(-text=>"Category",
+                   -foreground=>"#cdd226132613")->pack(-side=>'left');
+    $menu=$frame3->Menubutton(-text=>"Choose Category",
+                              -relief=>'raised',
+                              -tearoff=>0,
+                              -indicatoron=>1)->pack(-side=>'right');
     $query="SELECT * from categories ORDER BY description";
     my $sth=$dbh->prepare($query);
     $sth->execute or die "can't execute the query: $DBI::errstr\n";
@@ -751,93 +754,101 @@ sub add_new_song
                          -variable=>\$addsong_cat);
     }
     $sth->finish;
-  $frame4 = $box->add("Frame")->pack(-fill=>'x');
-  $frame4->Label(-text=>"Category Extra Info")->pack(-side=>'left');
-  $frame4->Entry(-width=>30,
-                 -textvariable=>\$addsong_info)->pack(-side=>'right');
-  $frame5 = $box->add("Frame")->pack(-fill=>'x');
-  $frame5->Label(-text=>"File to add",
-                 -foreground=>"#cdd226132613")->pack(-side=>'left');
-  $frame6 = $box->add("Frame")->pack(-fill=>'x');
-  $frame6->Button(-text=>"Select File",
-                  -command=>sub { 
-                     $addsong_filename = $mw->getOpenFile(-title=>'Select File',
-                                                          -initialdir=>$homedir,
-                                                          -filetypes=>$mp3types);
-                                })->pack(-side=>'right');
-  $frame5->Entry(-width=>30,
-                 -textvariable=>\$addsong_filename)->pack(-side=>'right');
+    $frame4 = $box->add("Frame")->pack(-fill=>'x');
+    $frame4->Label(-text=>"Category Extra Info")->pack(-side=>'left');
+    $frame4->Entry(-width=>30,
+                   -textvariable=>\$addsong_info)->pack(-side=>'right');
+    $frame5 = $box->add("Frame")->pack(-fill=>'x');
+    $frame5->Label(-text=>"File to add",
+                   -foreground=>"#cdd226132613")->pack(-side=>'left');
+    $frame6 = $box->add("Frame")->pack(-fill=>'x');
+    $frame6->Button(-text=>"Select File",
+                    -command=>sub { 
+      $addsong_filename = $mw->getOpenFile(-title=>'Select File',
+                                           -initialdir=>$homedir,
+                                           -filetypes=>$mp3types);
+                                  })->pack(-side=>'right');
+    $frame5->Entry(-width=>30,
+                   -textvariable=>\$addsong_filename)->pack(-side=>'right');
 
-  $result = $box->Show();
+    $result = $box->Show();
   
-  if ($result eq "OK")
-  {
-    if (! $addsong_cat)
+    if ($result eq "OK")
     {
-      infobox($mw, "Error","Could not add new song\n\nYou must choose a category");
-    }
-    elsif (! -r $addsong_filename)
-    {
-      infobox ($mw, "File Error","Could not open input file $addsong_filename\nfor reading.  Check file permissions"); 
-    }
-    elsif (! $addsong_title)
-    {
-      infobox ($mw, "File Error","You must provide the title for the song."); 
-    }
-    elsif (! -w $filepath)
-    {
-      infobox ($mw, "File Error","Could not write file to directory $filepath\nPlease check the permissions");
+      if (! $addsong_cat)
+      {
+        infobox($mw, "Error","Could not add new song\n\nYou must choose a category");
+      }
+      elsif (! -r $addsong_filename)
+      {
+        infobox ($mw, "File Error","Could not open input file $addsong_filename\nfor reading.  Check file permissions"); 
+      }
+      elsif (! $addsong_title)
+      {
+        infobox ($mw, "File Error","You must provide the title for the song."); 
+      }
+      elsif (! -w $filepath)
+      {
+        infobox ($mw, "File Error","Could not write file to directory $filepath\nPlease check the permissions");
+      }
+      else
+      {
+        $continue = 1;
+      }
     }
     else
     {
-      if ($addsong_artist)
-      {
-        $newfilename = "$addsong_artist-$addsong_title";
-      }
-      else
-      {
-        $newfilename = $addsong_title;
-      }
-      $newfilename =~ s/[^a-zA-Z0-9\-]//g;
-
-      our $path; # Only mentioned once
-      ($name,$path,$extension) = fileparse($addsong_filename,'\.\w+');
-      $extension=lc($extension);
-
-      if ( -e "$filepath$newfilename$extension")
-      {
-        $i=0;
-        while (1 == 1)
-        {
-          if (! -e "$filepath$newfilename-$i$extension")
-          {
-            $newfilename = "$newfilename-$i";
-            last;
-          }
-          $i++;
-        }
-      }
-      $newfilename = "$newfilename$extension";
-      $addsong_title = $dbh->quote($addsong_title);
-      $addsong_artist = $dbh->quote($addsong_artist);
-      $addsong_info = $dbh->quote($addsong_info);
-      $query = "INSERT INTO mrvoice VALUES (NULL,$addsong_title,$addsong_artist,'$addsong_cat',$addsong_info,'$newfilename',NULL)";
-      copy ($addsong_filename,"$filepath$newfilename");
-      if ($dbh->do($query))
-      {
-        infobox ($mw, "File Added Successfully","Successfully added new song into database.\n\nYou may now delete/move/etc. the file:\n$addsong_filename\nas it is no longer needed by Mr. Voice");
-        $status = "File added successfully";
-      }
-      else
-      {
-        infobox ($mw, "Error","Could not add song into database");
-        $status = "File add exited on database error";
-      }
+      $status = "Cancelled song add";
+      $addsong_title="";
+      $addsong_artist="";
+      $addsong_info="";
+      $addsong_cat="";
+      $addsong_filename="";
+      return (1);
     }
+  } # End while continue loop
+  if ($addsong_artist)
+  {
+    $newfilename = "$addsong_artist-$addsong_title";
   }
   else
   {
-    $status = "Cancelled song add";
+    $newfilename = $addsong_title;
+  }
+  $newfilename =~ s/[^a-zA-Z0-9\-]//g;
+
+  our $path; # Only mentioned once
+  ($name,$path,$extension) = fileparse($addsong_filename,'\.\w+');
+  $extension=lc($extension);
+
+  if ( -e "$filepath$newfilename$extension")
+  {
+    $i=0;
+    while (1 == 1)
+    {
+      if (! -e "$filepath$newfilename-$i$extension")
+      {
+        $newfilename = "$newfilename-$i";
+        last;
+      }
+      $i++;
+    }
+  }
+  $newfilename = "$newfilename$extension";
+  $addsong_title = $dbh->quote($addsong_title);
+  $addsong_artist = $dbh->quote($addsong_artist);
+  $addsong_info = $dbh->quote($addsong_info);
+  $query = "INSERT INTO mrvoice VALUES (NULL,$addsong_title,$addsong_artist,'$addsong_cat',$addsong_info,'$newfilename',NULL)";
+  copy ($addsong_filename,"$filepath$newfilename");
+  if ($dbh->do($query))
+  {
+    infobox ($mw, "File Added Successfully","Successfully added new song into database.\n\nYou may now delete/move/etc. the file:\n$addsong_filename\nas it is no longer needed by Mr. Voice");
+    $status = "File added successfully";
+  }
+  else
+  {
+    infobox ($mw, "Error","Could not add song into database");
+    $status = "File add exited on database error";
   }
   $addsong_title="";
   $addsong_artist="";
@@ -1051,7 +1062,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.141 $';
+  $rev = '$Revision: 1.142 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
