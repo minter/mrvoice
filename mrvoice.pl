@@ -34,7 +34,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.185 2002/12/11 21:07:55 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.186 2002/12/11 21:11:53 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1261,7 +1261,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.185 $';
+  $rev = '$Revision: 1.186 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -1716,7 +1716,11 @@ sub play_mp3
   }
   elsif ($filename)
   {
-    if ($statusartist)
+    if ($_[1] =~ /^F.*/)
+    {
+      $songstatusstring = $filename;
+    }
+    elsif ($statusartist)
     {
       $songstatusstring = "\"$statustitle\" by $statusartist";
     }
