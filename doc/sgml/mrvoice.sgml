@@ -1,0 +1,36 @@
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
+  <!ENTITY chapter1 SYSTEM "installing-mrvoice.sgml">
+  <!ENTITY chapter2 SYSTEM "config-mrvoice.sgml">
+  <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
+]>
+<!-- 
+  CVS ID: $Id 
+-->
+<book>
+
+<bookinfo>
+  <title>Mr. Voice Installation and Reference Manual</title>
+  <author><firstname>Wade</firstname><surname>Minter</surname></author>
+  <copyright><year>2001</year><holder>H. Wade Minter</holder></copyright>
+</bookinfo>
+
+<preface>
+  <title>Foreword</title>
+  <para>This program was written with a very specific purpose in mind - to be the GUI frontend for an MP3 database I designed for the ComedyWorx Improv comedy group (formerly the Great American Comedy Company, formerly ComedySportz) in Raleigh, NC.  As such, it may not be much use for anyone else, but I figured I'd put it out there in case anyone wanted it.</para>
+</preface>
+
+&chapter1
+
+&chapter2
+
+&chapter3
+
+<appendix><title>Contributing, Contacting, and Bug Reporting</title>
+  <para>If you like this program, and know of a way to make it better, feel free to modify it.  This software is released under the GNU General Public License, so read the COPYING file or visit <ulink url="http://www.gnu.org/">the GNU project</ulink> for information on license conditions.</para>
+  <para>If you make a cool modification to this program, feel free to send a diff to me, and I'll incorporate it into the main body of the program.</para>
+  <para>Considering I'm probably the only person using this program, if you even USE this software, feel free to send me an email and let me know that you've found it useful.  Otherwise, I'm just talking to myself.  :-)</para>
+  <para>Feel free to report any bugs, feature requests, etc. to me at <email>minter@lunenburg.org</email>.  As this is a specific-purpose project, there's no guarantee that I'll do it, but I'm glad to listen to any suggestions.  Check the TODO file to see stuff I'm currently working on.</para>
+  <para>The software's current home on the web is <ulink url="http://www.lunenburg.org/mrvoice/">http://www.lunenburg.org/mrvoice/</ulink> - check there for any news and developments.</para>
+</appendix>
+  
+</book>
