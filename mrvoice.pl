@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 use Tk;
+use Tk::FileSelect;
+use Tk::DialogBox;
+use File::Basename;
 use DBI;
 use MPEG::MP3Info;
 
@@ -11,8 +14,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/02/28 03:34:20 $
-#	CVS REVISION NUMBER:    $Revision: 1.11 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/04 00:28:38 $
+#	CVS REVISION NUMBER:    $Revision: 1.12 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -22,6 +25,7 @@ use MPEG::MP3Info;
 #####
 # CONFIGURATION VARIABLES
 #####
+$ostype = "unix";			# Valid values are "unix" and "windows"
 my $db_name = "";			# In the form DBNAME:HOSTNAME:PORT
 my $db_username = "";                   # The username used to connect
                                         # to the database.
@@ -29,78 +33,141 @@ my $db_pass = "";                       # The password used to connect
                                         # to the database.
 $category = "Any";			# The default category to search
                                         # Initial status message
+
+# If you're using Windows, your paths must be of the form "C:\\path\\file.exe"
+# This is due to Windows using the \ character for its path, while perl
+# interprets this character as special.
 $mp3player = "/usr/bin/xmms";		# Full path to MP3 player
-$filepath = "/";			# Path that will be prepended onto
+$filepath = "";				# Path that will be prepended onto
 					# the filename retrieved from the
 					# database, to find the actual
 					# MP3 on the local system.
 					# MUST END WITH TRAILING /
+$savedir = "";				# The default directory where 
+                                        # hotkey save files will live.
+
 #####
 # YOU SHOULD NOT NEED TO MODIFY ANYTHING BELOW HERE FOR NORMAL USE
 #####
 
 # The following variables set the locations of MP3s for static hotkey'd 
 # sounds
-#$altt = "/home/minter/TaDa.mp3";
-#$alty = "/home/minter/CalloutMusic.mp3";
-#$altb = "/home/minter/BrownBag.mp3";
-#$altg = "/home/minter/Groaner.mp3";
-#$altv = "/mp3/PriceIsRightTheme.mp3";
-#
+#$altt = "TaDa.mp3";
+#$alty = "CalloutMusic.mp3";
+#$altb = "BrownBag.mp3";
+#$altg = "Groaner.mp3";
+#$altv = "PriceIsRightTheme.mp3";
+
 #####
 
-my $version = "0.8";			# Program version
+my $version = "0.8.1devel";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
+
+if ($ostype eq "windows")
+{
+  $filepath = "$filepath\\" unless ($filepath =~ "/.*\\\\$/");
+  $savedir = "$savedir\\" unless ($savedir =~ "/.*\\\\$/");
+}
+else
+{
+  $filepath = "$filepath/" unless ($filepath =~ "/.*\/$/");
+  $savedir = "$savedir/" unless ($savedir =~ "/.*\/$/");
+}
 
 sub open_file
 {
+  $fileselectw = $mw->FileSelect(-directory=>"$savedir",
+                                 -acceptlabel=>"Load File",
+                                 -filelabel=>'The file to open:',
+                                 -defaultextension => "mrv");
+  $fileselectw->configure(-title=>"Open A File...");
+  $selectedfile = $fileselectw->Show;
+  if ($selectedfile)
+  {
+    if (! -r $selectedfile)
+    {
+      $box = $mw->DialogBox(-title=>"File Error!", -buttons=>["OK"]);
+      $box->add("Label",-text=>"Could not open file $selectedfile for reading")->pack();
+      $box->Show;
+    }
+    else
+    {
+      open (HOTKEYFILE,$selectedfile);
+      while (<HOTKEYFILE>)
+      {
+        chomp;
+        ($var1,$var2) = split(/::/);
+        $$var1=$var2;
+      }
+      close (HOTKEYFILE);
+      $status = "Loaded hotkey file $selectedfile successfully";
+    } 
+  }
 }
 
 sub save_file
 {
+  $fileselectw = $mw->FileSelect(-directory => "$savedir",
+                                 -acceptlabel => "Save File",
+                                 -filelabel => 'The file to save:',
+                                 -defaultextension => "mrv");
+  $fileselectw->configure(-title=>"Save A File...");
+  $selectedfile = $fileselectw->Show;
+  if ($selectedfile)
+  {
+    if ( (! -w $selectedfile) && (-e $selectedfile) )
+    {
+      $box = $mw->DialogBox(-title=>"File Error!", -buttons=>["OK"]);
+      $box->add("Label",-text=>"Could not open file $selectedfile for writing")->pack();
+      $box->Show;
+    }
+    elsif ( ! -w dirname($selectedfile) )
+    {
+      $box = $mw->DialogBox(-title=>"File Error!", -buttons=>["OK"]);
+      $box->add("Label",-text=>"Could not write new file to directory dirname($selectedfile)")->pack();
+      $box->Show;
+    }
+    else
+    {
+      $selectedfile = "$selectedfile.mrv" unless ($selectedfile =~ /.*\.mrv$/);
+      open (HOTKEYFILE,">$selectedfile");
+      print HOTKEYFILE "f1::$f1\n";
+      print HOTKEYFILE "f2::$f2\n";
+      print HOTKEYFILE "f3::$f3\n";
+      print HOTKEYFILE "f4::$f4\n";
+      print HOTKEYFILE "f5::$f5\n";
+      print HOTKEYFILE "f6::$f6\n";
+      print HOTKEYFILE "f7::$f7\n";
+      print HOTKEYFILE "f8::$f8\n";
+      print HOTKEYFILE "f9::$f9\n";
+      print HOTKEYFILE "f10::$f10\n";
+      print HOTKEYFILE "f11::$f11\n";
+      print HOTKEYFILE "f12::$f12\n";
+      close (HOTKEYFILE);
+      $status = "Finished saving hotkeys to $selectedfile\n";
+    }
+  }
 }
 
 sub show_about
 {
-  if (! Exists($aboutbox))
-  {
-    $aboutbox = $mw->Toplevel();
-    $aboutbox->title("About this program");
-    $aboutbox->Button(-relief=>'flat',
-                      -state=>'disabled')->pack();
-    $aboutbox->Label(-text=>"Mr. Voice version $version\n\nBy H. Wade Minter <minter\@lunenburg.org>")->pack();
-    $aboutbox->Button(-text=>"Close",
-                      -command=>sub { $aboutbox->withdraw})->pack;
-  }
-  else
-  {
-    $aboutbox->deiconify();
-    $aboutbox->raise();
-  }
+  $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["Close"]);
+  $box->add("Label",-text=>"Mr. Voice version $version")->pack();
+  $box->add("Label",-text=>"By H. Wade Minter <minter\@lunenburg.org>")->pack();
+  $box->Show;
 }
 
 #sub show_predefined_hotkeys
 #{
-#  if (! Exists($predefbox))
-#  {
-#    $predefbox = $mw->Toplevel();
-#    $predefbox->title("Predefined Hotkeys");
-#    $predefbox->Label(-text=>"The following hotkeys are always available\nand may not be changed")->pack();
-#    $predefbox->Label(-text=>"<Escape> - Stop the currently playing MP3")->pack();
-#    $predefbox->Label(-text=>"<Enter> - Perform the currently entered search")->pack();
-#    $predefbox->Label(-text=>"<ALT-t> - The \"Ta-Da\" MIDI")->pack();
-#    $predefbox->Label(-text=>"<ALT-y> - The \"You're Out\" MIDI")->pack();
-#    $predefbox->Label(-text=>"<ALT-b> - The Brown Bag MIDI")->pack();
-#    $predefbox->Label(-text=>"<ALT-g> - The Groaner MIDI")->pack();
-#    $predefbox->Label(-text=>"<ALT-v> - The Price Is Right theme (Volunteer photos)")->pack();
-#    $predefbox->Button(-text=>"Close",
-#                       -command=>sub { $predefbox->withdraw})->pack;
-#  }
-#  else
-#  {
-#    $predefbox->deiconify();
-#    $predefbox->raise();
-#  }
+#      $box = $mw->DialogBox(-title=>"Predefined Hotkeys", -buttons=>["Close"]);
+#      $box->add("Label",-text=>"The following hotkeys are always available\nand may not be changed")->pack();
+#      $box->add("Label",-text=>"<Escape> - Stop the currently playing MP3")->pack();
+#      $box->add("Label",-text=>"<Enter> - Perform the currently entered search")->pack();
+#      $box->add("Label",-text=>"<ALT-t> - The \"Ta-Da\" MIDI")->pack();
+#      $box->add("Label",-text=>"<ALT-y> - The \"You're Out\" MIDI")->pack();
+#      $box->add("Label",-text=>"<ALT-b> - The Brown Bag MIDI")->pack();
+#      $box->add("Label",-text=>"<ALT-v> - The Price Is Right theme (Volunteer photos)")->pack();
+#      $box->Show;
 #}
 
 sub clear_hotkeys
@@ -388,6 +455,8 @@ sub do_exit
 #########
 
 $dbh = DBI->connect("DBI:mysql:$db_name",$db_username,$db_pass) or die "Couldn't connect to database: $DBI::errstr\n";
+# We use the following statement to open the MP3 player asynchronously
+# when the Mr. Voice app starts.
 open (XMMS,"$mp3player|");
 
 $mw = MainWindow->new;
@@ -403,8 +472,9 @@ $filemenu = $menuframe->Menubutton(-text=>"File",
                                    -tearoff=>0)->pack(-side=>'left');
 $filemenu->AddItems(["command"=>"Open Hotkey File",
                     -command=>\&open_file]); 
-$filemenu->AddItems(["command"=>"Save Hotkey File",
+$filemenu->AddItems(["command"=>"Save Hotkeys To A File",
                     -command=>\&save_file]); 
+$filemenu->AddItems("-");
 $filemenu->AddItems(["command"=>"Exit", 
                      -command=>sub { 
                                      $dbh->disconnect;
@@ -535,5 +605,14 @@ $mw->bind("<Key-Escape>", [\&stop_mp3]);
 #$mw->bind("<Alt-Key-v>", [\&play_mp3,"ALT-V"]);
 #
 #####
+
+if (! -x $mp3player)
+{
+  $box = $mw->DialogBox(-title=>"Warning - MP3 player not found", -buttons=>["OK"]);
+  $box->add("Label",-text=>"Warning - Could not execute your defined MP3 player:")->pack();
+  $box->add("Label",-text=>"$mp3player")->pack();
+  $box->add("Label",-text=>"You may need to edit the mp3player variable at the top of mrvoice.pl")->pack();
+  $box->Show;
+}
 
 MainLoop;
