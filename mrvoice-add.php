@@ -1,22 +1,45 @@
+<? # CONFIGURATION
+   # Set the following variables for your particular configuration.  
+   # NOTE: This script is hardcoded to use MySQL.  If you use another 
+   # database supported by PHP, change the mysql_* calls to match your
+   # database.
+
+   # $path is the path to the directory on your filesystem that contains
+   # the Mr. Voice mp3s.  It must be writable by the user that your 
+   # web server is running as.  This will be prepended to the filename
+   # from the database result, so plan accordingly.
+   $path = "/home/minter/html/csz";
+ 
+   # These four options set the name, hostname, username, and password for
+   # your database.
+   # $database_username must have INSERT access on the mrvoice 
+   # database/tables.
+   $database = "comedysportz";
+   $database_host = "localhost";
+   $database_username = "mrvoice";
+   $database_password = "howie404";
+
+   # CVS ID: $Id: mrvoice-add.php,v 1.2 2001/02/16 21:45:28 minter Exp $
+?>
+
 <TITLE>Mr. Voice MP3 Database Insertion</TITLE>
 <BODY BGCOLOR=#FFFFFF>
 <H1>Add a song to the Mr. Voice Database</H1>
 <P>This is an online version of my <a href=http://www.greatamericancomedy.com/csz/>ComedySportz-Raleigh</A> Mr. Voice MP3 Database.  You can search for songs in various categories and use the MP3s for your own neferious purposes.
 <P>The "Extra Info." modifier is a companion to whichever category you choose to search.  For the "Game" category, it's the name of the game.  For the "Theme/Style" category, it's the type of style.  Etc.
-<P>Most of the smaller songs have been edited down to snippets, and automatically fade out at the end.
 <HR>
   
-<FORM ENCTYPE="multipart/form-data" ACTION="mrvoice-add.php" METHOD=POST>
+<FORM ENCTYPE="multipart/form-data" ACTION="<? print $PHP_SELF ?>" METHOD=POST>
 <TABLE BORDER=0>
 <TR><TD>Category</TD> <TD><SELECT NAME=category>
 
 <?
-  if (!($dblink = mysql_connect("localhost","mrvoice","howie404")))
+  if (!($dblink = mysql_connect($database_host,$database_username,$database_password)))
   { 
     print "mysql_connect failed\n";
   }
 
-  if (!(mysql_select_db("comedysportz",$dblink)))
+  if (!(mysql_select_db("$database",$dblink)))
   {
     print "mysql_select_db failed\n";
   }
@@ -41,7 +64,6 @@
 </FORM>
   
 <?
-  $path = "/home/minter/html/csz/";
   if ($action == "Add")
   {
     if ($UploadFile == "none")
@@ -61,32 +83,32 @@
     }
     $filename = ereg_replace ("[^A-Za-z\-]","",$filename);
 
-    if (! file_exists("$path/mp3/$filename.mp3"))
+    if (! file_exists("$path/$filename.mp3"))
     {
       $filename = "$filename.mp3";
-      if (! move_uploaded_file ($UploadFile,"$path/mp3/$filename"))
+      if (! move_uploaded_file ($UploadFile,"$path/$filename"))
       {
         print "<FONT COLOR=#FF0000>Rename of uploaded file failed!  Aborting!</FONT>\n";
         exit;
       }
-      chmod ("$path/mp3/$filename", 0664);
+      chmod ("$path/$filename", 0664);
     }
     else
     {
       $i=1;
       while (++$i)
       {
-        if (! file_exists("$path/mp3/$filename$i.mp3"))
+        if (! file_exists("$path/$filename$i.mp3"))
         {
           $filename="$filename$i.mp3";
           break;
         }
       }
-      if (! move_uploaded_file ($UploadFile,"$path/mp3/$filename"))
+      if (! move_uploaded_file ($UploadFile,"$path/$filename"))
       {
         print "<FONT COLOR=#FF0000>Rename of uploaded file failed!  Aborting!</FONT>\n";
       }
-      chmod ("$path/mp3/$filename", 0664);
+      chmod ("$path/$filename", 0664);
 
     }
         
@@ -107,5 +129,4 @@
 ?>
 
 <HR>
-<I>Designed and maintained by H. Wade Minter &lt<a href="mailto:minter@lunenburg.org?subject=Mr. Voice Database">minter@lunenburg.org</A>&gt.  Did you like this database?  Find it useful?  Drop me a line!</I>
-<P><I>Disclaimer: This is an online verison of my voice kit.  There are no guarantees as to quality/usefulness/correctness/etc.  Void where prohibited.</I>
+<I>Designed and maintained by H. Wade Minter &lt<a href="mailto:minter@lunenburg.org?subject=Mr. Voice">minter@lunenburg.org</A>&gt.  Did you like this database?  Find it useful?  Drop me a line!</I>
