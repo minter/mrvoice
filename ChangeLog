@@ -1,3 +1,8 @@
+Tue  Jul  9 2002	H. Wade Minter (minter@lunenburg.org)
+     * Fixed it so that Ctrl-P will play the currently-selected song in
+       the holding tank, if the holding tank window is the active one.
+       Suggested by Bill C. in Portland.
+
 Sun  Jul  7 2002	H. Wade Minter (minter@lunenburg.org)
      * Big update from my Long Island trip. 
      * Fixed a bug that was preventing date-based searching from working
@@ -290,4 +295,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.56 2002/07/08 20:04:22 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.57 2002/07/09 16:07:12 minter Exp $
