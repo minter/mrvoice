@@ -34,7 +34,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.187 2002/12/12 18:30:17 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.188 2002/12/12 18:43:10 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1261,7 +1261,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.187 $';
+  $rev = '$Revision: 1.188 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -1758,18 +1758,6 @@ sub do_search
   {
     $cattext_box->insert(0,$cattext);
     $cattext =~ s/^\s*(.*?)\s*$/$1/;
-  }
-  elsif ( (! $anyfield) && (! $title) && (! $artist) && (! $cattext) && ($category eq "Any") && (! $_[0]) )
-  {
-    my $box = $mw->DialogBox(-title=>"Confirm full search", -buttons=>["Ok","Cancel"],-default_button=>"Cancel");
-    $box->Icon(-image=>$icon);
-    $box->Label(-text=>"This search will display everything in your database.\nAre you sure you want to do this?")->pack();
-    my $button = $box->Show;
-    if ($button ne "Ok")
-    {
-      $status = "Cancelling full database search";
-      return;
-    }
   }
   $status="Starting search...";
   $mw->Busy(-recurse=>1);
