@@ -15,8 +15,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/03/07 23:18:09 $
-#	CVS REVISION NUMBER:    $Revision: 1.31 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/07 23:21:41 $
+#	CVS REVISION NUMBER:    $Revision: 1.32 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -26,21 +26,21 @@ use MPEG::MP3Info;
 #####
 # CONFIGURATION VARIABLES
 #####
-my $db_name = "comedysportz";			# In the form DBNAME:HOSTNAME:PORT
-my $db_username = "root";                   # The username used to connect
+my $db_name = "";			# In the form DBNAME:HOSTNAME:PORT
+my $db_username = "";                   # The username used to connect
                                         # to the database.
-my $db_pass = "rangers";                       # The password used to connect
+my $db_pass = "";                       # The password used to connect
                                         # to the database.
 $category = "Any";			# The default category to search
                                         # Initial status message
 
 $mp3player = "/usr/bin/xmms";		# Full path to MP3 player
-$filepath = "/mp3/";				# Path that will be prepended onto
+$filepath = "";				# Path that will be prepended onto
 					# the filename retrieved from the
 					# database, to find the actual
 					# MP3 on the local system.
 					# MUST END WITH TRAILING /
-$savedir = "/tmp/";				# The default directory where 
+$savedir = "";				# The default directory where 
                                         # hotkey save files will live.
 
 #####
