@@ -40,7 +40,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.235 2003/07/21 20:19:12 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.236 2003/07/21 20:32:45 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1899,7 +1899,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.235 $';
+  $rev = '$Revision: 1.236 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2214,6 +2214,7 @@ sub get_song_id
 
   $box = $_[0];
   $index = $_[1];
+  print "DEBUG: Box is $box, Index is $index, leftover is $_[2]\n";
   my $selection = $box->get($index);
   my ($id) = split /:/,$selection;
   return ($id);
@@ -2763,7 +2764,8 @@ sub Hotkey_Drop {
   # Assigns the dragged token to the hotkey that it's dropped onto.
 
   my ($fkey_var, $dnd_source) = @_;
-  my $id = get_song_id($mainbox, $dnd_source->cget(-text));
+  my @selection=$mainbox->curselection();
+  my $id = get_song_id($mainbox, $selection[0]);
   my $filename = get_filename($id);
   my $title = get_title($id);
   $fkeys{$fkey_var}->{id} = $id;
