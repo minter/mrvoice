@@ -1,3 +1,11 @@
+Wed  May 26 2004	H. Wade Minter (minter@lunenburg.org)
+     * Switch from DBD::MySQL to DBD::SQLite
+
+Tue  May 25 2004	H. Wade Minter (minter@lunenburg.org)
+     * Display invalid songs (where there is an entry in the database, but
+       no corresponding file on disk) in the search results, but tag them
+       in red.
+
 Mon  Apr 26 2004	H. Wade Minter (minter@lunenburg.org)
      * Switched direct accesses of @_ to use shift() instead.  Seems more
        perlish and easier to read.
@@ -647,4 +655,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.137 2004/04/26 20:41:57 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.138 2004/05/26 15:06:10 minter Exp $
