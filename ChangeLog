@@ -1,3 +1,10 @@
+Tue  Aug 12 2002	H. Wade Minter (minter@lunenburg.org)
+     * Gave up on using WM_COMMAND to communicate with WinAmp via the
+       Windows API.  Too gimpy.  Instead, I'm going with the WinAmp
+       httpQ plugin (http://www.csc.uvic.ca/~karvanit/) to do advanced
+       things like fade-stop.
+     * Bumped the version number to 1.5.5.
+
 Mon  Aug 11 2002	H. Wade Minter (minter@lunenburg.org)
      * Added requirement on the Ogg::Vorbis module, and code to determine
        the playing time of Vorbis files.
@@ -304,4 +311,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.59 2002/08/13 01:26:11 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.60 2002/08/13 19:52:49 minter Exp $
