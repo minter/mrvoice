@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# $Id: quicksetup.pl,v 1.3 2003/09/01 22:21:15 minter Exp $
+# $Id: quicksetup.pl,v 1.4 2004/03/15 17:24:54 minter Exp $
 
 use warnings;
 use DBI;
@@ -10,16 +10,16 @@ my $error = 0;
 
 sub do_exit
 {
-  $exitcode = $_[0];
-  print "\nPress Enter to exit.\n";
-  my $exit = <STDIN>;
-  exit($exitcode);
+    $exitcode = $_[0];
+    print "\nPress Enter to exit.\n";
+    my $exit = <STDIN>;
+    exit($exitcode);
 }
-  
-if ($^O ne "MSWin32")
+
+if ( $^O ne "MSWin32" )
 {
-  print "This utility can only be run on Windows systems\n";
-  do_exit(1);
+    print "This utility can only be run on Windows systems\n";
+    do_exit(1);
 }
 
 print <<EOF;
@@ -32,39 +32,39 @@ If there are problems, feel free to email Wade at minter\@lunenburg.org
 EOF
 print "Continue with setup? [y/N] ";
 my $choice = <STDIN>;
-chomp ($choice);
-unless ($choice =~ /^y/i)
+chomp($choice);
+unless ( $choice =~ /^y/i )
 {
-  print "Setup cancelled\n";
-  do_exit (1);
+    print "Setup cancelled\n";
+    do_exit(1);
 }
 
 print "\n--> Checking for WinAmp and MySQL <--\n\n";
 print "Checking for MySQL...";
-if (-f 'C:/mysql/bin/mysql.exe')
+if ( -f 'C:/mysql/bin/mysql.exe' )
 {
-  print "found at C:\\mysql\n";
+    print "found at C:\\mysql\n";
 }
 else
 {
-  $error = 1;
-  print "NOT FOUND at C:\\mysql\n";
+    $error = 1;
+    print "NOT FOUND at C:\\mysql\n";
 }
 
 print "Checking for WinAmp...";
-if (-f 'C:/Program Files/Winamp/Winamp.exe')
+if ( -f 'C:/Program Files/Winamp/Winamp.exe' )
 {
-  print "found at C:\\Program Files\\Winamp\\Winamp.exe\n";
+    print "found at C:\\Program Files\\Winamp\\Winamp.exe\n";
 }
 else
 {
-  $error = 1;
-  print "NOT FOUND at C:\\Program Files\\Winamp\\Winamp.exe\n";
+    $error = 1;
+    print "NOT FOUND at C:\\Program Files\\Winamp\\Winamp.exe\n";
 }
 
-if ($error == 1)
+if ( $error == 1 )
 {
-  print <<EOF;
+    print <<EOF;
 
 One or more required components were not found in the expected locations.
 Install and configure them first, then come back and run this utility again.
@@ -72,108 +72,123 @@ Install and configure them first, then come back and run this utility again.
 If you need to install them in a nonstandard location for some reason, you
 will need to set up Mr. Voice manually according to the documentation.
 EOF
-  do_exit (2);
+    do_exit(2);
+}
+
+print "Checking for Mr. Voice schema file...";
+my $mrv_directory = Win32::GetShortPathName(getcwd);
+my $path = File::Spec->catfile( $mrv_directory, "dbinit.sql" );
+if ( !-r $path )
+{
+    print "FAILED\n";
+    print "Could not read the Mr. Voice schema file at $path\n";
+    do_exit(8);
+}
+else
+{
+    print "succeeded\n";
 }
 
 print "\n\n--> Setting up the database <--\n\n";
 print "Connecting to the database with blank password...";
-if (! ($dbh = DBI->connect("DBI:mysql:mysql","root","")))
+if ( !( $dbh = DBI->connect( "DBI:mysql:mysql", "root", "" ) ) )
 {
-  print "FAILED\n";
-  print <<EOF;
+    print "FAILED\n";
+    print <<EOF;
 Could not connect to the database with a blank superuser password. Have you 
 perchance set up MySQL before?  If so, you will need to manually set up
 Mr. Voice as described in the documentation - this quick setup script will
 not work.
 EOF
-  do_exit (3);
+    do_exit(3);
 }
 else
 {
-  print "succeeded\n";
+    print "succeeded\n";
 }
 
 print "Setting a superuser password...";
-if (! ($dbh->do("UPDATE user SET Password=password('mrvoice') WHERE User='root'")) )
+if (
+    !(
+        $dbh->do(
+            "UPDATE user SET Password=password('mrvoice') WHERE User='root'")
+    )
+  )
 {
-  print "FAILED\n";
-  print "Could not set the superuser password.  MySQL error follows:\n$DBI::errstr\n";
-  do_exit (4);
+    print "FAILED\n";
+    print
+      "Could not set the superuser password.  MySQL error follows:\n$DBI::errstr\n";
+    do_exit(4);
 }
 else
-{ 
-  print "succeeded\n";
+{
+    print "succeeded\n";
 }
 
 print "Creating the Mr. Voice database...";
-if (! ($dbh->do("CREATE DATABASE mrvoice")) )
+if ( !( $dbh->do("CREATE DATABASE mrvoice") ) )
 {
-  print "FAILED\n";
-  print "Could not create the database.  MySQL error follows:\n$DBI::errstr\n";
-  do_exit (5);
+    print "FAILED\n";
+    print
+      "Could not create the database.  MySQL error follows:\n$DBI::errstr\n";
+    do_exit(5);
 }
 else
-{ 
-  print "succeeded\n";
+{
+    print "succeeded\n";
 }
 
 print "Creating the Mr. Voice DB user and granting...";
-if (! ($dbh->do("GRANT ALL ON mrvoice.* TO mrvoice\@localhost IDENTIFIED BY 'mrvoice'")) )
+if (
+    !(
+        $dbh->do(
+            "GRANT ALL ON mrvoice.* TO mrvoice\@localhost IDENTIFIED BY 'mrvoice'"
+        )
+    )
+  )
 {
-  print "FAILED\n";
-  print "Could not create the DB user.  MySQL error follows:\n$DBI::errstr\n";
-  do_exit (6);
+    print "FAILED\n";
+    print "Could not create the DB user.  MySQL error follows:\n$DBI::errstr\n";
+    do_exit(6);
 }
 else
-{ 
-  print "succeeded\n";
-  $dbh->do("FLUSH PRIVILEGES");
+{
+    print "succeeded\n";
+    $dbh->do("FLUSH PRIVILEGES");
 }
 
 $dbh->disconnect;
 
-print "Checking for Mr. Voice schema file...";
-my $mrv_directory = Win32::GetShortPathName(getcwd);
-my $path = File::Spec->catfile($mrv_directory,"dbinit.sql");
-if (! -r $path )
-{
-  print "FAILED\n";
-  print "Could not read the Mr. Voice schema file at $path\n";
-  do_exit (8);
-}
-else
-{ 
-  print "succeeded\n";
-}
-
 $path =~ s/\\/\//g;
 print "Loading the Mr. Voice schema...";
 $result = `C:/mysql/bin/mysql -u mrvoice --password=mrvoice mrvoice < $path`;
-if ($result ne "" )
+if ( $result ne "" )
 {
-  print "FAILED\n";
-  print "Could not import Mr. Voice schema.  Error follows:\n$result\n";
-  do_exit (9);
+    print "FAILED\n";
+    print "Could not import Mr. Voice schema.  Error follows:\n$result\n";
+    do_exit(9);
 }
 else
-{ 
-  print "succeeded\n";
+{
+    print "succeeded\n";
 }
 
 print "\n\n--> Doing Filesystem work <--\n\n";
 print "Creating default Mr. Voice directories...";
-if (! mkdir("C:/mp3",0755) || ! mkdir("C:/hotkeys",0755) )
+if ( !mkdir( "C:/mp3", 0755 ) || !mkdir( "C:/hotkeys", 0755 ) )
 {
-  print "FAILED\n";
-  print "Could not create C:\\mp3 or C:\\hotkeys - please manually create these\ndirectories before running Mr. Voice\n";
+    print "FAILED\n";
+    print
+      "Could not create C:\\mp3 or C:\\hotkeys - please manually create these\ndirectories before running Mr. Voice\n";
 }
 else
-{ 
-  print "succeeded\n";
+{
+    print "succeeded\n";
 }
 
 print "Writing Mr. Voice config file...";
-open (OUTFILE,">C:/mrvoice.cfg") or die ("Could not open c:\\mrvoice.cfg for writing\n");
+open( OUTFILE, ">C:/mrvoice.cfg" )
+  or die("Could not open c:\\mrvoice.cfg for writing\n");
 print OUTFILE <<EOF;
 db_name::mrvoice
 db_username::mrvoice
@@ -183,15 +198,22 @@ savedir::c:/hotkeys
 mp3player::c:/progra~1/winamp/winamp.exe
 savefile_max::4
 httpq_pw::
+search_ascap::1
+search_bmi::1
+search_other::1
+show_publisher::0
 EOF
 print "succeeded\n";
 
-print "\n\nHere is your Mr. Voice information - please save it for later reference.\n\n";
+print
+  "\n\nHere is your Mr. Voice information - please save it for later reference.\n\n";
 print "Superuser Password: mrvoice\n";
 print "Database Username: mrvoice\n";
 print "Database Password: mrvoice\n";
 print "MP3 Directory: C:\\mp3\n";
 print "Hotkey Directory: C:\\hotkeys\n";
-print "\nYou can adjust non-password things by going to File->Preferences within\nMr. Voice\n";
-print "At this point, Mr. Voice should be configured.  You may want to add the httpq\nplugin (if you haven't already) and set a password in the preferences.\nOtherwise, run mrvoice.exe and start Voicing!\n";
+print
+  "\nYou can adjust non-password things by going to File->Preferences within\nMr. Voice\n";
+print
+  "At this point, Mr. Voice should be configured.  You may want to add the httpq\nplugin (if you haven't already) and set a password in the preferences.\nOtherwise, run mrvoice.exe and start Voicing!\n";
 do_exit(0);
