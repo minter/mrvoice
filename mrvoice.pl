@@ -3306,7 +3306,7 @@ sub launch_tank_playlist
         RunAppleScript(
             qq( set unixFile to \"$filename\"\nset macFile to POSIX file unixFile\nset fileRef to (macFile as alias)\ntell application "Audion 3"\nplay fileRef in control window 1\nend tell)
           )
-          or die "Can't play: $@";
+          or $status = "Audion Error playing $filename";
     }
     else
     {
@@ -3802,7 +3802,7 @@ sub play_mp3
             RunAppleScript(
                 qq( set unixFile to \"$filename\"\nset macFile to POSIX file unixFile\nset fileRef to (macFile as alias)\ntell application "Audion 3"\nplay fileRef in control window 1\nend tell)
               )
-              or die "Can't play: $@";
+              or $status = "Can't play: $@";
         }
         else
         {
@@ -3836,7 +3836,7 @@ sub play_mp3
             RunAppleScript(
                 qq( set unixFile to \"$file\"\nset macFile to POSIX file unixFile\nset fileRef to (macFile as alias)\ntell application "Audion 3"\nplay fileRef in control window 1\nend tell)
               )
-              or die "Can't play: $@";
+              or $status = "Can't play: $@";
         }
         else
         {
@@ -4607,6 +4607,8 @@ sub online_search_window
                     -text => $person_hashref->{$person}{name} );
             }
         )->pack( -side => 'top' );
+        $onlinebox->bind( "<Double-Button-1>",
+            sub { online_download($onlinebox) } );
         $onlinewin->bind(
             "<Key-Return>",
             sub {
@@ -5294,7 +5296,12 @@ else
     elsif ( $^O eq "darwin" )
     {
         print "Starting AppleScript\n" if $debug;
-        RunAppleScript(qq( tell application "Audion 3" to activate)) or die;
+        RunAppleScript(qq( tell application "Audion 3" to activate))
+          or infobox(
+            $mw,
+            "Audion Error",
+            "AppleScript could not find Audion.  You will probably want to download the app and put it in the Applications folder.  Otherwise you will not be able to, in a word, 'play' any music"
+          );
         print "Finished AppleScript\n" if $debug;
     }
     else
