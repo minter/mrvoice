@@ -39,11 +39,9 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.211 2003/04/06 21:04:58 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.212 2003/04/08 14:18:37 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
-# CREDITS:
-#   See Credits file
 ##########
 
 # Declare global variables, until I'm good enough to work around them.
@@ -702,7 +700,7 @@ sub open_file
         my ($key,$id) = split(/::/);
         if ( (not ($id =~ /^\d+$/)) && (not ($id =~ /^\w*$/)) )
         {
-          infobox ($mw, "Invalid Hotkey File","This hotkey file, $selectedfile, is from an old version of Mr. Voice.\nAfter upgrading to Version 1.8, you need to run the converthotkey.pl utility in the\ntools subdirectory to convert to the new format.  This only has to be done once."); 
+          infobox ($mw, "Invalid Hotkey File","This hotkey file, $selectedfile, is from an old version of Mr. Voice.\nAfter upgrading to Version 1.8, you need to run the converthotkeys.pl utility in the\ntools subdirectory to convert to the new format.  This only has to be done once."); 
           return(1);
         }
         elsif ( ($id) && (validate_id($id)) )
@@ -1662,7 +1660,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.211 $';
+  $rev = '$Revision: 1.212 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
