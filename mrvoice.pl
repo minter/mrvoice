@@ -17,7 +17,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.110 2002/02/11 22:14:32 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.111 2002/03/22 21:12:06 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -818,7 +818,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.110 $';
+  $rev = '$Revision: 1.111 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   infobox($mw, "About Mr. Voice","Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License");
 }
@@ -835,6 +835,7 @@ sub show_about
 #  $box->add("Label",-text=>"<ALT-t> - The \"Ta-Da\" MIDI")->pack();
 #  $box->add("Label",-text=>"<ALT-y> - The \"You're Out\" MIDI")->pack();
 #  $box->add("Label",-text=>"<ALT-b> - The Brown Bag MIDI")->pack();
+#  $box->add("Label",-text=>"<ALT-g> - The Groaner MIDI")->pack();
 #  $box->add("Label",-text=>"<ALT-v> - The Price Is Right theme (Volunteer photos)")->pack();
 #  $box->Show;
 #}
