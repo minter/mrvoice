@@ -6,7 +6,6 @@ no warnings 'uninitialized';
 #use diagnostics;
 
 use strict;    # Works now!  Woo hoo!
-use Encode::Unicode;
 use Tk '804.026';
 use Tk::DialogBox;
 use Tk::Dialog;
@@ -39,7 +38,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.387 2004/06/04 16:15:17 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.388 2004/07/07 11:53:05 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2301,7 +2300,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.387 $';
+    my $rev    = '$Revision: 1.388 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::SQLite->VERSION;
