@@ -10,9 +10,9 @@ use MPEG::MP3Info;
 #              Great American Comedy Company, Raleigh, NC.
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
-#	LAST COMMIT BY AUTHOR: $Author: minter $
-#	LAST COMMIT DATE: $Date: 2001/02/16 18:07:31 $
-#	CVS REVISION NUMBER: $Revision: 1.3 $
+#	LAST COMMIT BY AUTHOR:  $Author: minter $
+#	LAST COMMIT DATE (GMT): $Date: 2001/02/16 21:02:21 $
+#	CVS REVISION NUMBER:    $Revision: 1.4 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -20,17 +20,24 @@ use MPEG::MP3Info;
 ##########
 
 #####
-# Set up global variables of some importance
-my $version = "0.7";			# Program version
+# CONFIGURATION VARIABLES
+#####
 my $db_name = "comedysportz";           # In the form DBNAME:HOSTNAME:PORT
-my $db_username = "root";               # The username used to connect
+my $db_username = "";                   # The username used to connect
                                         # to the database.
-my $db_pass = "rangers";                # The password used to connect
+my $db_pass = "";                       # The password used to connect
                                         # to the database.
 $category = "Any";			# The default category to search
-$status = "Welcome to Mr. Voice version $version";		
                                         # Initial status message
 $mp3player = "/usr/bin/xmms";		# Full path to MP3 player
+$filepath = "";				# Path that will be prepended onto
+					# the filename retrieved from the
+					# database, to find the actual
+					# MP3 on the local system.
+					# MUST END WITH TRAILING /
+#####
+# YOU SHOULD NOT NEED TO MODIFY ANYTHING BELOW HERE FOR NORMAL USE
+#####
 
 # The following variables set the locations of MP3s for static hotkey'd 
 # sounds
@@ -42,6 +49,8 @@ $altv = "/mp3/PriceIsRightTheme.mp3";
 #
 #####
 
+my $version = "0.7";			# Program version
+$status = "Welcome to Mr. Voice version $version";		
 
 sub show_about
 {
@@ -312,7 +321,7 @@ sub play_mp3
   if ($filename)
   {
     $status="Playing $filename now";
-    system ("$mp3player --play $filename");
+    system ("$mp3player --play $path$filename");
   }
 }
 
@@ -344,7 +353,7 @@ sub do_search
       $string = $string . ") - \"$table_row[4]\"";
       $string = $string. " by $table_row[3]" if ($table_row[3]);
       #####  WADE #####
-      my $info = get_mp3info($table_row[5]);
+      my $info = get_mp3info("$filepath$table_row[5]");
       #################
       $minute = $info->{MM};
       $minute = "0$minute" if ($minute < 10);
