@@ -4,14 +4,32 @@
   <object name="rootObject" class="NSCustomObject" id="1">
     <string name="customClass">NSApplication</string>
   </object>
-  <array count="3" name="allObjects">
+  <array count="6" name="allObjects">
     <object class="IBCarbonMenu" id="187">
       <string name="title">MenuBar</string>
       <array count="1" name="items">
         <object class="IBCarbonMenuItem" id="195">
-          <string name="title">ScriptExec</string>
+          <string name="title">Mr. Voice</string>
           <object name="submenu" class="IBCarbonMenu" id="193">
-            <string name="title">ScriptExec</string>
+            <string name="title">Mr. Voice</string>
+            <array count="1" name="items">
+              <object class="IBCarbonMenuItem" id="241">
+                <boolean name="updateSingleItem">TRUE</boolean>
+                <string name="title">About</string>
+                <object name="submenu" class="IBCarbonMenu" id="242">
+                  <string name="title">About</string>
+                  <array count="1" name="items">
+                    <object class="IBCarbonMenuItem" id="243">
+                      <boolean name="updateSingleItem">TRUE</boolean>
+                      <string name="title">About Mr. Voice</string>
+                      <int name="keyEquivalentModifier">0</int>
+                      <ostype name="command">abou</ostype>
+                    </object>
+                  </array>
+                  <string name="name">_NSAppleMenu</string>
+                </object>
+              </object>
+            </array>
             <string name="name">_NSAppleMenu</string>
           </object>
         </object>
@@ -20,11 +38,17 @@
     </object>
     <reference idRef="193"/>
     <reference idRef="195"/>
+    <reference idRef="241"/>
+    <reference idRef="242"/>
+    <reference idRef="243"/>
   </array>
-  <array count="3" name="allParents">
+  <array count="6" name="allParents">
     <reference idRef="1"/>
     <reference idRef="195"/>
     <reference idRef="187"/>
+    <reference idRef="193"/>
+    <reference idRef="241"/>
+    <reference idRef="242"/>
   </array>
   <dictionary count="2" name="nameTable">
     <string>File&apos;s Owner</string>
@@ -32,5 +56,5 @@
     <string>MenuBar</string>
     <reference idRef="187"/>
   </dictionary>
-  <unsigned_int name="nextObjectID">206</unsigned_int>
+  <unsigned_int name="nextObjectID">244</unsigned_int>
 </object>
