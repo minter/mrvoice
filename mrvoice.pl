@@ -30,7 +30,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.133 2002/06/28 20:48:28 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.134 2002/07/02 20:54:10 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -580,7 +580,58 @@ sub add_category
 
 sub edit_category
 {
+  my $edit_cat;
+  my %codehash;
+  my $box = $mw->DialogBox(-title=>"Choose a category to edit", -buttons=>["Ok","Cancel"]);
+  $box->Icon(-image=>$icon);
+  $box->add("Label",-text=>"You may currently edit the long name,\nbut not the code, of a category.\n\nChoose the category to edit below.")->pack(); 
+  my $query="SELECT * from categories ORDER BY description";
+  my $sth=$dbh->prepare($query);
+  $sth->execute or die "can't execute the query: $DBI::errstr\n";
+  while (@table_row = $sth->fetchrow_array)
+  {
+    my $code=$table_row[0];
+    my $name=$table_row[1];
+    $codehash{$code} = $name;
+    $box->add("Radiobutton",-text=>$name,
+                            -value=>$code,
+                            -variable=>\$edit_cat)->pack(-anchor=>"w");
+  }
+  $sth->finish;
+  my $choice = $box->Show();
 
+  if ($choice ne "Cancel")
+  {
+    # Throw up another dialog box to do the actual editing
+    my $editbox = $mw->DialogBox(-title=>"Edit a category", -buttons=>["Ok","Cancel"]);
+    $editbox->Icon(-image=>$icon);
+    $editbox->add("Label",-text=>"Edit the long name of the category: $codehash{$edit_cat}.")->pack(); 
+    my $new_desc = $codehash{$edit_cat};
+    $editbox->add("Label",-text=>"CODE: $edit_cat", -anchor=>'w')->pack(-fill=>'x', -expand=>1);
+    my $labelframe = $editbox->add("Frame")->pack(-fill=>'x');
+    $labelframe->Label(-text=>"New Description: ")->pack(-side=>'left');
+    $labelframe->Entry(-width=>25,
+                       -textvariable=>\$new_desc)->pack(-side=>'left');
+    my $editchoice = $editbox->Show();
+
+    if ($editchoice ne "Cancel")
+    {
+      $query = "UPDATE categories SET description='$new_desc' WHERE code='$edit_cat'";
+      $sth=$dbh->prepare($query);
+      if (! $sth->execute)
+      {
+        my $error_message = $sth->errstr();
+        infobox($mw, "Database Error","Database returned error: $error_message\n
+on query $query");
+      }
+      else
+      {
+        $status = "Edited category: $new_desc";
+        infobox($mw,"Success","Category successfully edited.");
+      }
+      $sth->finish;
+    }
+  }
 }
 
 sub delete_category
@@ -966,7 +1017,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.133 $';
+  $rev = '$Revision: 1.134 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -1786,6 +1837,7 @@ sub categoriesmenu_items
   [
     ['command', 'Add Category', -command=>\&add_category],
     ['command', 'Delete Category', -command=>\&delete_category],
+    ['command', 'Edit Category', -command=>\&edit_category],
   ];
 }
 
