@@ -11,13 +11,13 @@ use MPEG::MP3Info;
 #########
 # AUTHOR: H. Wade Minter <minter@lunenburg.org>
 # TITLE: mrvoice.pl
-# DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for The
-#              Great American Comedy Company, Raleigh, NC.
-#              http://www.greatamericancomedy.com/
+# DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
+#              ComedyWorx, Raleigh, NC.
+#              http://www.comedyworx.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/27 00:16:37 $
-#	CVS REVISION NUMBER:    $Revision: 1.70 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/27 01:41:43 $
+#	CVS REVISION NUMBER:    $Revision: 1.71 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -39,7 +39,7 @@ $db_pass = '';                      	# The password used to connect
 $category = 'Any';			# The default category to search
                                         # Initial status message
 
-$mp3player = '/usr/bin/xmms';		# Full path to MP3 player
+$mp3player = '';			# Full path to MP3 player
 $filepath = '';				# Path that will be prepended onto
 					# the filename retrieved from the
 					# database, to find the actual
@@ -95,7 +95,7 @@ else
 
 #####
 
-my $version = "1.2.1";			# Program version
+my $version = "1.3";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
 
 # This function is redefined due to evilness that keeps the focus on 
@@ -321,7 +321,9 @@ sub add_category
       }
       else
       {
-        infobox("Success","Category successfully added.\nYou will need to restart to see the change");
+	clear_categories_menu();
+	build_categories_menu();
+        infobox("Success","Category successfully added.");
       }
     }
     else 
@@ -376,8 +378,13 @@ sub delete_category
     {
       $query = "DELETE FROM categories WHERE code='$del_cat'";
       my $sth=$dbh->prepare($query);
-      infobox ("Success","Category $del_cat has been deleted.\n\nYou will need to restart Mr. Voice after\nyou finish deleting categories.") if ($sth->execute);
-      $status = "Deleted category";
+      if ($sth->execute)
+      {
+        clear_categories_menu();
+        build_categories_menu();
+        infobox ("Success","Category $del_cat has been deleted.");
+        $status = "Deleted category";
+      }
     }
   }
   else
@@ -1029,6 +1036,30 @@ sub do_search
   }
 }
 
+sub build_categories_menu
+{
+  $catmenu->radiobutton(-label=>"Any category",
+                        -value=>"Any",
+                        -variable=>\$category);
+  $query="SELECT * from categories ORDER BY description";
+  my $sth=$dbh->prepare($query);
+  $sth->execute or die "can't execute the query: $DBI::errstr\n";
+  while (@table_row = $sth->fetchrow_array)
+  {
+    $code=$table_row[0];
+    $name=$table_row[1];
+    $catmenu->radiobutton(-label=>$name,
+                          -value=>$code,
+                          -variable=>\$category);
+  }
+  $sth->finish;
+}
+
+sub clear_categories_menu
+{
+  $catmenu->delete(0,'end');
+}
+
 sub do_exit
 {
  $dbh->disconnect;
@@ -1129,7 +1160,7 @@ read_rcfile();
 
 if (! ($dbh = DBI->connect("DBI:mysql:$db_name",$db_username,$db_pass)))
 {
-  $box = $mw->DialogBox(-title=>"Fatal Error", -buttons=>["Exit"]);
+  $box = $mw->DialogBox(-title=>"Fatal Error", -buttons=>["Ok"]);
   $box->add("Label",-text=>"Could not connect to database.")->pack();
   $box->add("Label",-text=>"Make sure your database configuration is correct,\nand that your database is running.")->pack();
   $box->add("Label",-text=>"The preferences menu will now pop up for you to\ncheck or set any configuration options.")->pack();
@@ -1238,25 +1269,15 @@ $searchframe=$mw->Frame()->pack(-side=>'top',
                                 -anchor=>'n',
                                 -fill=>'x');
 
-$catmenu=$searchframe->Menubutton(-text=>"Choose Category",
-                                  -relief=>'raised',
-                                  -indicatoron=>1)->pack(-side=>'left',
-                                                         -anchor=>'n');
-$catmenu->radiobutton(-label=>"Any category",
-                      -value=>"Any",
-                      -variable=>\$category);
-$query="SELECT * from categories ORDER BY description";
-my $sth=$dbh->prepare($query);
-$sth->execute or die "can't execute the query: $DBI::errstr\n";
-while (@table_row = $sth->fetchrow_array)
-{
-  $code=$table_row[0];
-  $name=$table_row[1];
-  $catmenu->radiobutton(-label=>$name,
-                        -value=>$code,
-                        -variable=>\$category);
-}
-$sth->finish;
+
+$catmenubutton=$searchframe->Menubutton(-text=>"Choose Category",
+                                        -relief=>'raised',
+                                        -indicatoron=>1)->pack(-side=>'left',
+                                                               -anchor=>'n');
+$catmenu = $catmenubutton->menu(-tearoff => 0);
+$catmenubutton->configure(-menu=>$catmenu);
+build_categories_menu();
+
 $searchframe->Label(-text=>"Currently Selected: ")->pack(-side=>'left',
                                                          -anchor=>'n');
 $searchframe->Label(-textvariable=>\$category)->pack(-side=>'left',
