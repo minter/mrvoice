@@ -1,13 +1,15 @@
 #!/usr/bin/perl 
 
 # The perl source for the Win32 setup/installer
-# CVS ID: $Id: setup.pl,v 1.2 2003/08/08 01:49:56 minter Exp $
+# CVS ID: $Id: setup.pl,v 1.3 2003/08/08 20:16:12 minter Exp $
 
 use warnings;
 use Tk;
 use Tk::Dialog;
 use Tk::DialogBox;
 use Tk::Frame;
+
+$debug = "yes";
 
 our $logo_photo_data = <<end_of_data;
 R0lGODlhqwGzAMYAAP+bm3h4ePn5+XEAAP+oqOrq6lVVVePj4//IyKR/f0IAAP+5ueYAAMvLy9XV
@@ -251,7 +253,7 @@ sub start_setup
   # Check and make sure everything's kosher before we start.  
 
   # First, are we running on Win32?
-  if ($^O ne "MSWin32")
+  if ( ($^O ne "MSWin32") && ($debug ne "yes") )
   {
     my $box = $mw->messageBox(-title=>"Fatal Error",
                           -icon=>"error",
@@ -265,7 +267,7 @@ sub start_setup
   my $no_winamp = 1 if (! -e "C:/Progra~1/Winamp/Winamp.exe");
   my $no_mysql  = 1 if (! -e "C:/Mysql/bin/mysql.exe");
 
-  if ( ($no_winamp) || ($no_mysql) )
+  if ( ( ($no_winamp) || ($no_mysql) ) && $debug ne "yes" )
   {
     $string = "One or more required pieces of software were missing.\n\n";
     $string .= "Could not find WinAmp at C:/Program Files/Winamp/Winamp.exe - please install that before continuing.\n\n" if ($no_winamp);
@@ -282,21 +284,31 @@ sub start_setup
   # IF we get here, we're on Win32, and we have MySQL/Winamp.  Time to start
   # asking questions.
 
-  my $box1 = $mw->DialogBox(-title=>"Enter your database information",
-                            -buttons=>["Continue"]);
-  $box1->add("Label", -text=>"Now, we start setting up Mr. Voice for Windows.  Don't worry if you make a mistake, you'll get a chance to review at the end.\n")->pack(-side=>'top');
-  $box1->add("Label", -text=>"Enter your Superuser password, Database username, and Database password.  The Superuser password will only be used if you")->pack(-side=>'top');
-  $b1f1 = $box1->add("Frame")->pack(-side=>'top');
-  $b1f1->Label(-text=>"Superuser Password")->pack(-side=>"left");
-  $b1f1->Entry(-textvariable=>\$superuser_pw)->pack(-side=>'right');
-  $b1f2 = $box1->add("Frame")->pack(-side=>'top');
-  $b1f2->Label(-text=>"Database Username")->pack(-side=>"left");
-  $b1f2->Entry(-textvariable=>\$database_user)->pack(-side=>'right');
-  $b1f3 = $box1->add("Frame")->pack(-side=>'top');
-  $b1f3->Label(-text=>"Database Password")->pack(-side=>"left");
-  $b1f3->Entry(-textvariable=>\$database_pw)->pack(-side=>'right');
+  $step1_advance = "false";
+  while ($step1_advance eq "false")
+  {
+    my $box1 = $mw->DialogBox(-title=>"Enter your database information",
+                              -buttons=>["Continue"]);
+    $box1->add("Label", -text=>"Now, we start setting up Mr. Voice for Windows.  Don't worry if you make a mistake, you'll get a chance to review at the end.\n")->pack(-side=>'top');
+    $box1->add("Label", -text=>"Enter your Superuser password, Database username, and Database password.\n\n")->pack(-side=>'top');
+    $b1f1 = $box1->add("Frame")->pack(-side=>'top');
+    $b1f1->Label(-text=>"Superuser Password")->pack(-side=>"left");
+    $b1f1->Entry(-textvariable=>\$superuser_pw)->pack(-side=>'right');
+    $b1f2 = $box1->add("Frame")->pack(-side=>'top');
+    $b1f2->Label(-text=>"Database Username")->pack(-side=>"left");
+    $b1f2->Entry(-textvariable=>\$database_user)->pack(-side=>'right');
+    $b1f3 = $box1->add("Frame")->pack(-side=>'top');
+    $b1f3->Label(-text=>"Database Password")->pack(-side=>"left");
+    $b1f3->Entry(-textvariable=>\$database_pw)->pack(-side=>'right');
 
-  my $answer1 = $box1->Show();
+    my $answer1 = $box1->Show();
+    if ( $superuser_pw && $database_user && $database_pw)
+    {
+      $step1_advance = "true";
+    }
+  }
+
+  # Step two - 
 }
 
 # Mainloop, which just puts up a pretty picture and starts the steps in motion.
