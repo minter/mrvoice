@@ -201,6 +201,8 @@ if ( "$^O" eq "MSWin32" )
             Win32::FileOp->import();
             require Audio::WMA;
             Audio::WMA->import();
+            require Tk::DragDrop::Win32Site;
+            Tk::DragDrop::Win32Site->import();
         }
     }
     $agent = LWP::UserAgent->new;
