@@ -1,4 +1,4 @@
-# This initializes the database
+# This initializes the Mr. Voice database
 # Import it by running:
 #
 # mysql -u SUPERUSER_NAME -p YOUR_DATABASE < dbinit.sql
@@ -27,4 +27,4 @@ CREATE TABLE categories (
 INSERT INTO categories VALUES ('GEN','General Category');
 
 #--
-# CVS ID: $Id: dbinit.sql,v 1.5 2001/05/08 22:39:03 minter Exp $
+# CVS ID: $Id: dbinit.sql,v 1.6 2001/12/13 17:10:23 minter Exp $
