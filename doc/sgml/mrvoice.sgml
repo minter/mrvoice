@@ -10,14 +10,14 @@
 <book status="draft">
 
 <bookinfo>
-  <title>Mr. Voice 1.10.6 Installation and Reference Manual</title>
+  <title>Mr. Voice 2.0 Installation and Reference Manual</title>
   <author>
     <firstname>H. Wade</firstname><surname>Minter</surname>
     <affiliation>
       <address><email>minter@lunenburg.org</email></address>
     </affiliation>
   </author>
-  <copyright><year>2000-2003</year><holder>H. Wade Minter</holder></copyright>
+  <copyright><year>2000-2004</year><holder>H. Wade Minter</holder></copyright>
 </bookinfo>
 
 <dedication><title>Acknowledgements</title>
@@ -66,6 +66,14 @@
 <preface>
   <title>What's New</title>
   <para>A quick reference to what's changed between versions.</para>
+  <sect1><title>What's new in Version 2.0?</title>
+    <para>
+      <itemizedlist>
+        <listitem><para>The MySQL database has been eliminated.  Mr. Voice now runs an embedded database, SQLite.  This means that you do not need to install, run, or configure MySQL to use Mr. Voice from the 2.0 release forward.</para></listitem>
+        <listitem><para>"Invalid" songs (songs where there is an entry in the database, but no corresponding file on disk) now show up in red in the search box, instead of being hidden.  This should solve problems where you were unable to delete a category because there were still songs in it, but a search of the category revealed nothing.</para></listitem>
+       </itemizedlist>
+     </para>
+   </sect1>
   <sect1><title>What's new in Version 1.10.6?</title>
     <para>
       <itemizedlist>
@@ -126,18 +134,6 @@
         <listitem><para>The Update Times function has a nicer progress bar.</para></listitem>
         <listitem><para>Switched from perl2exe to PAR for packaging binaries.</para></listitem>
         <listitem><para>New logo. :-)</para></listitem>
-      </itemizedlist>
-    </para>
-  </sect1>
-  <sect1><title>What's new in Version 1.8?</title>
-    <para>
-      <itemizedlist>
-        <listitem><para>There is a <menuchoice> <guimenu>File</guimenu> <guimenuitem>Bulk-Add</guimenuitem> </menuchoice> menu option.  This will allow you to choose a category and a directory full of MP3 or OGG files, and then add all of those files into the specified category, using the ID3 tags to automatically fill in the title and artist.  (Bugzilla ID #8)</para></listitem>
-        <listitem><para>The hotkey listing now shows title and artist, instead of the raw filename.  Note - changing this caused a change in the format of the hotkey files, so you will need to run the <filename>converthotkeys</filename> utility from the tools subdirectory once before you can use hotkeys under 1.8.</para></listitem>
-        <listitem><para>A bug that affected the F10 hotkey under Windows has been fixed - that key should work like the other hotkeys now.</para></listitem>
-        <listitem><para>Better support for Ogg Vorbis files under Windows.</para></listitem>
-        <listitem><para>Fixed a Windows bug where the database import/export didn't, in a word, work.  It should now.</para></listitem>
-        <listitem><para>Verified that Mr. Voice runs under MacOS X 10.2 with Perl 5.8 and X11.app.</para></listitem>
       </itemizedlist>
     </para>
   </sect1>
