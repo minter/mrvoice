@@ -50,7 +50,7 @@
       <listitem><para><ulink url="http://www.cszdc.com/">ComedySportz</ulink> (Washington, DC)</para></listitem>
     </itemizedlist>
   </para>
-  <para>Thanks to Derek Lane of the Raleigh Perl Mongers for suggesting the move to SQLite as a database backend.</para>
+  <para>Thanks to <ulink url="http://pobox.com/~dereklane/">Derek Lane</ulink> of the <ulink url="http://raleigh.pm.org/">Raleigh Perl Mongers</ulink> for suggesting the move to SQLite as a database backend.</para>
   <para>And thanks to the Open Source and Free Software movements, letting people write software that doesn't suck!</para>
   <para>Mr. Voice is dedicated to the memory of Andy Sepelak (4/4/78 - 3/11/02), a fine improviser and a good man.  He will be missed.</para>
 </dedication>
@@ -70,7 +70,17 @@
   <sect1><title>What's new in Version 2.0?</title>
     <para>
       <itemizedlist>
-        <listitem><para>The MySQL database has been eliminated.  Mr. Voice now runs an embedded database, SQLite.  This means that you do not need to install, run, or configure MySQL to use Mr. Voice from the 2.0 release forward.</para></listitem>
+        <listitem>
+          <para>The MySQL database has been eliminated.  Mr. Voice now runs an embedded database, SQLite.  This means that you do not need to install, run, or configure MySQL in order to use Mr. Voice from the 2.0 release forward.</para>
+          <para>Why the change?  Several reasons.
+            <itemizedlist>
+              <listitem><para><emphasis>Complexity</emphasis>: Mr. Voice uses a very simple database backend - only two tables, and no complex queries.  Running an entire relational database engine to manage those two tables was overkill, bbut it was the best solution I had when I started the project.  SQLite looks like a much simpler solution, while still being able to do what the software needs.</para></listitem>
+              <listitem><para><emphasis>Ease of Installation</emphasis>: Over the years, MySQL was the biggest cause of problems for users.  Getting the database installed, the processes running, and the usernames and passwords straight were indeed a pain.  SQLite has one configuration option - the path to a single file.  That's it.</para></listitem>
+              <listitem><para><emphasis>Resources</emphasis>: MySQL was a fairly heavyweight installation - several gigs of disk space, as well as needing to run an extra process to handle the database.  On older or smaller systems, that could be a strain.  SQLite doesn't need any extra processes running, and on my 1300-song database, it takes up 125Kb of disk space.</para></listitem>
+            </itemizedlist>
+          </para> 
+          <para>From my observation, it looks like SQLite will be a solid, reliable database engine.  I certainly welcome feedback from users as to how well it works for them.</para>
+        </listitem>
         <listitem><para>"Invalid" songs (songs where there is an entry in the database, but no corresponding file on disk) now show up in red in the search box, instead of being hidden.  This should solve problems where you were unable to delete a category because there were still songs in it, but a search of the category revealed nothing.</para></listitem>
         <listitem><para>AAC (Advanced Audio Codec) files, also known as .mp4 or .m4a files, are now supported (playing them requires the proper plugin for your audio player of choice).  Encrypted songs purchased from the iTunes Music Store (.m4p) apparently do not work.</para></listitem>
        </itemizedlist>
