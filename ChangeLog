@@ -1,3 +1,7 @@
+Fri  Jul 25 2003	H. Wade Minter (minter@lunenburg.org)
+     * MUCH cleaner code for the up/down in the tankbox, courtesy
+       of "Mastering Perl/Tk"
+
 Thu  Jul 24 2003	H. Wade Minter (minter@lunenburg.org)
      * Added a hotkey lock (Bugzilla ID #17)
      * Nicer icons for the Holding Tank up/down.
@@ -463,4 +467,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.92 2003/07/24 19:28:29 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.93 2003/07/25 17:21:48 minter Exp $
