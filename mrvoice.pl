@@ -40,7 +40,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.224 2003/04/29 17:01:57 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.225 2003/04/29 17:31:40 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1690,7 +1690,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.224 $';
+  $rev = '$Revision: 1.225 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2366,6 +2366,7 @@ sub do_search
   $artist="";
   $anyfield="";
   $category="Any";
+  $longcat="Any Category";
   $mw->Unbusy(-recurse=>1);
   if ($numrows == 1)     
   {       
@@ -2385,6 +2386,18 @@ sub do_search
   }
 }
 
+sub return_longcat
+{
+  my $category = $_[0];
+  my $query = "SELECT description FROM categories WHERE code='$category'";
+  my $sth=$dbh->prepare($query);
+  $sth->execute;
+  my @row=$sth->fetchrow_array;
+  my $longcat = $row[0];
+  return ($longcat);
+}
+
+
 sub build_categories_menu
 {
   # This builds the categories menu in the search area.  First, it deletes
@@ -2400,7 +2413,9 @@ sub build_categories_menu
   # Query the database for new ones.
   $catmenu->radiobutton(-label=>"Any category",
                         -value=>"Any",
-                        -variable=>\$category);
+                        -variable=>\$category,
+                        -command=>sub {
+                          $longcat = "Any Category"; });
   $query="SELECT * from categories ORDER BY description";
   my $sth=$dbh->prepare($query);
   $sth->execute or die "can't execute the query: $DBI::errstr\n";
@@ -2410,7 +2425,9 @@ sub build_categories_menu
     $name=$table_row[1];
     $catmenu->radiobutton(-label=>$name,
                           -value=>$code,
-                          -variable=>\$category);
+                          -variable=>\$category,
+                          -command=>sub {
+                            $longcat = return_longcat($category); });
   }
   $sth->finish;
 }
@@ -3021,7 +3038,7 @@ $catmenubutton->menu()->configure(-postcommand=>\&build_categories_menu);
 
 $searchframe->Label(-text=>"Currently Selected: ")->pack(-side=>'left',
                                                          -anchor=>'n');
-$searchframe->Label(-textvariable=>\$category)->pack(-side=>'left',
+$searchframe->Label(-textvariable=>\$longcat)->pack(-side=>'left',
                                                      -anchor=>'n');
 #
 ######
