@@ -40,7 +40,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.216 2003/04/10 01:58:50 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.217 2003/04/10 02:51:01 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -802,7 +802,7 @@ sub dump_database
       {
         $dirname = Win32::GetShortPathName(dirname($dumpfile));
         $filename = basename($dumpfile);
-        $shortdumpfile = "$dirname/$filename";
+        $shortdumpfile = File::Spec->catfile ($dirname, $filename);
         my $rc = system ("C:\\mysql\\bin\\mysqldump.exe --add-drop-table --user=$db_username --password=$db_pass $db_name > $shortdumpfile");
         infobox($mw, "Database Dumped", "The contents of your database have been dumped to the file:\n$dumpfile\n\nNote: In order to have a full backup, you must also\nback up the files from the directory:\n$filepath\nas well as $rcfile and, optionally, the hotkeys from $savedir");
         $status = "Database dumped to $dumpfile";
@@ -1661,7 +1661,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.216 $';
+  $rev = '$Revision: 1.217 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
