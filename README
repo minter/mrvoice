@@ -20,6 +20,8 @@ REQUIRED COMPONENTS:
   + TK (Tk800.022)
   + MPEG-MP3Info (MPEG-MP3Info-0.71)
 * Relational database, with available perl DBI module (Tested with MySQL)
+  If you use something other than MySQL, you'll need to do some
+  modifications.
 * TCL/TK
 * xmms, or other MP3 player that plays songs from the command line.
 * class.id3.php (http://leknor.com/code/) if you're using the PHP
@@ -67,13 +69,14 @@ $filepath - The path information that will be prepended to the filename
             "/".  (ie. "/usr/local/mp3/" is valid, but "/usr/local/mp3"
             is not).
 
-If you want to use the PHP-based frontends for searching and adding songs,
-you must copy mrvoice.php and mrvoice-add.php to a directory in your webroot.
-Your web server must also be set up to use PHP.  See http://www.php.net/ for
-more information on PHP.
- 
-The top of both .php files contains configuration information that should be
-self-explanatory.  Be sure you install class.id3.php, or stuff won't work.
+CONFIGURING THE PHP FRONTENDS:
+To configure the PHP frontends, edit the file config.php.  It sets
+configuration variables for the frontend scripts.
+
+If you get an error when you access one of the frontend scripts about 
+config.php not being in the include path, you either need to edit
+your php.ini file so that directory "." in in the include path, or copy
+config.php to a directory in the include path.
 
 POPULATING THE DATABASE:
 Before you can use mrvoice, you must populate two tables in the database. 
@@ -125,6 +128,15 @@ sure that the mrvoice.pl program has execute permissions, and run it.
 If all has gone well, you should see the mrvoice window, along with 
 XMMS (or your MP3 player of choice).  Congratulations!
 
+CONTRIBUTING: 
+If you like this program, and know of a way to make it better, feel free
+to modify it.  This software is released under the GNU General Public
+License, so read the COPYING file or visit http://www.gnu.org/ for
+information on license conditions.
+
+If you make a cool modification to this program, feel free to send a diff
+to me, and I'll incorporate it into the main body of the program.
+
 REPORTING BUGS:
 Feel free to report any bugs, feature requests, etc. to me at 
 minter@lunenburg.org.  As this is a specific-purpose project, there's no
@@ -132,4 +144,4 @@ guarantee that I'll do it, but I'm glad to listen to any suggestions.  Check
 the TODO file to see stuff I'm currently working on.
 
 --
-CVS ID: $Id: README,v 1.5 2001/02/25 22:24:28 minter Exp $
+CVS ID: $Id: README,v 1.6 2001/02/25 23:07:28 minter Exp $
