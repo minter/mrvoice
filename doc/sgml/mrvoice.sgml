@@ -83,6 +83,7 @@
         </listitem>
         <listitem><para>"Invalid" songs (songs where there is an entry in the database, but no corresponding file on disk) now show up in red in the search box, instead of being hidden.  This should solve problems where you were unable to delete a category because there were still songs in it, but a search of the category revealed nothing.</para></listitem>
         <listitem><para>AAC (Advanced Audio Codec) files, also known as .mp4 or .m4a files, are now supported (playing them requires the proper plugin for your audio player of choice).  Encrypted songs purchased from the iTunes Music Store (.m4p) apparently do not work.</para></listitem>
+        <listitem><para>Mr. Voice itself will offer to perform a default configuration the first time it's run on a new system.  The defaults should be good enough for most people, but you always have the option of doing things manually.</para></listitem>
        </itemizedlist>
      </para>
    </sect1>

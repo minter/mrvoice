@@ -2786,10 +2786,11 @@ sub stop_mp3
 
     system("$config{'mp3player'} --stop");
     $status = "Playing Stopped";
-#    $widget->focus();
+
+    $widget->focus();
 
     # Manually give the mainbox focus
-#    $mainbox->focus();
+    #    $mainbox->focus();
 }
 
 sub play_mp3
@@ -3236,12 +3237,91 @@ sub read_rcfile
     }
     else
     {
-        infobox(
-            $mw,
-            "Configuration not found",
-            "You don't appear to have configured Mr. Voice before.\nStarting configuration now\n"
+        my $norcbox = $mw->Dialog(
+            -title => "Configuration file not found",
+            -text  =>
+              "Could not find Mr. Voice configuration file at $rcfile\n\nIf this is your first time running Mr. Voice, we can perform a default configuration for you.  Or, we can open the preferences so that you can set the values yourself.",
+            -buttons =>
+              [ "Perform Default Configuration", "Manual Configuration" ]
         );
-        edit_preferences();
+        my $response = $norcbox->Show;
+        if ( $response eq "Manual Configuration" )
+        {
+            edit_preferences();
+        }
+        else
+        {
+            $config{filepath} =
+              ( $^O eq "MSWin32" )
+              ? "C:\\mp3"
+              : catfile( get_homedir(), "mp3" );
+            my $string =
+              "Performing default configuration.\n\nCreating MP3 directory $config{filepath}...";
+
+            if ( -d $config{filepath} )
+            {
+                $string .= "Already exists, using it\n\n";
+            }
+            else
+            {
+                $string .=
+                  mkdir( $config{filepath} )
+                  ? "directory created\n\n"
+                  : "directory creation failed!\n\n";
+            }
+
+            $config{savedir} =
+              ( $^O eq "MSWin32" )
+              ? "C:\\hotkeys"
+              : catfile( get_homedir(), "hotkeys" );
+            $string .= "Creating hotkey directory $config{savedir}...";
+            if ( -d $config{savedir} )
+            {
+                $string .= "Already exists, using it\n\n";
+            }
+            else
+            {
+                $string .=
+                  mkdir( $config{savedir} )
+                  ? "directory created\n\n"
+                  : "directory creation failed!\n\n";
+            }
+
+            $config{db_file} =
+              ( $^O eq "MSWin32" )
+              ? "C:\\mrvoice.db"
+              : catfile( get_homedir(), "mrvoice.db" );
+            $string .= "Setting database file $config{db_file}...";
+            if ( -r $config{db_file} )
+            {
+                $string .=
+                  "Already exists, using it (but make sure it's really a Mr. Voice database file)\n\n";
+            }
+            else
+            {
+                $string .=
+                  "Does not exist, so Mr. Voice will initialize it after you view the preferences\n\n";
+            }
+
+            $config{mp3player} =
+              ( $^O eq "MSWin32" )
+              ? Win32::GetShortPathName("C:/Program Files/Winamp/Winamp.exe")
+              : "/usr/bin/xmms";
+            $string .= "Looking for MP3 player in $config{mp3player}...";
+            $string .=
+              ( -f $config{mp3player} ) ? "found it\n\n" : "nothing there!\n\n";
+
+            $string .=
+              "Now, we will launch the preferences so that you can doublecheck everything.";
+
+            my $defaultdonebox = $mw->Dialog(
+                -title   => "Finished default setup",
+                -text    => $string,
+                -buttons => ["Launch Preferences"]
+            );
+            $defaultdonebox->Show;
+            edit_preferences();
+        }
     }
     if ( $^O eq "MSWin32" )
     {
