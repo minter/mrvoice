@@ -197,6 +197,20 @@ else
 my $version = "2.0pre1";    # Program version
 our $status = "Welcome to Mr. Voice version $version";
 
+sub get_rows
+{
+
+    # Work around the lack of $dbh->rows in SQLite.
+    my $sth  = shift;
+    my $rows = 0;
+    while ( my @row = $sth->fetchrow_array )
+    {
+        $rows++;
+    }
+    $sth->finish;
+    return $rows;
+}
+
 sub get_homedir
 {
     return if ( $^O eq "MSWin32" );
@@ -1425,7 +1439,7 @@ sub add_category
               "SELECT * FROM categories WHERE (code='$addcat_code' OR description=$addcat_desc)";
             my $sth    = $dbh->prepare($checkquery);
             my $result = $sth->execute;
-            if ( $sth->rows > 0 )
+            if ( get_rows($sth) > 0 )
             {
                 infobox(
                     $mw,
@@ -1586,8 +1600,7 @@ sub delete_category
         $query = "SELECT * FROM mrvoice WHERE category='$del_cat'";
         my $sth = $dbh->prepare($query);
         $sth->execute;
-        my $rows = $sth->rows;
-        $sth->finish;
+        my $rows = get_rows($sth);
         if ( $rows > 0 )
         {
             infobox( $mw, "Error",
@@ -2770,11 +2783,7 @@ sub validate_id
     my $query = "SELECT * FROM mrvoice WHERE id=$id";
     my $sth   = $dbh->prepare($query);
     $sth->execute;
-    my $numrows = 0;
-    while ( my @row = $sth->fetchrow_array )
-    {
-        $numrows++;
-    }
+    my $numrows = get_rows($sth);
     return $numrows == 1 ? 1 : 0;
 }
 
@@ -3898,11 +3907,7 @@ sub orphans
         my $query = "SELECT * FROM mrvoice WHERE filename='$file'";
         my $sth   = $dbh->prepare($query);
         $sth->execute;
-        my $row_count = 0;
-        while ( my @row = $sth->fetchrow_array )
-        {
-            $row_count++;
-        }
+        my $row_count = get_rows($sth);
         if ( $row_count == 0 )
         {
             push( @orphans, $file );
