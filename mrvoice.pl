@@ -27,6 +27,7 @@ use Ogg::Vorbis::Header::PurePerl;
 use File::Glob qw(:globally :nocase);
 use File::Temp qw/ tempfile tempdir /;
 use Cwd 'abs_path';
+use Getopt::Long;
 
 use subs
   qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_items advancedmenu_items helpmenu_items/;
@@ -37,7 +38,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.385 2004/05/26 18:21:59 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.386 2004/05/28 20:50:53 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -124,9 +125,14 @@ if ( $^O eq "MSWin32" )
 if ( "$^O" eq "MSWin32" )
 {
     $rcfile = "C:\\mrvoice.cfg";
-    my $logfile = "C:\\mrvoice.log";
-    open( STDOUT, ">$logfile" );
-    open( STDERR, ">&STDOUT" );
+    my $logfile = "unset";
+    my $result = GetOptions( 'logfile:s' => \$logfile );
+    if ( ( $logfile eq "" ) || ( $logfile ne "unset" ) )
+    {
+        $logfile = ( $logfile eq "" ) ? "C:/mrvoice.log" : $logfile;
+        open( STDOUT, ">$logfile" );
+        open( STDERR, ">&STDOUT" );
+    }
 
     BEGIN
     {
@@ -169,9 +175,14 @@ else
                      )
               }ex;
     $rcfile = "$homedir/.mrvoicerc";
-    my $logfile = "$homedir/mrvoice.log";
-    open( STDOUT, ">$logfile" );
-    open( STDERR, ">&STDOUT" );
+    my $logfile = "unset";
+    my $result = GetOptions( 'logfile:s' => \$logfile );
+    if ( ( $logfile eq "" ) || ( $logfile ne "unset" ) )
+    {
+        $logfile = ( $logfile eq "" ) ? "$homedir/mrvoice.log" : $logfile;
+        open( STDOUT, ">$logfile" );
+        open( STDERR, ">&STDOUT" );
+    }
 }
 
 # The following variables set the locations of MP3s for static hotkey'd
@@ -2289,7 +2300,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.385 $';
+    my $rev    = '$Revision: 1.386 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::SQLite->VERSION;
