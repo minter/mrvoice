@@ -2,7 +2,7 @@
 # NAME: converthotkeys.pl
 # DESCRIPTION: Converts hotkeys files in your save directory from pre-1.8
 #              format to 1.8 format.
-# CVS ID: $Id: converthotkeys.pl,v 1.2 2003/04/09 14:01:16 minter Exp $
+# CVS ID: $Id: converthotkeys.pl,v 1.3 2003/04/09 18:02:30 minter Exp $
 
 use DBI;
 use DBD::mysql;
@@ -74,7 +74,7 @@ if ($^O eq "MSWin32")
 my $dbh = DBI->connect("DBI:mysql:$db_name",$db_username,$db_pass) or die ("Could not connect to database.  Exiting...");
 print "-->Connected to database\n" if ( ($dbh) && ($opt_v) );
 
-my @files = glob( catfile($savedir, "*.mrv") ) or die;
+my @files = glob( catfile($savedir, "*.mrv") ) or die "ERROR: No .mrv files in $savedir to convert!";
 
 foreach my $hotkeyfile (@files)
 {
