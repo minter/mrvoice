@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.182 2002/12/10 21:59:30 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.183 2002/12/10 22:09:14 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -510,7 +510,7 @@ sub dump_database
         $filename = basename($dumpfile);
         $shortdumpfile = "$dirname/$filename";
         my $rc = system ("C:/mysql/bin/mysqldump --add-drop-table --user=$db_username --password=$db_pass $db_name > $shortdumpfile");
-        infobox($mw, "Database Dumped", "The contents of your database have been dumped to the file:\n$dumpfile\n\nNote: In order to have a full backup, you must also\nback up the files from the directory:\n$filepath\nas well as $rcfile");
+        infobox($mw, "Database Dumped", "The contents of your database have been dumped to the file:\n$dumpfile\n\nNote: In order to have a full backup, you must also\nback up the files from the directory:\n$filepath\nas well as $rcfile and, optionally, the hotkeys from $savedir");
         $status = "Database dumped to $dumpfile";
       }
       else
@@ -1260,7 +1260,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.182 $';
+  $rev = '$Revision: 1.183 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
