@@ -1,3 +1,8 @@
+Thu  Mar 25 2004	H. Wade Minter (minter@lunenburg.org)
+     * Fixed a bug where the Listbox got focus upon completion of
+       a search.
+     * Released Mr. Voice version 1.10.2
+
 Thu  Mar 18 2004	H. Wade Minter (minter@lunenburg.org)
      * Released Mr. Voice version 1.10
 
@@ -612,4 +617,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.129 2004/03/18 18:53:50 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.130 2004/03/25 21:25:37 minter Exp $
