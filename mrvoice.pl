@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.381 2004/04/26 20:39:04 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.382 2004/05/26 00:32:44 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2278,7 +2278,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.381 $';
+    my $rev    = '$Revision: 1.382 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::mysql->VERSION;
@@ -2983,26 +2983,30 @@ sub do_search
         return (1);
     }
     my $numrows = $sth->rows;
+    my $invalid = 0;
     while ( my $row_hashref = $sth->fetchrow_hashref )
     {
 
-        if ( -e catfile( $config{'filepath'}, $row_hashref->{filename} ) )
+        my $string = "$row_hashref->{id}:($row_hashref->{description}";
+        $string = $string . " - $row_hashref->{info}"
+          if ( $row_hashref->{info} );
+        $string = $string . ") - \"$row_hashref->{title}\"";
+        $string = $string . " by $row_hashref->{artist}"
+          if ( $row_hashref->{artist} );
+        $string = $string . " $row_hashref->{time}";
+        $string = $string . " ($row_hashref->{publisher})"
+          if ( $config{'show_publisher'} == 1 );
+        $mainbox->insert( 'end', $string );
+        if ( !-e catfile( $config{'filepath'}, $row_hashref->{filename} ) )
         {
-            my $string = "$row_hashref->{id}:($row_hashref->{description}";
-            $string = $string . " - $row_hashref->{info}"
-              if ( $row_hashref->{info} );
-            $string = $string . ") - \"$row_hashref->{title}\"";
-            $string = $string . " by $row_hashref->{artist}"
-              if ( $row_hashref->{artist} );
-            $string = $string . " $row_hashref->{time}";
-            $string = $string . " ($row_hashref->{publisher})"
-              if ( $config{'show_publisher'} == 1 );
-            $mainbox->insert( 'end', $string );
+            $mainbox->itemconfigure(
+                'end',
+                -foreground       => 'red',
+                -selectforeground => 'red'
+            );
+            $invalid++;
         }
-        else
-        {
-            $numrows--;
-        }
+
     }
     if ( $numrows > 0 )
     {
@@ -3021,6 +3025,7 @@ sub do_search
 
     $status = sprintf( "Displaying %d search result%s ",
         $numrows, $numrows == 1 ? "" : "s" );
+    $status .= "($invalid invalid) " if $invalid;
     $status .= "($diff seconds elapsed)";
     $mainbox->yview( 'scroll', 1, 'units' );
     $mainbox->update;
