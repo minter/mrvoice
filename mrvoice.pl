@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.comedyworx.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/11/10 21:41:42 $
-#	CVS REVISION NUMBER:    $Revision: 1.81 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/11/12 15:57:15 $
+#	CVS REVISION NUMBER:    $Revision: 1.82 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -69,6 +69,7 @@ $mp3types = [
 if ("$^O" eq "MSWin32")
 {
   $rcfile = "C:\\mrvoice.cfg";
+  eval "use Win32::Process";
 }
 else
 {
@@ -1118,8 +1119,8 @@ sub do_exit
  $dbh->disconnect;
  if ("$^O" eq "MSWin32")
  {
-   # Close the MP3 player on a Windows system (borken)
-   close (MP3PLAYER);
+   # Close the MP3 player on a Windows system
+   Win32::Process::KillProcess($mp3_pid,1);
  }
  else
  {
@@ -1281,7 +1282,9 @@ if (! -W $savedir)
 if ("$^O" eq "MSWin32")
 {
   # Start the MP3 player on a Windows system
-  open (MP3PLAYER,"$mp3player|");
+  my $object;
+  Win32::Process::Create($object, $mp3player,'',0, NORMAL_PRIORITY_CLASS, ".");
+  $mp3_pid=$object->GetProcessID();
 }
 else
 {
