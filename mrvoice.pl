@@ -36,7 +36,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.329 2004/03/08 15:34:07 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.330 2004/03/09 16:58:52 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -634,6 +634,8 @@ sub save_tank
         {
             $status = "Holding tank save failed due to directory error";
             my $directory = dirname($selectedfile);
+            $directory = Win32::GetShortPathName($directory)
+              if ( $^O eq "MSWin32" );
             infobox(
                 $mw,
                 "Directory Error!",
@@ -757,6 +759,8 @@ sub save_file
         elsif ( !-w dirname($selectedfile) )
         {
             my $directory = dirname($selectedfile);
+            $directory = Win32::GetShortPathName($directory)
+              if ( $^O eq "MSWin32" );
             infobox(
                 $mw,
                 "Directory Error!",
@@ -804,6 +808,7 @@ sub dump_database
         -initialfile      => $defaultfilename,
         -filetypes        => $databasefiles
     );
+    $dumpfile = Win32::GetShortPathName($dumpfile) if ( $^O eq "MSWin32" );
 
     if ($dumpfile)
     {
@@ -812,13 +817,13 @@ sub dump_database
             infobox( $mw, "File Error!",
                 "Could not open file $dumpfile for writing" );
         }
-        elsif ( !-w dirname($dumpfile) )
+        my $dirname = dirname($dumpfile);
+        elsif ( !-w dirname($dirname) )
         {
-            my $directory = dirname($dumpfile);
             infobox(
                 $mw,
                 "Directory Error!",
-                "Could not write new file to directory $directory"
+                "Could not write new file to directory $dirname"
             );
         }
         else
@@ -827,8 +832,7 @@ sub dump_database
             # Run the MySQL Dump
             if ( $^O eq "MSWin32" )
             {
-                $dirname       = Win32::GetShortPathName( dirname($dumpfile) );
-                $filename      = basename($dumpfile);
+                $filename = basename($dumpfile);
                 $shortdumpfile = catfile( $dirname, $filename );
                 my $rc =
                   system(
@@ -870,6 +874,7 @@ sub import_database
         -filetypes        => $databasefiles
     );
 
+    $dumpfile = Win32::GetShortPathName($dumpfile) if ( $^O eq "MSWin32" );
     if ($dumpfile)
     {
         if ( !-r $dumpfile )
@@ -2182,7 +2187,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.329 $';
+    my $rev = '$Revision: 1.330 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
