@@ -1,3 +1,7 @@
+Fri Feb 16 2001		H. Wade Minter (minter@lunenburg.org)
+     * Cleaned up code in preparation for releasing mrvoice to the 
+       general public (shudder).
+
 Tue Jan 30 2001		H. Wade Minter (minter@lunenburg.org)
      * Released version 0.7.
      * Fixed resize bug - resizing will now change the size of the listbox
@@ -17,3 +21,6 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
      * Added more status notes for status line.
      * Disabled the ability to resize the main box, until I figure out how
        to get things to resize nicely.
+
+--
+CVS ID: $Id: ChangeLog,v 1.2 2001/02/16 21:47:11 minter Exp $
