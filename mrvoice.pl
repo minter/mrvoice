@@ -15,6 +15,7 @@ use Audio::Wav;
 # find them.
 use Tk::Menu;
 use Tk::Menubutton;
+use Tk::Checkbutton;
 use DBD::mysql;
 use Carp::Heavy;
 
@@ -26,7 +27,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.115 2002/05/02 19:32:41 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.116 2002/05/02 23:27:21 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -827,7 +828,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.115 $';
+  $rev = '$Revision: 1.116 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   infobox($mw, "About Mr. Voice","Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License");
 }
@@ -1264,6 +1265,7 @@ sub do_search
   $query = $query . "ORDER BY category,info,title";
   my $sth=$dbh->prepare($query);
   $sth->execute or die "can't execute the query: $DBI::errstr\n";
+  $numrows = $sth->rows;
   while (@table_row = $sth->fetchrow_array)
   {
     if (-e "$filepath$table_row[5]")
@@ -1276,8 +1278,11 @@ sub do_search
       $string = $string . $songstring;
       $mainbox->insert('end',$string); 
     }
+    else
+    {
+      $numrows--;
+    }
   }
-  $numrows = $sth->rows;
   $sth->finish;
   $cattext="";
   $title="";
