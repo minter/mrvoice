@@ -2108,7 +2108,7 @@ sub add_new_song
             -foreground => "#cdd226132613"
         )->pack( -side => 'left' );
         my $frame6 = $box->add("Frame")->pack( -fill => 'x' );
-        $frame6->Button(
+        my $selectfile_button = $frame6->Button(
             -text    => "Select File",
             -command => sub {
                 $addsong_filename = $mw->getOpenFile(
@@ -2120,11 +2120,14 @@ sub add_new_song
                   get_title_artist($addsong_filename);
             }
         )->pack( -side => 'right' );
+        $selectfile_button->configure( -state => 'disabled' )
+          if ( ref $arg eq "HASH" );
         my $songentry = $frame5->Entry(
             -background   => 'white',
             -width        => 30,
             -textvariable => \$addsong_filename
         )->pack( -side => 'right' );
+        $songentry->configure( -state => 'disabled' ) if ( ref $arg eq "HASH" );
         my $frame7 = $box->add("Frame")->pack( -fill => 'x' );
         my $previewbutton = $frame7->Button(
             -text    => "Preview song",
@@ -2880,7 +2883,7 @@ sub delete_song
 sub show_about
 {
     my @modules =
-      qw/Tk DBI DBD::SQLite MPEG::MP3Info MP4::Info Audio::Wav Ogg::Vorbis::Header::PurePerl Date::Manip Time::Local Time::HiRes File::Glob File::Temp File::Basename File::Copy/;
+      qw/Tk DBI DBD::SQLite MPEG::MP3Info MP4::Info Audio::Wav Ogg::Vorbis::Header::PurePerl Date::Manip Time::Local Time::HiRes File::Glob File::Temp File::Basename File::Copy XMLRPC::Lite Digest::MD5 MIME::Base64/;
     push(
         @modules,
         qw/LWP::UserAgent HTTP::Request Win32::Process Win32::FileOp Audio::WMA/
@@ -3981,7 +3984,8 @@ sub online_download
         return;
     }
 
-    $mw->Busy();
+    my $toplevel = $listbox->toplevel;
+    $toplevel->Busy();
     my $download_call = $xmlrpc->call(
         'download_song',
         {
@@ -3991,7 +3995,7 @@ sub online_download
     );
 
     my $result = $download_call->result;
-    $mw->Unbusy();
+    $toplevel->Unbusy();
 
     if ( !$result )
     {
@@ -4162,6 +4166,7 @@ sub upload_xmlrpc
             info       => $info->{info},
             filename   => $info->{filename},
             md5sum     => $md5,
+            publisher  => $info->{publisher},
         }
     );
 
