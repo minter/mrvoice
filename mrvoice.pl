@@ -3999,7 +3999,7 @@ sub read_rcfile
             }
             elsif ( $^O eq "darwin" )
             {
-                $config{mp3player} = "/sw/bin/xmms";
+                $config{mp3player} = "Audion";
             }
             else
             {
@@ -4007,8 +4007,17 @@ sub read_rcfile
             }
             print "MP3 player is $config{mp3player}\n" if $debug;
             $string .= "Looking for MP3 player in $config{mp3player}...";
-            $string .=
-              ( -f $config{mp3player} ) ? "found it\n\n" : "nothing there!\n\n";
+            if ( $^O eq "darwin" )
+            {
+                $string .= "Skipping\n\n";
+            }
+            else
+            {
+                $string .=
+                  ( -f $config{mp3player} )
+                  ? "found it\n\n"
+                  : "nothing there!\n\n";
+            }
 
             $string .=
               "Now, we will launch the preferences so that you can doublecheck everything.";
