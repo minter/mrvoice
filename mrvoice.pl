@@ -40,7 +40,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.234 2003/07/21 19:21:57 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.235 2003/07/21 20:19:12 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1710,67 +1710,141 @@ sub edit_preferences
 
 sub edit_song
 {
-  my $id = get_song_id($mainbox);
-  $query = "SELECT title,artist,category,info from mrvoice where id=$id";
-  ($edit_title,$edit_artist,$edit_category,$edit_info) = $dbh->selectrow_array($query);
-
-  $box = $mw->DialogBox(-title=>"Edit Song", -buttons=>["Edit","Cancel"],
-                                             -default_button=>"Edit");
-  $box->Icon(-image=>$icon);
-  $box->add("Label",-text=>"You may use this form to modify information about\na song that is already in the database\n")->pack();
-  $frame1 = $box->add("Frame")->pack(-fill=>'x');
-  $frame1->Label(-text=>"Song Title")->pack(-side=>'left');
-  $frame1->Entry(-width=>30,
-                 -textvariable=>\$edit_title)->pack(-side=>'right');
-  $frame2 = $box->add("Frame")->pack(-fill=>'x');
-  $frame2->Label(-text=>"Artist")->pack(-side=>'left');
-  $frame2->Entry(-width=>30,
-                 -textvariable=>\$edit_artist)->pack(-side=>'right');
-  $frame3 = $box->add("Frame")->pack(-fill=>'x');
-  $frame3->Label(-text=>"Category")->pack(-side=>'left');
-  $menu=$frame3->Menubutton(-text=>"Choose Category",
-                            -relief=>'raised',
-                            -tearoff=>0,
-                            -indicatoron=>1)->pack(-side=>'right');
-    $query="SELECT * from categories ORDER BY description";
-    my $sth=$dbh->prepare($query);
-    $sth->execute or die "can't execute the query: $DBI::errstr\n";
-    while (@table_row = $sth->fetchrow_array)
-    {
-      $code=$table_row[0];
-      $name=$table_row[1];
-      $menu->radiobutton(-label=>$name,
-                         -value=>$code,
-                         -variable=>\$edit_category);
-    }
-    $sth->finish;
-
-  $frame4 = $box->add("Frame")->pack(-fill=>'x');
-  $frame4->Label(-text=>"Extra Info")->pack(-side=>'left');
-  $frame4->Entry(-width=>30,
-                 -textvariable=>\$edit_info)->pack(-side=>'right');
-  $result = $box->Show();
-
-  if ($result eq "Edit")
+  @selected = $mainbox->curselection();
+  $count = $#selected + 1;
+  if ($count == 1)
   {
-    $edit_artist = $dbh->quote($edit_artist);
-    $edit_title = $dbh->quote($edit_title);
-    $edit_info = $dbh->quote($edit_info);
-    $query = "UPDATE mrvoice SET artist=$edit_artist, title=$edit_title, info=$edit_info, category='$edit_category' WHERE id=$id";
-    if ($dbh->do($query))
+    # We're looking to edit one song, so we can choose everything
+    my $id = get_song_id($mainbox,$selected[0]);
+    $query = "SELECT title,artist,category,info from mrvoice where id=$id";
+    ($edit_title,$edit_artist,$edit_category,$edit_info) = $dbh->selectrow_array($query);
+
+    $box = $mw->DialogBox(-title=>"Edit Song", -buttons=>["Edit","Cancel"],
+                                               -default_button=>"Edit");
+    $box->Icon(-image=>$icon);
+    $box->add("Label",-text=>"You may use this form to modify information about\na song that is already in the database\n")->pack();
+    $frame1 = $box->add("Frame")->pack(-fill=>'x');
+    $frame1->Label(-text=>"Song Title")->pack(-side=>'left');
+    $frame1->Entry(-width=>30,
+                   -textvariable=>\$edit_title)->pack(-side=>'right');
+    $frame2 = $box->add("Frame")->pack(-fill=>'x');
+    $frame2->Label(-text=>"Artist")->pack(-side=>'left');
+    $frame2->Entry(-width=>30,
+                   -textvariable=>\$edit_artist)->pack(-side=>'right');
+    $frame3 = $box->add("Frame")->pack(-fill=>'x');
+    $frame3->Label(-text=>"Category")->pack(-side=>'left');
+    $menu=$frame3->Menubutton(-text=>"Choose Category",
+                              -relief=>'raised',
+                              -tearoff=>0,
+                              -indicatoron=>1)->pack(-side=>'right');
+      $query="SELECT * from categories ORDER BY description";
+      my $sth=$dbh->prepare($query);
+      $sth->execute or die "can't execute the query: $DBI::errstr\n";
+      while (@table_row = $sth->fetchrow_array)
+      {
+        $code=$table_row[0];
+        $name=$table_row[1];
+        $menu->radiobutton(-label=>$name,
+                           -value=>$code,
+                           -variable=>\$edit_category);
+      }
+      $sth->finish;
+
+    $frame4 = $box->add("Frame")->pack(-fill=>'x');
+    $frame4->Label(-text=>"Extra Info")->pack(-side=>'left');
+    $frame4->Entry(-width=>30,
+                   -textvariable=>\$edit_info)->pack(-side=>'right');
+    $result = $box->Show();
+    if ($result eq "Edit")
     {
-      infobox ($mw, "Song Edited Successfully","The song was edited successfully.");
-      $status = "Edited song";
+      $edit_artist = $dbh->quote($edit_artist);
+      $edit_title = $dbh->quote($edit_title);
+      $edit_info = $dbh->quote($edit_info);
+      $query = "UPDATE mrvoice SET artist=$edit_artist, title=$edit_title, info=$edit_info, category='$edit_category' WHERE id=$id";
+      if ($dbh->do($query))
+      {
+        infobox ($mw, "Song Edited Successfully","The song was edited successfully.");
+        $status = "Edited song";
+      }
+      else
+      {
+        infobox ($mw, "Error","There was an error editing the song.\nNo changes made.");
+        $status = "Error editing song - no changes made";
+      }
     }
     else
     {
-      infobox ($mw, "Error","There was an error editing the song.\nNo changes made.");
-      $status = "Error editing song - no changes made";
+      $status = "Cancelled song edit.";
     }
   }
-  else
+  elsif ($count > 1)
   {
-    $status = "Cancelled song edit.";
+    # We're editing multiple songs, so only put up a subset
+    # First, convert the indices to song ID's
+    my @songids;
+    foreach $id (@selected)
+    {
+      my $songid = get_song_id($mainbox,$id);
+      push (@songids,$songid);
+    }
+    $box = $mw->DialogBox(-title=>"Edit $count Songs", -buttons=>["Edit","Cancel"],
+                                                       -default_button=>"Edit");
+    $box->Icon(-image=>$icon);
+    $box->add("Label",-text=>"You are editing the attributes of $count songs.\nAny changes you make here will be applied to all $count.\n")->pack();
+    $frame2 = $box->add("Frame")->pack(-fill=>'x');
+    $frame2->Label(-text=>"Artist")->pack(-side=>'left');
+    $frame2->Entry(-width=>30,
+                   -textvariable=>\$edit_artist)->pack(-side=>'right');
+    $frame3 = $box->add("Frame")->pack(-fill=>'x');
+    $frame3->Label(-text=>"Category")->pack(-side=>'left');
+    $menu=$frame3->Menubutton(-text=>"Choose Category",
+                              -relief=>'raised',
+                              -tearoff=>0,
+                              -indicatoron=>1)->pack(-side=>'right');
+      $query="SELECT * from categories ORDER BY description";
+      my $sth=$dbh->prepare($query);
+      $sth->execute or die "can't execute the query: $DBI::errstr\n";
+      while (@table_row = $sth->fetchrow_array)
+      {
+        $code=$table_row[0];
+        $name=$table_row[1];
+        $menu->radiobutton(-label=>$name,
+                           -value=>$code,
+                           -variable=>\$edit_category);
+      }
+      $sth->finish;
+
+    $frame4 = $box->add("Frame")->pack(-fill=>'x');
+    $frame4->Label(-text=>"Extra Info")->pack(-side=>'left');
+    $frame4->Entry(-width=>30,
+                   -textvariable=>\$edit_info)->pack(-side=>'right');
+    $result = $box->Show();
+    if ( ($result eq "Edit") && ( $edit_artist || $edit_category || $edit_info ) )
+    {
+      # Go into edit loop
+      my @querystring;
+      my $string;
+      my $edit_artist = "artist=" . $dbh->quote($edit_artist) if $edit_artist;
+      my $edit_info = "info=" . $dbh->quote($edit_info) if $edit_info;
+      my $edit_category = "category=" . $dbh->quote($edit_category) if $edit_category;
+
+      push (@querystring, $edit_artist) if $edit_artist;
+      push (@querystring, $edit_info) if $edit_info;
+      push (@querystring, $edit_category) if $edit_category;
+
+      $string = join (" AND ", @querystring);
+
+      foreach $songid (@songids)
+      {
+        $query = "UPDATE mrvoice SET $string WHERE id=$songid";
+        $dbh->do($query);
+      }
+      $status = "Edited $count songs";
+    }
+    else
+    {
+      $status = "Cancelled editing $count songs";
+    }   
   }
 
   $edit_title="";
@@ -1825,7 +1899,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.234 $';
+  $rev = '$Revision: 1.235 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2135,14 +2209,12 @@ sub list_hotkeys
 
 sub get_song_id
 {
-  # This gets the current selection from the search results box, and returns
+  # This gets the current selection for the index passed in, and returns
   # the database ID for that song.
 
   $box = $_[0];
-  # When playing a song, we only take the first index, even if
-  # multiple selections are allowed
-  my @index = $box->curselection();
-  my $selection = $box->get($index[0]);
+  $index = $_[1];
+  my $selection = $box->get($index);
   my ($id) = split /:/,$selection;
   return ($id);
 }
@@ -2312,7 +2384,9 @@ sub play_mp3
     {
       $box = $_[0];
     }
-    my $id = get_song_id($box);
+    # We only care about playing one song
+    my @selection = $box->curselection();
+    my $id = get_song_id($box,$selection[0]);
     if ($id)
     {
       $query = "SELECT filename,title,artist from mrvoice WHERE id=$id";
@@ -3250,7 +3324,7 @@ $mainbox = $searchboxframe->Scrolled('Listbox',
                        -scrollbars=>'osoe',
                        -width=>100,
                        -setgrid=>1,
-                       -selectmode=>"single")->pack(-fill=>'both',
+                       -selectmode=>"extended")->pack(-fill=>'both',
                                                     -expand=>1,
                                                     -side=>'top');
 $mainbox->bind("<Double-Button-1>", \&play_mp3);
