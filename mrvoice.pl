@@ -4,6 +4,7 @@ use diagnostics;
 #use strict; # Yeah right
 use Tk;
 use Tk::DialogBox;
+use Tk::RadioButton;
 use Tk::DragDrop;
 use Tk::DropSite;
 use Tk::NoteBook;
@@ -34,7 +35,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.189 2002/12/14 19:39:32 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.190 2002/12/16 20:39:10 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1261,7 +1262,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.189 $';
+  $rev = '$Revision: 1.190 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
