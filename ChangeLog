@@ -1,5 +1,7 @@
 Sat  Sep 11  2004	H. Wade Minter (minter@lunenburg.org)
      * Fixed a similar bug in the edit_categories function.
+     * Fixed an inaccuracy in progress reporting with update_times, due
+       to the previous policy of ignoring invalid files.
 
 Fri  Sep 10  2004	H. Wade Minter (minter@lunenburg.org)
      * Fixed a bug in the delete_categories function that was causing
