@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.153 2002/09/02 02:46:30 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.154 2002/09/05 18:58:26 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1051,7 +1051,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.153 $';
+  $rev = '$Revision: 1.154 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -1202,75 +1202,87 @@ sub list_hotkeys
     my $f1_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f1_frame->Checkbutton(-text=>"F1: ",
                            -variable=>\$f1_cb)->pack(-side=>'left');
-    $f1_frame->Label(-textvariable=>\$f1)->pack(-side=>'left');
+    $f1_frame->Label(-textvariable=>\$f1, 
+                     -anchor=>'w')->pack(-side=>'left');
     $f1_frame->DropSite(-droptypes=>['Local'],
                         -dropcommand=>[\&Hotkey_Drop, \$f1, $dnd_token ]);
     my $f2_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f2_frame->Checkbutton(-text=>"F2: ",
                            -variable=>\$f2_cb)->pack(-side=>'left');
-    $f2_frame->Label(-textvariable=>\$f2)->pack(-side=>'left');
+    $f2_frame->Label(-textvariable=>\$f2,
+                     -anchor=>'w')->pack(-side=>'left');
     $f2_frame->DropSite(-droptypes=>['Local'],
                         -dropcommand=>[\&Hotkey_Drop, \$f2, $dnd_token ]);
     my $f3_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f3_frame->Checkbutton(-text=>"F3: ",
                            -variable=>\$f3_cb)->pack(-side=>'left');
-    $f3_frame->Label(-textvariable=>\$f3)->pack(-side=>'left');
+    $f3_frame->Label(-textvariable=>\$f3,
+                     -anchor=>'w')->pack(-side=>'left');
     $f3_frame->DropSite(-droptypes=>['Local'],
                         -dropcommand=>[\&Hotkey_Drop, \$f3, $dnd_token ]);
     my $f4_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f4_frame->Checkbutton(-text=>"F4: ",
                            -variable=>\$f4_cb)->pack(-side=>'left');
-    $f4_frame->Label(-textvariable=>\$f4)->pack(-side=>'left');
+    $f4_frame->Label(-textvariable=>\$f4,
+                     -anchor=>'w')->pack(-side=>'left');
     $f4_frame->DropSite(-droptypes=>['Local'],
                         -dropcommand=>[\&Hotkey_Drop, \$f4, $dnd_token ]);
     my $f5_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f5_frame->Checkbutton(-text=>"F5: ",
                            -variable=>\$f5_cb)->pack(-side=>'left');
-    $f5_frame->Label(-textvariable=>\$f5)->pack(-side=>'left');
+    $f5_frame->Label(-textvariable=>\$f5,
+                     -anchor=>'w')->pack(-side=>'left');
     $f5_frame->DropSite(-droptypes=>['Local'],
                         -dropcommand=>[\&Hotkey_Drop, \$f5, $dnd_token ]);
     my $f6_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f6_frame->Checkbutton(-text=>"F6: ",
                            -variable=>\$f6_cb)->pack(-side=>'left');
-    $f6_frame->Label(-textvariable=>\$f6)->pack(-side=>'left');
+    $f6_frame->Label(-textvariable=>\$f6,
+                     -anchor=>'w')->pack(-side=>'left');
     $f6_frame->DropSite(-droptypes=>['Local'],
                         -dropcommand=>[\&Hotkey_Drop, \$f6, $dnd_token ]);
     my $f7_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f7_frame->Checkbutton(-text=>"F7: ",
                            -variable=>\$f7_cb)->pack(-side=>'left');
-    $f7_frame->Label(-textvariable=>\$f7)->pack(-side=>'left');
+    $f7_frame->Label(-textvariable=>\$f7,
+                     -anchor=>'w')->pack(-side=>'left');
     $f7_frame->DropSite(-droptypes=>['Local'],
                         -dropcommand=>[\&Hotkey_Drop, \$f7, $dnd_token ]);
     my $f8_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f8_frame->Checkbutton(-text=>"F8: ",
                            -variable=>\$f8_cb)->pack(-side=>'left');
-    $f8_frame->Label(-textvariable=>\$f8)->pack(-side=>'left');
+    $f8_frame->Label(-textvariable=>\$f8,
+                     -anchor=>'w')->pack(-side=>'left');
     $f8_frame->DropSite(-droptypes=>['Local'],
                         -dropcommand=>[\&Hotkey_Drop, \$f8, $dnd_token ]);
     my $f9_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f9_frame->Checkbutton(-text=>"F9: ",
                            -variable=>\$f9_cb)->pack(-side=>'left');
-    $f9_frame->Label(-textvariable=>\$f9)->pack(-side=>'left');
+    $f9_frame->Label(-textvariable=>\$f9,
+                     -anchor=>'w')->pack(-side=>'left');
     $f9_frame->DropSite(-droptypes=>['Local'],
                         -dropcommand=>[\&Hotkey_Drop, \$f9, $dnd_token ]);
     my $f10_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f10_frame->Checkbutton(-text=>"F10:",
                             -variable=>\$f10_cb)->pack(-side=>'left');
-    $f10_frame->Label(-textvariable=>\$f10)->pack(-side=>'left');
+    $f10_frame->Label(-textvariable=>\$f10,
+                      -anchor=>'w')->pack(-side=>'left');
     $f10_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, \$f10, $dnd_token ]);
+                         -dropcommand=>[\&Hotkey_Drop, \$f10, $dnd_token ]);
     my $f11_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f11_frame->Checkbutton(-text=>"F11:",
                             -variable=>\$f11_cb)->pack(-side=>'left');
-    $f11_frame->Label(-textvariable=>\$f11)->pack(-side=>'left');
+    $f11_frame->Label(-textvariable=>\$f11,
+                      -anchor=>'w')->pack(-side=>'left');
     $f11_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, \$f11, $dnd_token ]);
+                         -dropcommand=>[\&Hotkey_Drop, \$f11, $dnd_token ]);
     my $f12_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
     $f12_frame->Checkbutton(-text=>"F12:",
                             -variable=>\$f12_cb)->pack(-side=>'left');
-    $f12_frame->Label(-textvariable=>\$f12)->pack(-side=>'left');
+    $f12_frame->Label(-textvariable=>\$f12,
+                      -anchor=>'w')->pack(-side=>'left');
     $f12_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, \$f12, $dnd_token ]);
+                         -dropcommand=>[\&Hotkey_Drop, \$f12, $dnd_token ]);
     my $buttonframe = $hotkeysbox->Frame()->pack(-side=>'bottom',
                                                  -fill=>'x');
     $buttonframe->Button(-text=>"Close",
