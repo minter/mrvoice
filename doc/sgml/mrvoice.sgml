@@ -4,7 +4,7 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.18 2002/01/27 21:22:25 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.19 2002/01/28 21:12:55 minter Exp $ 
 -->
 <book status="draft">
 
@@ -54,11 +54,11 @@
     <para>
       <itemizedlist>
         <listitem><para>There are now keyboard shortcuts to open (Control-O) or save (Control-S) hotkey files, exit Mr. Voice (Control-X), and open the Hotkeys listing (Control-H).</para></listitem>
-        <listitem><para>The Do Search button is bigger.</para></listitem>
         <listitem><para>The <guimenu>Recent Files</guimenu> menu is now a sub-menu off of the <guimenu>File</guimenu> menu, instead of just hanging off the end of <guimenu>File</guimenu>.</para></listitem>
         <listitem><para>Exiting Mr. Voice now also closes the MP3 player.</para></listitem>
 	<listitem><para>There is a "holding tank" to store songs for later use.</para></listitem>
 	<listitem><para>Mr. Voice is friendler to audio file formats other than MP3.  You can use WAV files, OGG files, etc.</para></listitem>
+	<listitem><para>The HTML documentaion now builds both multi-page (with a main page of index.html) and single-page formats (with a main page of mrvoice.html)</para></listitem>
       </itemizedlist>
     </para>
   </sect1>
