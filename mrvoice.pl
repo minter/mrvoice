@@ -19,6 +19,7 @@ use File::Copy;
 use File::Spec::Functions;
 use DBI;
 use MPEG::MP3Info;
+use MP4::Info;
 use Audio::Wav;
 use Date::Manip;
 use Time::Local;
@@ -104,12 +105,14 @@ our $mp3types = [
         'All Valid Audio Files',
         [
             '*.mp3', '*.MP3', '*.ogg', '*.OGG', '*.wav', '*.WAV',
-            '*.m3u', '*.M3U', '*.pls', '*.PLS'
+            '*.m3u', '*.M3U', '*.pls', '*.PLS', '*.m4a', '*.M4A',
+            '*.mp4', '*.MP4'
         ]
     ],
     [ 'MP3 Files',    [ '*.mp3', '*.MP3' ] ],
     [ 'WAV Files',    [ '*.wav', '*.WAV' ] ],
     [ 'Vorbis Files', [ '*.ogg', '*.OGG' ] ],
+    [ 'AAC Files',    [ '*.m4a', '*.M4A', '*.mp4', '*.MP4' ] ],
     [ 'Playlists',    [ '*.m3u', '*.M3U', '*.pls', '*.PLS' ] ],
     [ 'All Files', '*' ],
 ];
@@ -1078,6 +1081,13 @@ sub get_title_artist
         $title  = $comment->{TITLE};
         $artist = $comment->{AUTHOR};
     }
+    elsif ( ( $filename =~ /.m4a/i ) || ( $filename =~ /.mp4/i ) )
+    {
+        $filename = Win32::GetShortPathName($filename) if ( $^O eq "MSWin32" );
+        my $tag = get_mp4tag($filename);
+        $title  = $tag->{NAM};
+        $artist = $tag->{ART};
+    }
     $title  =~ s/^\s*// if $title;
     $artist =~ s/^\s*// if $artist;
 
@@ -1280,10 +1290,12 @@ sub bulk_add
 
     my @mp3glob = glob( catfile( $directory, "*.mp3" ) );
     my @oggglob = glob( catfile( $directory, "*.ogg" ) );
+    my @m4aglob = glob( catfile( $directory, "*.m4a" ) );
+    my @mp4glob = glob( catfile( $directory, "*.mp4" ) );
     my @wmaglob = glob( catfile( $directory, "*.wma" ) )
       if ( $^O eq "MSWin32" );
 
-    my @list = ( @mp3glob, @oggglob );
+    my @list = ( @mp3glob, @oggglob, @m4aglob, @mp4glob );
     push( @list, @wmaglob ) if ( $^O eq "MSWin32" );
 
     $mw->Busy( -recurse => 1 );
@@ -2928,6 +2940,13 @@ sub get_songlength
         $second = "0$second" if ( $second < 10 );
         $time = "[$minute:$second]";
     }
+    elsif ( ( $file =~ /\.m4a/i ) || ( $file =~ /\.mp4/i ) )
+    {
+
+        # AAC/MP4 File
+        my $info = get_mp4info($file);
+        $time = "[$info->{TIME}]";
+    }
     elsif ( ( $file =~ /\.m3u$/i ) || ( $file =~ /\.pls$/i ) )
     {
 
@@ -3829,11 +3848,16 @@ sub orphans
     my @mp3files = glob( catfile( $config{filepath}, "*.mp3" ) );
     my @oggfiles = glob( catfile( $config{filepath}, "*.ogg" ) );
     my @wavfiles = glob( catfile( $config{filepath}, "*.wav" ) );
+    my @m4afiles = glob( catfile( $config{filepath}, "*.m4a" ) );
+    my @mp4files = glob( catfile( $config{filepath}, "*.mp4" ) );
     my @m3ufiles = glob( catfile( $config{filepath}, "*.m3u" ) );
     my @plsfiles = glob( catfile( $config{filepath}, "*.pls" ) );
     my @wmafiles = glob( catfile( $config{filepath}, "*.wma" ) )
       if ( $^O eq "MSWin32" );
-    my @files = ( @mp3files, @oggfiles, @wavfiles, @m3ufiles, @plsfiles );
+    my @files = (
+        @mp3files, @oggfiles, @wavfiles, @m3ufiles,
+        @plsfiles, @m4afiles, @mp4files
+    );
     push( @files, @wmafiles ) if ( $^O eq "MSWin32" );
     my @orphans;
 

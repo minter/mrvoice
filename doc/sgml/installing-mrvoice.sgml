@@ -14,6 +14,7 @@
         <listitem> <para>An MP3 player.  <ulink url="http://www.winamp.com/">WinAmp</ulink> version 5 is recommended.  If you plan on playing Windows Media Audio (WMA) files, you will need at least WinAmp Version 5, Full install (not "Lite")</para></listitem>
         <listitem><para>The <ulink url="http://www.kostaa.com/winamp/index.html">httpQ plugin</ulink> for WinAmp.  <emphasis>Optional, but recommended</emphasis></para></listitem>
         <listitem><para>The <ulink url="http://www.lunenburg.org/mrvoice/files/">Ogg Vorbis plugin</ulink> for WinAmp.  <emphasis>Optional, but recommended</emphasis></para></listitem>
+        <listitem><para>The <ulink url="http://www.rarewares.org/mp4.html">AAC plugin</ulink> for WinAmp.  <emphasis>Optional, but required if you want to use AAC/MP4 files</emphasis></para></listitem>
       </itemizedlist>
       </para>
     </sect2>
@@ -51,11 +52,17 @@
               <listitem>
                 <para><ulink url="http://www.cpan.org/modules/by-module/Tk/">Tk::ProgressBar::Mac</ulink></para>
               </listitem>
+              <listitem>
+                <para><ulink url="http://www.cpan.org/modules/by-module/MP4/">MP4::Info</ulink></para>
+              </listitem>
             </itemizedlist>
           </para>
         </listitem>
         <listitem>
           <para>An MP3 player.  <ulink url="http://www.xmms.org/">xmms</ulink> is recommended.</para>
+        </listitem>  
+        <listitem>
+          <para><ulink url="http://faac.sourceforge.net/">AAC plugin for XMMS</ulink>.  <emphasis>Optional, but needed if you want to use AAC/MP4/M4A files.</emphasis></para>
         </listitem>  
       </itemizedlist>
     </para>
