@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.3 2001/09/26 15:21:51 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.4 2001/09/26 15:36:02 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
@@ -46,10 +46,10 @@
     </itemizedlist>
   </sect1>
 
-  <sect1><title>Installation steps</title>
+  <sect1><title>Installation Steps</title>
     <para>This will help you get Mr. Voice up and running on either a Unix or Windows system.</para>
 
-    <sect2><title>Unix installation instructions</title>
+    <sect2><title>Unix Installation Instructions</title>
       <itemizedlist>
         <listitem>
           <para>Unpack the <filename>mrvoice-x.x.tar.gz</filename> archive.  It will create a <filename>mrvoice-x.x</filename> directory.  The <filename>mrvoice.pl</filename> file is the only one needed to run the program (meaning that you can move <filename>mrvoice.pl</filename> to another location after you're done configuring it), but there are other files in the archive, such as the <filename>dbinit.sql</filename> database initilization script, documentation, licenses, etc.</para>
@@ -87,7 +87,7 @@ mysql>
 
     <sect2><title>Windows Installation Instructions</title>
       <para>First, install all of the supporting software.  Install WinAmp, ActivePerl, and ActiveTCL the normal way, by double-clicking the installer icons and using the defaults provided.</para>
-      <sect3><title>Installing and setting up MySQL</title>
+      <sect3><title>Installing and Setting Up MySQL</title>
         <itemizedlist>
           <listitem>
             <para>Unzip the MySQL .zip file that you downloaded to a temporary place (such as C:\mysql-temp).  Go to that directory and run the <filename>setup.exe</filename> file.  It will install into <filename>C:\mysql</filename> by default - accept that unless you have a reason to put it somewhere else.  Choose the "Typical" installation.</para>
@@ -109,7 +109,7 @@ mysql>
           </listitem>
         </itemizedlist>
       </sect3>
-      <sect3><title>Installing the Perl modules</title>
+      <sect3><title>Installing the Perl Modules</title>
       <para>The next step is to install the needed Perl modules.  Thanks to the great PPM system that ActiveState provides for their ActivePerl distribution, this is a snap. To start PPM, open a Command Prompt/DOS Window.  Type <userinput>ppm</userinput> and hit enter.  You should see "PPM Interactive Shell" and a <prompt>PPM></prompt> prompt. From that prompt, we'll install the modules. <note><para>You must be connected to the internet to download and install these modules.</para></note>
         <itemizedlist>
           <listitem>
@@ -132,7 +132,7 @@ mysql>
           </listitem>
         </itemizedlist>
       </sect3>
-      <sect3><title>Installing the Mr. Voice software</title>
+      <sect3><title>Installing the Mr. Voice Software</title>
         <para>Now we will install the Mr. Voice software itself, and set up its environment.</para>
         <itemizedlist>
           <listitem>
