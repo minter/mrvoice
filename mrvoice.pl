@@ -3880,6 +3880,11 @@ sub advanced_search
     my $end_date  = $today[3];
     my $end_year  = $today[5] + 1900;
 
+    my @months = (
+        '',    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
+        'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    );
+
     my $box = $mw->DialogBox(
         -title   => "Advanced Search",
         -buttons => [ "Ok", "Cancel" ]
@@ -3897,7 +3902,7 @@ sub advanced_search
     $adv_searchframe_start->Label( -text => "Start date: " )
       ->pack( -side => 'left' );
     my $start_month_button = $adv_searchframe_start->Menubutton(
-        -text        => "Month ($start_month)",
+        -text        => "$months[$start_month]",
         -relief      => 'raised',
         -indicatoron => 1
     )->pack( -side => "left" );
@@ -3911,14 +3916,14 @@ sub advanced_search
             -value    => $i,
             -variable => \$start_month,
             -command  => sub {
-                update_button( $start_month_button, "Month", $start_month );
+                update_button( $start_month_button, $months[$start_month] );
             }
         );
     }
     $adv_searchframe_start->Label( -text => "/" )->pack( -side => 'left' );
 
     my $start_date_button = $adv_searchframe_start->Menubutton(
-        -text        => "Date ($start_date)",
+        -text        => "$start_date",
         -relief      => 'raised',
         -indicatoron => 1
     )->pack( -side => "left" );
@@ -3931,12 +3936,12 @@ sub advanced_search
             -value    => $i,
             -variable => \$start_date,
             -command  =>
-              sub { update_button( $start_date_button, "Date", $start_date ); }
+              sub { update_button( $start_date_button, $start_date ); }
         );
     }
     $adv_searchframe_start->Label( -text => "/" )->pack( -side => 'left' );
     my $start_year_button = $adv_searchframe_start->Menubutton(
-        -text        => "Year ($start_year)",
+        -text        => "$start_year",
         -relief      => 'raised',
         -indicatoron => 1
     )->pack( -side => "left" );
@@ -3949,7 +3954,7 @@ sub advanced_search
             -value    => $i,
             -variable => \$start_year,
             -command  =>
-              sub { update_button( $start_year_button, "Year", $start_year ); }
+              sub { update_button( $start_year_button, $start_year ); }
         );
     }
 
@@ -3961,7 +3966,7 @@ sub advanced_search
     $adv_searchframe_end->Label( -text => "End date:   " )
       ->pack( -side => 'left' );
     my $end_month_button = $adv_searchframe_end->Menubutton(
-        -text        => "Month ($end_month)",
+        -text        => "$months[$end_month]",
         -relief      => 'raised',
         -indicatoron => 1
     )->pack( -side => "left" );
@@ -3973,14 +3978,13 @@ sub advanced_search
             -label    => $i,
             -value    => $i,
             -variable => \$end_month,
-            -command  =>
-              sub { update_button( $end_month_button, "Month", $end_month ); }
+            -command  => sub { update_button( $end_month_button, $end_month ); }
         );
     }
     $adv_searchframe_end->Label( -text => "/" )->pack( -side => 'left' );
 
     my $end_date_button = $adv_searchframe_end->Menubutton(
-        -text        => "Date ($end_date)",
+        -text        => "$end_date",
         -relief      => 'raised',
         -indicatoron => 1
     )->pack( -side => "left" );
@@ -3992,13 +3996,12 @@ sub advanced_search
             -label    => $i,
             -value    => $i,
             -variable => \$end_date,
-            -command  =>
-              sub { update_button( $end_date_button, "Date", $end_date ); }
+            -command  => sub { update_button( $end_date_button, $end_date ); }
         );
     }
     $adv_searchframe_end->Label( -text => "/" )->pack( -side => 'left' );
     my $end_year_button = $adv_searchframe_end->Menubutton(
-        -text        => "Year ($end_year)",
+        -text        => "$end_year",
         -relief      => 'raised',
         -indicatoron => 1
     )->pack( -side => "left" );
@@ -4010,8 +4013,7 @@ sub advanced_search
             -label    => $i,
             -value    => $i,
             -variable => \$end_year,
-            -command  =>
-              sub { update_button( $end_year_button, "Year", $end_year ); }
+            -command  => sub { update_button( $end_year_button, $end_year ); }
         );
     }
 
@@ -4063,8 +4065,8 @@ sub advanced_search
 
 sub update_button()
 {
-    my ( $button, $label, $value ) = @_;
-    $button->configure( -text => "$label ($value)" );
+    my ( $button, $value ) = @_;
+    $button->configure( -text => "$value" );
 }
 
 sub advancedmenu_items
