@@ -1,6 +1,8 @@
 Mon  Dec 29 2003	H. Wade Minter (minter@lunenburg.org)
      * You can launch a m3u playlist from the contents of the Holding 
        Tank now.  Suggested by Bill C. in Portland.
+     * Added a simple HTML documentation viewer based on Tk::Web.  Dunno
+       if it works on Windows, though.
 
 Mon  Dec 15 2003	H. Wade Minter (minter@lunenburg.org)
      * Fixed a typo in a variable name.
@@ -517,4 +519,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.106 2003/12/29 19:51:42 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.107 2003/12/29 21:09:10 minter Exp $
