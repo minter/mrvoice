@@ -1,3 +1,6 @@
+Thu  Nov  6 2003	H. Wade Minter (minter@lunenburg.org)
+     * Tagged 1.9.2, a bugfix release for the drag-and-drop problem.
+
 Tue  Nov  4 2003	H. Wade Minter (minter@lunenburg.org)
      * Override the default behavior of the extended select mode for
        Tk::Listbox, to fix a problem where drag-and-drop selected too
@@ -496,4 +499,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.100 2003/11/04 17:08:38 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.101 2003/11/06 18:56:16 minter Exp $
