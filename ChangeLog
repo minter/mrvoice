@@ -1,5 +1,6 @@
 Thu  Nov  7 2002	H. Wade Minter (minter@lunenburg.org)
      * Added a "dump database" option from the File menu.
+     * Added an "import database dumpfile" option from the File menu.
      * Other minor cosmetic fixes.
 
 Wed  Nov  6 2002	H. Wade Minter (minter@lunenburg.org)
@@ -355,4 +356,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.66 2002/11/07 15:35:34 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.67 2002/11/07 16:27:10 minter Exp $
