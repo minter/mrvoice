@@ -194,6 +194,9 @@ V.   POPULATING THE DATABASE:
         The NULL in the first field tells the database to assign the next free 
         number for ID, and the NULL at the end says to update the timestamp 
         with the current time.
+    
+        After adding the entry to the mrvoice table, you must then copy the
+        file to the directory pointed to by the $filepath variable.
 
 VI.   RUNNING THE PROGRAM:
       After you've done all of the above, it's time to run the program!  Make
@@ -218,4 +221,4 @@ VIII. REPORTING BUGS:
 
 --------------------------------------------------------------------------
 
-CVS ID: $Id: README,v 1.9 2001/03/06 23:08:55 minter Exp $
+CVS ID: $Id: README,v 1.10 2001/03/07 00:36:14 minter Exp $
