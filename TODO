@@ -1,8 +1,9 @@
 Things I'm currently working on:
 
+* Category variables are broken!
 * Debug mode - log stuff to a file with the proper switch.
 * Investigate switching to an HList, to get the -data option
 * General cleanup and pretty-fication.
 
 --
-CVS ID: $Id: TODO,v 1.33 2004/03/01 15:37:59 minter Exp $
+CVS ID: $Id: TODO,v 1.34 2004/03/04 03:46:21 minter Exp $
