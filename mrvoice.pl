@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.173 2002/11/09 14:39:26 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.174 2002/11/11 01:31:35 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -186,6 +186,31 @@ static char * mrvoice_3232_xpm[] = {
 "..................)'''>.........",
 "..................];;;^........."};
 end-of-icon-data
+
+our $sound_icon_data = <<end_of_data;
+R0lGODlhGQAgAOcAAP/////////////////////////////3///3///3///3///3///3//f3//f3
+//f3//f3//f3//f39/f39/f39/f39/f39/f39/fv9/fv9/fv9/fv9/fv9+/v9+/v9+/v9+/v9+/v
+9+/v7+/v7+/v7+/v7+/v7+fn5+fn5+fn5+fn5+fn597e3t7e3t7e3t7e3t7e3t7e3s7O/87O/87O
+/87O/87O/87O/87Ozs7Ozs7Ozs7Ozs7OzsbGxsbGxsbGxsbGxsbGxr29vb29vb29vb29vb29vbW1
+tbW1tbW1tbW1tbW1ta21ta21ta21ta21ta21ta2tra2tra2tra2tra2tra2tra2lpa2lpa2lpa2l
+pa2lpaWlpaWlpaWlpaWlpaWlpaWlpZyc/5yc/5yc/5yc/5yc/5yc/5SUlJSUlJSUlJSUlJSUlIyM
+jIyMjIyMjIyMjIyMjISEhISEhISEhISEhISEhHt7e3t7e3t7e3t7e3t7e3Nzc3Nzc3Nzc3Nzc3Nz
+c3Nzc2NjzmNjzmNjzmNjzmNjzmNjzmNjY2NjY2NjY2NjY2NjY1paWlpaWlpaWlpaWlpaWlpaWlJS
+UlJSUlJSUlJSUlJSUkpSUkpSUkpSUkpSUkpSUkpKSkpKSkpKSkpKSkpKSkJKSkJKSkJKSkJKSkJK
+SkJKSkJCQkJCQkJCQkJCQkJCQjk5OTk5OTk5OTk5OTk5OTExYzExYzExYzExYzExYzExMTExMTEx
+MTExMTExMTEpKTEpKTEpKTEpKTEpKSkxKSkxKSkxKSkxKSkxKSkpKSkpKSkpKSkpKSkpKSEpISEp
+ISEpISEpISEpISEhKSEhKSEhKSEhKSEhKSEhKSEhISEhISEhISEhISEhIRghIRghIRghIRghIRgh
+IRgYGBgYGBgYGBgYGBgYGBAQEBAQEBAQEBAQEBAQEAgIEAgIEAgIEAgIEAgIEAgICAgICAgICAgI
+CAgICAgAAAgAAAgAAAgAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAAGQAgAAAI/gABCBTI
+AhGiRggTdmrUqWHDVp1atRoIQIRBEQM7VKyIQYRHjCJY8BpoEUcjjxU/slAZkgULIRMBFBRikUXK
+jyFzunQZxVhFRDQBnESJU+dKl0xazVwptGjRozuFGEO4EBNCpjiPtjzasxGaKF/R0CT61GgUiDI9
+Hr2Z1SiLrhg3gqzIQlZOi1vfGusUlyRdWXbVirgDtSemviBDyhIUmO9KRC178qWIsa4gMYI+Oh7M
+E9zkjTIXi5GRWXNIyHo/ExQtA0BmpSIauST81rNGAIBZAyAtwvHJxyKieI4rS4wYIQJl8BbRymOn
+2bU/i6GoXEzg5ix+Exb+uThm48YbqK+UXVN4TAD/BKkHb90jdseE0QwX+K/++vDMPf5msR3ceQBC
+CJHeZe1hRx5tUfzTHEUADtjeR+Qh0lknt80loHqBscBXSLTJ55NfFV34z3g5ofaWggwSJeA/LJl4
+4oICxQWSgDihFhmKlCUmwlgrueUhZTGK0JFgbr04EAZysSUYVCyg8Y8xO0YhBBNRVGmllV+BpeVX
+Chrj5ZfbgCPmmGL+UyY49dUXEAA7
+end_of_data
 
 our $logo_photo_data = <<end_of_data;
 R0lGODlh5wCOAIQAAP///6qqqsfHx+Pj4wAAAB0dHVVVVXJycjk5OY6OjuPj/8fH/6qq/46O/1VV
@@ -1199,7 +1224,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.173 $';
+  $rev = '$Revision: 1.174 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -1921,6 +1946,7 @@ sub read_rcfile
 sub StartDrag
 {
   # Starts the drag for the hotkey drag-and-drop.
+  $sound_icon = $mw->Photo(-data=>$sound_icon_data);
 
   my ($token) = @_;
   my $widget = $token->parent;
@@ -1930,7 +1956,7 @@ sub StartDrag
   {
     my $text = $widget->get($index);
     $text =~ s/.*?(".*?").*/$1/;
-    $token->configure(-text=>$text);
+    $token->configure(-image=>$sound_icon);
     my ($X, $Y) = ($event->X, $event->Y);
     $token->raise;
     $token->deiconify;
