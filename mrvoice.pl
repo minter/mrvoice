@@ -82,6 +82,7 @@ our $title;                     # The "Title" search entry field
 our $artist;                    # The "Artist" search entry field
 our $anyfield;                  # The "Any Field" search entry field
 our $cattext;                   # The "Extra Info" search entry field
+our $authenticated = 0;         # Has the user provided the proper password?
 ##########
 
 # Allow searches of all music publishers by default.
@@ -1395,7 +1396,18 @@ sub build_category_menubutton
 
 sub bulk_add
 {
-    print "Using bulk add\n";
+    print "Using bulk add\n" if $debug;
+    if ( ( $config{write_password} ) && ( !$authenticated ) )
+    {
+        print "There is a write_password of $config{write_password}\n"
+          if $debug;
+        if ( !authenticate_user() )
+        {
+            print "User authentication failed\n" if $debug;
+            $status = "You do not have permission to bulk-add songs";
+            return;
+        }
+    }
     my ( @accepted, @rejected, $directory, $longcat, $db_cat );
     my $bulkadd_publisher = "OTHER";
     my $box1              = $mw->DialogBox(
@@ -1600,6 +1612,17 @@ sub bulk_add
 sub add_category
 {
     print "Adding new category\n" if $debug;
+    if ( ( $config{write_password} ) && ( !$authenticated ) )
+    {
+        print "There is a write_password of $config{write_password}\n"
+          if $debug;
+        if ( !authenticate_user() )
+        {
+            print "User authentication failed\n" if $debug;
+            $status = "You do not have permission to add categories";
+            return;
+        }
+    }
     my ( $addcat_code, $addcat_desc );
     my $box = $mw->DialogBox(
         -title   => "Add a category",
@@ -1686,6 +1709,17 @@ sub add_category
 sub edit_category
 {
     print "Editing category\n" if $debug;
+    if ( ( $config{write_password} ) && ( !$authenticated ) )
+    {
+        print "There is a write_password of $config{write_password}\n"
+          if $debug;
+        if ( !authenticate_user() )
+        {
+            print "User authentication failed\n" if $debug;
+            $status = "You do not have permission to edit categories";
+            return;
+        }
+    }
     my $edit_cat;
     my $box = $mw->DialogBox(
         -title   => "Choose a category to edit",
@@ -1779,6 +1813,17 @@ sub edit_category
 sub delete_category
 {
     print "Deleting category\n" if $debug;
+    if ( ( $config{write_password} ) && ( !$authenticated ) )
+    {
+        print "There is a write_password of $config{write_password}\n"
+          if $debug;
+        if ( !authenticate_user() )
+        {
+            print "User authentication failed\n" if $debug;
+            $status = "You do not have permission to delete categories";
+            return;
+        }
+    }
     my $box = $mw->DialogBox(
         -title   => "Delete a category",
         -buttons => [ "Ok", "Cancel" ]
@@ -1938,6 +1983,17 @@ sub accept_songdrop
 sub add_new_song
 {
     print "Adding new song\n" if $debug;
+    if ( ( $config{write_password} ) && ( !$authenticated ) )
+    {
+        print "There is a write_password of $config{write_password}\n"
+          if $debug;
+        if ( !authenticate_user() )
+        {
+            print "User authentication failed\n" if $debug;
+            $status = "You do not have permission to add new songs";
+            return;
+        }
+    }
     my (
         $addsong_title, $addsong_artist,   $addsong_info,
         $addsong_cat,   $addsong_filename, $addsong_publisher
@@ -2151,9 +2207,48 @@ sub add_new_song
     }
 }
 
+sub authenticate_user
+{
+    print "Attempting to authenticate user\n" if $debug;
+    my $password;
+    my $authbox = $mw->DialogBox(
+        -title   => "Please Enter Your Password",
+        -buttons => [ "Authenticate", "Cancel" ]
+    );
+    $authbox->Icon( -image => $icon );
+    $authbox->Label( -text =>
+          "You must provide a password in order to access this function.\nPlease enter it below."
+    )->pack( -side => 'top' );
+    $authbox->Entry( -width => 8, -textvariable => \$password, -show => '*' )
+      ->pack( -side => 'top' );
+    my $choice = $authbox->Show;
+    return if ( $choice eq "Cancel" );
+
+    if ( $password eq $config{write_password} )
+    {
+        $authenticated = 1;
+        return $authenticated;
+    }
+    else
+    {
+        return;
+    }
+}
+
 sub edit_preferences
 {
     print "Editing preferences\n" if $debug;
+    if ( ( $config{write_password} ) && ( !$authenticated ) )
+    {
+        print "There is a write_password of $config{write_password}\n"
+          if $debug;
+        if ( !authenticate_user() )
+        {
+            print "User authentication failed\n" if $debug;
+            $status = "You do not have permission to edit the Preferences";
+            return;
+        }
+    }
     my $box = $mw->DialogBox(
         -title          => "Edit Preferences",
         -buttons        => [ "Ok", "Cancel" ],
@@ -2315,6 +2410,16 @@ sub edit_preferences
         -textvariable => \$config{'httpq_pw'}
     )->pack( -side => 'right' );
 
+    my $writepass_frame = $other_page->Frame()->pack( -fill => 'x' );
+    $writepass_frame->Label( -text => "Write Access Password (empty for none)" )
+      ->pack( -side => 'left' );
+    $writepass_frame->Entry(
+        -background   => 'white',
+        -width        => 8,
+        -show         => '*',
+        -textvariable => \$config{'write_password'}
+    )->pack( -side => 'right' );
+
     $notebook->pack(
         -expand => "yes",
         -fill   => "both",
@@ -2362,6 +2467,17 @@ sub edit_preferences
 sub edit_song
 {
     print "Editing song\n" if $debug;
+    if ( ( $config{write_password} ) && ( !$authenticated ) )
+    {
+        print "There is a write_password of $config{write_password}\n"
+          if $debug;
+        if ( !authenticate_user() )
+        {
+            print "User authentication failed\n" if $debug;
+            $status = "You do not have permission to edit songs";
+            return;
+        }
+    }
     my (@selected) = $mainbox->info('selection');
     print "Selected items are " . join( ", ", @selected ) . "\n" if $debug;
     my ( $edit_title, $edit_artist, $edit_category, $edit_publisher,
@@ -2611,6 +2727,17 @@ sub edit_song
 sub delete_song
 {
     print "Deleting song\n" if $debug;
+    if ( ( $config{write_password} ) && ( !$authenticated ) )
+    {
+        print "There is a write_password of $config{write_password}\n"
+          if $debug;
+        if ( !authenticate_user() )
+        {
+            print "User authentication failed\n" if $debug;
+            $status = "You do not have permission to delete songs";
+            return;
+        }
+    }
     my (@selection) = $mainbox->info('selection');
     print "Deleting songs " . join( ", ", @selection ) . "\n" if $debug;
     my $count = scalar @selection;

@@ -1,3 +1,9 @@
+Sun  Jan  2 2005	H. Wade Minter (minter@lunenburg.org)
+     * Add password protection for Randy in KC.  You can now set a write
+       access password in the Preferences that will cause any attempt to
+       modify things (add/edit/delete songs and categories) to ask for that
+       password before proceeding.
+
 Sat  Jan  1 2005	H. Wade Minter (minter@lunenburg.org)
      * Make the mainbox a DropSite so that if you drop a file onto it,
        the add_song dialog comes up.  Should be handy for Windows users.
