@@ -2578,11 +2578,11 @@ EOF
         );
         $holdingtank->Button(
             -image   => $arrowup,
-            -command => [ \&move_tank, "-1" ]
+            -command => [ \&move_tank, "-before" ]
         )->pack( -side => 'left' );
         $holdingtank->Button(
             -image   => $arrowdown,
-            -command => [ \&move_tank, "1" ]
+            -command => [ \&move_tank, "-after" ]
         )->pack( -side => 'right' );
         $tankbox = $holdingtank->Scrolled(
             'HList',
@@ -2650,22 +2650,51 @@ EOF
 sub move_tank
 {
 
-    # Blatantly cribbed from Mastering Perl/Tk's Tk::NavListbox example
-    my $lb          = $tankbox;
-    my $direction   = shift;
-    my (@selection) = $lb->curselection;
-    my $index       = $selection[0];
+    # Function courtesy of Kyle at sickduck.org
+    my $h         = $tankbox;
+    my $direction = shift;
 
-    # Sanity checks
-    return if ( $index == 0 && $direction == -1 );
-    return if ( $index == $lb->size() - 1 && $direction == 1 );
+    #Do nothing unless an item is selected in the HList
+    return unless my $target = $h->infoAnchor;
 
-    my $newindex = $index + $direction;
+    #Based on direction to be moved, get index for prior/next item in HList
+    my $neighbor;
+    if ( $direction =~ /before/i )
+    {
+        $neighbor = $h->infoPrev($target);
+    }
+    else
+    {
+        $neighbor = $h->infoNext($target);
+    }
 
-    my $item = $lb->get($index);
-    $lb->delete($index);
-    $lb->insert( $newindex, $item );
-    $lb->selectionSet($newindex);
+    #infoNext/infoPrev returns no value if there is no item after/before the
+    #target entry.  This generally means we're already at the end/beginning
+    #of list, so we can return with no action.
+    return unless $neighbor;
+
+    #We need to grab the text of the entry that needs to be moved
+    my $targettext = $h->entrycget( $target, '-text' );
+
+    #Now we can delete the entry...
+    $h->delete( 'entry', $target );
+
+    #then we use the passed direction ("-before" or "-after") to add
+    #the entry information appropriately...
+    $h->add(
+        $target,
+        -data => $target,
+        -text => $targettext,
+        $direction, $neighbor
+    );
+
+    #...and assumedly we want the newly re-inserted item to be selected...
+    $h->anchorSet($target);
+
+    #...and assumedly, in a scrolling list, we want to have the re-inserted
+    #item be visible.
+    $h->see($target);
+    return;
 }
 
 sub clear_tank
