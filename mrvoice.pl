@@ -34,7 +34,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.186 2002/12/11 21:11:53 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.187 2002/12/12 18:30:17 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1261,7 +1261,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.186 $';
+  $rev = '$Revision: 1.187 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -1568,74 +1568,6 @@ sub get_filename
   $sth->finish;
   my $filename = $result[0];
   return ($filename);
-}
-
-sub set_hotkey
-{
-  my $id = get_song_id($mainbox);
-  $box = $mw->DialogBox(-title=>"Bind Hotkeys", -buttons=>["Apply","Cancel"]);
-  $box->Icon(-image=>$icon);
-  $box->add("Label",-text=>"Choose the keys to bind song $id to:")->pack();
-  $box->add("Checkbutton",-text=>"F1",
-                          -variable=>\$f1_cb)->pack();
-  $box->add("Checkbutton",-text=>"F2",
-                          -variable=>\$f2_cb)->pack();
-  $box->add("Checkbutton",-text=>"F3",
-                          -variable=>\$f3_cb)->pack();
-  $box->add("Checkbutton",-text=>"F4",
-                          -variable=>\$f4_cb)->pack();
-  $box->add("Checkbutton",-text=>"F5",
-                          -variable=>\$f5_cb)->pack();
-  $box->add("Checkbutton",-text=>"F6",
-                          -variable=>\$f6_cb)->pack();
-  $box->add("Checkbutton",-text=>"F7",
-                          -variable=>\$f7_cb)->pack();
-  $box->add("Checkbutton",-text=>"F8",
-                          -variable=>\$f8_cb)->pack();
-  $box->add("Checkbutton",-text=>"F9",
-                          -variable=>\$f9_cb)->pack();
-  $box->add("Checkbutton",-text=>"F10",
-                          -variable=>\$f10_cb)->pack();
-  $box->add("Checkbutton",-text=>"F11",
-                          -variable=>\$f11_cb)->pack();
-  $box->add("Checkbutton",-text=>"F12",
-                          -variable=>\$f12_cb)->pack();
-  $result = $box->Show();
-
-  if ($result eq "Apply")
-  {
-    $filename = get_filename($id);
-    $f1=$filename if ($f1_cb);
-    $f2=$filename if ($f2_cb);
-    $f3=$filename if ($f3_cb);
-    $f4=$filename if ($f4_cb);
-    $f5=$filename if ($f5_cb);
-    $f6=$filename if ($f6_cb);
-    $f7=$filename if ($f7_cb);
-    $f8=$filename if ($f8_cb);
-    $f9=$filename if ($f9_cb);
-    $f10=$filename if ($f10_cb);
-    $f11=$filename if ($f11_cb);
-    $f12=$filename if ($f12_cb);
-    $f1_cb=0;
-    $f2_cb=0;
-    $f3_cb=0;
-    $f4_cb=0;
-    $f5_cb=0;
-    $f6_cb=0;
-    $f7_cb=0;
-    $f8_cb=0;
-    $f9_cb=0;
-    $f10_cb=0;
-    $f11_cb=0;
-    $f12_cb=0;
-    $status = "Hotkey assigned";
-  }
-  else
-  {
-    $status = "Hotkey assignment cancelled";
-  }
-
 }
 
 sub stop_mp3
@@ -2646,8 +2578,6 @@ if ($^O eq "MSWin32")
 
 $stopbutton->configure(-bg=>'red',
                        -activebackground=>'tomato3');
-#$statusframe->Button(-text=>"Assign Hotkey",
-#                     -command=>\&set_hotkey)->pack(-side=>'right');
 
 $statusframe->Label(-textvariable=>\$status,
                     -relief=>'sunken')->pack(-anchor=>'center',
