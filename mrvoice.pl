@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/25 14:56:57 $
-#	CVS REVISION NUMBER:    $Revision: 1.63 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/25 16:56:55 $
+#	CVS REVISION NUMBER:    $Revision: 1.64 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -522,6 +522,10 @@ sub edit_preferences
                                 })->pack(-side=>'right');
   $frame6->Entry(-width=>30,
                  -textvariable=>\$mp3player)->pack(-side=>'right'); 
+  my $frame7 = $box->add("Frame")->pack(-fill=>'x');
+  $frame7->Label(-text=>"Number of Dynamic Documents To Show")->pack(-side=>'left');
+  $frame7->Entry(-width=>2,
+                 -textvariable=>\$savefile_max)->pack(-side=>'right');
 
   my $result = $box->Show();
 
@@ -544,6 +548,7 @@ sub edit_preferences
       print RCFILE "filepath::$filepath\n";
       print RCFILE "savedir::$savedir\n";
       print RCFILE "mp3player::$mp3player\n";
+      print RCFILE "savefile_max::$savefile_max\n";
       close(RCFILE);
     }
   }
