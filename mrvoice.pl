@@ -34,7 +34,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.146 2002/08/13 19:34:39 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.147 2002/08/13 19:51:23 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -69,6 +69,19 @@ our $mp3types = [
 if ("$^O" eq "MSWin32")
 {
   our $rcfile = "C:\\mrvoice.cfg";
+  BEGIN 
+  {
+    if ($^O eq "MSWin32")
+    {
+      require LWP::UserAgent;
+      LWP::UserAgent->import();
+      require HTTP::Request;
+      HTTP::Request->import();
+    }
+  }
+  $agent = LWP::UserAgent->new;
+  $agent->agent("Mr. Voice Audio Software/$0 ");
+
 
   # You have to manually set the time zone for Windows.
   my ($l_min, $l_hour, $l_year, $l_yday) = (localtime $^T)[1, 2, 5, 7];
@@ -102,7 +115,7 @@ else
 
 #####
 
-my $version = "1.5.4";			# Program version
+my $version = "1.5.5";			# Program version
 our $status = "Welcome to Mr. Voice version $version";		
 
 # Define 32x32 XPM icon data
@@ -329,7 +342,8 @@ sub bind_hotkeys
   if ($^O eq "MSWin32")
   {
     $window->bind("<Shift-Key-Escape>", sub {
-    # Replace this with code to fade-stop WinAmp
+      $req = HTTP::Request->new(GET => "http://localhost:4800/fadeoutandstop?p=$httpq_pw");
+      $res = $agent->request($req);
     });
   }
 }
@@ -880,6 +894,11 @@ sub edit_preferences
   $numdyn_frame->Entry(-width=>2,
                  -textvariable=>\$savefile_max)->pack(-side=>'right');
 
+  my $httpq_frame = $other_page->Frame()->pack(-fill=>'x');
+  $httpq_frame->Label(-text=>"httpQ Password (WinAmp only, optional)")->pack(-side=>'left');
+  $httpq_frame->Entry(-width=>8,
+                      -textvariable=>\$httpq_pw)->pack(-side=>'right');
+
   $notebook->pack(-expand=>"yes",
                   -fill=>"both",
 		  -padx=>5,
@@ -1029,7 +1048,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.146 $';
+  $rev = '$Revision: 1.147 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -2185,7 +2204,8 @@ if ($^O eq "MSWin32")
   # It's not changing the relief back after it's done, though.
   $stopbutton->bindtags([$stopbutton,ref($stopbutton),$stopbutton->toplevel,'all']);
   $stopbutton->bind("<Shift-ButtonRelease-1>" => sub {
-    # Replace this with the code to fade-stop WinAmp
+      $req = HTTP::Request->new(GET => "http://localhost:4800/fadeoutandstop?p=$httpq_pw");
+      $res = $agent->request($req);
     });
 }
 
