@@ -4,7 +4,7 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.21 2002/02/01 19:53:37 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.22 2002/02/05 17:14:33 minter Exp $ 
 -->
 <book status="draft">
 
@@ -60,6 +60,8 @@
 	<listitem><para>Mr. Voice is friendler to audio file formats other than MP3.  You can use WAV files, OGG files, etc.</para></listitem>
 	<listitem><para>The HTML documentaion now builds both multi-page (with a main page of <filename>index.html</filename>) and single-page formats (with a main page of <filename>mrvoice.html</filename>)</para></listitem>
 	<listitem><para>The search fields in the main window now have arrow selectors to the right of each box.  You can use these selectors to pop up a list of things you have entered into that search box.</para></listitem>
+	<listitem><para>Minor changes to the menu bar at the top of the page - should provide a more native look-and-feel now.</para></listitem>
+	<listitem><para>Took a first stab at creating an icon for the project.  It's not pretty, but it's something.</para></listitem>
       </itemizedlist>
     </para>
   </sect1>
