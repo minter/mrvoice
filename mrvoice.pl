@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.366 2004/04/19 00:11:54 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.367 2004/04/19 17:33:43 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -174,7 +174,7 @@ else
 
 #####
 
-my $version = "1.10.5";    # Program version
+my $version = "1.10.6";    # Program version
 our $status = "Welcome to Mr. Voice version $version";
 
 # Define 32x32 XPM icon data
@@ -2266,7 +2266,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.366 $';
+    my $rev    = '$Revision: 1.367 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::mysql->VERSION;
