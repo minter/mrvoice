@@ -14,8 +14,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/09/25 16:35:50 $
-#	CVS REVISION NUMBER:    $Revision: 1.43 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/09/26 17:07:11 $
+#	CVS REVISION NUMBER:    $Revision: 1.44 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -58,6 +58,23 @@ $mp3types = [
     ['MP3 Files', '*.mp3'],
     ['All Files', '*'],
   ];
+
+# Check to see if we're on Windows or Linux, and set the RC file accordingly.
+if ("$^O" eq "MSWin32")
+{
+  $rcfile = "C:\\mrvoice.cfg";
+}
+else
+{
+  $rcfile = "~/.mrvoicerc";
+  $rcfile =~ s{ ^ ~ ( [^/]* ) }
+              { $1 
+                   ? (getpwnam($1))[7] 
+                   : ( $ENV{HOME} || $ENV{LOGDIR} 
+                        || (getpwuid($>))[7]
+                     )
+              }ex;
+}
 
 #####
 
@@ -820,10 +837,10 @@ sub do_exit
 
 sub read_rcfile
 {
-  $filename = <~/.mrvoicerc>;
-  if (-r $filename)
+#  $filename = <~/.mrvoicerc>;
+  if (-r $rcfile)
   {
-    open (RCFILE,$filename);
+    open (RCFILE,$rcfile);
     while (<RCFILE>)
     {
       chomp;
