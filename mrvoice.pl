@@ -9,6 +9,10 @@ use MPEG::MP3Info;
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for The
 #              Great American Comedy Company, Raleigh, NC.
 #              http://www.greatamericancomedy.com/
+# CVS INFORMATION:
+#	LAST COMMIT BY AUTHOR: $Author: minter $
+#	LAST COMMIT DATE: $Date: 2001/02/16 16:06:04 $
+#	CVS REVISION NUMBER: $Revision: 1.2 $
 # CHANGELOG:
 #   v0.7 - 1/30/01:
 #     + Fixed resize bug - resizing will now change the size of the listbox
