@@ -35,7 +35,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.315 2004/03/01 01:27:47 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.316 2004/03/01 01:40:53 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2217,7 +2217,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.315 $';
+    my $rev = '$Revision: 1.316 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3281,8 +3281,6 @@ sub StartDrag
     my $index  = $widget->nearest( $event->y );
     if ( defined $index )
     {
-        my $text = $widget->get($index);
-        $text =~ s/.*?(".*?").*/$1/;
         $current_token->configure( -image => $sound_icon );
         my ( $X, $Y ) = ( $event->X, $event->Y );
         $current_token->raise;
