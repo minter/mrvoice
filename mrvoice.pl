@@ -182,17 +182,6 @@ else
     }
 }
 
-# The following variables set the locations of MP3s for static hotkey'd
-# sounds
-#STARTCSZ
-#our $altt = "TaDa.mp3";
-#our $alty = "CalloutMusic.mp3";
-#our $altb = "BrownBag.mp3";
-#our $altg = "Groaner.mp3";
-#our $altv = "PriceIsRightTheme.mp3";
-
-#ENDCSZ
-
 #####
 
 my $version = "2.0pre4";    # Program version
@@ -590,14 +579,6 @@ sub bind_hotkeys
     $window->bind( "<Control-Key-h>", \&list_hotkeys );
     $window->bind( "<Control-Key-t>", \&holding_tank );
 
-    #STARTCSZ
-    #$window->bind( "<Alt-Key-t>", [ \&play_mp3, "ALT-T" ] );
-    #$window->bind( "<Alt-Key-y>", [ \&play_mp3, "ALT-Y" ] );
-    #$window->bind( "<Alt-Key-b>", [ \&play_mp3, "ALT-B" ] );
-    #$window->bind( "<Alt-Key-g>", [ \&play_mp3, "ALT-G" ] );
-    #$window->bind( "<Alt-Key-v>", [ \&play_mp3, "ALT-V" ] );
-
-    #ENDCSZ
     if ( $^O eq "MSWin32" )
     {
         $window->bind(
@@ -2397,61 +2378,6 @@ sub show_about
     $box->Show;
 }
 
-#STARTCSZ
-#sub show_predefined_hotkeys
-#{
-#    my $box =
-#      $mw->DialogBox( -title => "Predefined Hotkeys", -buttons => ["Close"] );
-#    $box->Icon( -image => $icon );
-#    $box->add( "Label",
-#        -text =>
-#          "The following hotkeys are always available and may not be changed" )
-#      ->pack();
-#    $box->add(
-#        "Label",
-#        -text   => "<Escape> - Stop the currently playing MP3",
-#        -anchor => 'nw'
-#    )->pack( -fill => 'x' );
-#    $box->add(
-#        "Label",
-#        -text   => "<Control-P> - Play the currently selected song",
-#        -anchor => 'nw'
-#    )->pack( -fill => 'x' );
-#    $box->add(
-#        "Label",
-#        -text   => "<Enter> - Perform the currently entered search",
-#        -anchor => 'nw'
-#    )->pack( -fill => 'x' );
-#    $box->add(
-#        "Label",
-#        -text   => "<ALT-t> - The \"Ta-Da\" MIDI",
-#        -anchor => 'nw'
-#    )->pack( -fill => 'x' );
-#    $box->add(
-#        "Label",
-#        -text   => "<ALT-y> - The \"You're Out\" MIDI",
-#        -anchor => 'nw'
-#    )->pack( -fill => 'x' );
-#    $box->add(
-#        "Label",
-#        -text   => "<ALT-b> - The Brown Bag MIDI",
-#        -anchor => 'nw'
-#    )->pack( -fill => 'x' );
-#    $box->add(
-#        "Label",
-#        -text   => "<ALT-g> - The Groaner MIDI",
-#        -anchor => 'nw'
-#    )->pack( -fill => 'x' );
-#    $box->add(
-#        "Label",
-#        -text   => "<ALT-v> - The Price Is Right theme (Volunteer photos)",
-#        -anchor => 'nw'
-#    )->pack( -fill => 'x' );
-#    $box->Show;
-#}
-
-#ENDCSZ
-
 sub wipe_tank
 {
 
@@ -2578,11 +2504,11 @@ EOF
         );
         $holdingtank->Button(
             -image   => $arrowup,
-            -command => [ \&move_tank, "-1" ]
+            -command => [ \&move_tank, "-before" ]
         )->pack( -side => 'left' );
         $holdingtank->Button(
             -image   => $arrowdown,
-            -command => [ \&move_tank, "1" ]
+            -command => [ \&move_tank, "-after" ]
         )->pack( -side => 'right' );
         $tankbox = $holdingtank->Scrolled(
             'HList',
@@ -2650,22 +2576,51 @@ EOF
 sub move_tank
 {
 
-    # Blatantly cribbed from Mastering Perl/Tk's Tk::NavListbox example
-    my $lb          = $tankbox;
-    my $direction   = shift;
-    my (@selection) = $lb->curselection;
-    my $index       = $selection[0];
+    # Function courtesy of Kyle at sickduck.org
+    my $h         = $tankbox;
+    my $direction = shift;
 
-    # Sanity checks
-    return if ( $index == 0 && $direction == -1 );
-    return if ( $index == $lb->size() - 1 && $direction == 1 );
+    #Do nothing unless an item is selected in the HList
+    return unless my $target = $h->infoAnchor;
 
-    my $newindex = $index + $direction;
+    #Based on direction to be moved, get index for prior/next item in HList
+    my $neighbor;
+    if ( $direction =~ /before/i )
+    {
+        $neighbor = $h->infoPrev($target);
+    }
+    else
+    {
+        $neighbor = $h->infoNext($target);
+    }
 
-    my $item = $lb->get($index);
-    $lb->delete($index);
-    $lb->insert( $newindex, $item );
-    $lb->selectionSet($newindex);
+    #infoNext/infoPrev returns no value if there is no item after/before the
+    #target entry.  This generally means we're already at the end/beginning
+    #of list, so we can return with no action.
+    return unless $neighbor;
+
+    #We need to grab the text of the entry that needs to be moved
+    my $targettext = $h->entrycget( $target, '-text' );
+
+    #Now we can delete the entry...
+    $h->delete( 'entry', $target );
+
+    #then we use the passed direction ("-before" or "-after") to add
+    #the entry information appropriately...
+    $h->add(
+        $target,
+        -data => $target,
+        -text => $targettext,
+        $direction, $neighbor
+    );
+
+    #...and assumedly we want the newly re-inserted item to be selected...
+    $h->anchorSet($target);
+
+    #...and assumedly, in a scrolling list, we want to have the re-inserted
+    #item be visible.
+    $h->see($target);
+    return;
 }
 
 sub clear_tank
@@ -2856,18 +2811,6 @@ sub play_mp3
     if ( $action =~ /^f\d+/ )
     {
         $filename = $fkeys{$action}->{filename};
-    }
-    elsif ( $action =~ /^ALT/ )
-    {
-
-        #STARTCSZ
-        #if    ( $action eq "ALT-T" ) { $filename = $altt; }
-        #elsif ( $action eq "ALT-Y" ) { $filename = $alty; }
-        #elsif ( $action eq "ALT-B" ) { $filename = $altb; }
-        #elsif ( $action eq "ALT-G" ) { $filename = $altg; }
-        #elsif ( $action eq "ALT-V" ) { $filename = $altv; }
-
-        #ENDCSZ
     }
     elsif ( $action eq "addsong" )
     {
@@ -3779,14 +3722,6 @@ sub hotkeysmenu_items
             -accelerator => 'Ctrl-T'
         ],
 
-        #STARTCSZ
-        #[
-        #    'command',
-        #    'Show Predefined Hotkeys',
-        #    -command => \&show_predefined_hotkeys
-        #],
-
-        #ENDCSZ
         "",
         [ 'command',     'Restore Hotkeys', -command  => \&restore_hotkeys ],
         [ 'checkbutton', 'Lock Hotkeys',    -variable => \$lock_hotkeys ],
