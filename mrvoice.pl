@@ -15,8 +15,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/03/07 02:45:47 $
-#	CVS REVISION NUMBER:    $Revision: 1.28 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/07 02:47:46 $
+#	CVS REVISION NUMBER:    $Revision: 1.29 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -26,11 +26,11 @@ use MPEG::MP3Info;
 #####
 # CONFIGURATION VARIABLES
 #####
-my $ostype = "unix"			# Valid values are "unix" and "windows"
+my $ostype = "unix";			# Valid values are "unix" and "windows"
 my $db_name = "comedysportz";			# In the form DBNAME:HOSTNAME:PORT
 my $db_username = "root";                   # The username used to connect
                                         # to the database.
-my $db_pass = "";                       # The password used to connect
+my $db_pass = "rangers";                       # The password used to connect
                                         # to the database.
 $category = "Any";			# The default category to search
                                         # Initial status message
@@ -109,23 +109,11 @@ sub open_file
 
 sub save_file
 {
-  if ($ostype eq "windows")
-  {
-    $fileselectw = $mw->FileSelect(-directory => "$savedir",
-                                   -acceptlabel => "Save File",
-                                   -filelabel => 'The file to save:',
-                                   -defaultextension => "mrv");
-    $fileselectw->configure(-title=>"Save A File...");
-    $selectedfile = $fileselectw->Show;
-  }
-  else
-  {
-    $fileselectw = $mw->FileDialog(-Title=>'Save a File',
-                                   -FPat=>"*.mrv",
-                                   -OKButtonLabel=>"Save File",
-                                   -Path=>$savedir);
-    $selectedfile = $fileselectw->Show;
-  }
+  $fileselectw = $mw->FileDialog(-Title=>'Save a File',
+                                 -FPat=>"*.mrv",
+                                 -OKButtonLabel=>"Save File",
+                                 -Path=>$savedir);
+  $selectedfile = $fileselectw->Show;
 
   if ($selectedfile)
   {
