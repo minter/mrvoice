@@ -5,6 +5,7 @@ no warnings 'redefine';
 #use diagnostics;
 
 #use strict;    # Yeah right
+#use strict 'vars';
 use Encode::Unicode;
 use Tk '804.026';
 use Tk::DialogBox;
@@ -37,7 +38,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.370 2004/04/22 18:18:05 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.371 2004/04/22 20:07:29 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -59,6 +60,7 @@ our $holdingtank;    # Holding Tank window
 our $tankbox;        # Holding tank listbox
 our %fkeys;          # Function keys
 our %oldfkeys;       # Used when restoring hotkeys
+our %fkeys_cb;       # The checkboxes in the Hotkeys box
 our @current;        # Array holding the dynamic documents
 ##########
 
@@ -179,8 +181,11 @@ else
 my $version = "1.10.7";    # Program version
 our $status = "Welcome to Mr. Voice version $version";
 
-# Define 32x32 XPM icon data
-our $icon_data = <<'end-of-icon-data';
+sub icon_data
+{
+
+    # Define 32x32 XPM icon data
+    my $icon = <<'end-of-icon-data';
 /* XPM */
 static char * mrvoice_3232_xpm[] = {
 "32 32 21 1",
@@ -239,7 +244,12 @@ static char * mrvoice_3232_xpm[] = {
 "..................];;;^........."};
 end-of-icon-data
 
-our $logo_photo_data = <<end_of_data;
+    return ($icon);
+}
+
+sub logo_photo
+{
+    my $logo_photo_data = <<end_of_data;
 R0lGODlhqwGzAMYAAP+bm3h4ePn5+XEAAP+oqOrq6lVVVePj4//IyKR/f0IAAP+5ueYAAMvLy9XV
 1To6Ov7+/v/X19zc3P+Kiv+Dg/9cXGtra66QkNcAAMLCwv9jY7UAAIODg5qamv97e6CgoP80NLu7
 u0lJSfX19aqqqv8rK8YAAP9UVIuLi5SUlLKysv90dP9DQ/8AAM+/v/9sbP8MDJcAAPHx8Ww5Of8i
@@ -409,6 +419,9 @@ p7SwBjvGBvPXXl60izw0C3TlBiXmcXdqBnmKTDlUTXOwRrWQBnFASE+0brFUpoEKX5rac5kgR7hJ
 fHqFe2AqS30kpzKJCarHUmt0pir0XLNqGDBkqwEHqnizqx3YZ6lgppjKVR2GUN9Jq8eKQcaKrMvK
 rM3qrM8KrdEqrdNKrdVqrdeKrdmqre8TCAA7
 end_of_data
+
+    return ($logo_photo_data);
+}
 
 sub soundicon_gif
 {
@@ -2269,7 +2282,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.370 $';
+    my $rev    = '$Revision: 1.371 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::mysql->VERSION;
@@ -2281,7 +2294,7 @@ sub show_about
         -buttons    => ["OK"],
         -background => 'white'
     );
-    my $logo_photo = $mw->Photo( -data => $logo_photo_data );
+    my $logo_photo = $mw->Photo( -data => logo_photo() );
     $box->Icon( -image => $icon );
     $box->add(
         "Label",
@@ -2530,7 +2543,7 @@ sub list_hotkeys
         my %fkeys_frame;
         my %fkeys_chkb;
         my %fkeys_label;
-        $hotkeysbox = $mw->Toplevel();
+        my $hotkeysbox = $mw->Toplevel();
         $hotkeysbox->withdraw();
         $hotkeysbox->Icon( -image => $icon );
         bind_hotkeys($hotkeysbox);
@@ -2631,7 +2644,7 @@ sub update_time
     my $numrows      = $get_rows_sth->rows;
     my $update_query = "UPDATE mrvoice SET time=? WHERE id=?";
     my $update_sth   = $dbh->prepare($update_query);
-    while ( @table_row = $get_rows_sth->fetchrow_array )
+    while ( my @table_row = $get_rows_sth->fetchrow_array )
     {
         my ( $id, $filename, $time ) = @table_row;
         my $newtime =
@@ -2699,7 +2712,7 @@ sub stop_mp3
 sub play_mp3
 {
 
-    my ( $statustitle, $statusartist );
+    my ( $statustitle, $statusartist, $filename );
 
     # See if the request is coming from one our hotkeys first...
     if ( ( $_[1] ) && ( ( $_[1] =~ /^F.*/ ) || ( $_[1] =~ /^ALT.*/ ) ) )
@@ -2738,6 +2751,7 @@ sub play_mp3
     }
     else
     {
+        my $box;
         if ( ( $_[1] ) && ( $_[1] eq "Current" ) )
         {
             $box = $mainbox;
@@ -2769,9 +2783,10 @@ sub play_mp3
     }
     elsif ($filename)
     {
+        my $songstatusstring;
         if ( ( $_[1] ) && ( $_[1] =~ /^F.*/ ) )
         {
-            $fkey             = lc( $_[1] );
+            my $fkey = lc( $_[1] );
             $songstatusstring = $fkeys{$fkey}->{title};
         }
         elsif ($statusartist)
@@ -2871,14 +2886,15 @@ sub get_songlength
 
 sub do_search
 {
+    my ( $datestring, $startdate, $enddate );
     if ( ( $_[0] ) && ( $_[0] eq "timespan" ) )
     {
-        $date = DateCalc( "today", "- $_[1]" );
+        my $date = DateCalc( "today", "- $_[1]" );
         $date =~ /^(\d{4})(\d{2})(\d{2}).*?/;
-        $year       = $1;
-        $month      = $2;
-        $date       = $3;
-        $datestring = "$year-$month-$date";
+        my $year  = $1;
+        my $month = $2;
+        my $day   = $3;
+        $datestring = "$year-$month-$day";
     }
     elsif ( ( $_[0] ) && ( $_[0] eq "range" ) )
     {
@@ -2932,7 +2948,7 @@ sub do_search
         $mw->Unbusy( -recurse => 1 );
         return (1);
     }
-    $numrows = $sth->rows;
+    my $numrows = $sth->rows;
     while ( my $row_hashref = $sth->fetchrow_hashref )
     {
 
@@ -3136,7 +3152,7 @@ sub StartDrag
 {
 
     # Starts the drag for the hotkey drag-and-drop.
-    $sound_icon = $mw->Photo( -data => soundicon_gif() );
+    my $sound_icon = $mw->Photo( -data => soundicon_gif() );
 
     my ($token) = @_;
     $current_token = $token;
@@ -3179,7 +3195,7 @@ sub Tank_Drop
     my ($dnd_source) = @_;
     my $parent       = $dnd_source->parent;
     my (@indices)    = $parent->curselection();
-    foreach $index (@indices)
+    foreach my $index (@indices)
     {
         my $entry = $parent->get($index);
         $tankbox->insert( 'end', $entry );
@@ -3200,7 +3216,7 @@ $mw->geometry("+0+0");
 $mw->title("Mr. Voice");
 $mw->minsize( 67, 2 );
 $mw->protocol( 'WM_DELETE_WINDOW', \&do_exit );
-$icon = $mw->Pixmap( -data => $icon_data );
+$icon = $mw->Pixmap( -data => icon_data() );
 $mw->Icon( -image => $icon );
 
 read_rcfile();
@@ -3305,16 +3321,16 @@ if ( !$dbh->do($query_17) )
         -text =>
           "Continuing will update your tables and record the song times into the database This process may take upwards of a few minutes, depending on the number of songs in your database."
     )->pack();
-    $result = $box->Show();
+    my $result = $box->Show();
     if ( $result eq "Continue" )
     {
-        $box = $mw->DialogBox(
+        my $box = $mw->DialogBox(
             -title   => "Updating Database",
             -buttons => ["Continue"]
         );
         $box->Icon( -image => $icon );
         $box->add( "Label", -text => "Creating temp database..." )->pack();
-        $query = "CREATE TABLE mrvoice2 (
+        my $create_query = "CREATE TABLE mrvoice2 (
    id int(8) NOT NULL auto_increment,
    title varchar(255) NOT NULL,
    artist varchar(255),
@@ -3325,20 +3341,20 @@ if ( !$dbh->do($query_17) )
    modtime timestamp(6),
    PRIMARY KEY (id))";
 
-        my $sth2 = $dbh->prepare($query);
-        $sth2->execute;
+        my $create_temp_table_sth = $dbh->prepare($create_query);
+        $create_temp_table_sth->execute;
         if ($DBI::err)
         {
-            $string = "$DBI::errstr";
+            my $string = "$DBI::errstr";
             $box->add( "Label", -text => "FAILED: $string" )->pack();
         }
         else
         {
             $box->add( "Label", -text => "SUCCEEDED" )->pack();
         }
-        $sth2->finish;
+        $create_temp_table_sth->finish;
 
-        $query = "SELECT * from mrvoice";
+        my $selectall_query = "SELECT * from mrvoice";
 
         $percent_done = 0;
         my $progressbox = $mw->Toplevel();
@@ -3349,7 +3365,7 @@ if ( !$dbh->do($query_17) )
           $progressbox->ProgressBar( -width => 150 )->pack( -side => 'top' );
         $progressbox->Label( -text => "Song Conversion Status (Percentage)" )
           ->pack( -side => 'top' );
-        $donebutton = $progressbox->Button(
+        my $donebutton = $progressbox->Button(
             -text    => "Done",
             -state   => 'disabled',
             -command => sub { $progressbox->destroy }
@@ -3357,52 +3373,52 @@ if ( !$dbh->do($query_17) )
         $progressbox->deiconify();
         $progressbox->raise();
 
-        $sth3 = $dbh->prepare($query);
-        $sth3->execute;
-        $numrows  = $sth3->rows;
-        $rowcount = 0;
-        while ( my @table_row = $sth3->fetchrow_array )
+        my $select_all_sth = $dbh->prepare($selectall_query);
+        $select_all_sth->execute;
+        my $numrows  = $select_all_sth->rows;
+        my $rowcount = 0;
+        while ( my @table_row = $select_all_sth->fetchrow_array )
         {
-            $tmpid       = $dbh->quote( $table_row[0] );
-            $tmptitle    = $dbh->quote( $table_row[1] );
-            $tmpartist   = $dbh->quote( $table_row[2] );
-            $tmpcategory = $dbh->quote( $table_row[3] );
-            $tmpinfo     = $dbh->quote( $table_row[4] );
-            $tmpfilename = $dbh->quote( $table_row[5] );
-            $tmpmodtime  = $dbh->quote( $table_row[6] );
+            my $tmpid       = $dbh->quote( $table_row[0] );
+            my $tmptitle    = $dbh->quote( $table_row[1] );
+            my $tmpartist   = $dbh->quote( $table_row[2] );
+            my $tmpcategory = $dbh->quote( $table_row[3] );
+            my $tmpinfo     = $dbh->quote( $table_row[4] );
+            my $tmpfilename = $dbh->quote( $table_row[5] );
+            my $tmpmodtime  = $dbh->quote( $table_row[6] );
 
-            my $query =
+            my $insert_query =
               "INSERT INTO mrvoice2 (id,title,artist,category,info,filename,time,modtime) VALUES ($tmpid, $tmptitle,";
             if ( $tmpartist eq "" )
             {
-                $query .= "NULL,";
+                $insert_query .= "NULL,";
             }
             else
             {
-                $query .= "$tmpartist,";
+                $insert_query .= "$tmpartist,";
             }
-            $query .= "$tmpcategory,";
+            $insert_query .= "$tmpcategory,";
             if ( $tmpinfo eq "" )
             {
-                $query .= "NULL,";
+                $insert_query .= "NULL,";
             }
             else
             {
-                $query .= "$tmpinfo,";
+                $insert_query .= "$tmpinfo,";
             }
-            $query .= "$tmpfilename,";
-            $length =
+            $insert_query .= "$tmpfilename,";
+            my $length =
               get_songlength( catfile( $config{'filepath'}, $table_row[5] ) );
-            $query .= "'$length',$tmpmodtime)";
-            $sth4 = $dbh->prepare($query);
-            $sth4->execute;
-            $sth4->finish;
+            $insert_query .= "'$length',$tmpmodtime)";
+            my $insert_new_table_sth = $dbh->prepare($insert_query);
+            $insert_new_table_sth->execute;
+            $insert_new_table_sth->finish;
             $rowcount++;
             $percent_done = int( ( $rowcount / $numrows ) * 100 );
             $pb->set($percent_done);
             $progressbox->update();
         }
-        $sth3->finish;
+        $select_all_sth->finish;
         $donebutton->configure( -state => 'active' );
         $progressbox->update();
         while ( Exists($progressbox) )
