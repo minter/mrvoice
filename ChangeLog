@@ -1,3 +1,6 @@
+Wed  May  8 2002	H. Wade Minter (minter@lunenburg.org)
+     * Released version 1.5
+
 Thu  May  2 2002	H. Wade Minter (minter@lunenburg.org)
      * Added some hardcoded "use" lines at the top of the script.  This
        is required by perl2exe, which I am investigating using for
@@ -230,4 +233,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.42 2002/05/02 23:26:37 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.43 2002/05/08 20:29:58 minter Exp $
