@@ -40,7 +40,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.223 2003/04/15 20:41:05 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.224 2003/04/29 17:01:57 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1690,7 +1690,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.223 $';
+  $rev = '$Revision: 1.224 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2014,30 +2014,56 @@ sub get_song_id
 
 sub update_time
 {
-  $mw->Busy(-recurse=>1);
+  my $percent_done = 0;
+  my $updated=0;
+  my $progressbox=$mw->Toplevel();
+  $progressbox->withdraw();
+  $progressbox->Icon(-image=>$icon);
+  $progressbox->title("Time Update");
+  $progressbox->Label(-text=>"Time Update Status (Percentage)")->pack(-side=>'top');
+  $progressbox->ProgressBar(
+    -width => 20,
+    -length => 200,
+    -from => 0,
+    -to => 100,
+    -blocks => 10,
+    -colors => [0, 'green'],
+    -variable=>\$percent_done)->pack(-side=>'top');
+  my $progress_frame1 = $progressbox->Frame()->pack(-side=>'top');
+  $progress_frame1->Label(-text=>"Number of files updated: ")->pack(-side=>'left');
+  $progress_frame1->Label(-textvariable=>\$updated)->pack(-side=>'left');
+  my $donebutton = $progressbox->Button(
+    -text => "Done",
+    -state => 'disabled',
+    -command=>sub { $progressbox->destroy})->pack(-side=>'bottom');
+  $progressbox->deiconify();
+  $progressbox->raise();
+
   my $count = 0;
   my $query = "SELECT id,filename,time FROM mrvoice";
   my $sth=$dbh->prepare($query);
   $sth->execute;
+  my $numrows = $sth->rows;
   while (@table_row = $sth->fetchrow_array)
   {
     ($id,$filename,$time) = @table_row;
-    $newtime = get_songlength(File::Spec->catfile($filepath,$filename));
+    my $newtime = get_songlength(File::Spec->catfile($filepath,$filename));
     if ($newtime ne $time)
     {
-      $query = "UPDATE mrvoice SET time='$newtime' WHERE id='$id'";
+      my $query = "UPDATE mrvoice SET time='$newtime' WHERE id='$id'";
       my $sth2=$dbh->prepare($query);
       $sth2->execute;
       $sth2->finish;
-      $count++;
+      $updated++;
     }
+    $count++;
+    $percent_done = int ( ($count / $numrows) * 100);
+    $progressbox->update();
   }
   $sth->finish;
-  $mw->Unbusy(-recurse=>1);
-  $box = $mw->DialogBox(-title=>"Updating Song Times", -buttons=>["Ok"]);
-  $box->Icon(-image=>$icon);
-  $box->add("Label",-text=>"Updated times on $count files")->pack();
-  $box->Show();
+  $donebutton->configure(-state=>'active');
+  $progressbox->update();
+  $status = "Updated times on $updated files";
 }    
   
 sub get_filename
