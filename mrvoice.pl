@@ -27,7 +27,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.122 2002/05/21 19:21:49 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.123 2002/05/23 14:01:39 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -170,6 +170,58 @@ static char * mrvoice_3232_xpm[] = {
 "..................)'''>.........",
 "..................];;;^........."};
 end-of-icon-data
+
+$logo_photo_data = <<end_of_data;
+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
+end_of_data
 
 
 # This function is redefined due to evilness that keeps the focus on 
@@ -868,9 +920,15 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.122 $';
+  $rev = '$Revision: 1.123 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
-  infobox($mw, "About Mr. Voice","Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License");
+  my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
+  my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
+  $logo_photo = $mw->Photo(-data=>$logo_photo_data);
+  $box->Icon(-image=>$icon);
+  $box->add("Label",-image=>$logo_photo)->pack();
+  $box->add("Label",-text=>"$string")->pack();
+  $box->Show;
 }
 
 #STARTCSZ
@@ -1201,7 +1259,7 @@ sub stop_mp3
 sub play_mp3 
 {
   # See if the request is coming from one our hotkeys first...
-  if ($_[1] =~ /^F.*/)
+  if ( ($_[1] =~ /^F.*/) || ($_[1] =~ /^ALT.*/) )
   {
     if ($_[1] eq "F1") { $filename = $f1; }
     elsif ($_[1] eq "F2") { $filename = $f2; }
