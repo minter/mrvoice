@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: config-mrvoice.sgml,v 1.18 2002/08/14 18:32:02 minter Exp $
+  CVS ID: $Id: config-mrvoice.sgml,v 1.19 2002/12/11 22:28:48 minter Exp $
 -->
 
 <chapter><title>Configuring Mr. Voice</title>
@@ -42,7 +42,7 @@
         <para><varname>Number of Dynamic Documents To Show (savefile_max)</varname> - The number of "most recently accessed hotkey files" to keep available under the <guimenu>File</guimenu> menu.  Defaults to 4.</para>
       </listitem>
       <listitem>
-        <para><varname>httpQ Passowrd (httpq_pw)</varname> - The password used to connect to the httpQ plugin for WinAmp.  Only useful under Windows if you're using the httpQ plugin.  Otherwise it's ignored.</para>
+        <para><varname>httpQ Password (httpq_pw)</varname> - The password used to connect to the httpQ plugin for WinAmp.  Only useful under Windows if you're using the httpQ plugin.  Otherwise it's ignored.</para>
       </listitem>
     </itemizedlist>
     <sect2><title>Manual Configuration</title>
