@@ -1,3 +1,7 @@
+Thu  Dec 12 2002	H. Wade Minter (minter@lunenburg.org)
+     * Removed the "Are you sure you want to show the whole database" 
+       popup box, as searches of the whole database now take under a second.
+
 Wed  Dec 11 2002	H. Wade Minter (minter@lunenburg.org)
      * Use a progress bar to show the status of the initial time
        conversion.
@@ -381,4 +385,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.70 2002/12/11 20:38:40 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.71 2002/12/12 18:43:10 minter Exp $
