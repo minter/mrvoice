@@ -46,7 +46,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.301 2004/01/19 20:04:40 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.302 2004/01/20 14:22:14 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1502,6 +1502,7 @@ sub bulk_add
 
 sub add_category
 {
+    my ( $addcat_code, $addcat_desc );
     my $box = $mw->DialogBox(
         -title   => "Add a category",
         -buttons => [ "Ok", "Cancel" ]
@@ -1575,8 +1576,6 @@ sub add_category
     {
         $status = "Cancelled adding category.";
     }
-    $addcat_code = "";
-    $addcat_desc = "";
 }
 
 sub edit_category
@@ -1771,9 +1770,12 @@ sub move_file
 
 sub add_new_song
 {
+    my (
+        $addsong_title, $addsong_artist,   $addsong_info,
+        $addsong_cat,   $addsong_filename, $addsong_publisher
+    );
     my $continue = 0;
-    my ( $longcat, $addsong_cat );
-    my $addsong_publisher = "OTHER";
+    $addsong_publisher = "OTHER";
     while ( $continue != 1 )
     {
         $box = $mw->DialogBox(
@@ -1813,7 +1815,6 @@ sub add_new_song
             -tearoff     => 0,
             -indicatoron => 1
         )->pack( -side => 'right' );
-        $frame3->Label( -textvariable => \$longcat )->pack( -side => 'right' );
         $query = "SELECT * from categories ORDER BY description";
         my $sth = $dbh->prepare($query);
         $sth->execute or die "can't execute the query: $DBI::errstr\n";
@@ -1926,13 +1927,7 @@ sub add_new_song
         }
         else
         {
-            $status            = "Cancelled song add";
-            $addsong_title     = "";
-            $addsong_artist    = "";
-            $addsong_info      = "";
-            $addsong_cat       = "";
-            $addsong_filename  = "";
-            $addsong_publisher = "";
+            $status = "Cancelled song add";
             return (1);
         }
     }    # End while continue loop
@@ -1976,11 +1971,6 @@ sub add_new_song
         infobox( $mw, "Error", "Could not add song into database" );
         $status = "File add exited on database error";
     }
-    $addsong_title    = "";
-    $addsong_artist   = "";
-    $addsong_info     = "";
-    $addsong_cat      = "";
-    $addsong_filename = "";
 }
 
 sub edit_preferences
@@ -2172,6 +2162,8 @@ sub edit_preferences
 sub edit_song
 {
     my (@selected) = $mainbox->curselection();
+    my ( $edit_title, $edit_artist, $edit_category, $edit_publisher,
+        $edit_info );
     $count = $#selected + 1;
     if ( $count == 1 )
     {
@@ -2233,6 +2225,7 @@ sub edit_song
                 }
             );
         }
+        $menu->configure( -text => return_longcat($edit_category) );
         $sth->finish;
 
         $frame4 = $box->add("Frame")->pack( -fill => 'x' );
@@ -2261,6 +2254,7 @@ sub edit_song
                 }
             );
         }
+        $pubmenu->configure( -text => $edit_publisher );
         $result = $box->Show();
         if ( $result eq "Edit" )
         {
@@ -2433,11 +2427,6 @@ sub edit_song
         $status = "No songs selected for editing";
     }
 
-    $edit_title     = "";
-    $edit_artist    = "";
-    $edit_category  = "";
-    $edit_publisher = "";
-    $edit_info      = "";
 }
 
 sub delete_song
@@ -2445,7 +2434,7 @@ sub delete_song
     my (@selection) = $mainbox->curselection();
     my $count = $#selection + 1;
     my @ids;
-    my $index;
+    my ( $index, $delete_file_cb );
     foreach $index (@selection)
     {
         push( @ids, get_song_id( $mainbox, $index ) );
@@ -2508,12 +2497,11 @@ sub delete_song
     {
         $status = "No song selected for deletion";
     }
-    $delete_file_cb = 0;
 }
 
 sub show_about
 {
-    $rev = '$Revision: 1.301 $';
+    $rev = '$Revision: 1.302 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3159,6 +3147,8 @@ sub stop_mp3
 sub play_mp3
 {
 
+    my ( $statustitle, $statusartist );
+
     # See if the request is coming from one our hotkeys first...
     if ( ( $_[1] ) && ( ( $_[1] =~ /^F.*/ ) || ( $_[1] =~ /^ALT.*/ ) ) )
     {
@@ -3247,8 +3237,6 @@ sub play_mp3
         $status = "Playing $songstatusstring";
         my $file = catfile( $config{'filepath'}, $filename );
         system("$config{'mp3player'} $file");
-        $statustitle  = "";
-        $statusartist = "";
     }
 }
 
