@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.335 2004/03/09 18:11:20 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.336 2004/03/09 18:18:54 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2198,7 +2198,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.335 $';
+    my $rev = '$Revision: 1.336 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3041,7 +3041,17 @@ sub do_search
     $query = $query . "ORDER BY category,info,title";
     my $starttime = gettimeofday();
     my $sth       = $dbh->prepare($query);
-    $sth->execute or die "can't execute the query: $DBI::errstr\n";
+    if ( !$sth->execute )
+    {
+        infobox(
+            $mw,
+            "Database Error",
+            "Your search failed with the following database error:\n"
+              . $sth->errstr
+        );
+        $status = "Search failed with database error";
+        return (1);
+    }
     $numrows = $sth->rows;
     while ( my $row_hashref = $sth->fetchrow_hashref )
     {
