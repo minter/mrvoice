@@ -1,6 +1,8 @@
 Tue  Sep 7  2004	H. Wade Minter (minter@lunenburg.org)
      * Fixed a bug in the "Select new location for DB file" dialog in
        Preferences.
+     * Moved the get_homedir code to a subroutine.
+     * Bumped version to 2.0pre1
 
 Mon  Sep 6  2004	H. Wade Minter (minter@lunenburg.org)
      * Happy birthday to me!

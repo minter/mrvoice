@@ -169,14 +169,7 @@ if ( "$^O" eq "MSWin32" )
 }
 else
 {
-    our $homedir = "~";
-    $homedir =~ s{ ^ ~ ( [^/]* ) }
-              { $1 
-                   ? (getpwnam($1))[7] 
-                   : ( $ENV{HOME} || $ENV{LOGDIR} 
-                        || (getpwuid($>))[7]
-                     )
-              }ex;
+    my $homedir = get_homedir();
     $rcfile = "$homedir/.mrvoicerc";
     my $logfile = "unset";
     my $result = GetOptions( 'logfile:s' => \$logfile );
@@ -201,8 +194,22 @@ else
 
 #####
 
-my $version = "1.10.7";    # Program version
+my $version = "2.0pre1";    # Program version
 our $status = "Welcome to Mr. Voice version $version";
+
+sub get_homedir
+{
+    return if ( $^O eq "MSWin32" );
+    my $homedir = "~";
+    $homedir =~ s{ ^ ~ ( [^/]* ) }
+              { $1 
+                   ? (getpwnam($1))[7] 
+                   : ( $ENV{HOME} || $ENV{LOGDIR} 
+                        || (getpwuid($>))[7]
+                     )
+              }ex;
+    return $homedir;
+}
 
 sub icon_data
 {
@@ -1865,11 +1872,17 @@ sub edit_preferences
     $dbfile_frame->Button(
         -text    => "Select Database Location",
         -command => sub {
-            if ( my $dbdir = $box->chooseDirectory() )
+            my $initialdir = ( $^O eq "MSWin32" ) ? "C:/" : get_homedir();
+            if (
+                my $dbdir = $box->chooseDirectory(
+                    -title      => "Choose directory for the mrvoice.db file",
+                    -initialdir => $initialdir
+                )
+              )
             {
                 $dbdir = Win32::GetShortPathName($dbdir)
                   if ( $^O eq "MSWin32" );
-                my $dbfile = catfile ($dbdir, "mrvoice.db");
+                my $dbfile = catfile( $dbdir, "mrvoice.db" );
                 $config{'db_file'} = $dbfile;
             }
         }
