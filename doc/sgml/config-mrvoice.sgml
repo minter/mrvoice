@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: config-mrvoice.sgml,v 1.9 2001/10/29 17:28:23 minter Exp $
+  CVS ID: $Id: config-mrvoice.sgml,v 1.10 2001/10/29 17:48:13 minter Exp $
 -->
 
 <chapter><title>Configuring Mr. Voice</title>
@@ -30,7 +30,7 @@
         <para><varname>Number of Dynamic Documents To Show (savefile_max)</varname> - The number of "most recently accessed hotkey files" to keep available under the <guimenu>File</guimenu> menu.  Defaults to 4.</para>
       </listitem>
     </itemizedlist>
-    <sect2><title>Manual Configuratino</title>
+    <sect2><title>Manual Configuration</title>
       <para>To troubleshoot, fine-tune changes, or skip the GUI alltogether, you can manually set up the configuration file.  The configuration file consists of lines in the following format:</para>
       <para><computeroutput>variable_name::value</computeroutput></para>
       <para>Where variable_name is the name in parenthesis in the configuration listing above, followed by two colons, followed by the value you want to set the variable to.  A sample file would look like this:

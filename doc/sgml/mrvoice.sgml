@@ -4,7 +4,7 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.13 2001/10/29 16:29:22 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.14 2001/10/29 17:48:13 minter Exp $ 
 -->
 <book status="draft">
 
@@ -51,7 +51,7 @@
     <title>What's New In Version 1.3</title>
     <para>
       <itemizedlist>
-        <listitem><para>There is now a Preferences option under the <guimenu>File</guimenu> menu, where you can set up most configurable options for Mr. Voice.  This is now the preferred way to set up Mr. Voice.  You should <emphasis>NOT</emphasis> need to edit variables directly in <filename>mrvoice.pl</filename> any more.</para></listitem>
+        <listitem><para>There is now a <menuchoice> <guimenu>File</guimenu> <guimenuitem>Preferences</guimenuitem> </menuchoice> menu, where you can set up most configurable options for Mr. Voice.  This is now the preferred way to set up Mr. Voice.  You should <emphasis>NOT</emphasis> need to edit variables directly in <filename>mrvoice.pl</filename> any more.</para></listitem>
 	<listitem><para>Right-clicking on a song within the search results box will give you a quick-options menu, where you can choose to play, edit, or delete the selected song.</para></listitem>
 	<listitem><para>The Show Hotkeys box now displays the hotkey name and attached song in a side-by-side listing, intead of having the hotkey name above the song.  Suggested by K. Christie.</para></listitem>
 	<listitem><para>The <guibutton>Play</guibutton> button is now green, and the <guibutton>Stop</guibutton> button is now red.  Suggested by K. Christie.</para></listitem>
@@ -73,6 +73,7 @@
 <appendix><title>Known Bugs and Issues</title>
   <para>The following items are known as bugs that need to be fixed and/or enhancements that should be made:
     <itemizedlist>
+      <listitem><para>There needs to be a way to edit categories.</para></listitem>
       <listitem><para>The "last files accessed" menu should be smarter about recognizing if files that are already on the list are being accessed.  Right now, it'll just add another listing for the same file on the bottom of the list.</para></listitem>
       <listitem><para>The file-selector box for Unix ignores the <varname>$savedir</varname> variable, putting you in / instead.  This is a bug with Perl/Tk and will be fixed in Tk800.024.</para></listitem>
     </itemizedlist>
