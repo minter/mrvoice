@@ -2,64 +2,158 @@ The following steps detail setting up Mr. Voice on a Windows system.  Windows
 95 and higher should be supported.  This README is a supplement to the
 main README file.
 
-First, You'll need TCL/TK for Windows.  You can download it from:
+-----------------------------------------------------
+GETTING STUFF
+-----------------------------------------------------
+You will need the following pieces:
+* Mr. Voice (duh): http://www.lunenburg.org/mrvoice/
+* ActivePerl: http://www.activestate.com/ (Get the .MSI Microsoft
+  installer from the download page)
+* ActiveTCL: http://www.activestate.com/ (Get the .MSI Microsoft
+  installer from the download page)
+* MySQL: http://www.mysql.com/ (Windows binary .ZIP file)
+* WinAMP: http://www.winamp.com/
 
-http://dev.scriptics.com/software/tcltk/download83.html
+-----------------------------------------------------
+INSTALLING SECONDARY SOFTWARE
+-----------------------------------------------------
 
-Second, I recommend that you install Active State's ActivePerl.  You can
-download it from http://www.activestate.com/.  You will be able to download 
-the modules that you need from ActivePerl's PPM package manager - see their  
-documentation for details.  See the README file for information on the
-modules that you need.
+* Install WinAMP by double-clicking its installer icon, and choosing
+  the default settings.
 
-Third, You can get MySQL for Windows from http://www.mysql.com/downloads/.  
-As of this writing, the current release is 3.23.  When you first install
-MySQL for windows, the superuser account is named "root", with no password.
-Read the docs at http://www.mysql.com/documentation/index.html for
-full MySQL information.  But, basically, to set the database up, you'll
-just need to do this:
-  1) Install MySQL.  It should install into C:\MYSQL.
-  2) Double-click/run C:\MYSQL\BIN\MYSQLD.exe
-  3) Double-click/run C:\MYSQL\BIN\MYSQL
-  4) This will bring up a DOS prompt with mysql> on the screen.
-  5) Enter "use mysql;"
-  6) If that succeeds, run "update user set Password=password('YOUR_PASSWORD')
-       where User='root';", where everything between the ""'s is on one line.
-  7) If that succeeds, run "flush privileges;"
-  8) If all of that works, then your superuser account name is "root", and
-     its password is whatever you put for YOUR_PASSWORD.
+* Install ActiveTCL by double-clicking the .MSI file you downloaded.
+  Use the defaults it provides you.  You will probably have to reboot
+  after installing.
 
-I don't believe that Tk::FileDialog.pm is available through PPM.  So you
-can find the .tar.gz module from the ActiveState website search, use
-WinZip to uncompress it, and copy FileDialog.pm to C:\perl\site\lib\Tk\.
+* Install ActivePerl by double-clicking the .MSI file you downloaded.
+  Use the defaults it provides you.  You will probably have to reboot
+  after installing.
 
-The path stuff is kind of weird, I'm trying to figure out why.  But,
+* Unzip the MySQL .ZIP file to a temporary location (like C:\mysql-temp).
+  Go to that directory and run the SETUP.EXE file.  It will install 
+  to C:\MYSQL\ by default - accept that.  Choose the "Typical" installation.
+
+  Set up Windows to run C:\MYSQL\BIN\MYSQLD.EXE upon startup.  I belive
+  you do this by going under Start->Settings->Taskbar & Start Menu, choosing
+  "Advanced" under "Customize Start Menu", and placing a shortcut to the
+  MYSQLD.EXE file under the "StartUp" section.
+
+  While you're messing with MySQL, set up your superuser password and the
+  database you're going to use for Mr. Voice.  To do this, go to 
+  C:\MYSQL\BIN\ and run MYSQL.EXE.  It will open a DOS window with
+  a MySQL> prompt.  At this prompt, enter "use mysql;"
+  
+  If that succeeds, run "update user set Password=password('YOUR_PASSWORD')
+  where User='root';", where everything between the ""'s is on one line.
+  This will set your superuser up to be username "root" with password 
+  YOUR_PASSWORD.
+  
+  If that succeeds, run "flush privileges;"
+
+  Finally, run "create database DATABASE_NAME", where DATABASE_NAME is
+  the name of the database you want to house the Mr. Voice tables.  The
+  one I use is "comedysportz".  Bear in mind that the database name
+  can't contain spaces or other weird characters - make it alphanumeric.
+
+  After all of this is done, enter "quit" at the MySQL> prompt.
+
+-----------------------------------------------------
+INSTALLING PERL MODULES
+-----------------------------------------------------
+Open a Command Prompt/DOS Window.  Type "ppm" and hit enter.  You should
+see "PPM Interactive Shell" and a PPM> prompt.
+
+Enter "search DBI".  It should return some packages.  Enter "install DBI"
+to install the DBI module.
+
+Enter "search mysql".  It should return a couple of packages.  Enter
+"install DBD-Mysql" to install the MySQL module.
+
+Enter "search dump".  It should return a lot of packages.  Enter "install
+Data-Dump" to install the Data Dumper module.
+
+Enter "search Tk".  Enter "install Tk" to install the Tk module.  Enter
+"install Tk-FileDialog" to install the File Dialog module.
+
+Enter "search MP3".  Enter "install MP3-Info" to install the MP3 Info
+module.  Now you're done with the perl install!
+
+Enter "quit" at the PPM> prompt to exit back to the DOS shell.
+
+
+-----------------------------------------------------
+INSTALLING MR. VOICE
+-----------------------------------------------------
+Unzip the mrvoice-current.zip file to C:\.  This will create the
+directory C:\mrvoice-x.x\ , where x.x is the version number.
+
+Open a DOS prompt window, and cd to C:\MRVOICE-X.X\.  Run the command:
+"C:\MYSQL\BIN\MYSQL -u root -p DATABASE_NAME < dbinit.sql"
+where DATABASE_NAME is the name you set up above.  It will prompt you
+for a password.  Enter the password you set up above.  If it runs
+the command without errors, then your database is initialized.
+
+You will need a directory to store your MP3 files, and a directory
+to store your hotkey save files.  I suggest C:\MP3\ for the MP3 directory
+and C:\MRVOICE-X.X\ for the save files, but you can pick anything.  
+NOTE! - Mr. Voice doesn't handle path names with spaces very well, so
+you should make sure that the path to these directories does not contain
+spaces.  For example:
+C:\MRVOICE\MP3S\  [GOOD]
+C:\Program Files\Crazy Stuff\My MP3s\ [BAD]
+
+-----------------------------------------------------
+CONFIGURING MR. VOICE
+-----------------------------------------------------
+Open a DOS window and cd to C:\MRVOICE-X.X\.  From there, run:
+"edit mrvoice.pl".  This will bring up the DOS editor with the Mr. Voice
+source code in it.  Editors like notepad seem to have trouble with the
+source code at the moment - I'm working on a fix.  Until then, DOS
+Edit is your best bet.
+
+Due to some Windows weirdness, the way you enter paths will be kind of 
+odd in the configuration section.  So we'll go through the variables
+now, with Windows-specific notes.
+
+$db_name="DATABSE_NAME"; - set the $db_name variable equal to the 
+DATABASE_NAME you defined earlier.
+
+$db_username="root"; - This is your superuser name.  If you're comfortable
+with MySQL, you can set up a user that just has access to the Mr. Voice
+database, but root will do for most people.
+
+$db_password="YOUR_PASSWORD"; - This is set to the password you defined above.
+
+$category="Any"; - Can be used to change the default category that searches
+look in.  Leave alone unless you have need to change it.
+
+$mp3player="C:\\PROGRA~1\WINAMP\WINAMP.EXE"; - This defines the path to your
+MP3 player.  If you're using WinAMP in its default install, this path will
+work.  If not, you need to use "\\" to separate the parts of the path,
+and instead of spaces, you need to use the "short" version of the directory.
+
+$filepath="C:/MP3"; - Notice the difference?  Weird.  For this variable,
+you use "/" to separate the parts of the path.  
+
+$savepath="C:/MRVOICE-X.X"; - Like $filepath, this uses "/" as a path
+separator.
+
+That should be all the configuration that you need to do.
+
+-----------------------------------------------------
+THINGS TO DO/LAST NOTES
+-----------------------------------------------------
+The path stuff is kind of weird, and I'm trying to figure out why.  But,
 until I do, there are different path styles for the directories and
-the programs.
-
-For the $mp3player variable, you'll have to do something like:
-
-$mp3player = "C:\\PROGRA~1\\WINAMP\\WINAMP.EXE";
-
-However, for the $filepath and $savepath variables, you'll need to do:
-
-$filepath = "C:/MP3/";
-$savepath = "C:/TEMP/";
-
-Notice the two different path separators?  Weird.  I think it may
-have something to do with Tk::FileDialog.pm.  If I find the answer,
-I'll put it here.
-
-In addition, you'll have to use the eight-character name for long files.
-For example, use "C:\\progra~1\\file.exe" instead of
-"C:\\program files\file.exe".
-
-I've tested WinAmp (http://www.winamp.com/) as the MP3 player, and it
-works fine.  If you install it the default way, you'll set your
-$mp3player variable to be "C:\\progra~1\\winamp\\winamp.exe".
+the programs.  Make sure that doesn't bite you.  In particular, the
+"Add New Song" function can't seem to find MP3 files if the path
+has spaces, so be warned.
 
 Other than that, the cross-platform nature of Perl/Tk means that running
 on either Unix or Windows should be pretty easy!
 
+If you run into Windows issues, feel free to drop me an email, and I'll
+try to solve it for you.
+
 --
-CVS ID: $Id: README.windows,v 1.5 2001/03/07 23:16:20 minter Exp $
+CVS ID: $Id: README.windows,v 1.6 2001/05/11 23:45:56 minter Exp $
