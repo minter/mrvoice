@@ -1,6 +1,11 @@
+Tue  Jul 22 2003	H. Wade Minter (minter@lunenburg.org)
+     * Switched to using Tk::ProgressBar::Mac, which looks nicer.
+
 Mon  Jul 21 2003        H. Wade Minter (minter@lunenburg.org)
      * Added a check to prevent duplicate categories.
        Suggested by Alan C. in Dallas.
+     * Switched the edit/delete song infrastructure to allow for multiple
+       selections.
 
 Thu  Jul 17 2003	H. Wade Minter (minter@lunenburg.org)
      * Added a confirmation to exit the program.
@@ -449,4 +454,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.88 2003/07/21 19:21:00 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.89 2003/07/22 14:56:56 minter Exp $
