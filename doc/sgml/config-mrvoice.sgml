@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: config-mrvoice.sgml,v 1.19 2002/12/11 22:28:48 minter Exp $
+  CVS ID: $Id: config-mrvoice.sgml,v 1.20 2004/03/11 22:07:21 minter Exp $
 -->
 
 <chapter><title>Configuring Mr. Voice</title>
@@ -44,6 +44,18 @@
       <listitem>
         <para><varname>httpQ Password (httpq_pw)</varname> - The password used to connect to the httpQ plugin for WinAmp.  Only useful under Windows if you're using the httpQ plugin.  Otherwise it's ignored.</para>
       </listitem>
+      <listitem>
+        <para><varname>Search ASCAP songs (search_ascap)</varname> - Enables searches of songs that have ASCAP set as the publisher field.  Only needed if you are using song publishers in your database.</para>
+      </listitem>
+      <listitem>
+        <para><varname>Search BMI songs (search_bmi)</varname> - Enables searches of songs that have BMI set as the publisher field.  Only needed if you are using song publishers in your database.</para>
+      </listitem>
+      <listitem>
+        <para><varname>Show Song Publisher (show_publisher)</varname> - Enables the display of the song publisher in the search results.  Only needed if you are using song publishers in your database.</para>
+      </listitem>
+      <listitem>
+        <para><varname>Search Other songs (search_other)</varname> - Enables searches of songs that have "Other" set as the publisher field.  Only needed if you are using song publishers in your database.</para>
+      </listitem>
     </itemizedlist>
     <sect2><title>Manual Configuration</title>
       <para>To troubleshoot, fine-tune changes, or skip the GUI alltogether, you can manually set up the configuration file.  The configuration file consists of lines in the following format:</para>
@@ -57,6 +69,11 @@ filepath::/mp3/
 savedir::/tmp/
 mp3player::/usr/bin/xmms
 savefile_max::4
+httpq_pw::mypass
+search_ascap::1
+search_bmi::1
+search_other::1
+show_publisher::0
         </screen>
       </para>
     </sect2>
