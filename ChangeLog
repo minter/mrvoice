@@ -1,3 +1,7 @@
+Mon  Feb 23 2004        H. Wade Minter (minter@lunenburg.org)
+     * Must raise/deiconify the window on Win32 before popping up the
+       database update Dialog, for some reason.
+
 Tue  Jan 13 2004	H. Wade Minter (minter@lunenburg.org)
      * Ran the whole code through perltidy.  Funny how it looks a lot
        nicer now...
@@ -543,4 +547,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.113 2004/01/13 18:33:40 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.114 2004/02/23 22:07:32 minter Exp $
