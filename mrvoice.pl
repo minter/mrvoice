@@ -18,7 +18,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.112 2002/04/24 19:40:49 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.113 2002/04/24 20:02:58 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -819,7 +819,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.112 $';
+  $rev = '$Revision: 1.113 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   infobox($mw, "About Mr. Voice","Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License");
 }
@@ -1203,7 +1203,7 @@ sub get_songlength
 
   $file = $_[0];
   my $time = "";
-  if ($file =~ /.*\.mp3$/)
+  if ($file =~ /.*\.mp3$/i)
   {
     # It's an MP3 file
     my $info = get_mp3info("$filepath$table_row[5]");
@@ -1213,7 +1213,7 @@ sub get_songlength
     $second = "0$second" if ($second < 10);
     $time = " [$minute:$second]";
   }
-  elsif ($file =~ /\.wav$/)
+  elsif ($file =~ /\.wav$/i)
   {
     # It's a WAV file
     my $wav = new Audio::Wav;
