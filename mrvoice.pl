@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.179 2002/11/13 17:52:00 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.180 2002/12/03 22:19:32 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1025,7 +1025,8 @@ sub add_new_song
   {
     $addsong_artist = $dbh->quote($addsong_artist);
   }
-  $query = "INSERT INTO mrvoice VALUES (NULL,$addsong_title,$addsong_artist,'$addsong_cat',$addsong_info,'$newfilename',NULL)";
+  $time = get_songlength($addsong_filename);
+  $query = "INSERT INTO mrvoice VALUES (NULL,$addsong_title,$addsong_artist,'$addsong_cat',$addsong_info,'$newfilename','$time',NULL)";
   copy ($addsong_filename,"$filepath$newfilename");
   if ($dbh->do($query))
   {
@@ -1256,7 +1257,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.179 $';
+  $rev = '$Revision: 1.180 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -1709,12 +1710,12 @@ sub get_songlength
   if ($file =~ /.*\.mp3$/i)
   {
     # It's an MP3 file
-    my $info = get_mp3info("$filepath$table_row[5]");
+    my $info = get_mp3info("$file");
     $minute = $info->{MM};
     $minute = "0$minute" if ($minute < 10);
     $second = $info->{SS};
     $second = "0$second" if ($second < 10);
-    $time = " [$minute:$second]";
+    $time = "[$minute:$second]";
   }
   elsif ($file =~ /\.wav$/i)
   {
@@ -1726,7 +1727,7 @@ sub get_songlength
     $minute = "0$minute" if ($minute < 10);
     $second = $audio_seconds % 60;
     $second = "0$second" if ($second < 10);
-    $time = " [$minute:$second]";
+    $time = "[$minute:$second]";
   }
   elsif ( ($file =~ /\.ogg$/i) && ($^O eq "linux") )
   {
@@ -1739,18 +1740,18 @@ sub get_songlength
     $minute = "0$minute" if ($minute < 10);
     $second = $audio_seconds % 60;
     $second = "0$second" if ($second < 10);
-    $time = " [$minute:$second]";
+    $time = "[$minute:$second]";
     close (OGG_IN);
   }
   elsif ( ($file =~ /\.m3u$/i) || ($file =~ /\.pls$/i) )
   {
     #It's a playlist 
-    $time = " [PLAYLIST]";
+    $time = "[PLAYLIST]";
   }
   else
   {
     # Unsupported file type
-    $time = " [??:??]";
+    $time = "[??:??]";
   }
   return ($time);
 }
@@ -1806,7 +1807,7 @@ sub do_search
   $status="Starting search...";
   $mw->Busy(-recurse=>1);
   $mainbox->delete(0,'end');
-  my $query = "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.filename from mrvoice,categories where mrvoice.category=categories.code ";
+  my $query = "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.filename,mrvoice.time from mrvoice,categories where mrvoice.category=categories.code ";
   $query = $query . "AND modtime >= '$datestring'" if ( ($_[0]) && ($_[0] eq "timespan"));
   $query = $query . "AND modtime >= '$startdate' AND modtime <= '$enddate'" if (($_[0]) && ($_[0] eq "range"));
   $query = $query . "AND category='$category' " if ($category ne "Any");
@@ -1832,9 +1833,9 @@ sub do_search
       $string="$table_row[0]:($table_row[1]";
       $string = $string . " - $table_row[2]" if ($table_row[2]);
       $string = $string . ") - \"$table_row[4]\"";
-      $string = $string. " by $table_row[3]" if ($table_row[3]);
-      my $songstring = get_songlength("$filepath$table_row[5]");
-      $string = $string . $songstring;
+      $string = $string. " by $table_row[3] " if ($table_row[3]);
+      #my $songstring = get_songlength("$filepath$table_row[5]");
+      $string = $string . $table_row[6];
       $mainbox->insert('end',$string); 
     }
     else
