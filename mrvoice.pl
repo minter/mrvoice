@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.378 2004/04/26 13:32:59 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.379 2004/04/26 14:55:04 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -174,14 +174,15 @@ else
     open( STDERR, ">&STDOUT" );
 }
 
-#STARTCSZ
 # The following variables set the locations of MP3s for static hotkey'd
 # sounds
+#STARTCSZ
 #our $altt = "TaDa.mp3";
 #our $alty = "CalloutMusic.mp3";
 #our $altb = "BrownBag.mp3";
 #our $altg = "Groaner.mp3";
 #our $altv = "PriceIsRightTheme.mp3";
+
 #ENDCSZ
 
 #####
@@ -572,11 +573,12 @@ sub bind_hotkeys
     $window->bind( "<Control-Key-t>", \&holding_tank );
 
     #STARTCSZ
-    #$window->bind("<Alt-Key-t>", [\&play_mp3,"ALT-T"]);
-    #$window->bind("<Alt-Key-y>", [\&play_mp3,"ALT-Y"]);
-    #$window->bind("<Alt-Key-b>", [\&play_mp3,"ALT-B"]);
-    #$window->bind("<Alt-Key-g>", [\&play_mp3,"ALT-G"]);
-    #$window->bind("<Alt-Key-v>", [\&play_mp3,"ALT-V"]);
+    #$window->bind( "<Alt-Key-t>", [ \&play_mp3, "ALT-T" ] );
+    #$window->bind( "<Alt-Key-y>", [ \&play_mp3, "ALT-Y" ] );
+    #$window->bind( "<Alt-Key-b>", [ \&play_mp3, "ALT-B" ] );
+    #$window->bind( "<Alt-Key-g>", [ \&play_mp3, "ALT-G" ] );
+    #$window->bind( "<Alt-Key-v>", [ \&play_mp3, "ALT-V" ] );
+
     #ENDCSZ
     if ( $^O eq "MSWin32" )
     {
@@ -1702,7 +1704,7 @@ sub add_new_song
             -text    => "Preview song",
             -command => sub {
                 my $tmpsong = $songentry->cget( -textvariable );
-                play_mp3( "addsong", $$tmpsong );
+                play_mp3( $box, "addsong", $$tmpsong );
             }
         )->pack( -side => 'right' );
 
@@ -2276,7 +2278,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.378 $';
+    my $rev    = '$Revision: 1.379 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::mysql->VERSION;
@@ -2306,19 +2308,56 @@ sub show_about
 #STARTCSZ
 #sub show_predefined_hotkeys
 #{
-#  my $box = $mw->DialogBox(-title=>"Predefined Hotkeys", -buttons=>["Close"]);
-#  $box->Icon(-image=>$icon);
-#  $box->add("Label",-text=>"The following hotkeys are always available and may not be changed")->pack();
-#  $box->add("Label",-text=>"<Escape> - Stop the currently playing MP3",-anchor=>'nw')->pack(-fill=>'x');
-#  $box->add("Label",-text=>"<Control-P> - Play the currently selected song",-anchor=>'nw')->pack(-fill=>'x');
-#  $box->add("Label",-text=>"<Enter> - Perform the currently entered search",-anchor=>'nw')->pack(-fill=>'x');
-#  $box->add("Label",-text=>"<ALT-t> - The \"Ta-Da\" MIDI",-anchor=>'nw')->pack(-fill=>'x');
-#  $box->add("Label",-text=>"<ALT-y> - The \"You're Out\" MIDI",-anchor=>'nw')->pack(-fill=>'x');
-#  $box->add("Label",-text=>"<ALT-b> - The Brown Bag MIDI",-anchor=>'nw')->pack(-fill=>'x');
-#  $box->add("Label",-text=>"<ALT-g> - The Groaner MIDI",-anchor=>'nw')->pack(-fill=>'x');
-#  $box->add("Label",-text=>"<ALT-v> - The Price Is Right theme (Volunteer photos)",-anchor=>'nw')->pack(-fill=>'x');
-#  $box->Show;
+#    my $box =
+#      $mw->DialogBox( -title => "Predefined Hotkeys", -buttons => ["Close"] );
+#    $box->Icon( -image => $icon );
+#    $box->add( "Label",
+#        -text =>
+#          "The following hotkeys are always available and may not be changed" )
+#      ->pack();
+#    $box->add(
+#        "Label",
+#        -text   => "<Escape> - Stop the currently playing MP3",
+#        -anchor => 'nw'
+#    )->pack( -fill => 'x' );
+#    $box->add(
+#        "Label",
+#        -text   => "<Control-P> - Play the currently selected song",
+#        -anchor => 'nw'
+#    )->pack( -fill => 'x' );
+#    $box->add(
+#        "Label",
+#        -text   => "<Enter> - Perform the currently entered search",
+#        -anchor => 'nw'
+#    )->pack( -fill => 'x' );
+#    $box->add(
+#        "Label",
+#        -text   => "<ALT-t> - The \"Ta-Da\" MIDI",
+#        -anchor => 'nw'
+#    )->pack( -fill => 'x' );
+#    $box->add(
+#        "Label",
+#        -text   => "<ALT-y> - The \"You're Out\" MIDI",
+#        -anchor => 'nw'
+#    )->pack( -fill => 'x' );
+#    $box->add(
+#        "Label",
+#        -text   => "<ALT-b> - The Brown Bag MIDI",
+#        -anchor => 'nw'
+#    )->pack( -fill => 'x' );
+#    $box->add(
+#        "Label",
+#        -text   => "<ALT-g> - The Groaner MIDI",
+#        -anchor => 'nw'
+#    )->pack( -fill => 'x' );
+#    $box->add(
+#        "Label",
+#        -text   => "<ALT-v> - The Price Is Right theme (Volunteer photos)",
+#        -anchor => 'nw'
+#    )->pack( -fill => 'x' );
+#    $box->Show;
 #}
+
 #ENDCSZ
 
 sub wipe_tank
@@ -2707,29 +2746,33 @@ sub play_mp3
 {
 
     my ( $statustitle, $statusartist, $filename );
+    my $songstatusstring;
+    my $widget = shift;
+    my $action = shift;
 
     # See if the request is coming from one our hotkeys first...
-    if ( $_[1] =~ /^f\d+/ )
+    if ( $action =~ /^f\d+/ )
     {
-        $filename = $fkeys{ $_[1] }->{filename};
+        $filename = $fkeys{$action}->{filename};
     }
-    elsif ( $_[1] =~ /^ALT/ )
+    elsif ( $action =~ /^ALT/ )
     {
 
         #STARTCSZ
-        #  elsif ($_[1] eq "ALT-T") { $filename = $altt; }
-        #  elsif ($_[1] eq "ALT-Y") { $filename = $alty; }
-        #  elsif ($_[1] eq "ALT-B") { $filename = $altb; }
-        #  elsif ($_[1] eq "ALT-G") { $filename = $altg; }
-        #  elsif ($_[1] eq "ALT-V") { $filename = $altv; }
+        #if    ( $action eq "ALT-T" ) { $filename = $altt; }
+        #elsif ( $action eq "ALT-Y" ) { $filename = $alty; }
+        #elsif ( $action eq "ALT-B" ) { $filename = $altb; }
+        #elsif ( $action eq "ALT-G" ) { $filename = $altg; }
+        #elsif ( $action eq "ALT-V" ) { $filename = $altv; }
+
         #ENDCSZ
     }
-    elsif ( $_[0] eq "addsong" )
+    elsif ( $action eq "addsong" )
     {
 
         # if we're playing from the "add new song" dialog, the full path
         # will already be set.
-        $filename = $_[1];
+        $filename = shift @_;
         if ( $^O eq "MSWin32" )
         {
             $filename = Win32::GetShortPathName($filename);
@@ -2738,17 +2781,17 @@ sub play_mp3
     else
     {
         my $box;
-        if ( ( $_[1] ) && ( $_[1] eq "Current" ) )
+        if ( $action eq "Current" )
         {
             $box = $mainbox;
         }
-        elsif ( ( $_[1] ) && ( $_[1] eq "Holding" ) )
+        elsif ( $action eq "Holding" )
         {
             $box = $tankbox;
         }
         else
         {
-            $box = $_[0];
+            $box = $widget;
         }
 
         # We only care about playing one song
@@ -2762,18 +2805,21 @@ sub play_mp3
             $statusartist = $id_ref->{artist};
         }
     }
-    if ( ($filename) && ( $_[0] eq "addsong" ) )
+    if ( $action eq "addsong" )
     {
         $status = "Previewing file $filename";
         system("$config{'mp3player'} $filename");
     }
     elsif ($filename)
     {
-        my $songstatusstring;
-        if ( ( $_[1] ) && ( $_[1] =~ /^F.*/ ) )
+        if ( $action =~ /^f.*/ )
         {
-            my $fkey = lc( $_[1] );
+            my $fkey = lc($action);
             $songstatusstring = $fkeys{$fkey}->{title};
+        }
+        elsif ( $action =~ /^ALT/ )
+        {
+            $songstatusstring = $filename;
         }
         elsif ($statusartist)
         {
@@ -3599,9 +3645,14 @@ sub hotkeysmenu_items
             -accelerator => 'Ctrl-T'
         ],
 
-#STARTCSZ
-#    ['command', 'Show Predefined Hotkeys', -command=>\&show_predefined_hotkeys],
-#ENDCSZ
+        #STARTCSZ
+        #[
+        #    'command',
+        #    'Show Predefined Hotkeys',
+        #    -command => \&show_predefined_hotkeys
+        #],
+
+        #ENDCSZ
         "",
         [ 'command',     'Restore Hotkeys', -command  => \&restore_hotkeys ],
         [ 'checkbutton', 'Lock Hotkeys',    -variable => \$lock_hotkeys ],
