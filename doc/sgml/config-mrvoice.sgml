@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: config-mrvoice.sgml,v 1.5 2001/09/26 17:14:16 minter Exp $
+  CVS ID: $Id: config-mrvoice.sgml,v 1.6 2001/09/27 14:09:24 minter Exp $
 -->
 
 <chapter><title>Configuring Mr. Voice</title>
@@ -46,33 +46,33 @@
     <para>Due to some Windows weirdness, the way you enter paths will be kind of odd in the configuration section.  So we'll go through the variables now, with Windows-specific notes.</para>
     <itemizedlist>
       <listitem>
-        <para><varname>$db_name</varname>="<replaceable>DATABSE_NAME</replaceable>"; - set this variable equal to the <replaceable>DATABASE_NAME</replaceable> you defined earlier.</para>
+        <para><varname>$db_name</varname>='<replaceable>DATABSE_NAME</replaceable>'; - set this variable equal to the <replaceable>DATABASE_NAME</replaceable> you defined earlier.</para>
       </listitem>
       <listitem>
-        <para><varname>$db_username</varname>="<replaceable>root</replaceable>"; - This is your superuser name.  If you're comfortable with MySQL, you can set up a user that just has access to the Mr. Voice database, but root will do for most people.</para>
+        <para><varname>$db_username</varname>='<replaceable>root</replaceable>'; - This is your superuser name.  If you're comfortable with MySQL, you can set up a user that just has access to the Mr. Voice database, but root will do for most people.</para>
        </listitem>
        <listitem>
-         <para><varname>$db_password</varname>="<replaceable>YOUR_PASSWORD</replaceable>"; - This is set to the password you defined earlier.</para>
+         <para><varname>$db_password</varname>='<replaceable>YOUR_PASSWORD</replaceable>'; - This is set to the password you defined earlier.</para>
        </listitem>
        <listitem>
-         <para><varname>$category</varname>="<replaceable>Any</replaceable>"; - Can be used to change the default category that searches look in.  Leave alone unless you know what you're doing by changing it.</para>
+         <para><varname>$category</varname>='<replaceable>Any</replaceable>'; - Can be used to change the default category that searches look in.  Leave alone unless you know what you're doing by changing it.</para>
        </listitem>
        <listitem>
-         <para><varname>$mp3player</varname>="<replaceable>C:\\PROGRA~1\WINAMP\WINAMP.EXE</replaceable>"; - This defines the path to your MP3 player.  If you're using WinAMP in its default install, this path will work.  If not, you need to use "\\" to separate the parts of the path, and instead of spaces, you need to use the "short" version of the directory.</para>
+         <para><varname>$mp3player</varname>='<replaceable>C:\PROGRA~1\WINAMP\WINAMP.EXE</replaceable>'; - This defines the path to your MP3 player.  If you're using WinAMP in its default install, this path will work.  If not, be aware that you need to use "\" to separate the parts of the path, and instead of spaces, you need to use the "short" version of the directory. See the appendix for more information.</para>
        </listitem>
        <listitem>
-         <para><varname>$filepath</varname>="<replaceable>C:/MP3</replaceable>"; - Notice the difference?  Weird.  For this variable, you use "/" to separate the parts of the path.
+         <para><varname>$filepath</varname>='<replaceable>C:\MP3\</replaceable>'; - This is the directory on your system where Mr. Voice will store the MP3 files after you add them.  Again, due to syntax differences between Windows and Unix, you must use "\" to separate parts of the path.
        </listitem>
        <listitem>
-         <para><varname>$savepath</varname>="<replaceable>C:/mrvoice-hotkeys</replaceable>"; - Like <varname>$filepath</varname>, this uses "/" as a path separator.</para>
+         <para><varname>$savepath</varname>='<replaceable>C:\mrvoice-hotkeys\</replaceable>'; - This is the default location that Mr. Voice will store your saved hotkeys.</para>
        </listitem>
      </itemizedlist>
      <para>Nothing else should need to be edited for normal operation.  Save the file and exit out of the DOS editor.</para>
     <sect2><title>The <filename>C:\mrvoice.cfg</filename> File</title>
       <para>If the file <filename>C:\mrvoice.cfg</filename> exists on your computer, any variables that you define in that file will <emphasis>override</emphasis> the ones in the <filename>mrvoice.pl</filename> script itself.  The variables take the form:</para>
       <para>variable_name::value</para>
-      <para>So, for example, to define a <varname>$savepath</varname> of <filename>/tmp/</filename> in the <filename>C:\mrvoice.cfg</filename> file, you would include the line:</para>
-      <para>savepath::/tmp/</para>
+      <para>So, for example, to define a <varname>$savepath</varname> of <filename>C:\hotkeys</filename> in the <filename>C:\mrvoice.cfg</filename> file, you would include the line:</para>
+      <para>savepath::C:\\hotkeys\\</para>
     </sect2>
   </sect1>
 
