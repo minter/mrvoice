@@ -71,7 +71,12 @@
 
   <sect1><title>Installation Steps</title>
     <para>This will help you get Mr. Voice up and running on either a Unix or Windows system.</para>
-
+    <sect2><title>Upgrading to Mr. Voice 2.0</title>
+      <para>Mr. Voice 2.0 involves a migration from the old database backend (MySQL) used in Mr. Voice 1.10.6 and before, to a new database backend (SQLite).  In order to migrate your data from the old database to the new one, you need to run the migration utility.</para>
+      <para>Windows users should double-click on the <filename>upgrade20.exe</filename> file.  It will open up a DOS box.  Follow the instructions on-screen and, if there are no errors, it will create the new Mr. Voice database file and update your configuration to point to it.  If there are errors, your MySQL database will not be modified, so you can always use 1.10.6 or lower as usual while I'm working on the problem.</para>
+      <para>Unix users should run the <filename>tools/upgrade20.pl</filename> script, and it will do the same as in the Windows instructions.</para>
+      <para>If you are installing Mr. Voice 2.0 on a new system for the first time, you do <emphasis>not</emphasis> need to do these upgrade steps</para>
+    </sect2>
     <sect2><title>Unix Installation Instructions</title>
       <itemizedlist>
         <listitem>
