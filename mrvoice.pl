@@ -219,12 +219,10 @@ else
         }
     }
     my $homedir = get_homedir();
-    print "DEBUG: Home Directory is $homedir\n";
     $rcfile = ( $userrcfile eq "" ) ? "$homedir/.mrvoicerc" : $userrcfile;
     if ( ( defined($logfile) ) || ( $^O eq "darwin" ) )
     {
         $logfile = ( $logfile eq "" ) ? "$homedir/mrvoice.log" : $logfile;
-        print "DEBUG: Logfile is $logfile\n";
         open( STDOUT, ">$logfile" ) or die;
         open( STDERR, ">&STDOUT" )  or die;
         print "Using Unix logfile $logfile\n"
@@ -4540,6 +4538,7 @@ sub hotkeysmenu_items
             -command     => \&holding_tank,
             -accelerator => 'Ctrl-T'
         ],
+        [ 'command', 'Empty Holding Tank', -command => \&wipe_tank ],
 
         "",
         [ 'command',     'Restore Hotkeys', -command  => \&restore_hotkeys ],
