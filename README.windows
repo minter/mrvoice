@@ -2,13 +2,18 @@ The following steps detail setting up Mr. Voice on a Windows system.  Windows
 95 and higher should be supported.  This README is a supplement to the
 main README file.
 
-First, I recommend that you install Active State's ActivePerl.  You can
-download it from http://www.activestate.com/.  You will be able to download 
-the modules that you need from ActivePerl's PPM package manager - see their 
-documentation for details.
+First, You'll need TCL/TK for Windows.  You can download it from:
 
-You can get MySQL for Windows from http://www.mysql.com/downloads/.  As 
-of this writing, the current release is 3.23.  When you first install
+http://dev.scriptics.com/software/tcltk/download83.html
+
+Second, I recommend that you install Active State's ActivePerl.  You can
+download it from http://www.activestate.com/.  You will be able to download 
+the modules that you need from ActivePerl's PPM package manager - see their  
+documentation for details.  See the README file for information on the
+modules that you need.
+
+Third, You can get MySQL for Windows from http://www.mysql.com/downloads/.  
+As of this writing, the current release is 3.23.  When you first install
 MySQL for windows, the superuser account is named "root", with no password.
 Read the docs at http://www.mysql.com/documentation/index.html for
 full MySQL information.  But, basically, to set the database up, you'll
@@ -28,12 +33,22 @@ I don't believe that Tk::FileDialog.pm is available through PPM.  So you
 can find the .tar.gz module from the ActiveState website search, use
 WinZip to uncompress it, and copy FileDialog.pm to C:\perl\site\lib\Tk\.
 
-The other big change is path names.  In Unix, a path name would look
-like "/path/to/filename".  For Windows, you'll change that to be
-"C:\\path\\to\\file.exe".  Note that this is a change from the normal
-DOS/Windows way, which uses a single backslash to separate items in 
-the path (ie "C:\path\to\file.exe".  The "\" character is special under 
-perl, so use the "\\", and it'll work fine.
+The path stuff is kind of weird, I'm trying to figure out why.  But,
+until I do, there are different path styles for the directories and
+the programs.
+
+For the $mp3player variable, you'll have to do something like:
+
+$mp3player = "C:\\PROGRA~1\\WINAMP\\WINAMP.EXE";
+
+However, for the $filepath and $savepath variables, you'll need to do:
+
+$filepath = "C:/MP3/";
+$savepath = "C:/TEMP/";
+
+Notice the two different path separators?  Weird.  I think it may
+have something to do with Tk::FileDialog.pm.  If I find the answer,
+I'll put it here.
 
 In addition, you'll have to use the eight-character name for long files.
 For example, use "C:\\progra~1\\file.exe" instead of
@@ -47,4 +62,4 @@ Other than that, the cross-platform nature of Perl/Tk means that running
 on either Unix or Windows should be pretty easy!
 
 --
-CVS ID: $Id: README.windows,v 1.4 2001/03/07 13:44:19 minter Exp $
+CVS ID: $Id: README.windows,v 1.5 2001/03/07 23:16:20 minter Exp $
