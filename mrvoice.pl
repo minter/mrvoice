@@ -15,8 +15,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/05/10 12:07:42 $
-#	CVS REVISION NUMBER:    $Revision: 1.37 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/05/11 00:18:55 $
+#	CVS REVISION NUMBER:    $Revision: 1.38 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -61,7 +61,7 @@ $savefile_max = 4;			# The maximum number of files to
 
 #####
 
-my $version = "1.0.2";			# Program version
+my $version = "1.1";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
 
 $filepath = "$filepath/" unless ($filepath =~ "/.*\/$/");
