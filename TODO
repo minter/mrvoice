@@ -1,6 +1,6 @@
 Things I'm currently working on:
 
-* Debug mode - log stuff to a file with the proper switch.
+* Debug mode - log extra information to logfile
 * Tabbed interface to the Hotkeys.
 * General code cleanup and pretty-fication.
 

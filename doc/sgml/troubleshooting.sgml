@@ -11,14 +11,6 @@
         <para>To diagnose a problem like this, Mr. Voice sends debugging output to a file.  That file is <filename>C:/mrvoice.log</filename> under Windows or <filename>~/mrvoice.log</filename> under Unix.  You can use that file to figure out what's going wrong, or send it to me so I can debug the problem.</para>
       </listitem>
       <listitem>
-        <para><emphasis>My computer crashed while I was using Mr. Voice, and now it won't start!</emphasis></para>
-        <para>Mr. Voice writes its error messages to a file, either <filename>C:/mrvoice.log</filename> under Windows or <filename>~/mrvoice.log</filename> under Unix.  Open that file and look for any error messages, especially ones referencing "Got error 127 from the table handler."  If you see that error, you've got a common problem that pops up when the database crashes.</para>
-        <para>To fix it, cd to the directory C:\mysql\bin, and run the following commands:</para>
-        <para><userinput>myisamchk -r c:\mysql\data\<replaceable>YOUR_DATABASE</replaceable>\categories</userinput></para>
-        <para><userinput>myisamchk -r c:\mysql\data\<replaceable>YOUR_DATABASE</replaceable>\mrvoice</userinput></para>
-        <para>Where <replaceable>YOUR_DATABASE</replaceable> is the name of your Mr. Voice database (check <filename>C:\mrvoice.cfg</filename>, or do run "dir C:\mysql\data" to see the name to use).  This should repair any damage to your database, and you should be able to run Mr. Voice again after those commands have finished.</para>
-      </listitem>
-      <listitem>
         <para><emphasis>When I try to fade-stop a song, I get a "pop" of volume at the end.  How do I fix that?</emphasis></para>
         <para>Randy in KC has written up steps that he used to solve this problem.  He recommends doing the following.  Right mouse click on Winamp.  Choose Options->Preferences->Plug Ins->Output.  Highlight DirectSound Output v 2.2.10.  Click Configure.  Choose Fading Tab.  Select "Old Style Fade on pause".  Hit Apply.</para>
       </listitem>
@@ -29,14 +21,15 @@
         <para>This is both the easiest and hardest part of the equation.  It's the easiest because backing up the MP3 files involves only copying them to another place, so that you are covered in case something happens to the files themselves (disk crash, accidental deletion, etc.)</para>
         <para>It's the hardest, though, because you're generally talking about a gigabyte-plus of data, which limits your transfer options.  Some suggestions for MP3 file backups include:
         <itemizedlist>
-          <listitem><para>A second hard drive in your computer.  Will protect against a drive crash, OS crash, or accidental deletion, but will not protect against on-site disasters (physical damage to the computer, fire, locusts, etc.) * Burning files to CD/DVD.  Easy off-site storage, but requires the purchase of a burner if you don't already have one.</para></listitem>
+          <listitem><para>A second hard drive in your computer.  Will protect against a drive crash, OS crash, or accidental deletion, but will not protect against on-site disasters (physical damage to the computer, fire, locusts, etc.)</para></listitem>
+          <listitem><para>Burning files to CD/DVD.  Easy off-site storage, but requires the purchase of a burner if you don't already have one.</para></listitem>
           <listitem><para>Copying files to another computer over a network.  This is what I do - I have a network card (~$15) in the voice computer, and use an ethernet cable to copy the files over to my laptop.  Transfer time is fast.  You can also use things like a USB link cable to transfer files between computers.</para></listitem>
           <listitem><para>Copying the files onto several thousand floppy disks.  Time-consuming and not recommended.  ;-)</para></listitem>
         </itemizedlist>
         </para>
         <para><emphasis role="strong">BACKING UP THE DATABASE</emphasis></para>
         <para>Backing up the files themselves is good, but there's another step involved.  You need to back up the information in your database, so that all of your meta-data (categories, extra info, etc.) isn't lost.  The database actually drives the Mr. Voice program, too, so if you lose the database data, Mr. Voice will be pretty useless.</para>
-        <para>Beginning with Mr. Voice version 1.7, you can use the <menuchoice> <guimenu>File</guimenu> <guimenuitem>Backup Database To A File</guimenuitem> </menuchoice> menu choice to export the contents of your database to a file.  You can then copy that file to a safe place.  Also, beginning with version 2.0, you can back up the SQLite .db file itself to a safe place.  Check the <menuchoice><guimenu>File</guimenu> <guimenuitem>Preferences</guimenuitem> </menuchoice> menu for the location of the file.</para>
+        <para>Beginning with Mr. Voice version 1.7, you can use the <menuchoice> <guimenu>File</guimenu> <guimenuitem>Backup Database To A File</guimenuitem> </menuchoice> menu choice to export the contents of your database to a file.  You can then copy that file to a safe place.  Also, beginning with version 2.0, you can back up the SQLite .db file itself to a safe place.  Just copy the .db file to another computer, and you've got the same database that the original one had!  Check the <menuchoice><guimenu>File</guimenu> <guimenuitem>Preferences</guimenuitem> </menuchoice> menu for the location of the file.</para>
         <para><emphasis role="strong">OTHER THINGS TO BACKUP</emphasis></para>
         <para>You may also want to back up your saved hotkey files from the directory listed in the <menuchoice> <guimenu>File</guimenu> <guimenuitem>Preferences</guimenuitem></menuchoice> menu, as well as <filename>C:\mrvoice.cfg</filename> on Windows or <filename>~/.mrvoicerc</filename> on Unix.  Backing up all of this data should allow you to completely restore your system in the event that something goes wrong.</para>
         <para><emphasis role="strong">WHEN TO BACKUP?</emphasis></para>

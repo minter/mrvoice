@@ -1,42 +1,18 @@
 This directory contains small utilities that you might use to get
 the most out of Mr. Voice.  A description of each utility follows.
 
-###### quicksetup.pl ######
-The source for the Windows quick setup executable.
-
 ###### converthotkeys.pl ######
 This script will convert saved hotkey (.mrv) files from the format they
 used prior to relase 1.8, to the 1.8 format.  It only needs to be run
 once, before you start using release 1.8.  After that, any new hotkey files
 will be created in the proper format.
 
-###### orphans.pl ######
-Run this script and it will print out a list of "orphaned" MP3s in your
-MP3 storage directory.  And orphaned MP3 is defined as an MP3 file that
-is not referenced by any entry in the database.  
+###### cpancheck.pl ######
+Checks CPAN for updates to modules that Mr. Voice uses.  Useful only 
+to developers.
 
-If you run "orphans.pl" by itself, it will just print out a report.  If
-you run "orphans.pl -d", it will delete the orphaned files.  Adding a
-"-v" flag to either of those options will cause the script to become
-more verbose in its output, to possibly help you track down any problems.
-
-###### mrvoice.php ######
-This is a PHP utility to provide a web frontend to your database.  You
-can search for songs, show songs added within a particular date range,
-and download songs.
-
-This script does NOT use your normal config file, so you must manually
-set up the variables at the top of the script.  
-
-This utility requires a webserver with PHP (http://www.php.net/) compiled
-into it, PHP with MySQL support, the class.id3.php file, and the ability
-to connect to your database.
-
-###### mrvoice-backup.bat ######
-This script automates backups under Windows systems.  Be sure to edit
-the file and replace the variables at the top with the ones for your 
-system, and also remember to create the directory to use for backup
-files.  OBSOLETE - Replaced by the File->Backup Database menu option.
+###### upgrade20.pl ######
+Converts a Mr. Voice 0.x or 1.x database to a Mr. Voice 2.x database.
 
 ###### END ######
 # SVN ID: $Id$

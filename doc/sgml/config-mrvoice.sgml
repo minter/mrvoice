@@ -3,8 +3,9 @@
 -->
 
 <chapter><title>Configuring Mr. Voice</title>
-  <para>This section will take you through configuring the Mr. Voice software.  Mr. Voice is configured via an external configuration file - this provides the most flexibility in keeping your configuration sane from one version to the next.  On Unix, the config file is named <filename>.mrvoicerc</filename>, and lives in your home directory.  On Windows, the filename is <filename>C:\mrvoice.cfg</filename>.</para>
-  <para>If you start Mr. Voice without a configuration file, or if there is an error in your configuration, Mr. Voice will pop up the preferences window, allowing you to enter and edit the configuration information.  Changes are then written out to the appropriate configuration file.  The configuration options are detailed below.
+  <para>This section will take you through configuring the Mr. Voice software.  Mr. Voice is configured via an external configuration file - this provides the most flexibility in keeping your configuration sane from one version to the next.  On Unix, the default config file is named <filename>.mrvoicerc</filename>, and lives in your home directory.  On Windows, the default filename is <filename>C:\mrvoice.cfg</filename>.</para>
+  <para>To provide an alternate configuration file (for example, if you would like to run two separate databases off of the same computer), you can pass the Mr. Voice program the "--config" flag.  So on Windows, if you wanted to use an alternate config file, you would run "<computeroutput>MRVOICE.EXE --config C:\MRVOICE-ALTERNATE.CFG</computeroutput>", or on Unix "<computeroutput>./mrvoice.pl --config /path/to/new/configfile</computeroutput>".</para>
+  <para>If you start Mr. Voice without a configuration file, or if there is an error in your configuration, Mr. Voice will pop up a window asking if you want to create a default or manual configuration.  If you choose default, it will set up a fairly standard installation for you.  If you choose manual, you will be taken to the preferences window, allowing you to enter and edit the configuration information.  Changes are then written out to the appropriate configuration file.  The configuration options are detailed below.
     <figure>
       <title>The Preferences window</title>
       <mediaobject>
@@ -68,6 +69,7 @@ search_other::1
 show_publisher::0
         </screen>
       </para>
+      <para>The Windows <filename>C:\MRVOICE.CFG</filename> file will look similar, but with Windows pathnames instead of Unix ones.</para>
     </sect2>
   </sect1>
 </chapter>

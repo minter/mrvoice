@@ -194,7 +194,7 @@ our $altv = "PriceIsRightTheme.mp3";
 
 #####
 
-my $version = "2.0pre4";    # Program version
+my $version = "2.0";    # Program version
 our $status = "Welcome to Mr. Voice version $version";
 
 sub get_rows
@@ -496,8 +496,8 @@ EOD
 # The extra brackets are suggested by the debugging code
 sub Tk::DragDrop::Mapped
 {
-    my ($token) = @_;
-    my $e = $token->parent->XEvent;
+    my $token = shift;
+    my $e     = $token->parent->XEvent;
     $token = $token->toplevel;
     $token->grabGlobal;
 
@@ -526,7 +526,7 @@ sub Tk::HList::Button1Motion
 sub BindMouseWheel
 {
 
-    my ($w) = @_;
+    my $w = shift;
 
     if ( $^O eq 'MSWin32' )
     {
@@ -605,6 +605,7 @@ sub bind_hotkeys
                       "http://localhost:4800/fadeoutandstop?p=$config{'httpq_pw'}"
                   );
                 $agent->request($req);
+                $status = "Playing Fade-Stopped";
             }
         );
     }
@@ -914,8 +915,11 @@ sub dump_database
         {
 
             # Run the SQLite Dump
-            open( DUMPFILE, ">$dumpfile" )
-              or die "Could not open $dumpfile for writing";
+            if ( !open( DUMPFILE, ">$dumpfile" ) )
+            {
+                $status = "Could not open $dumpfile for writing";
+                return;
+            }
 
             # Get the table schema information
             my $query =
@@ -1001,10 +1005,15 @@ sub import_database
 
             if ( $button eq "Ok" )
             {
-                open( DUMPFILE, $dumpfile )
-                  or die "Cannot open $dumpfile for reading";
-                my $query;
-                my $errstat = 0;
+                if ( !open( DUMPFILE, $dumpfile ) )
+                {
+                    $status = "Cannot open $dumpfile for reading";
+                    return;
+                }
+
+                my $starttime = gettimeofday();
+                my $errstat   = 0;
+                $dbh->do("BEGIN");
                 while ( my $query = <DUMPFILE> )
                 {
                     if ( $query =~ /^--/ )
@@ -1016,10 +1025,13 @@ sub import_database
                     my $sth = $dbh->prepare($query);
                     $errstat = 1 if ( !$sth->execute() );
                 }
-                close(DUMPFILE) or die "Cannot close $dumpfile after reading";
+                close(DUMPFILE);
+                my $endtime = gettimeofday();
+                my $diff = sprintf( "%.2f", $endtime - $starttime );
                 if ( $errstat == 1 )
                 {
-                    $status = "Database import HAD ERRORS";
+                    $status = "File $dumpfile HAD ERRORS - nothing imported";
+                    $dbh->do("ROLLBACK");
                 }
                 elsif ( $errstat == 2 )
                 {
@@ -1027,7 +1039,8 @@ sub import_database
                 }
                 else
                 {
-                    $status = "Database dump $dumpfile imported";
+                    $status = "Imported $dumpfile in $diff seconds";
+                    $dbh->do("COMMIT");
                 }
             }
             else
@@ -2907,7 +2920,7 @@ sub play_mp3
 
         # if we're playing from the "add new song" dialog, the full path
         # will already be set.
-        $filename = shift @_;
+        $filename = shift;
         if ( $^O eq "MSWin32" )
         {
             $filename = Win32::GetShortPathName($filename);
@@ -3177,6 +3190,7 @@ sub do_search
     {
         my $curr_entry = ( $mainbox->info("children") )[0];
         $mainbox->selectionSet($curr_entry);
+        $mainbox->see($curr_entry);
     }
     $sth->finish;
     my $endtime = gettimeofday();
@@ -3448,7 +3462,7 @@ sub StartDrag
     # Starts the drag for the hotkey drag-and-drop.
     my $sound_icon = $mw->Photo( -data => soundicon_gif() );
 
-    my ($token) = @_;
+    my $token = shift;
     $current_token = $token;
     my $widget = $current_token->parent;
     my $event  = $widget->XEvent;
@@ -3473,12 +3487,12 @@ sub Hotkey_Drop
         $status = "Can't drop hotkey - hotkeys locked";
         return;
     }
-    my ($fkey_var)  = @_;
+    my $fkey_var    = shift;
     my $widget      = $current_token->parent;
     my (@selection) = $widget->info('selection');
-    my $id       = $widget->info( 'data', $selection[0] );
-    my $filename = get_info_from_id($id)->{filename};
-    my $title    = get_info_from_id($id)->{fulltitle};
+    my $id          = $widget->info( 'data', $selection[0] );
+    my $filename    = get_info_from_id($id)->{filename};
+    my $title       = get_info_from_id($id)->{fulltitle};
     $fkeys{$fkey_var}->{id}       = $id;
     $fkeys{$fkey_var}->{filename} = $filename;
     $fkeys{$fkey_var}->{title}    = $title;
@@ -3486,9 +3500,9 @@ sub Hotkey_Drop
 
 sub Tank_Drop
 {
-    my ($dnd_source) = @_;
-    my $parent       = $dnd_source->parent;
-    my (@indices)    = $parent->info('selection');
+    my $dnd_source = shift;
+    my $parent     = $dnd_source->parent;
+    my (@indices)  = $parent->info('selection');
     foreach my $index (@indices)
     {
         my $text = $parent->itemCget( $index, 0, '-text' );
@@ -4416,6 +4430,7 @@ if ( $^O eq "MSWin32" )
                   "http://localhost:4800/fadeoutandstop?p=$config{'httpq_pw'}"
               );
             $agent->request($req);
+            $status = "Playing Fade-Stopped";
         }
     );
 }

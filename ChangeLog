@@ -1,6 +1,24 @@
+Fri  Sep 24  2004	H. Wade Minter (minter@lunenburg.org)
+     * Finished updating documentation.
+     * Released Version 2.0!
+     * Merged changes from trunk - 829:846
+
+Tue  Sep 21  2004	H. Wade Minter (minter@lunenburg.org)
+     * Print a status message when we fade-stop.
+
+Sun  Sep 19  2004	H. Wade Minter (minter@lunenburg.org)
+     * Use shift() instead of ($scalar) = @_ when we only care about one
+       argument.
+
 Sat  Sep 18  2004	H. Wade Minter (minter@lunenburg.org)
      * Merge trunk changes from 825 to 828.
      * Add a CWX tag to the Version number.
+     * Wrap the database SQL import in a transaction for efficency.
+     * Replace spurious die() calls with status updates.
+     * Add a tool, cpancheck.pl, to check CPAN for updates of the modules
+       that Mr. Voice uses.
+     * Removed obsolete tools.
+     * Make it so that the top item in a search is always selected AND visible.
 
 Fri  Sep 17  2004	H. Wade Minter (minter@lunenburg.org)
      * Get the move_tank function working with the HList.  Thanks to 
