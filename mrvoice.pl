@@ -46,7 +46,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.299 2004/01/15 18:15:41 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.300 2004/01/16 20:03:45 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -686,25 +686,6 @@ p7SwBjvGBvPXXl60izw0C3TlBiXmcXdqBnmKTDlUTXOwRrWQBnFASE+0brFUpoEKX5rac5kgR7hJ
 fHqFe2AqS30kpzKJCarHUmt0pir0XLNqGDBkqwEHqnizqx3YZ6lgppjKVR2GUN9Jq8eKQcaKrMvK
 rM3qrM8KrdEqrdNKrdVqrdeKrdmqre8TCAA7
 end_of_data
-
-# If you have Tk800.024 with Nik's patch, you don't need this Tk::Wm
-# patch.
-#
-#if ($^O ne "MSWin32")
-#{
-#  sub Tk::Wm::Post
-#  {
-#    my ($w,$X,$Y) = @_;
-#    $X = int($X);
-#    $Y = int($Y);
-#    $w->positionfrom('user');
-#    # $w->geometry('+$X+$Y');
-#    $w->MoveToplevelWindow($X,$Y);
-#    $w->deiconify;
-#    # $w->idletasks; # to prevent problems with KDE's kwm etc.
-#    # $w->raise;
-#  }
-#}
 
 # This function is redefined due to evilness that keeps the focus on
 # the dragged token.  Thanks to Slaven Rezic <slaven.rezic@berlin.de>
@@ -2532,7 +2513,7 @@ sub delete_song
 
 sub show_about
 {
-    $rev = '$Revision: 1.299 $';
+    $rev = '$Revision: 1.300 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
