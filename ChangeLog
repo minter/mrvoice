@@ -1,6 +1,7 @@
 Tue  May 08 2001	H. Wade Minter (minter@lunenburg.org)
      * Added the Restore Hotkey feature.
      * Added a "recently accessed" list under the File menu.
+     * Upped the version number to 1.1
 
 Mon  May 07 2001	H. Wade Minter (minter@lunenburg.org)
      * Added the ability to source a ~/.mrvoicerc file for 
@@ -65,4 +66,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.12 2001/05/08 22:37:17 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.13 2001/05/11 00:19:25 minter Exp $
