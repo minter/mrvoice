@@ -42,7 +42,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.274 2003/11/26 02:45:09 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.275 2003/11/26 16:39:56 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1343,33 +1343,34 @@ sub add_category
 sub edit_category
 {
   my $edit_cat;
-  my %codehash;
   my $box = $mw->DialogBox(-title=>"Choose a category to edit", -buttons=>["Ok","Cancel"]);
   $box->Icon(-image=>$icon);
   $box->add("Label",-text=>"You may currently edit the long name,\nbut not the code, of a category.\n\nChoose the category to edit below.")->pack(); 
   my $query="SELECT * from categories ORDER BY description";
   my $sth=$dbh->prepare($query);
   $sth->execute or die "can't execute the query: $DBI::errstr\n";
+  my $editbox = $box->add("Scrolled","Listbox",-scrollbars=>'se',
+                                 -setgrid=>1,
+                                 -height=>10,
+                                 -selectmode=>"single")->pack();
   while (@table_row = $sth->fetchrow_array)
   {
     my $code=$table_row[0];
     my $name=$table_row[1];
-    $codehash{$code} = $name;
-    $box->add("Radiobutton",-text=>$name,
-                            -value=>$code,
-                            -variable=>\$edit_cat)->pack(-anchor=>"w");
+    my $string = "$code - $name";
+    $editbox->insert('end',"$string");
   }
   $sth->finish;
   my $choice = $box->Show();
-
-  if ($choice ne "Cancel")
+  if ( ($choice ne "Cancel") && ( defined($editbox->curselection()) ) )
   {
     # Throw up another dialog box to do the actual editing
+    my ($code,$desc) = split(/ - /,$editbox->get($editbox->curselection()));
     my $editbox = $mw->DialogBox(-title=>"Edit a category", -buttons=>["Ok","Cancel"]);
     $editbox->Icon(-image=>$icon);
-    $editbox->add("Label",-text=>"Edit the long name of the category: $codehash{$edit_cat}.")->pack(); 
-    my $new_desc = $codehash{$edit_cat};
-    $editbox->add("Label",-text=>"CODE: $edit_cat", -anchor=>'w')->pack(-fill=>'x', -expand=>1);
+    $editbox->add("Label",-text=>"Edit the long name of the category: $desc.")->pack(); 
+    my $new_desc = $desc;
+    $editbox->add("Label",-text=>"CODE: $code", -anchor=>'w')->pack(-fill=>'x', -expand=>1);
     my $labelframe = $editbox->add("Frame")->pack(-fill=>'x');
     $labelframe->Label(-text=>"New Description: ")->pack(-side=>'left');
     $labelframe->Entry(-width=>25,
@@ -1378,7 +1379,7 @@ sub edit_category
 
     if ($editchoice ne "Cancel")
     {
-      $query = "UPDATE categories SET description='$new_desc' WHERE code='$edit_cat'";
+      $query = "UPDATE categories SET description='$new_desc' WHERE code='$code'";
       $sth=$dbh->prepare($query);
       if (! $sth->execute)
       {
@@ -1393,6 +1394,10 @@ on query $query");
       }
       $sth->finish;
     }
+    else
+    {
+      $status = "Cancelled category edit";
+    }
   }
 }
 
@@ -1405,19 +1410,23 @@ sub delete_category
   my $query="SELECT * from categories ORDER BY description";
   my $sth=$dbh->prepare($query);
   $sth->execute or die "can't execute the query: $DBI::errstr\n";
+  my $deletebox = $box->add("Scrolled","Listbox",-scrollbars=>'se',
+                            -setgrid=>1,
+                            -height=>10,
+                            -selectmode=>"single")->pack();
   while (@table_row = $sth->fetchrow_array)
   {
     $code=$table_row[0];
     $name=$table_row[1];
-    $box->add("Radiobutton",-text=>$name,
-                            -value=>$code,
-                            -variable=>\$del_cat)->pack(-anchor=>"w");
+    my $string = "$code - $name";
+    $deletebox->insert('end',"$string");
   }
   $sth->finish;
   my $choice = $box->Show();
   
-  if ($choice ne "Cancel")
+  if ( ($choice ne "Cancel") && (defined($deletebox->curselection()) ) )
   {
+    my ($del_cat,$del_desc) = split(/ - /,$deletebox->get($deletebox->curselection()) );
     $query = "SELECT * FROM mrvoice WHERE category='$del_cat'";
     my $sth=$dbh->prepare($query);
     $sth->execute;
@@ -1434,8 +1443,8 @@ sub delete_category
       my $sth=$dbh->prepare($query);
       if ($sth->execute)
       {
-        $status = "Deleted category $del_cat";
-        infobox ($mw, "Success","Category $del_cat has been deleted.");
+        $status = "Deleted category $del_desc";
+        infobox ($mw, "Success","Category \"$del_desc\" has been deleted.");
       }
       $sth->finish;
     }
@@ -1444,8 +1453,6 @@ sub delete_category
   {
     $status = "Category deletion cancelled";
   }
-
-  $del_cat="";
 }
 
 sub move_file
@@ -1968,7 +1975,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.274 $';
+  $rev = '$Revision: 1.275 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
