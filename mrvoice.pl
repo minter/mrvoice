@@ -204,6 +204,15 @@ if ( "$^O" eq "MSWin32" )
 }
 else
 {
+
+    BEGIN
+    {
+        if ( $^O eq "darwin" )
+        {
+            require Mac::Applescript;
+            Mac::AppleScript->import('RunAppleScript');
+        }
+    }
     my $homedir = get_homedir();
     $rcfile = ( $userrcfile eq "" ) ? "$homedir/.mrvoicerc" : $userrcfile;
     if ( defined($logfile) )
@@ -2382,7 +2391,7 @@ sub edit_preferences
 
     my $mp3frame = $other_page->Frame()->pack( -fill => 'x' );
     $mp3frame->Label( -text => "MP3 Player" )->pack( -side => 'left' );
-    $mp3frame->Button(
+    my $mp3button = $mp3frame->Button(
         -text    => "Choose",
         -command => sub {
             $config{'mp3player'} = $mw->getOpenFile(
@@ -2391,11 +2400,13 @@ sub edit_preferences
             );
         }
     )->pack( -side => 'right' );
-    $mp3frame->Entry(
+    $mp3button->configure( -state => 'disabled' ) if ( $^O eq "darwin" );
+    my $mp3entry = $mp3frame->Entry(
         -background   => 'white',
         -width        => 30,
         -textvariable => \$config{'mp3player'}
     )->pack( -side => 'right' );
+    $mp3entry->configure( -state => 'disabled' ) if ( $^O eq "darwin" );
 
     my $numdyn_frame = $other_page->Frame()->pack( -fill => 'x' );
     $numdyn_frame->Label( -text => "Number of Dynamic Documents To Show" )
@@ -2953,7 +2964,17 @@ sub launch_tank_playlist
     }
     close($fh) or die;
     print "Sending playlist command to MP3 player\n" if $debug;
-    system("$config{'mp3player'} $filename");
+    if ( $^O eq "darwin" )
+    {
+        RunAppleScript(
+            qq( set unixFile to \"$filename\"\nset macFile to POSIX file unixFile\nset fileRef to (macFile as alias)\ntell application "Audion 3"\nplay fileRef in control window 1\nend tell)
+          )
+          or die "Can't play: $@";
+    }
+    else
+    {
+        system("$config{'mp3player'} $filename");
+    }
 }
 
 sub holding_tank
@@ -2991,6 +3012,8 @@ EOF
             -bg               => 'dodgerblue',
             -activebackground => 'royalblue'
         );
+        $playlistbutton->configure( -state => 'disabled' )
+          if ( $^O eq "darwin" );
         my $buttonframe = $holdingtank->Frame()->pack(
             -side => 'bottom',
             -fill => 'x'
@@ -3344,7 +3367,15 @@ sub stop_mp3
     # Sends a stop command to the MP3 player.  Works for both xmms and WinAmp,
     # though not particularly cleanly.
 
-    system("$config{'mp3player'} --stop");
+    if ( $^O eq "darwin" )
+    {
+        RunAppleScript(
+            qq( tell application "Audion 3" to stop in control window 1));
+    }
+    else
+    {
+        system("$config{'mp3player'} --stop");
+    }
     $status = "Playing Stopped";
 
     # Manually give the mainbox focus
@@ -3415,7 +3446,17 @@ sub play_mp3
     if ( $action eq "addsong" )
     {
         $status = "Previewing file $filename";
-        system("$config{'mp3player'} $filename");
+        if ( $^O eq "darwin" )
+        {
+            RunAppleScript(
+                qq( set unixFile to \"$filename\"\nset macFile to POSIX file unixFile\nset fileRef to (macFile as alias)\ntell application "Audion 3"\nplay fileRef in control window 1\nend tell)
+              )
+              or die "Can't play: $@";
+        }
+        else
+        {
+            system("$config{'mp3player'} $filename");
+        }
     }
     elsif ($filename)
     {
@@ -3439,7 +3480,17 @@ sub play_mp3
         print "Playing file $filename\n" if $debug;
         $status = "Playing $songstatusstring";
         my $file = catfile( $config{'filepath'}, $filename );
-        system("$config{'mp3player'} $file");
+        if ( $^O eq "darwin" )
+        {
+            RunAppleScript(
+                qq( set unixFile to \"$file\"\nset macFile to POSIX file unixFile\nset fileRef to (macFile as alias)\ntell application "Audion 3"\nplay fileRef in control window 1\nend tell)
+              )
+              or die "Can't play: $@";
+        }
+        else
+        {
+            system("$config{'mp3player'} $file");
+        }
     }
 }
 
@@ -3774,12 +3825,16 @@ sub do_exit
     {
         print "Disconnecting from $dbh\n" if $debug;
         $dbh->disconnect;
-        if ( "$^O" eq "MSWin32" )
+        if ( $^O eq "MSWin32" )
         {
 
             # Close the MP3 player on a Windows system
             print "Killing process $mp3_pid on Win32\n" if $debug;
             Win32::Process::KillProcess( $mp3_pid, 1 );
+        }
+        elsif ( $^O eq "darwin" )
+        {
+            RunAppleScript(qq (tell application "Audion 3" to quit));
         }
         else
         {
@@ -4301,7 +4356,7 @@ if ( !-W $config{'savedir'} )
 # We use the following statement to open the MP3 player asynchronously
 # when the Mr. Voice app starts.
 
-if ( !-x $config{'mp3player'} )
+if ( ( !-x $config{'mp3player'} ) && ( $^O ne "darwin" ) )
 {
     print "Could not execute MP3 player $config{'mp3player'}\n" if $debug;
     infobox(
@@ -4324,6 +4379,10 @@ else
         $mp3_pid = $object->GetProcessID();
         print "Got Win32::Process id $mp3_pid\n" if $debug;
         sleep(1);
+    }
+    elsif ( $^O eq "darwin" )
+    {
+        RunAppleScript(qq( tell application "Audion 3" to activate));
     }
     else
     {

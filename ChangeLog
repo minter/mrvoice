@@ -1,3 +1,8 @@
+Mon  Jan  3 2005	H. Wade Minter (minter@lunenburg.org)
+     * Make things much more MacOS X friendly.  Use the now-free Audion
+       instead of XMMS under X11, and use Mac::AppleScript to send AppleScript
+       commands to it.
+
 Sun  Jan  2 2005	H. Wade Minter (minter@lunenburg.org)
      * Add password protection for Randy in KC.  You can now set a write
        access password in the Preferences that will cause any attempt to
