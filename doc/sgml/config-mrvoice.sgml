@@ -21,13 +21,7 @@
     <para>The options that you can set in the <menuchoice> <guimenu>File</guimenu> <guimenuitem>Preferences</guimenuitem> </menuchoice> menu are listed below.  After the name of each option, the actual variable name is given in parenthesis, in case you need to edit the configuration files manually (Manual configuration is detailed in section 2.1.1).</para>
     <itemizedlist>
       <listitem>
-        <para><varname>Database Name (db_name)</varname> - This should be set to the name of the database containing the mrvoice and categories tables.  You set this up in Chapter 1. If the database is local to the machine that you are running mrvoice on (as is normally the case), you simply need to supply the database name.  If it is on a remote server, the variable takes the form of "DATABASENAME:HOSTNAME:PORT".</para>
-      </listitem>
-      <listitem>
-        <para><varname>Database Username (db_username)</varname> - Set to a username that has SELECT access on the tables.  This is the username that you chose when you configured MySQL in Chapter 1 ("mrvoice" in this example).</para>
-      </listitem>
-      <listitem>
-        <para><varname>Database Password (db_pass)</varname> - The password in the database for user <varname>db_username</varname>.  You set this up when you configured MySQL in Chapter 1 ("password" in this example).</para>
+        <para><varname>Database Filename (db_file)</varname> - The file on your hard drive that contains the Mr. Voice SQLite database (<filename>C:\mrvoice.db</filename> by default on Windows, <filename>~/mrvoice.db</filename> by default on Unix)</para>
       </listitem>
       <listitem>
         <para><varname>MP3 Player (mp3player)</varname> - The path to your MP3 player.  Likely options are <filename>/usr/bin/xmms</filename> for Unix systems, and <filename>C:\Program Files\WinAmp\WinAmp.exe</filename> for Windows systems.</para>
@@ -62,9 +56,7 @@
       <para><computeroutput>variable_name::value</computeroutput></para>
       <para>Where variable_name is the name in parenthesis in the configuration listing above, followed by two colons, followed by the value you want to set the variable to.  A sample file on Unix would look like this:
         <screen>
-db_name::comedysportz
-db_username::mrvoice
-db_pass::password
+db_file::/home/mrvoice/mrvoice.db
 filepath::/mp3/
 savedir::/tmp/
 mp3player::/usr/bin/xmms
