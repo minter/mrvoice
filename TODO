@@ -3,6 +3,7 @@ Things I'm currently working on:
 * Fix it so hotkeys work when non-main menus are active. (If possible)
 * General cleanup and pretty-fication.
 * An editable GUI "preferences" dialog to configure the software.
+* And "Edit Category" feature.
 
 --
-CVS ID: $Id: TODO,v 1.10 2001/09/26 18:04:38 minter Exp $
+CVS ID: $Id: TODO,v 1.11 2001/09/26 18:27:34 minter Exp $
