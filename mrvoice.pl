@@ -15,8 +15,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/03/05 00:52:08 $
-#	CVS REVISION NUMBER:    $Revision: 1.19 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/05 02:05:32 $
+#	CVS REVISION NUMBER:    $Revision: 1.20 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -278,7 +278,44 @@ sub edit_song
 
 sub delete_song
 {
-
+  my $id = get_song_id();
+  if ($id)
+  {  
+    $box = $mw->DialogBox(-title=>"Confirm Deletion", 
+                          -default_button=>"Cancel",
+                          -buttons=>["Delete","Cancel"]);
+    $box->add("Label",-text=>"About to delete song id $id from the database\nBe sure this is what you want to do!")->pack();
+    $box->add("Checkbutton",-text=>"Delete file on disk",
+                            -variable=>\$delete_file_cb)->pack();
+    $result = $box->Show();
+    if ($result eq "Delete")
+    {
+      if ($delete_file_cb == 1)
+      {
+        $filequery = "SELECT filename FROM mrvoice WHERE id=$id";
+        ($filename) = $dbh->selectrow_array($filequery);
+      }
+      $query = "DELETE FROM mrvoice WHERE id=$id";
+      my $sth=$dbh->prepare($query);
+      $sth->execute;
+      $sth->finish;
+      if ($delete_file_cb == 1)
+      {
+        infobox("File Deletion Error","Could not delete file $filepath$filename from the disk\n\nEntry was removed from the database") unless ( unlink("$filepath$filename") );
+      }
+      infobox("Song Deleted","Deleted song with ID $id");
+      $status = "Deleted song id $id";
+    } 
+    else
+    {
+      $status = "Cancelled deletion";
+    }
+  }
+  else
+  {
+    $status = "No song selected for deletion";
+  }
+  $delete_file_cb = 0;
 }
 
 sub show_about
@@ -392,11 +429,18 @@ sub list_hotkeys
                       -command=>[\&clear_selected])->pack(-side=>'right');
 }
 
-sub set_hotkey
+sub get_song_id
 {
   @list = $mainbox->curselection();
-  my $selection = $mainbox->get($list[0]);
+  my $selection = $mainbox->get($list['end']);
   my ($id) = split /:/,$selection;
+  return ($id);
+}
+
+sub set_hotkey
+{
+  #@list = $mainbox->curselection();
+  my $id = get_song_id;
 
   if (! Exists($hotkeybox))
   {
@@ -508,11 +552,10 @@ sub play_mp3
   else
   {
     # If not, find the selected song.
-    @list = $mainbox->curselection();
-    $selection = $mainbox->get($list[0]);
-    if ($selection)
+    #@list = $mainbox->curselection();
+    my $id = get_song_id;
+    if ($id)
     {
-      ($id)=split /:/,$selection;
       $query = "SELECT filename from mrvoice WHERE id=$id";
       my $sth=$dbh->prepare($query);
       $sth->execute or die "can't execute the query: $DBI::errstr\n";
@@ -623,6 +666,7 @@ $catmenu->AddItems(["command"=>"Add Category",
                    -command=>\&add_category]);
 $catmenu->AddItems(["command"=>"Delete Category",
                    -command=>\&delete_category]);
+
 $songmenu = $menuframe->Menubutton(-text=>"Songs",
                                    -tearoff=>0)->pack(-side=>'left');
 $songmenu->AddItems(["command"=>"Add New Song",
@@ -631,6 +675,7 @@ $songmenu->AddItems(["command"=>"Edit Currently Selected Song",
                     -command=>\&edit_song]);
 $songmenu->AddItems(["command"=>"Delete Currently Selected Song",
                     -command=>\&delete_song]);
+
 $helpmenu = $menuframe->Menubutton(-text=>"Help",
                                    -tearoff=>0)->pack(-side=>'right');
 $helpmenu->AddItems(["command"=>"About",
