@@ -1506,7 +1506,7 @@ sub edit_category
 
         # Throw up another dialog box to do the actual editing
         my ( $code, $desc ) =
-          split( /-/, $editbox->get( $editbox->curselection() ) );
+          split( / - /, $editbox->get( $editbox->curselection() ) );
         my $editbox = $mw->DialogBox(
             -title   => "Edit a category",
             -buttons => [ "Ok", "Cancel" ]
