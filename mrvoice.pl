@@ -14,8 +14,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/11 19:13:50 $
-#	CVS REVISION NUMBER:    $Revision: 1.55 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/17 22:18:45 $
+#	CVS REVISION NUMBER:    $Revision: 1.56 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -956,6 +956,27 @@ sub do_exit
  exit;
 } 
 
+sub rightclick_menu
+{
+  my $rightmenu = $mw->Menu(-menuitems=>[
+                                        ["command" => "Edit this song",
+                                        -command => \&edit_song],
+                                        ["command" => "Delete this song",
+                                        -command => \&delete_song]
+                                        ],
+                            -tearoff=>0);
+
+  my $w=shift;
+  my $ev=$w->XEvent;
+  my $index=$w->nearest($ev->y);
+
+  $w->selectionClear(0,'end');
+  $w->selectionSet($index);
+
+  $rightmenu->Popup(-popover=>'cursor',
+                    -popanchor=>'nw');
+}
+
 sub read_rcfile
 {
   if (-r $rcfile)
@@ -1008,6 +1029,7 @@ if (! ($dbh = DBI->connect("DBI:mysql:$db_name",$db_username,$db_pass)))
     die "Died with database error $DBI::errstr\n";
   }
 }
+
 # We use the following statement to open the MP3 player asynchronously
 # when the Mr. Voice app starts.
 open (XMMS,"$mp3player|");
@@ -1146,6 +1168,8 @@ $mainbox=$mw->Scrolled('Listbox',
                                                     -expand=>1,
                                                     -side=>'top');
 $mainbox->bind("<Double-Button-1>", \&play_mp3);
+
+$mainbox->bind("<Button-3>", [\&rightclick_menu]);
 #
 #####
 
@@ -1170,10 +1194,10 @@ bind_hotkeys($mw);
 
 if (! -x $mp3player)
 {
-  $box = $mw->DialogBox(-title=>"Warning - MP3 player not found", -buttons=>["OK"]);
+  my $box = $mw->DialogBox(-title=>"Warning - MP3 player not found", -buttons=>["OK"]);
   $box->add("Label",-text=>"Warning - Could not execute your defined MP3 player:")->pack();
   $box->add("Label",-text=>"$mp3player")->pack();
-  $box->add("Label",-text=>"You may need to edit the mp3player variable at the top of mrvoice.pl")->pack();
+  $box->add("Label",-text=>"You may need to select the proper file in the preferences.")->pack();
   $box->Show;
 }
 
