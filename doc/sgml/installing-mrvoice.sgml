@@ -102,8 +102,14 @@
         <para>Unzip the <filename>mrvoice-current.zip</filename> file to your desired location.  It will create a directory named <filename>mrvoice-x.x</filename> under the location that you choose.  These instructions will assume that you unzip it to <filename>C:\</filename>, creating the <filename>C:\mrvoice-x.x\</filename> directory, where x.x is the version number.</para>
         <para>The first time you run Mr. Voice on a particular computer, you will need to set up the configuration.   With later releases, you can just unzip the new version, and skip these remaining steps.</para> 
         <para>You will need a directory to store your MP3 files, and a directory to store your hotkey save files.  I suggest <filename>C:\MP3\</filename> for the MP3 directory and <filename>C:\hotkeys\</filename> for the save files, but you can pick anything.  Go ahead and create the directories now.</para>
-       <para>In the Mr. Voice directory, there will be a file named <filename>quicksetup.exe</filename>.  Double-click that file.  It will bring up a DOS window, and attempt to configure your Mr. Voice installation for you.  If you see any errors during the configuration, please report them to me so I can help you debug the problems.  If there are no errors, your software should be set up properly.</para>
-       <para>Finally, to actually run the software, double-click on the file <filename>mrvoice.exe</filename>.  The program should start up!  </para>
+       <para>Finally, to actually run the software, double-click on the file <filename>mrvoice.exe</filename>.  The program should start up!  The first time you run the program (or, more specifically, if it can't find its configuration file), you will be given the option of creating a default configuration, or going into the preferences to set the values manually.  The default should be good enough for most people.  It sets up the following values, creating directories where needed:
+          <itemizedlist>
+            <listitem><para>MP3 Directory: <filename>C:\MP3</filename></para></listitem>
+            <listitem><para>Hotkey Directory: <filename>C:\HOTKEYS</filename></para></listitem>
+            <listitem><para>MP3 Player: <filename>C:\Program Files\Winamp\Winamp.exe</filename></para></listitem>
+            <listitem><para>Database File: <filename>C:\MRVOICE.DB</filename></para></listitem>
+          </itemizedlist>
+        </para>
       </sect3>
     </sect2>
   </sect1>
