@@ -1,6 +1,7 @@
 #!/usr/bin/perl 
 use warnings;
 use diagnostics;
+#use strict; # Yeah right
 use Tk;
 use Tk::DialogBox;
 use Tk::DragDrop;
@@ -32,12 +33,15 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.140 2002/07/11 19:16:05 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.141 2002/07/15 14:02:34 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
 #   See Credits file
 ##########
+
+# Declare global variables, until I'm good enough to work around them.
+our ($db_name,$db_username,$db_pass,$category,$mp3player,$filepath,$savedir);
 
 #####
 # CONFIGURATION VARIABLES
@@ -67,15 +71,15 @@ $savedir = '';				# The default directory where
 # YOU SHOULD NOT NEED TO MODIFY ANYTHING BELOW HERE FOR NORMAL USE
 #####
 
-$savefile_count = 0;			# Counter variables
-$savefile_max = 4;			# The maximum number of files to
+our $savefile_count = 0;		# Counter variables
+our $savefile_max = 4;			# The maximum number of files to
 					# keep in the "recently used" list.
-$hotkeytypes = [
+our $hotkeytypes = [
     ['Mr. Voice Hotkey Files', '.mrv'],
     ['All Files', '*'],
   ];
 
-$mp3types = [
+our $mp3types = [
     ['MP3 Files', ['*.mp3', '*.MP3']],
     ['WAV Files', ['*.wav', '*.WAV']],
     ['Vorbis Files', ['*.ogg', '*.OGG']],
@@ -85,7 +89,7 @@ $mp3types = [
 # Check to see if we're on Windows or Linux, and set the RC file accordingly.
 if ("$^O" eq "MSWin32")
 {
-  $rcfile = "C:\\mrvoice.cfg";
+  our $rcfile = "C:\\mrvoice.cfg";
   BEGIN 
   {
     if ($^O eq "MSWin32")
@@ -107,7 +111,7 @@ if ("$^O" eq "MSWin32")
 }
 else
 {
-  $homedir = "~";
+  our $homedir = "~";
   $homedir =~ s{ ^ ~ ( [^/]* ) }
               { $1 
                    ? (getpwnam($1))[7] 
@@ -115,7 +119,7 @@ else
                         || (getpwuid($>))[7]
                      )
               }ex;
-  $rcfile = "$homedir/.mrvoicerc";
+  our $rcfile = "$homedir/.mrvoicerc";
 }
 
 #STARTCSZ
@@ -131,10 +135,10 @@ else
 #####
 
 my $version = "1.5.4";			# Program version
-$status = "Welcome to Mr. Voice version $version";		
+our $status = "Welcome to Mr. Voice version $version";		
 
 # Define 32x32 XPM icon data
-$icon_data = <<'end-of-icon-data';
+our $icon_data = <<'end-of-icon-data';
 /* XPM */
 static char * mrvoice_3232_xpm[] = {
 "32 32 21 1",
@@ -193,7 +197,7 @@ static char * mrvoice_3232_xpm[] = {
 "..................];;;^........."};
 end-of-icon-data
 
-$logo_photo_data = <<end_of_data;
+our $logo_photo_data = <<end_of_data;
 R0lGODlh5wCOAIQAAP///6qqqsfHx+Pj4wAAAB0dHVVVVXJycjk5OY6OjuPj/8fH/6qq/46O/1VV
 /x0d/3Jy/wAA/zk5///Hx/+qqv/j4/8dHf8AAP9VVf85Of+Ojv9ycv///////////////yH+FUNy
 ZWF0ZWQgd2l0aCBUaGUgR0lNUAAsAAAAAOcAjgAABf4gII5kaZ5oqq5s675wLM90bd94ru987//A
@@ -245,46 +249,43 @@ EDi4aGVr188f+dJTHoGjYUz0N/+VuowV712h/2Iqi9zALPZ4hVHwaoMbePL0JnoJqO1x0443wYa+
 0seAEghbsEV9I/Bq2ZZ9meVnjnV+cTUFCXiCKriCLNiCLviCMBiDMjiDNFiDNniDOJiDLhgCADs=
 end_of_data
 
-if ($^O ne "MSWin32")
-{
-  {
-    no warnings;
-    eval "sub Tk::Wm::Post
-    {
-      my ($w,$X,$Y) = @_;
-      $X = int($X);
-      $Y = int($Y);
-      $w->positionfrom('user');
-      # $w->geometry('+$X+$Y');
-      $w->MoveToplevelWindow($X,$Y);
-      $w->deiconify;
-      # $w->idletasks; # to prevent problems with KDE's kwm etc.
-      # $w->raise;
-    }";
-  }
-}
+# If you have Tk800.024 with Nik's patch, you don't need this Tk::Wm
+# patch.
+#
+#if ($^O ne "MSWin32")
+#{
+#  sub Tk::Wm::Post
+#  {
+#    my ($w,$X,$Y) = @_;
+#    $X = int($X);
+#    $Y = int($Y);
+#    $w->positionfrom('user');
+#    # $w->geometry('+$X+$Y');
+#    $w->MoveToplevelWindow($X,$Y);
+#    $w->deiconify;
+#    # $w->idletasks; # to prevent problems with KDE's kwm etc.
+#    # $w->raise;
+#  }
+#}
 
 # This function is redefined due to evilness that keeps the focus on 
 # the dragged token.  Thanks to Slaven Rezic <slaven.rezic@berlin.de>
 # The extra brackets are suggested by the debugging code
+sub Tk::DragDrop::Mapped
 {
-  no warnings;
-  eval "sub Tk::DragDrop::Mapped
+  my ($token) = @_;
+  my $e = $token->parent->XEvent;
+  $token = $token->toplevel;
+  $token->grabGlobal;
+  #$token->focus;
+  if (defined $e)
   {
-    my ($token) = @_;
-    my $e = $token->parent->XEvent;
-    $token = $token->toplevel;
-    $token->grabGlobal;
-    #$token->focus;
-    if (defined $e)
-    {
-      my $X = $e->X;
-      my $Y = $e->Y;
-      $token->MoveToplevelWindow($X+3,$Y+3);
-      $token->NewDrag;
-      $token->FindSite($X,$Y,$e);
-    }
-  }";
+    my $X = $e->X;
+    my $Y = $e->Y;
+    $token->MoveToplevelWindow($X+3,$Y+3);
+    $token->NewDrag;
+    $token->FindSite($X,$Y,$e);
+  }
 }
 
 sub BindMouseWheel {
@@ -824,7 +825,7 @@ sub add_new_song
       copy ($addsong_filename,"$filepath$newfilename");
       if ($dbh->do($query))
       {
-        infobox ($mw, "File Added Successfully","Successfully added new song into database");
+        infobox ($mw, "File Added Successfully","Successfully added new song into database.\n\nYou may now delete/move/etc. the file:\n$addsong_filename\nas it is no longer needed by Mr. Voice");
         $status = "File added successfully";
       }
       else
@@ -1050,7 +1051,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.140 $';
+  $rev = '$Revision: 1.141 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -1404,7 +1405,7 @@ sub stop_mp3
 sub play_mp3 
 {
   # See if the request is coming from one our hotkeys first...
-  if ( ($_[1] =~ /^F.*/) || ($_[1] =~ /^ALT.*/) )
+  if ( ($_[1] ) && ( ($_[1] =~ /^F.*/) || ($_[1] =~ /^ALT.*/) ) )
   {
     if ($_[1] eq "F1") { $filename = $f1; }
     elsif ($_[1] eq "F2") { $filename = $f2; }
@@ -1428,11 +1429,11 @@ sub play_mp3
   }
   else
   {
-    if ($_[1] eq "Current")
+    if ( ($_[1]) && ($_[1] eq "Current") )
     {
       $box = $mainbox;
     }
-    elsif ($_[1] eq "Holding")
+    elsif ( ($_[1]) && ($_[1] eq "Holding") )
     {
       $box = $tankbox;
     }
@@ -1497,7 +1498,7 @@ sub get_songlength
 
 sub do_search
 {
-  if ($_[0] eq "timespan")
+  if ( ($_[0]) && ($_[0] eq "timespan") )
   {
     $date = DateCalc("today","- $_[1]"); 
     $date =~ /^(\d{4})(\d{2})(\d{2}).*?/;
@@ -1506,7 +1507,7 @@ sub do_search
     $date = $3;
     $datestring = "$year-$month-$date";
   }
-  elsif ($_[0] eq "range")
+  elsif ( ($_[0]) && ($_[0] eq "range") )
   {
     $startdate = $_[1];
     $enddate = $_[2];
@@ -1547,8 +1548,8 @@ sub do_search
   $mw->Busy(-recurse=>1);
   $mainbox->delete(0,'end');
   my $query = "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.filename from mrvoice,categories where mrvoice.category=categories.code ";
-  $query = $query . "AND modtime >= '$datestring'" if ($_[0] eq "timespan");
-  $query = $query . "AND modtime >= '$startdate' AND modtime <= '$enddate'" if ($_[0] eq "range");
+  $query = $query . "AND modtime >= '$datestring'" if ( ($_[0]) && ($_[0] eq "timespan"));
+  $query = $query . "AND modtime >= '$startdate' AND modtime <= '$enddate'" if (($_[0]) && ($_[0] eq "range"));
   $query = $query . "AND category='$category' " if ($category ne "Any");
   if ($anyfield)
   {
