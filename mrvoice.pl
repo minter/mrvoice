@@ -591,6 +591,7 @@ sub bind_hotkeys
                       "http://localhost:4800/fadeoutandstop?p=$config{'httpq_pw'}"
                   );
                 $agent->request($req);
+                $status = "Playing Fade-Stopped";
             }
         );
     }
@@ -4347,6 +4348,7 @@ if ( $^O eq "MSWin32" )
                   "http://localhost:4800/fadeoutandstop?p=$config{'httpq_pw'}"
               );
             $agent->request($req);
+            $status = "Playing Fade-Stopped";
         }
     );
 }
