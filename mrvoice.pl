@@ -182,6 +182,14 @@ else
     }
 }
 
+# The following variables set the locations of MP3s for static hotkey'd
+# sounds
+our $altt = "TaDa.mp3";
+our $alty = "CalloutMusic.mp3";
+our $altb = "BrownBag.mp3";
+our $altg = "Groaner.mp3";
+our $altv = "PriceIsRightTheme.mp3";
+
 #####
 
 my $version = "2.0pre4";    # Program version
@@ -578,6 +586,12 @@ sub bind_hotkeys
     $window->bind( "<Control-Key-s>", \&save_file );
     $window->bind( "<Control-Key-h>", \&list_hotkeys );
     $window->bind( "<Control-Key-t>", \&holding_tank );
+
+    $window->bind( "<Alt-Key-t>", [ \&play_mp3, "ALT-T" ] );
+    $window->bind( "<Alt-Key-y>", [ \&play_mp3, "ALT-Y" ] );
+    $window->bind( "<Alt-Key-b>", [ \&play_mp3, "ALT-B" ] );
+    $window->bind( "<Alt-Key-g>", [ \&play_mp3, "ALT-G" ] );
+    $window->bind( "<Alt-Key-v>", [ \&play_mp3, "ALT-V" ] );
 
     if ( $^O eq "MSWin32" )
     {
@@ -2378,6 +2392,58 @@ sub show_about
     $box->Show;
 }
 
+sub show_predefined_hotkeys
+{
+    my $box =
+      $mw->DialogBox( -title => "Predefined Hotkeys", -buttons => ["Close"] );
+    $box->Icon( -image => $icon );
+    $box->add( "Label",
+        -text =>
+          "The following hotkeys are always available and may not be changed" )
+      ->pack();
+    $box->add(
+        "Label",
+        -text   => "<Escape> - Stop the currently playing MP3",
+        -anchor => 'nw'
+    )->pack( -fill => 'x' );
+    $box->add(
+        "Label",
+        -text   => "<Control-P> - Play the currently selected song",
+        -anchor => 'nw'
+    )->pack( -fill => 'x' );
+    $box->add(
+        "Label",
+        -text   => "<Enter> - Perform the currently entered search",
+        -anchor => 'nw'
+    )->pack( -fill => 'x' );
+    $box->add(
+        "Label",
+        -text   => "<ALT-t> - The \"Ta-Da\" MIDI",
+        -anchor => 'nw'
+    )->pack( -fill => 'x' );
+    $box->add(
+        "Label",
+        -text   => "<ALT-y> - The \"You're Out\" MIDI",
+        -anchor => 'nw'
+    )->pack( -fill => 'x' );
+    $box->add(
+        "Label",
+        -text   => "<ALT-b> - The Brown Bag MIDI",
+        -anchor => 'nw'
+    )->pack( -fill => 'x' );
+    $box->add(
+        "Label",
+        -text   => "<ALT-g> - The Groaner MIDI",
+        -anchor => 'nw'
+    )->pack( -fill => 'x' );
+    $box->add(
+        "Label",
+        -text   => "<ALT-v> - The Price Is Right theme (Volunteer photos)",
+        -anchor => 'nw'
+    )->pack( -fill => 'x' );
+    $box->Show;
+}
+
 sub wipe_tank
 {
 
@@ -2811,6 +2877,16 @@ sub play_mp3
     if ( $action =~ /^f\d+/ )
     {
         $filename = $fkeys{$action}->{filename};
+    }
+    elsif ( $action =~ /^ALT/ )
+    {
+
+        if    ( $action eq "ALT-T" ) { $filename = $altt; }
+        elsif ( $action eq "ALT-Y" ) { $filename = $alty; }
+        elsif ( $action eq "ALT-B" ) { $filename = $altb; }
+        elsif ( $action eq "ALT-G" ) { $filename = $altg; }
+        elsif ( $action eq "ALT-V" ) { $filename = $altv; }
+
     }
     elsif ( $action eq "addsong" )
     {
@@ -3720,6 +3796,12 @@ sub hotkeysmenu_items
             'command', 'Show Holding Tank',
             -command     => \&holding_tank,
             -accelerator => 'Ctrl-T'
+        ],
+
+        [
+            'command',
+            'Show Predefined Hotkeys',
+            -command => \&show_predefined_hotkeys
         ],
 
         "",
