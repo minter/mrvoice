@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.comedyworx.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/27 01:41:43 $
-#	CVS REVISION NUMBER:    $Revision: 1.71 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/29 21:44:53 $
+#	CVS REVISION NUMBER:    $Revision: 1.72 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1274,7 +1274,7 @@ $catmenubutton=$searchframe->Menubutton(-text=>"Choose Category",
                                         -relief=>'raised',
                                         -indicatoron=>1)->pack(-side=>'left',
                                                                -anchor=>'n');
-$catmenu = $catmenubutton->menu(-tearoff => 0);
+$catmenu = $catmenubutton->menu(-tearoff => 1);
 $catmenubutton->configure(-menu=>$catmenu);
 build_categories_menu();
 
