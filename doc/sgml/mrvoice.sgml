@@ -4,7 +4,7 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.10 2001/09/27 14:06:46 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.11 2001/09/27 15:48:55 minter Exp $ 
 -->
 <book status="draft">
 
@@ -16,7 +16,7 @@
       <address><email>minter@lunenburg.org</email></address>
     </affiliation>
   </author>
-  <edition>User's Guide for Mr. Voice Version 1.1.1</edition>
+  <edition>User's Guide for Mr. Voice Version 1.2</edition>
   <copyright><year>2001</year><holder>H. Wade Minter</holder></copyright>
 </bookinfo>
 
