@@ -11,6 +11,8 @@ use CPAN;
 my @mods =
   qw(DBI DBD::SQLite MPEG::MP3Info MP4::Info Audio::Wav Date::Manip Time::Local Time::HiRes Ogg::Vorbis::Header::PurePerl Tk Tk::ProgressBar::Mac Getopt::Long Cwd );
 
+my $count = 0;
+
 # list all modules on my disk that have newer versions on CPAN
 for my $module (@mods)
 {
@@ -19,6 +21,7 @@ for my $module (@mods)
     next if $mod->uptodate;
     printf "Module %s is installed as %s, could be updated to %s from CPAN\n",
       $mod->id, $mod->inst_version, $mod->cpan_version;
+    $count++;
 }
 
-exit();
+print "No Mr. Voice modules need upgrades!\n" if ( $count == 0 );
