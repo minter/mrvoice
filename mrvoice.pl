@@ -35,7 +35,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.322 2004/03/02 19:46:33 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.323 2004/03/04 12:28:05 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1051,8 +1051,9 @@ sub restore_hotkeys
 
 sub build_category_menubutton
 {
-    my $parent = $_[0];
-    my $menu   = $parent->Menubutton(
+    my $parent  = $_[0];
+    my $var_ref = $_[1];
+    my $menu    = $parent->Menubutton(
         -text        => "Choose Category",
         -relief      => 'raised',
         -tearoff     => 0,
@@ -1067,9 +1068,9 @@ sub build_category_menubutton
         $menu->radiobutton(
             -label    => $cat_hashref->{description},
             -value    => $cat_hashref->{code},
-            -variable => \$db_cat,
+            -variable => $var_ref,
             -command  => sub {
-                $menu->configure( -text => return_longcat($db_cat) );
+                $menu->configure( -text => return_longcat($$var_ref) );
             }
         );
     }
@@ -1091,7 +1092,7 @@ sub bulk_add
     )->pack( -side => 'top' );
     my $box1frame2 = $box1->add("Frame")->pack( -fill => 'x' );
     $box1frame2->Label( -text => "Add To Category: " )->pack( -side => 'left' );
-    my $menu = build_category_menubutton($box1frame2);
+    my $menu = build_category_menubutton( $box1frame2, \$db_cat );
     $menu->pack( -side => 'left' );
 
     my $box1frame3 = $box1->add("Frame")->pack( -fill => 'x' );
@@ -1529,7 +1530,7 @@ sub add_new_song
             -text       => "Category",
             -foreground => "#cdd226132613"
         )->pack( -side => 'left' );
-        my $menu = build_category_menubutton($frame3);
+        my $menu = build_category_menubutton( $frame3, \$addsong_cat );
         $menu->pack( -side => 'right' );
         $frame4 = $box->add("Frame")->pack( -fill => 'x' );
         $frame4->Label( -text => "Category Extra Info" )
@@ -1900,7 +1901,7 @@ sub edit_song
         )->pack( -side => 'right' );
         $frame3 = $box->add("Frame")->pack( -fill => 'x' );
         $frame3->Label( -text => "Category" )->pack( -side => 'left' );
-        my $menu = build_category_menubutton($frame3);
+        my $menu = build_category_menubutton( $frame3, \$edit_category );
         $menu->pack( -side => 'right' );
 
         $frame4 = $box->add("Frame")->pack( -fill => 'x' );
@@ -1997,7 +1998,7 @@ sub edit_song
         )->pack( -side => 'right' );
         $frame3 = $box->add("Frame")->pack( -fill => 'x' );
         $frame3->Label( -text => "Category" )->pack( -side => 'left' );
-        my $menu = build_category_menubutton($frame3);
+        my $menu = build_category_menubutton( $frame3, \$edit_category );
         $menu->pack( -side => 'right' );
 
         $frame4 = $box->add("Frame")->pack( -fill => 'x' );
@@ -2154,7 +2155,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.322 $';
+    my $rev = '$Revision: 1.323 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
