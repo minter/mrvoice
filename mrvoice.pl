@@ -1549,7 +1549,7 @@ sub bulk_add
     $mw->Busy( -recurse => 1 );
     print "Gone busy\n" if $debug;
     my $query =
-      "INSERT INTO mrvoice (id,title,artist,category,filename,time,modtime,publisher) VALUES (NULL, ?, ?, ?, ?, ?, (SELECT strftime('%s','now')),?)";
+      "INSERT INTO mrvoice (id,title,artist,category,filename,time,modtime,publisher,md5) VALUES (NULL, ?, ?, ?, ?, ?, (SELECT strftime('%s','now')),?,?)";
     my $sth = $dbh->prepare($query);
     print "Preparing query $query\n" if $debug;
     foreach my $file (@list)
@@ -1564,6 +1564,7 @@ sub bulk_add
             # Valid title, all we need
             my $time = get_songlength($file);
             print "Got time $time\n" if $debug;
+            my $md5      = get_md5($file);
             my $db_title = $dbh->quote($title);
             my $db_artist;
             if ( ($artist) && ( $artist !~ /^\s*$/ ) )
@@ -2236,8 +2237,9 @@ sub add_new_song
         $addsong_artist = $dbh->quote($addsong_artist);
     }
     my $time  = get_songlength($addsong_filename);
+    my $md5   = get_md5($addsong_filename);
     my $query =
-      "INSERT INTO mrvoice VALUES (NULL,$addsong_title,$addsong_artist,'$addsong_cat',$addsong_info,'$newfilename','$time',(SELECT strftime('%s','now')),'$addsong_publisher')";
+      "INSERT INTO mrvoice VALUES (NULL,$addsong_title,$addsong_artist,'$addsong_cat',$addsong_info,'$newfilename','$time',(SELECT strftime('%s','now')),'$addsong_publisher', '$md5')";
     print "Using INSERT query -->$query<--\n" if $debug;
     if ( $dbh->do($query) )
     {
@@ -3149,14 +3151,14 @@ sub import_bundle
                   or die "Couldn't copy $song_ref->{filename}";
                 my $sth =
                   $dbh->prepare(
-                    "INSERT INTO mrvoice VALUES (NULL, ?, ?, ?, ?, ?, ?, (SELECT strftime('%s','now')), ?)"
+                    "INSERT INTO mrvoice VALUES (NULL, ?, ?, ?, ?, ?, ?, (SELECT strftime('%s','now')), ?, ?)"
                   )
                   or die "Couldn't prepare query";
                 $sth->execute(
-                    $song_ref->{title},    $song_ref->{artist},
-                    $song_ref->{category}, $song_ref->{info},
-                    $song_ref->{filename}, $song_ref->{time},
-                    $song_ref->{publisher}
+                    $song_ref->{title},     $song_ref->{artist},
+                    $song_ref->{category},  $song_ref->{info},
+                    $song_ref->{filename},  $song_ref->{time},
+                    $song_ref->{publisher}, $song_ref->{md5}
                   )
                   or die "Couldn't execute query";
             }
@@ -3565,13 +3567,7 @@ sub update_time
         next if ( !-r catfile( $config{filepath}, $filename ) );
         my $newtime =
           get_songlength( catfile( $config{'filepath'}, $filename ) );
-        my $newmd5;
-        {
-            local $/ = undef;
-            open( my $fh, "<", catfile( $config{filepath}, $filename ) );
-            my $bindata = <$fh>;
-            $newmd5 = md5_hex($bindata);
-        }
+        my $newmd5 = get_md5($filename);
         if ( ( $newtime ne $time ) || ( $newmd5 ne $md5 ) )
         {
             print
@@ -3775,6 +3771,15 @@ sub play_mp3
             system("$config{'mp3player'} $file");
         }
     }
+}
+
+sub get_md5
+{
+    my $filename = shift;
+    local $/ = undef;
+    open( my $fh, "<", catfile( $config{filepath}, $filename ) );
+    my $bindata = <$fh>;
+    return md5_hex($bindata);
 }
 
 sub get_songlength
