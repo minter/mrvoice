@@ -2586,10 +2586,12 @@ EOF
         )->pack( -side => 'right' );
         $tankbox = $holdingtank->Scrolled(
             'HList',
-            -scrollbars => 'osoe',
-            -background => 'white',
-            -width      => 50,
-            -selectmode => 'extended'
+            -scrollbars       => 'osoe',
+            -background       => 'white',
+            -selectbackground => 'navy',
+            -selectforeground => 'white',
+            -width            => 50,
+            -selectmode       => 'extended'
           )->pack(
             -fill   => 'both',
             -expand => 1,
@@ -4305,10 +4307,12 @@ $searchbuttonframe->Button(
 our $searchboxframe = $mw->Frame();
 $mainbox = $searchboxframe->Scrolled(
     'HList',
-    -scrollbars => 'osoe',
-    -background => 'white',
-    -width      => 100,
-    -selectmode => "extended"
+    -scrollbars       => 'osoe',
+    -background       => 'white',
+    -selectbackground => 'navy',
+    -selectforeground => 'white',
+    -width            => 100,
+    -selectmode       => "extended"
   )->pack(
     -fill   => 'both',
     -expand => 1,
