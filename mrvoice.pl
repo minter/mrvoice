@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.353 2004/03/15 17:59:12 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.354 2004/03/17 16:24:28 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -576,9 +576,18 @@ sub open_tank
 {
 
     # Opens a saved holding tank file, overwriting the current contents
+    # UGLY HACK
+    my $initialdir = $config{'savedir'};
+    if ( $^O eq "MSWin32" )
+    {
+        $initialdir =~ s#/#\\#;
+    }
+
+    # UGLY HACK
+
     my $selectedfile = $mw->getOpenFile(
         -filetypes  => $holdingtanktypes,
-        -initialdir => $config{'savedir'},
+        -initialdir => $initialdir,
         -title      => 'Open a File'
     );
     if ($selectedfile)
@@ -635,11 +644,17 @@ sub save_tank
         return;
     }
 
+    # UGLY HACK
+    my $initialdir = $config{'savedir'};
+    if ( $^O eq "MSWin32" )
+    {
+        $initialdir =~ s#/#\\#;
+    }
     my $selectedfile = $mw->getSaveFile(
         -title            => 'Save a File',
         -defaultextension => ".hld",
         -filetypes        => $holdingtanktypes,
-        -initialdir       => "$config{'savedir'}"
+        -initialdir       => $initialdir
     );
 
     if ($selectedfile)
@@ -701,11 +716,18 @@ sub open_file
 
     my $parentwidget = $_[0];
     my $selectedfile = $_[1];
+
+    # UGLY HACK
+    my $initialdir = $config{'savedir'};
+    if ( $^O eq "MSWin32" )
+    {
+        $initialdir =~ s#/#\\#;
+    }
     if ( !$selectedfile )
     {
         $selectedfile = $mw->getOpenFile(
             -filetypes  => $hotkeytypes,
-            -initialdir => $config{'savedir'},
+            -initialdir => $initialdir,
             -title      => 'Open a File'
         );
     }
@@ -762,11 +784,17 @@ sub save_file
     # then write out the data in the form of hotkey_number::id.
     # Finally, we add this file to our dynamic documents menu.
 
+    # UGLY HACK
+    my $initialdir = $config{'savedir'};
+    if ( $^O eq "MSWin32" )
+    {
+        $initialdir =~ s#/#\\#;
+    }
     my $selectedfile = $mw->getSaveFile(
         -title            => 'Save a File',
         -defaultextension => ".mrv",
         -filetypes        => $hotkeytypes,
-        -initialdir       => "$config{'savedir'}"
+        -initialdir       => $initialdir,
     );
 
     if ($selectedfile)
@@ -2223,7 +2251,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.353 $';
+    my $rev = '$Revision: 1.354 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
