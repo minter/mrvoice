@@ -1,4 +1,9 @@
-Sun  Sep 5  2040	H. Wade Minter (minter@lunenburg.org)
+Mon  Sep 6  2004	H. Wade Minter (minter@lunenburg.org)
+     * Happy birthday to me!
+     * Added support for AAC files (.m4a, .mp4) via the MP4::Info module.
+       Protected AAC (iTunes Music Store, .m4p) don't work.
+
+Sun  Sep 5  2004	H. Wade Minter (minter@lunenburg.org)
      * Switch the updater to use SQLite transactions on the inserts, instead
        of autocommits.  Makes things much faster.
 
