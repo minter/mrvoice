@@ -9,7 +9,7 @@ use Tk::DragDrop;
 use Tk::DropSite;
 use Tk::NoteBook;
 use Tk::BrowseEntry;
-use Tk::ProgressBar;
+use Tk::ProgressBar::Mac;
 use Tk::DirTree;
 use File::Basename;
 use File::Copy;
@@ -40,7 +40,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.237 2003/07/21 20:57:34 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.238 2003/07/22 13:06:20 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1908,7 +1908,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.237 $';
+  $rev = '$Revision: 1.238 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2238,14 +2238,8 @@ sub update_time
   $progressbox->Icon(-image=>$icon);
   $progressbox->title("Time Update");
   $progressbox->Label(-text=>"Time Update Status (Percentage)")->pack(-side=>'top');
-  $progressbox->ProgressBar(
-    -width => 20,
-    -length => 200,
-    -from => 0,
-    -to => 100,
-    -blocks => 10,
-    -colors => [0, 'green'],
-    -variable=>\$percent_done)->pack(-side=>'top');
+  my $pb = $progressbox->ProgressBar(
+    -width => 150)->pack(-side=>'top');
   my $progress_frame1 = $progressbox->Frame()->pack(-side=>'top');
   $progress_frame1->Label(-text=>"Number of files updated: ")->pack(-side=>'left');
   $progress_frame1->Label(-textvariable=>\$updated)->pack(-side=>'left');
@@ -2276,6 +2270,7 @@ sub update_time
     }
     $count++;
     $percent_done = int ( ($count / $numrows) * 100);
+    $pb->set($percent_done);
     $progressbox->update();
   }
   $sth->finish;
@@ -2895,14 +2890,8 @@ if (! $sth->execute)
     $progressbox->withdraw();
     $progressbox->Icon(-image=>$icon);
     $progressbox->title("Song Conversion Status");
-    $progressbox->ProgressBar(
-      -width => 20,
-      -length => 200,
-      -from => 0,
-      -to => 100,
-      -blocks => 10,
-      -colors => [0, 'green'],
-      -variable=>\$percent_done)->pack(-side=>'top');
+    my $pb = $progressbox->ProgressBar(
+      -width => 150)->pack(-side=>'top');
     $progressbox->Label(-text=>"Song Conversion Status (Percentage)")->pack(-side=>'top');
     $donebutton = $progressbox->Button(
       -text => "Done",
@@ -2951,6 +2940,7 @@ if (! $sth->execute)
       $sth4->finish;
       $rowcount++;
       $percent_done = int ( ($rowcount / $numrows) * 100);
+      $pb->set($percent_done);
       $progressbox->update();
     }
     $sth3->finish;
