@@ -1,49 +1,63 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.17 2002/05/08 20:52:11 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.18 2002/08/14 18:00:10 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
 
   <sect1><title>Required Components</title>
     <para>
-      The following software components are required to run Mr. Voice:
+      Mr. Voice currently runs under Unix-like operating systems (Linux/*BSD/etc) and Microsoft operating systems (Windows 95 or higher).
     </para>
-    <itemizedlist>
-      <listitem><para>
-          A Unix-like operating system (Linux/*BSD/etc.) or a Microsoft operating system Windows 95 or higher.
-        </para>
-      </listitem>
-      <listitem>
-        <para><ulink url="http://www.perl.com/">Perl</ulink> version 5 (Unix version should be provided with most modern Unix systems, or get the Windows version from <ulink url="http://aspn.activestate.com/ASPN/Downloads/ActivePerl/">ActiveState</ulink>), plus the following perl modules (available from <ulink url="http://www.cpan.org/">CPAN</ulink> or for Windows via ActivePerl's PPM):
-	  <note><para>If you're running on Windows, you can use the <filename>mrvoice.exe</filename> instead of downloading ActivePerl and the following modules.  The .exe file has everything built in.  See "Installing on Windows - The Easy Way" below.</para></note>
-          <itemizedlist>
-            <listitem>
-              <para><ulink url="http://www.cpan.org/modules/by-module/DBI/">DBI</ulink></para>
-            </listitem>
-            <listitem>
-              <para><ulink url="http://www.cpan.org/modules/by-module/DBD/">DBD </ulink> driver for your database (Msql-Mysql-modules if you're using MySQL on Unix, DBD-Mysql if you're using MySQL on Windows)</para>
-            </listitem>
-            <listitem>
-              <para><ulink url="http://www.cpan.org/modules/by-module/Tk/">Tk</ulink></para>
-            </listitem>
-            <listitem>
-              <para><ulink url="http://www.cpan.org/modules/by-module/MPEG/">MPEG::MP3-Info</ulink></para>
-            </listitem>
-            <listitem>
-              <para><ulink url="http://www.cpan.org/modules/by-module/Audio/">Audio::Wav</ulink></para>
-            </listitem>
-          </itemizedlist>
-        </para>
-	<para>If you are planning to install Mr. Voice onto a Windows computer (The Hard Way) without internet access, you will need to grab the PPM bundle I've built from <ulink url="http://www.lunenburg.org/mrvoice/ppm.zip">http://www.lunenburg.org/mrvoice/ppm.zip</ulink>.  Details on how to use it will be covered later.</para>
-      </listitem>
-      <listitem>
-        <para>A relational database that is supported by a perl DBI module.  <ulink url="http://www.mysql.com/">MySQL</ulink> has been tested and is recommended.</para>
-      </listitem>
-      <listitem>
-        <para>An MP3 player.  <ulink url="http://www.xmms.org/">xmms</ulink> and <ulink url="http://www.winamp.com/">WinAmp</ulink> are recommended.</para>
-      </listitem>  
-    </itemizedlist>
-    <important><para>Further verification is needed, but it appears that Windows users need to have networking set up for MySQL to work.  So if you don't have a modem or a network card in your computer, you may need to add one (you can find cheap network cards for $10-$15).</para></important>
+    <sect2><title>Microsoft Windows</title>
+      <para>The following components are required to run Mr. Voice under Windows 95 or higher.
+      <itemizedlist>
+        <listitem><para>The <ulink url= "http://www.mysql.com/">MySQL</ulink> database engine.</para></listitem>
+        <listitem> <para>An MP3 player.  <ulink url="http://www.winamp.com/">WinAmp</ulink> is recommended.</para></listitem>
+        <listitem><para>The <ulink url="http://www.csc.uvic.ca/~karvanit/">httpQ plugin</ulink> for WinAmp.  <emphasis>Optional, but recommended</emphasis></para></listitem>
+      </itemizedlist>
+      <important><para>Windows users need to have at least minimal TCP/IP networking set up for MySQL to work.</para></important>
+      </para>
+    </sect2>
+    
+    <sect2><title>Unix/Linux/BSD</title>
+    <para>
+      <itemizedlist>
+        <listitem>
+          <para><ulink url="http://www.perl.com/">Perl</ulink> version 5 (Should be provided with most modern Unix systems), plus the following perl modules (most available from <ulink url="http://www.cpan.org/">CPAN</ulink>):
+            <itemizedlist>
+              <listitem>
+                <para><ulink url="http://www.cpan.org/modules/by-module/DBI/">DBI</ulink></para>
+              </listitem>
+              <listitem>
+                <para><ulink url="http://www.cpan.org/modules/by-module/DBD/">DBD </ulink> driver for your database (Msql-Mysql-modules if you're using MySQL)</para>
+              </listitem>
+              <listitem>
+                <para><ulink url="http://www.cpan.org/modules/by-module/Tk/">Tk</ulink></para>
+              </listitem>
+              <listitem>
+                <para><ulink url="http://www.cpan.org/modules/by-module/MPEG/">MPEG::MP3-Info</ulink></para>
+              </listitem>
+              <listitem>
+                <para><ulink url="http://www.cpan.org/modules/by-module/Audio/">Audio::Wav</ulink></para>
+              </listitem>
+              <listitem>
+                <para><ulink url="http://synthcode.com/code/vorbis/">Ogg::Vorbis</ulink></para>
+              </listitem>
+              <listitem>
+                <para><ulink url="http://www.cpan.org/modules/by-module/Date/">Date::Manip</ulink></para>
+              </listitem>
+            </itemizedlist>
+          </para>
+        </listitem>
+        <listitem>
+          <para>A relational database that is supported by a perl DBI module.  <ulink url="http://www.mysql.com/">MySQL</ulink> has been tested and is recommended.</para>
+        </listitem>
+        <listitem>
+          <para>An MP3 player.  <ulink url="http://www.xmms.org/">xmms</ulink> is recommended.</para>
+        </listitem>  
+      </itemizedlist>
+    </para>
+    </sect2>
   </sect1>
 
   <sect1><title>Installation Steps</title>
@@ -90,6 +104,13 @@ mysql>
 
     <sect2><title>Windows Installation Instructions</title>
       <para>First, download WinAmp and MySQL from their respective websites.  Install WinAmp the normal way, by double-clicking the installer icons and using the defaults provided.</para>
+      <para>If you're using the httpQ plugin for WinAmp, download its zip file and install it.  Then, do the following steps:
+        <itemizedlist>
+          <listitem><para>Start WinAmp by itself, right-click on the "OAIDV" bar on the left of the window, choose Options->Preferences.</para></listitem>
+          <listitem><para>Go down to plugins->General Purpose.  You should see the httpQ plugin listed.  Highlight that, and hit "configure".</para></listitem>
+          <listitem><para>Under the General tab, put in a password (your choosing), leave the port at 4800, and check the box to start the service automatically.  Hit the Apply button, then the x at the top-right.  Close the preferences, and exit from WinAmp.  <emphasis>Remember the password you just set up - you will need it later.</emphasis></para></listitem>
+        </itemizedlist>
+      </para>
       <sect3><title>Installing and Setting Up MySQL</title>
         <itemizedlist>
           <listitem>
@@ -113,87 +134,12 @@ mysql>
           </listitem>
         </itemizedlist>
       </sect3>
-      <sect3><title>Installing on Windows - The Easy Way</title>
-        <para>New in Version 1.5 is an all-in-one version of Mr. Voice that does <emphasis>not</emphasis> require you to install ActivePerl or any of the perl modules that are discussed in this section.  It's still in a testing phase, but I recommend trying to use this method before going through the trouble of installing ActivePerl and the perl modules.</para>
-	<para>To use this method, double-click on the <filename>mrvoice.exe</filename> instead of the <filename>mrvoice.pl</filename> file after you unzip the Mr. Voice .zip file that you download.  Skip down to the "Installing the Mr. Voice software" section to finish up.</para>
-      </sect3>
-      <sect3><title>Installing on Windows - The Hard Way</title>
-        <sect4><title>Installing ActivePerl</title>
-	 <para>Download ActivePerl and install it by double-clicking the installer file that you downloaded.  Accept the defaults on where to install it and what to install.</para>
-	</sect4>
-        <sect4><title>Installing the Perl Modules</title>
-          <para>The next step is to install the needed Perl modules.  Thanks to the great PPM system that ActiveState provides for their ActivePerl distribution, this is a snap. To start PPM, open a Command Prompt/DOS Window.  Type <userinput>ppm</userinput> and hit enter.  You should see "PPM Interactive Shell" and a <prompt>PPM></prompt> prompt. From that prompt, we'll install the modules. <note><para>If you are not connected to the internet, skip to the section entitled "Manually Installing the Perl Modules"</para></note></para>
-          <itemizedlist>
-            <listitem>
-              <para>Enter <userinput>search DBI</userinput>.  You should see a list of packages returned.  At the <prompt>PPM></prompt> prompt, enter <userinput>install DBI</userinput> to install the DBI module.</para>
-            </listitem>
-            <listitem>
-              <para>Enter <userinput>search mysql</userinput>.  At the <prompt>PPM></prompt> prompt, enter <userinput>install mysql</userinput> to install the MySQL module.</para>
-            </listitem>
-            <listitem>
-              <para>Enter <userinput>search Tk</userinput>.  At the <prompt>PPM></prompt> prompt, enter <userinput>install Tk</userinput> to install the Tk module.</para>
-            </listitem>
-            <listitem>
-              <para>Enter <userinput>search MP3</userinput>.  At the <prompt>PPM></prompt> prompt, enter <userinput>install MP3-Info</userinput> to install the MPEG::MP3-Info module.</para>
-            </listitem>
-            <listitem>
-              <para>Enter <userinput>search Audio</userinput>.  At the <prompt>PPM></prompt> prompt, enter <userinput>install Audio-Wav</userinput> to install the Audio::Wav module.</para>
-            </listitem>
-            <listitem>
-              <para>You're now done with the Perl install!  Enter <userinput>quit</userinput> at the <prompt>PPM></prompt> prompt to exit back to the DOS shell.  Close the DOS shell.</para>
-            </listitem>
-          </itemizedlist>
-      	  <sect5><title>Manually Installing the Perl Modules (on systems without an internet connection)</title>
-	    <para>If the Windows computer that you are installing on does not have internet access, you will not be able to download the proper Perl modules on-the-fly.  If this is the case, you will need to get the modules manually. I have created a zip file that will hopefully make this easy.</para>
-	    <para>
-	      <itemizedlist>
-	        <listitem>
-		  <para>Get the file <filename>ppm.zip</filename> from <ulink url="http://www.lunenburg.org/mrvoice/ppm.zip">http://www.lunenburg.org/mrvoice/ppm.zip</ulink>, and copy it to the computer that will run Mr. Voice.</para>
-		</listitem>
-		<listitem>
-		  <para>Unzip <filename>ppm.zip</filename> into the directory <filename>C:\</filename>.  This will create the directory <filename>C:\PPM\</filename>, containing eight files.</para>
-		</listitem>
-		<listitem>
-		  <para>Go to a DOS/Command prompt, type <userinput>ppm</userinput> and hit enter.  You should see "PPM Interactive Shell" and a <prompt>PPM></prompt> prompt.</para>
-		</listitem>
-		<listitem>
-		  <para>From that prompt, run <userinput>search --location=C:\PPM</userinput>.  That should return a list of five packages (DBI, DBD-Mysql, Tk, Audio-Wav, and MP3-Info).</para>
-		</listitem>
-		<listitem>
-		  <para>Next, you have to tell PPM that your new directory is a valid repository, so run <userinput>set repository local C:\PPM</userinput> to enable the local directory.</para>
-		</listitem>
-		<listitem>
-		  <para>From the <prompt>PPM></prompt> prompt, run <userinput>install DBI DBD-Mysql Tk Audio-Wav MP3-Info</userinput>.  Answer "y" to the confirmations.</para>
-		</listitem>
-		<listitem>
-		  <para>From the <prompt>PPM></prompt> prompt, run <userinput>query</userinput> to make sure those four packages show up as being installed.</para>
-		</listitem>
-		<listitem>
-		  <para>If they do, then enter <userinput>quit</userinput> to exit from PPM, and then close the DOS window.  You're done!</para>
-		</listitem>
-              </itemizedlist>
-	    </para>
-	  </sect5>
-	</sect4>
-        <sect4><title>Installing the Mr. Voice Software</title>
-        <para>Now we will install the Mr. Voice software itself, and set up its environment.</para>
-        <itemizedlist>
-          <listitem>
-            <para>Unzip the <filename>mrvoice-current.zip</filename> file to your desired location.  It will create a directory named <filename>mrvoice-x.x</filename> under the location that you choose.  These instructions will assume that you unzip it to <filename>C:\</filename>, creating the <filename>C:\mrvoice-x.x\</filename> directory, where x.x is the version number.</para>
-           </listitem>
-           <listitem>
-             <para>Open a DOS prompt window, and cd to <filename>C:\mrvoice-x.x\</filename>.  Run the command: <userinput>C:\mysql\bin\mysql -u root -p <replaceable>DATABASE_NAME</replaceable> < dbinit.sql</userinput> where <replaceable>DATABASE_NAME</replaceable> is the name you set up above.  It will prompt you for a password.  Enter the password you set up above.  If it runs the command without errors, then your database is initialized.</para>
-           </listitem>
-           <listitem>
-             <para>You will need a directory to store your MP3 files, and a directory to store your hotkey save files.  I suggest <filename>C:\MP3\</filename> for the MP3 directory and <filename>C:\mrvoice-hotkeys\</filename> for the save files, but you can pick anything.  Go ahead and create the directories now.
-             </para>
-           </listitem>
-	   <listitem>
-	     <para>Finally, to actually run the software, double-click on the file <filename>mrvoice.pl</filename> (if you are running on Unix, or if you are on Windows and have installed ActivePerl and the Perl modules), or <filename>mrvoice.exe</filename> (if you haven't, and you're running on Windows "The Easy Way").  The program should start up!
-	     </para>
-	   </listitem>
-         </itemizedlist>
-        </sect4>
+      <sect3><title>Installing the Mr. Voice software on Windows</title>
+        <para>New in Version 1.5 is an all-in-one version of Mr. Voice that does <emphasis>not</emphasis> require you to install ActivePerl or any of the perl modules that are discussed in this section.  This is now the supported way to run Mr. Voice on Windows - it's significantly less complicated than using ActivePerl, PPM modules, and so forth.</para>
+        <para>Unzip the <filename>mrvoice-current.zip</filename> file to your desired location.  It will create a directory named <filename>mrvoice-x.x</filename> under the location that you choose.  These instructions will assume that you unzip it to <filename>C:\</filename>, creating the <filename>C:\mrvoice-x.x\</filename> directory, where x.x is the version number.</para>
+        <para>Open a DOS prompt window, and cd to <filename>C:\mrvoice-x.x\</filename>.  Run the command: <userinput>C:\mysql\bin\mysql -u root -p <replaceable>DATABASE_NAME</replaceable> < dbinit.sql</userinput> where <replaceable>DATABASE_NAME</replaceable> is the name you set up above.  It will prompt you for a password.  Enter the password you set up above.  If it runs the command without errors, then your database is initialized.</para>
+        <para>You will need a directory to store your MP3 files, and a directory to store your hotkey save files.  I suggest <filename>C:\MP3\</filename> for the MP3 directory and <filename>C:\mrvoice-hotkeys\</filename> for the save files, but you can pick anything.  Go ahead and create the directories now.</para>
+       <para>Finally, to actually run the software, double-click on the file <filename>mrvoice.exe</filename>.  The program should start up!  </para>
       </sect3>
     </sect2>
   </sect1>
