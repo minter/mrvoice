@@ -1,0 +1,20 @@
+The following steps detail setting up Mr. Voice on a Windows system.  Windows
+95 and higher should be supported.  This README is a supplement to the
+main README file.
+
+First, I recommend that you install Active State's ActivePerl.  You can
+download it from http://www.activestate.com/.  You can get MySQL for 
+Windows from http://www.mysql.com/downloads/.  As of this writing, the
+current release is 3.23.  You will be able to download the modules that
+you need from ActivePerl's PPM package manager - see their documentation
+for details.
+
+The other big change is path names.  In Unix, a path name would look
+like "/path/to/filename".  For Windows, you'll change that to be
+"C:/path/to/file.exe".  Note that this is a change from the normal
+DOS/Windows way, which uses a backslash to separate items in the path (ie
+"C:\path\to\file.exe".  The "\" character is special under perl, so use
+the "/", and it'll work fine.
+
+--
+CVS ID: $Id: README.windows,v 1.1 2001/03/07 00:42:49 minter Exp $
