@@ -15,7 +15,6 @@ use MPEG::MP3Info;
 use Audio::Wav;
 use Date::Manip;
 use Time::Local;
-use Ogg::Vorbis;
 
 # These modules need to be hardcoded into the script for perl2exe to 
 # find them.
@@ -34,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.148 2002/08/14 00:25:38 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.149 2002/08/15 00:08:33 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -51,7 +50,7 @@ our ($db_name,$db_username,$db_pass,$category,$mp3player,$filepath,$savedir);
 our $savefile_count = 0;		# Counter variables
 our $savefile_max = 4;			# The maximum number of files to
 					# keep in the "recently used" list.
-our $category = 'Any';			# The default category to search
+    $category = 'Any';			# The default category to search
                                         # Initial status message
 our $hotkeytypes = [
     ['Mr. Voice Hotkey Files', '.mrv'],
@@ -77,6 +76,8 @@ if ("$^O" eq "MSWin32")
       LWP::UserAgent->import();
       require HTTP::Request;
       HTTP::Request->import();
+      require Win32::Process;
+      Win32::Process->import();
     }
   }
   $agent = LWP::UserAgent->new;
@@ -101,6 +102,8 @@ else
                      )
               }ex;
   our $rcfile = "$homedir/.mrvoicerc";
+  require Ogg::Vorbis;
+  Ogg::Vorbis->import();
 }
 
 #STARTCSZ
@@ -1049,7 +1052,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.148 $';
+  $rev = '$Revision: 1.149 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -1478,9 +1481,9 @@ sub get_songlength
     $second = "0$second" if ($second < 10);
     $time = " [$minute:$second]";
   }
-  elsif ($file =~ /\.ogg$/i)
+  elsif ( ($file =~ /\.ogg$/i) && ($^O eq "linux") )
   {
-    #It's an Ogg Vorbis file
+    #It's an Ogg Vorbis file.  No Ogg Vorbis module for Windows yet.
     my $ogg = Ogg::Vorbis->new;
     open (OGG_IN,$file);
     $ogg->open(OGG_IN);
