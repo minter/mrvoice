@@ -39,7 +39,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.209 2003/04/04 20:47:56 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.210 2003/04/04 22:45:07 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -997,7 +997,7 @@ sub restore_hotkeys
 
 sub bulk_add
 {
-  my (@accepted, @rejected);
+  my (@accepted, @rejected, $directory);
   my $box1 = $mw->DialogBox(-title=>"Add all songs in directory",
                             -buttons=>["Continue","Cancel"]);
   $box1->Icon(-image=>$icon);
@@ -1661,7 +1661,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.209 $';
+  $rev = '$Revision: 1.210 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
