@@ -127,19 +127,22 @@ if ( $^O eq "MSWin32" )
 
 my $logfile;
 my $userrcfile;
-my $result = GetOptions( 'logfile:s' => \$logfile, 'config=s' => \$userrcfile );
+my $debug;
+my $result = GetOptions(
+    'logfile:s' => \$logfile,
+    'config=s'  => \$userrcfile,
+    'debug'     => \$debug
+);
 
 # Check to see if we're on Windows or Linux, and set the RC file accordingly.
 if ( "$^O" eq "MSWin32" )
 {
     $rcfile = ( $userrcfile eq "" ) ? "C:\\mrvoice.cfg" : $userrcfile;
-    my $logfile = "unset";
-    if ( ( $logfile eq "" ) || ( $logfile ne "unset" ) )
-    {
-        $logfile = ( $logfile eq "" ) ? "C:/mrvoice.log" : $logfile;
-        open( STDOUT, ">$logfile" );
-        open( STDERR, ">&STDOUT" );
-    }
+    $logfile = "" if !defined($logfile);
+    $logfile = ( $logfile eq "" ) ? "C:/mrvoice.log" : $logfile;
+    open( STDOUT, ">$logfile" );
+    open( STDERR, ">&STDOUT" );
+    print "Using Windows logfile $logfile\n" if $debug;
 
     BEGIN
     {
@@ -175,12 +178,12 @@ else
 {
     my $homedir = get_homedir();
     $rcfile = ( $userrcfile eq "" ) ? "$homedir/.mrvoicerc" : $userrcfile;
-    my $logfile = "unset";
-    if ( ( $logfile eq "" ) || ( $logfile ne "unset" ) )
+    if ( defined($logfile) )
     {
         $logfile = ( $logfile eq "" ) ? "$homedir/mrvoice.log" : $logfile;
         open( STDOUT, ">$logfile" );
         open( STDERR, ">&STDOUT" );
+        print "Using Unix logfile $logfile\n" if $debug;
     }
 }
 
@@ -195,19 +198,23 @@ sub get_rows
     # $sth->rows support still appears to be wonky under Win32.  Go
     # back to the manual way for now.
     my $query = shift;
-    my $rows  = 0;
-    my $sth   = $dbh->prepare($query);
+    print "Getting rows for $query\n" if $debug;
+    my $rows = 0;
+    my $sth  = $dbh->prepare($query);
     $sth->execute;
     while ( my @row = $sth->fetchrow_array )
     {
         $rows++;
     }
+    print "$query returned $rows rows\n" if $debug;
     return $rows;
 }
 
 sub get_homedir
 {
+    print "Getting home directory\n" if $debug;
     return if ( $^O eq "MSWin32" );
+    print "Must be on a Unix system - $^O\n" if $debug;
     my $homedir = "~";
     $homedir =~ s{ ^ ~ ( [^/]* ) }
               { $1 
@@ -216,6 +223,7 @@ sub get_homedir
                         || (getpwuid($>))[7]
                      )
               }ex;
+    print "Home directory is $homedir\n" if $debug;
     return $homedir;
 }
 
@@ -564,6 +572,8 @@ sub BindMouseWheel
 
 sub bind_hotkeys
 {
+
+    print "Binding hotkeys\n" if $debug;
 
     # This will set up hotkeybindings for the window that is passed
     # in as the first argument.
@@ -3261,17 +3271,21 @@ sub read_rcfile
 
     if ( -r $rcfile )
     {
+        print "rcfile $rcfile is readable\n" if $debug;
         open( RCFILE, $rcfile );
+        print "rcfile open\n" if $debug;
         while (<RCFILE>)
         {
             chomp;
             my ( $key, $value ) = split(/::/);
+            print "Read key $key, value $value from rcfile\n" if $debug;
             $config{$key} = $value;
         }
         close(RCFILE);
     }
     else
     {
+        print "rcfile $rcfile not found or unreadable.\n" if $debug;
         $mw->deiconify();
         $mw->raise();
         my $norcbox = $mw->Dialog(
@@ -3281,22 +3295,29 @@ sub read_rcfile
             -buttons =>
               [ "Perform Default Configuration", "Manual Configuration" ]
         );
+        print "Showing norcbox\n" if $debug;
         my $response = $norcbox->Show;
         if ( $response eq "Manual Configuration" )
         {
+            print "Editing preferences from Manual Configuration\n" if $debug;
             edit_preferences();
+            print "Done editing preferences from Manual Configuration\n"
+              if $debug;
         }
         else
         {
+            print "Performing default configuration\n" if $debug;
             $config{filepath} =
               ( $^O eq "MSWin32" )
               ? "C:\\mp3"
               : catfile( get_homedir(), "mp3" );
+            print "Filepath is $config{filepath}\n" if $debug;
             my $string =
               "Performing default configuration.\n\nCreating MP3 directory $config{filepath}...";
 
             if ( -d $config{filepath} )
             {
+                print "Filepath $config{filepath} already exists\n" if $debug;
                 $string .= "Already exists, using it\n\n";
             }
             else
@@ -3305,15 +3326,18 @@ sub read_rcfile
                   mkdir( $config{filepath} )
                   ? "directory created\n\n"
                   : "directory creation failed!\n\n";
+                print "Made directory $config{filepath}\n" if $debug;
             }
 
             $config{savedir} =
               ( $^O eq "MSWin32" )
               ? "C:\\hotkeys"
               : catfile( get_homedir(), "hotkeys" );
+            print "Savedir is $config{savedir}\n" if $debug;
             $string .= "Creating hotkey directory $config{savedir}...";
             if ( -d $config{savedir} )
             {
+                print "Savedir $config{savedir} already exists\n" if $debug;
                 $string .= "Already exists, using it\n\n";
             }
             else
@@ -3322,20 +3346,25 @@ sub read_rcfile
                   mkdir( $config{savedir} )
                   ? "directory created\n\n"
                   : "directory creation failed!\n\n";
+                print "Made savedir directory $config{savedir}\n" if $debug;
             }
 
             $config{db_file} =
               ( $^O eq "MSWin32" )
               ? "C:\\mrvoice.db"
               : catfile( get_homedir(), "mrvoice.db" );
+            print "DB File is $config{db_file}\n" if $debug;
             $string .= "Setting database file $config{db_file}...";
             if ( -r $config{db_file} )
             {
+                print "DB File $config{db_file} already exists\n" if $debug;
                 $string .=
                   "Already exists, using it (but make sure it's really a Mr. Voice database file)\n\n";
             }
             else
             {
+                print "DB File $config{db_file} does not already exists\n"
+                  if $debug;
                 $string .=
                   "Does not exist, so Mr. Voice will initialize it after you view the preferences\n\n";
             }
@@ -3353,6 +3382,7 @@ sub read_rcfile
             {
                 $config{mp3player} = "/usr/bin/xmms";
             }
+            print "MP3 player is $config{mp3player}\n" if $debug;
             $string .= "Looking for MP3 player in $config{mp3player}...";
             $string .=
               ( -f $config{mp3player} ) ? "found it\n\n" : "nothing there!\n\n";
@@ -3365,8 +3395,11 @@ sub read_rcfile
                 -text    => $string,
                 -buttons => ["Launch Preferences"]
             );
+            print "Showing defaultdonebox\n" if $debug;
             $defaultdonebox->Show;
+            print "defaultdonebox shown, editing preferences\n" if $debug;
             edit_preferences();
+            print "Editing preferences done\n" if $debug;
         }
     }
     if ( $^O eq "MSWin32" )
@@ -3457,11 +3490,13 @@ sub create_new_database
     my $dbfile = shift;
     my $create_dbh;
     my @queries;
+    print "Connecting to dbi:SQLite:dbname=$dbfile\n" if $debug;
     if (
         !( $create_dbh = DBI->connect( "dbi:SQLite:dbname=$dbfile", "", "" ) ) )
     {
         die "Could not create new database file $dbfile via DBI";
     }
+    print "Connected to dbi:SQLite:dbname=$dbfile\n" if $debug;
 
     my $query;
     while ( my $line = <DATA> )
@@ -3482,8 +3517,10 @@ sub create_new_database
 
     foreach my $query (@queries)
     {
+        print "Preparing query -->$query<--\n" if $debug;
         my $sth = $create_dbh->prepare($query);
         $sth->execute or die "Could not run database query $query";
+        print "Executed query -->$query<--\n" if $debug;
     }
 
     $status = "New database $dbfile initialized successfully";
@@ -3492,6 +3529,8 @@ sub create_new_database
 #########
 # MAIN PROGRAM
 #########
+print "Starting Mr. Voice version $version at " . scalar(localtime) . "\n"
+  if $debug;
 $|  = 1;
 $mw = MainWindow->new;
 $mw->withdraw();
@@ -3504,29 +3543,39 @@ $mw->protocol( 'WM_DELETE_WINDOW', \&do_exit );
 $icon = $mw->Pixmap( -data => icon_data() );
 $mw->Icon( -image => $icon );
 
+print "Reading rcfile\n" if $debug;
 read_rcfile();
+print "Read rcfile\n" if $debug;
 
 if ( !defined $config{db_file} )
 {
+    print "db_file not defined, doing database configuration\n" if $debug;
     $mw->deiconify();
     $mw->raise();
+    print "MainWindow deiconified and raised\n" if $debug;
     my $box = $mw->DialogBox( -title => "Fatal Error", -buttons => ["Ok"] );
     $box->Icon( -image => $icon );
     $box->add( "Label",
         -text =>
           "You have not configured a location for your Mr. Voice database file.\nYou will now be taken to the preferences, where you can select the location\nof the file.  Then restart Mr. Voice to see the changes."
     )->pack();
+    print "Showing 'Need to configure db location' box\n" if $debug;
     my $result = $box->Show();
+    print "Finished showing 'Need to configure db location' box\n" if $debug;
 
     if ($result)
     {
+        print "Editing preferences for db configuration\n" if $debug;
         edit_preferences();
+        print "Finished editing preferences for db configuration\n" if $debug;
         die "Died because database file not set";
     }
 }
 
 if ( !( -e $config{db_file} ) )
 {
+    print "db_file $config{db_file} configured, but file does not exist\n"
+      if $debug;
     my $box = $mw->DialogBox(
         -title          => "Database Error",
         -buttons        => [ "Create", "Cancel" ],
@@ -3537,44 +3586,59 @@ if ( !( -e $config{db_file} ) )
         -text =>
           "You have chosen $config{db_file} as your database file,\nbut it does not exist.\n\nYou can either create and initialize a new Mr. Voice database at that location, or\nCancel and select the proper location of your database file"
     )->pack();
+    print "Showing 'initialized database' box\n" if $debug;
     my $result = $box->Show();
+    print "Finished showing 'initialized database' box\n" if $debug;
     if ( $result eq "Create" )
     {
+        print "Creating new database $config{db_file}\n" if $debug;
         create_new_database( $config{db_file} );
+        print "Finished creating new database $config{db_file}\n" if $debug;
     }
     else
     {
+        print "Editing preferences to set database location manually\n"
+          if $debug;
         edit_preferences();
+        print
+          "Finished editing preferences to set database location manually.  Dying.\n"
+          if $debug;
         die "Died because we could not access database file $config{db_file}";
     }
 }
 
 if ( !( -w $config{db_file} ) )
 {
+    print "Could not write to db_file $config{db_file}\n" if $debug;
     my $box = $mw->DialogBox( -title => "Fatal Error", -buttons => ["Ok"] );
     $box->Icon( -image => $icon );
     $box->add( "Label",
         -text =>
-          "Could not read database file $config{db_file}\nYou have configured Mr. Voice to find its database file at the location above, but\nthe file cannot be read.  Make sure that Mr. Voice has permission to write to\nthe file, or make sure that you are looking for the file in the right place.\nAfter fixing the problem, restart Mr. Voice."
+          "Could not write to database file $config{db_file}\nYou have configured Mr. Voice to find its database file at the location above, but\nthe file cannot be written to.  Make sure that Mr. Voice has permission to write to\nthe file, or make sure that you are looking for the file in the right place.\nAfter fixing the problem, restart Mr. Voice."
     )->pack();
+    print "Showing db_file write error box\n" if $debug;
     my $result = $box->Show();
+    print "Showed db_file write error box\n" if $debug;
 
     if ($result)
     {
+        print "Editing preferences for db_file write error\n" if $debug;
         edit_preferences();
+        print "Edited preferences for db_file write error.  Dying.\n" if $debug;
         die "Died because we could not write to database file $config{db_file}";
     }
 }
 
 if ( !( $dbh = DBI->connect( "dbi:SQLite:dbname=$config{db_file}", "", "" ) ) )
 {
+    print
+      "Could not connect to dbi:SQLite:dbname=$config{db_file} with error $DBI::errstr\n"
+      if $debug;
     my $box = $mw->DialogBox( -title => "Fatal Error", -buttons => ["Ok"] );
     $box->Icon( -image => $icon );
     $box->add( "Label", -text => "Could not connect to database." )->pack();
     $box->add( "Label",
-        -text =>
-          "Make sure your database configuration is correct, and that your database is running."
-    )->pack();
+        -text => "Make sure your database configuration is correct." )->pack();
     $box->add( "Label",
         -text =>
           "The preferences menu will now pop up for you to check or set any configuration options."
@@ -3585,17 +3649,22 @@ if ( !( $dbh = DBI->connect( "dbi:SQLite:dbname=$config{db_file}", "", "" ) ) )
     )->pack();
     $box->add( "Label", -text => "Database returned error: $DBI::errstr" )
       ->pack();
+    print "Showing DBI connect error box\n" if $debug;
     my $result = $box->Show();
+    print "Showed DBI connect error box\n" if $debug;
 
     if ($result)
     {
+        print "Editing preferences after DBI error\n" if $debug;
         edit_preferences();
+        print "Edited preferences after DBI error.  Dying\n" if $debug;
         die "Died with database error $DBI::errstr\n";
     }
 }
 
 if ( !-W $config{'filepath'} )
 {
+    print "Could not write to MP3 directory $config{'filepath'}\n" if $debug;
     my $box = $mw->DialogBox( -title => "Fatal Error", -buttons => ["Exit"] );
     $box->Icon( -image => $icon );
     $box->add( "Label", -text => "MP3 Directory unavailable" )->pack();
@@ -3613,17 +3682,25 @@ if ( !-W $config{'filepath'} )
     )->pack();
     $box->add( "Label", -text => "Current MP3 Directory: $config{'filepath'}" )
       ->pack();
+    print "Showing 'could not write to MP3 directory' box\n" if $debug;
     my $result = $box->Show();
+    print "Showed 'could not write to MP3 directory' box\n" if $debug;
 
     if ($result)
     {
+        print "Editing preferences after unable to write to MP3 directory\n"
+          if $debug;
         edit_preferences();
+        print
+          "Edited preferences after unable to write to MP3 directory.  Dying\n"
+          if $debug;
         die("Error accessing MP3 directory\n");
     }
 }
 
 if ( !-W $config{'savedir'} )
 {
+    print "Could not write to hotkey directory $config{savedir}\n" if $debug;
     my $box = $mw->DialogBox( -title => "Warning", -buttons => ["Continue"] );
     $box->Icon( -image => $icon );
     $box->add( "Label", -text => "Hotkey save directory unavailable" )->pack();
@@ -3637,7 +3714,9 @@ if ( !-W $config{'savedir'} )
     )->pack();
     $box->add( "Label",
         -text => "Current Hotkey Directory: $config{'savedir'}" )->pack();
+    print "Showing 'could not write to hotkey directory' box\n" if $debug;
     my $result = $box->Show();
+    print "Showed 'could not write to hotkey directory' box\n" if $debug;
 }
 
 # We use the following statement to open the MP3 player asynchronously
@@ -3645,6 +3724,7 @@ if ( !-W $config{'savedir'} )
 
 if ( !-x $config{'mp3player'} )
 {
+    print "Could not execute MP3 player $config{'mp3player'}\n" if $debug;
     infobox(
         $mw,
         "Warning - MP3 Player Not Found",
@@ -3659,16 +3739,20 @@ else
 
         # Start the MP3 player on a Windows system
         my $object;
+        print "Creating Win32::Process for $config{'mp3player'}\n" if $debug;
         Win32::Process::Create( $object, $config{'mp3player'}, '', 1,
             NORMAL_PRIORITY_CLASS(), "." );
         $mp3_pid = $object->GetProcessID();
+        print "Got Win32::Process id $mp3_pid\n" if $debug;
         sleep(1);
     }
     else
     {
 
         # Start the MP3 player on a Unix system using fork/exec
+        print "Forking to exec $config{'mp3player'}\n" if $debug;
         $mp3_pid = fork();
+        print "Got PID $mp3_pid\n" if $debug;
         if ( $mp3_pid == 0 )
         {
 
@@ -3804,6 +3888,8 @@ sub songsmenu_items
 sub orphans
 {
 
+    print "Processing orphans\n" if $debug;
+
     # Build up a list of all files in the filepath directory
     my @mp3files = glob( catfile( $config{filepath}, "*.mp3" ) );
     my @oggfiles = glob( catfile( $config{filepath}, "*.ogg" ) );
@@ -3825,7 +3911,8 @@ sub orphans
     $mw->Busy( -recurse => 1 );
     my $percent_done = 0;
     my $file_count   = 0;
-    my $progressbox  = $mw->Toplevel();
+    print "Creating progressbox toplevel\n" if $debug;
+    my $progressbox = $mw->Toplevel();
     $progressbox->withdraw();
     $progressbox->Icon( -image => $icon );
     $progressbox->title("Orphan Search");
@@ -3836,23 +3923,28 @@ sub orphans
     $progressbox->update();
     $progressbox->deiconify();
     $progressbox->raise();
+    print "Updated, deiconified, and raised progressbox\n" if $debug;
 
     # Cycle through each file and check whether or not a database entry
     # references it.
     foreach my $file (@files)
     {
+        print "Checking file $file\n" if $debug;
         $file = basename($file);
         my $query = "SELECT * FROM mrvoice WHERE filename='$file'";
         if ( get_rows($query) == 0 )
         {
             push( @orphans, $file );
+            print "File $file is an orphan\n" if $debug;
         }
         $file_count++;
         $percent_done = int( ( $file_count / $#files ) * 100 );
         $pb->set($percent_done);
         $progressbox->update();
     }
+    print "Setting MainWindow to unbusy\n" if $debug;
     $mw->Unbusy( -recurse => 1 );
+    print "MainWindow unbusy\n" if $debug;
     $progressbox->destroy();
 
     if ( $#orphans == -1 )
@@ -3860,6 +3952,8 @@ sub orphans
         $status = "No orphaned files found";
         return;
     }
+
+    print "We have orphans, so create a toplevel to report\n" if $debug;
 
     # Create a listbox with the orphans
     my $orphanbox = $mw->Toplevel( -title => "Orphaned Files" );
@@ -3916,13 +4010,16 @@ sub orphans
         $lb->insert( 'end', $orphan );
     }
 
+    print "Showing orphan report toplevel to report\n" if $debug;
     $orphanbox->update();
     $orphanbox->deiconify();
     $orphanbox->raise();
+    print "Showed orphan report toplevel to report\n" if $debug;
 }
 
 sub advanced_search
 {
+    print "Running advanced search function\n" if $debug;
     my $query = "select modtime from mrvoice order by modtime asc limit 1";
     my $firstdate_ref = $dbh->selectrow_hashref($query);
     my $firstdate     = $firstdate_ref->{modtime};
@@ -4382,17 +4479,23 @@ $searchboxframe->pack(
     -expand => 1
 );
 
+print "Binding hotkeys\n" if $debug;
 bind_hotkeys($mw);
 $mw->bind( "<Control-Key-p>", [ \&play_mp3, "Current" ] );
+print "Bound hotkeys\n" if $debug;
 
 # If the default hotkey file exists, load that up.
 if ( -r catfile( $config{'savedir'}, "default.mrv" ) )
 {
+    print "Loading default hotkey file default.mrv\n" if $debug;
     open_file( $mw, catfile( $config{'savedir'}, "default.mrv" ) );
+    print "Loaded default hotkey file default.mrv\n" if $debug;
 }
 
+print "Deiconifying and raising MainWindow\n" if $debug;
 $mw->deiconify();
 $mw->raise();
+print "Deiconified and raised, running MainLoop now\n" if $debug;
 MainLoop;
 
 __DATA__
