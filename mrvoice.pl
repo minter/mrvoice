@@ -1,6 +1,7 @@
 #!/usr/bin/perl 
 use warnings;
 no warnings 'redefine';
+no warnings 'uninitialized';
 
 #use diagnostics;
 
@@ -38,7 +39,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.386 2004/05/28 20:50:53 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.387 2004/06/04 16:15:17 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2300,7 +2301,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.386 $';
+    my $rev    = '$Revision: 1.387 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::SQLite->VERSION;
