@@ -40,7 +40,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.232 2003/07/18 21:18:36 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.233 2003/07/21 19:15:54 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1265,19 +1265,32 @@ sub add_category
     {
       $addcat_desc = $dbh->quote($addcat_desc);
       $addcat_code =~ tr/a-z/A-Z/;
-      my $query = "INSERT INTO categories VALUES ('$addcat_code',$addcat_desc)";
-      my $sth=$dbh->prepare($query);
-      if (! $sth->execute)
+
+      # Check to see if there's a duplicate of either entry
+     
+      $checkquery = "SELECT * FROM categories WHERE (code='$addcat_code' OR description=$addcat_desc)";
+      my $sth = $dbh->prepare($checkquery);
+      $result=$sth->execute;
+      if ($sth->rows > 0)
       {
-        my $error_message = $sth->errstr();
-        infobox($mw, "Database Error","Database returned error: $error_message\non query $query");
-      }
+        infobox($mw, "Category Error","A category with that name or code already exists.  Please try again");
+      } 
       else
       {
-	$status = "Added category $addcat_desc";
-        infobox($mw,"Success","Category added.");
+        my $query = "INSERT INTO categories VALUES ('$addcat_code',$addcat_desc)";
+        $sth=$dbh->prepare($query);
+        if (! $sth->execute)
+        {
+          my $error_message = $sth->errstr();
+          infobox($mw, "Database Error","Database returned error: $error_message\non query $query");
+        }
+        else
+        {
+          $status = "Added category $addcat_desc";
+          infobox($mw,"Success","Category added.");
+        }
+        $sth->finish;
       }
-      $sth->finish;
     }
     else 
     {
@@ -1812,7 +1825,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.232 $';
+  $rev = '$Revision: 1.233 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
