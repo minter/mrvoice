@@ -4,7 +4,7 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.19 2002/01/28 21:12:55 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.20 2002/01/28 23:08:12 minter Exp $ 
 -->
 <book status="draft">
 
@@ -58,7 +58,7 @@
         <listitem><para>Exiting Mr. Voice now also closes the MP3 player.</para></listitem>
 	<listitem><para>There is a "holding tank" to store songs for later use.</para></listitem>
 	<listitem><para>Mr. Voice is friendler to audio file formats other than MP3.  You can use WAV files, OGG files, etc.</para></listitem>
-	<listitem><para>The HTML documentaion now builds both multi-page (with a main page of index.html) and single-page formats (with a main page of mrvoice.html)</para></listitem>
+	<listitem><para>The HTML documentaion now builds both multi-page (with a main page of <filename>index.html</filename>) and single-page formats (with a main page of <filename>mrvoice.html</filename>)</para></listitem>
       </itemizedlist>
     </para>
   </sect1>
