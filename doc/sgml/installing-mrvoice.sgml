@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.23 2003/09/01 20:24:55 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.24 2004/03/11 21:54:18 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
@@ -11,8 +11,8 @@
     <sect2><title>Microsoft Windows</title>
       <para>The following components are required to run Mr. Voice under Windows 95 or higher.
       <itemizedlist>
-        <listitem><para>The <ulink url= "http://www.mysql.com/">MySQL</ulink> database engine version 3.X (MySQL 4.x has not been tested).</para></listitem>
-        <listitem> <para>An MP3 player.  <ulink url="http://www.winamp.com/">WinAmp</ulink> is recommended.  <emphasis>There are known issues with WinAmp Version 3.  Until they are resolved, WinAmp Version 2 is the supported release to use</emphasis></para></listitem>
+        <listitem><para>The <ulink url= "http://www.mysql.com/">MySQL</ulink> database engine version 4.X.</para></listitem>
+        <listitem> <para>An MP3 player.  <ulink url="http://www.winamp.com/">WinAmp</ulink> version 5 is recommended.</para></listitem>
         <listitem><para>The <ulink url="http://www.kostaa.com/winamp/index.html">httpQ plugin</ulink> for WinAmp.  <emphasis>Optional, but recommended</emphasis></para></listitem>
         <listitem><para>The <ulink url="http://www.lunenburg.org/mrvoice/files/">Ogg Vorbis plugin</ulink> for WinAmp.  <emphasis>Optional, but recommended</emphasis></para></listitem>
       </itemizedlist>
@@ -24,37 +24,34 @@
     <para>The following components are required to run Mr. Voice under Unix systems.
       <itemizedlist>
         <listitem>
-          <para><ulink url="http://www.perl.com/">Perl</ulink> version 5 (Should be provided with most modern Unix systems), plus the following perl modules (most available from <ulink url="http://www.cpan.org/">CPAN</ulink>):
+          <para><ulink url="http://www.perl.com/">Perl</ulink> version 5.8 (Should be provided with most modern Unix systems), plus the following perl modules (most available from <ulink url="http://www.cpan.org/">CPAN</ulink>):
             <itemizedlist>
               <listitem>
-                <para><ulink url="http://www.cpan.org/modules/by-module/DBI/">DBI</ulink></para>
-              </listitem>
-              <listitem>
-                <para><ulink url="http://www.cpan.org/modules/by-module/DBD/">DBD </ulink> driver for your database (Msql-Mysql-modules if you're using MySQL)</para>
-              </listitem>
-              <listitem>
-                <para><ulink url="http://www.cpan.org/modules/by-module/Tk/">Tk</ulink></para>
-              </listitem>
-              <listitem>
-                <para><ulink url="http://www.cpan.org/modules/by-module/Tk/SREZIC/">Patch-SREZIC-Tk</ulink></para>
-              </listitem>
-              <listitem>
-                <para><ulink url="http://www.cpan.org/modules/by-module/MPEG/">MPEG::MP3-Info</ulink></para>
-              </listitem>
-              <listitem>
                 <para><ulink url="http://www.cpan.org/modules/by-module/Audio/">Audio::Wav</ulink></para>
-              </listitem>
-              <listitem>
-                <para><ulink url="http://www.cpan.org/modules/by-module/Ogg/">Ogg::Vorbis::Header::PurePerl</ulink></para>
               </listitem>
               <listitem>
                 <para><ulink url="http://www.cpan.org/modules/by-module/Date/">Date::Manip</ulink></para>
               </listitem>
               <listitem>
-                <para><ulink url="http://www.cpan.org/modules/by-module/Tk/">Tk::ProgressBar::Mac</ulink></para>
+                <para><ulink url="http://www.cpan.org/modules/by-module/DBD/">DBD </ulink> driver for your database (Msql-Mysql-modules if you're using MySQL)</para>
               </listitem>
               <listitem>
-                <para><ulink url="http://www.cpan.org/authors/id/K/KR/KRISTI/">Tk::DirSelect</ulink></para>
+                <para><ulink url="http://www.cpan.org/modules/by-module/DBI/">DBI</ulink></para>
+              </listitem>
+              <listitem>
+                <para><ulink url="http://www.cpan.org/modules/by-module/MPEG/">MPEG::MP3-Info</ulink></para>
+              </listitem>
+              <listitem>
+                <para><ulink url="http://www.cpan.org/modules/by-module/Ogg/">Ogg::Vorbis::Header::PurePerl</ulink></para>
+              </listitem>
+              <listitem>
+                <para><ulink url="http://www.cpan.org/modules/by-module/Time/">Time::HiRes</ulink></para>
+              </listitem>
+              <listitem>
+                <para><ulink url="http://www.cpan.org/modules/by-module/Tk/">Tk</ulink>804.x (Version 800.x is unsupported as of Mr. Voice version 1.10)</para>
+              </listitem>
+              <listitem>
+                <para><ulink url="http://www.cpan.org/modules/by-module/Tk/">Tk::ProgressBar::Mac</ulink></para>
               </listitem>
             </itemizedlist>
           </para>

@@ -5,7 +5,7 @@
   <!ENTITY epilogue SYSTEM "troubleshooting.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.49 2004/03/11 21:45:00 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.50 2004/03/11 21:54:19 minter Exp $ 
 -->
 <book status="draft">
 
@@ -79,6 +79,7 @@
         <listitem><para>If music licensing is a concern, you can now assign a Publisher to each song in the database, and restrict searches based on allowed publishers.  The options to restrict the searches are in the <menuchoice> <guimenu>File</guimenu> <guimenuitem>Preferences</guimenuitem> </menuchoice> menu.</para></listitem>
         <listitem><para>Most category buttons now update to show which category you've selected.</para></listitem>
         <listitem><para>The "dropdown" feature of the main search fields (Artist, Title, etc.) have been removed.</para></listitem>
+        <listitem><para>MySQL 4.x and Winamp 5.x are now the preferred environments under Windows, replacing MySQL 3.x and Winamp 2.x.</para></listitem>
       </itemizedlist>
     </para>
   </sect1>
