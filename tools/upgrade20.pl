@@ -234,6 +234,8 @@ sub upgrade_20
     my $mysql_sth   = $mysql_dbh->prepare($mysql_query);
     $mysql_sth->execute;
 
+    my $insert_count = 0;
+    $sqlite_dbh->do("BEGIN");
     while ( my $in = $mysql_sth->fetchrow_hashref )
     {
         my $title    = $sqlite_dbh->quote( $in->{title} );
@@ -249,7 +251,16 @@ sub upgrade_20
           "INSERT INTO mrvoice VALUES ($in->{id}, $title, $artist, $category, $info, '$in->{filename}', '$in->{time}', $epoch, '$in->{publisher}')";
         my $sqlite_sth = $sqlite_dbh->prepare($outquery);
         $sqlite_sth->execute or die "Died on query -->$outquery<-- $!";
+        if ( ( $insert_count % 500 ) == 0 )
+        {
+
+            # Commit after 500 inserts
+            $sqlite_dbh->do("COMMIT");
+            $sqlite_dbh->do("BEGIN");
+        }
+        $insert_count++;
     }
+    $sqlite_dbh->do("COMMIT");
 
     $mysql_dbh->disconnect;
     $sqlite_dbh->disconnect;
@@ -258,6 +269,9 @@ sub upgrade_20
 
 print $wrapper->wrap(
     "This utility will upgrade your Mr. Voice database from the version 1.x series (MySQL) to the version 2.x series (SQLite).  It should ONLY be run to upgrade an existing Mr. Voice installation.  For new installs, just run the mrvoice.exe file - it will do all of the database creation for you.\n\n"
+);
+print $wrapper->wrap(
+    "Your old MySQL data will not be changed, and will remain available in case there are problems with the upgrade.\n\n"
 );
 
 print "Continue with Mr. Voice 2.0 Database Migration [y/N]? ";

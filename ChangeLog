@@ -1,3 +1,7 @@
+Sun  Sep 5  2040	H. Wade Minter (minter@lunenburg.org)
+     * Switch the updater to use SQLite transactions on the inserts, instead
+       of autocommits.  Makes things much faster.
+
 Fri  Sep 3  2004	H. Wade Minter (minter@lunenburg.org)
      * Give up on having the 2.0 updater in Perl/Tk and get it working
        via the console.
