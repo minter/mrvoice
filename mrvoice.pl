@@ -14,10 +14,7 @@ use MPEG::MP3Info;
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS INFORMATION:
-#	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/11/14 14:42:40 $
-#	CVS REVISION NUMBER:    $Revision: 1.84 $
+# CVS ID: $Id: mrvoice.pl,v 1.85 2001/11/14 19:49:42 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
