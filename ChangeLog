@@ -1,3 +1,6 @@
+Mon  Mar 14 2005	H. Wade Minter (minter@lunenburg.org)
+     * Add the framework for the "bundle" import/export.
+
 Fri  Mar 11 2005	H. Wade Minter (minter@lunenburg.org)
      * Add uploader person and category modifiers for the online search.
 
