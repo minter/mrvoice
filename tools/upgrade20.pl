@@ -14,7 +14,6 @@ our $mw;               # Tk MainWindow
 our $icon;             # Window icon
 our $homedir;          # Unix home directory
 our $mysql_dbh;        # MySQL database handle
-our $sqlite_dbfile;    # New SQLite Database File
 our $rcfile;           # Config file
 our $wrapper = Text::Wrapper->new;
 
@@ -58,13 +57,12 @@ sub save_rcfile
 
 sub create_new_database
 {
-    my $dbfile = shift;
     my $create_dbh;
     my @queries;
     if (
-        !( $create_dbh = DBI->connect( "dbi:SQLite:dbname=$dbfile", "", "" ) ) )
+        !( $create_dbh = DBI->connect( "dbi:SQLite:dbname=$config{db_file}", "", "" ) ) )
     {
-        die "Could not create new database file $dbfile via DBI";
+        die "Could not create new database file $config{db_file} via DBI";
     }
 
     my $query;
@@ -206,9 +204,9 @@ sub upgrade_20
 
     # This migrates the database from MySQL to SQLite
 
-    my $sqlite_dbh = DBI->connect( "dbi:SQLite:dbname=$sqlite_dbfile", "", "" )
+    my $sqlite_dbh = DBI->connect( "dbi:SQLite:dbname=$config{db_file}", "", "" )
       or die
-      "Could not connect to SQLite database $sqlite_dbfile - error $DBI::errstr\n\n";
+      "Could not connect to SQLite database $config{db_file} - error $DBI::errstr\n\n";
 
     my $mysql_cats = "SELECT * FROM categories";
     my $cats_sth   = $mysql_dbh->prepare($mysql_cats);
@@ -273,13 +271,13 @@ die if ( !check_17 );
 die if ( !check_110 );
 
 my $dbdir = get_dbdir;
-$sqlite_dbfile = "$dbdir/mrvoice.db";
+$config{db_file} = "$dbdir/mrvoice.db";
 
 print $wrapper->wrap(
-    "Your new SQLite Mr. Voice 2.0 database will be created at:\n$sqlite_dbfile\nYou can move this file after the upgrade if you want it somewhere else.\n\n"
+    "Your new SQLite Mr. Voice 2.0 database will be created at:\n$config{db_file}\nYou can move this file after the upgrade if you want it somewhere else.\n\n"
 );
 
-create_new_database($sqlite_dbfile);
+create_new_database;
 
 print $wrapper->wrap(
     "New SQLite database created - we will now migrate your MySQL data to it.\n\n"
