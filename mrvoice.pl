@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.355 2004/03/18 20:22:51 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.356 2004/03/23 19:34:26 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2251,10 +2251,13 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.355 $';
+    my $rev    = '$Revision: 1.356 $';
+    my $tkver  = Tk->VERSION;
+    my $dbiver = DBI->VERSION;
+    my $dbdver = DBD::mysql->VERSION;
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
-      "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
+      "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\nTk Version: $tkver\nDBI Version: $dbiver\nDBD Version: $dbdver\n\n(c)2001-2004, Released under the GNU General Public License";
     my $box = $mw->DialogBox(
         -title      => "About Mr. Voice",
         -buttons    => ["OK"],
