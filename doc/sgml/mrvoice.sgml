@@ -4,7 +4,7 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.23 2002/02/11 14:14:54 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.24 2002/03/14 16:58:21 minter Exp $ 
 -->
 <book status="draft">
 
@@ -33,8 +33,9 @@
       <listitem><para>The newsgroup comp.lang.perl.tk</para></listitem>
     </itemizedlist>
   </para>
-  <para>Kasey Christie at <ulink url="http://www.spocomedy.com/">SpoComedy</ulink>, for feature suggestions and actually being willing to use this software!</para>
+  <para>Kasey Christie at <ulink url="http://www.spocomedy.com/">SpoComedy</ulink> and Patrick Short at <ulink url="http://www.comedysportz.com/portland/">ComedySportz-Portland</ulink>, for feature suggestions and actually being willing to use this software!</para>
   <para>And thanks to the Open Source and Free Software movements, letting people write software that doesn't suck!</para>
+  <para>Mr. Voice is dedicated to the memory of Andy Sepelak (4/4/78 - 3/11/02), a fine improviser and a good man.  He will be missed.</para>
 </dedication>
 
 <preface>
