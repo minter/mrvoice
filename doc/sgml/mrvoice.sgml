@@ -5,7 +5,7 @@
   <!ENTITY epilogue SYSTEM "troubleshooting.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.41 2003/04/10 15:57:47 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.42 2003/04/10 16:33:49 minter Exp $ 
 -->
 <book status="draft">
 
@@ -66,7 +66,7 @@
         <listitem><para>The hotkey listing now shows title and artist, instead of the raw filename.  Note - changing this caused a change in the format of the hotkey files, so you will need to run the <filename>converthotkeys</filename> utility from the tools subdirectory once before you can use hotkeys under 1.8.</para></listitem>
         <listitem><para>A bug that affected the F10 hotkey under Windows has been fixed - that key should work like the other hotkeys now.</para></listitem>
         <listitem><para>Better support for Ogg Vorbis files under Windows.</para></listitem>
-        <listitem><para>Fixed a Windows bug where the database import/export didn't, in a word, work.</para></listitem>
+        <listitem><para>Fixed a Windows bug where the database import/export didn't, in a word, work.  It should now.</para></listitem>
         <listitem><para>Verified that Mr. Voice runs under MacOS X 10.2 with Perl 5.8 and X11.app.</para></listitem>
       </itemizedlist>
     </para>
