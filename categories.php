@@ -1,19 +1,6 @@
-<? # CONFIGURATION
-   # Set the following variables for your particular configuration.
-   # NOTE: This script is hardcoded to use MySQL.  If you use another
-   # database supported by PHP, change the mysql_* calls to match your
-   # database.
-
-   # These four options set the name, hostname, username, and password for
-   # your database.
-   # $database_username must have INSERT access on the mrvoice
-   # database/tables.
-   $database = "DBNAME";
-   $database_host = "localhost";
-   $database_username = "USERNAME";
-   $database_password = "PASSWORD";
-
-   # CVS ID: $Id: categories.php,v 1.1 2001/02/25 22:11:36 minter Exp $
+<? 
+  include ("config.php");
+  # CVS ID: $Id: categories.php,v 1.2 2001/02/25 23:07:29 minter Exp $
 ?>
 
 <TITLE>Display/Modify the categories database</TITLE>

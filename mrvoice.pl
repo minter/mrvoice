@@ -11,8 +11,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/02/16 21:34:35 $
-#	CVS REVISION NUMBER:    $Revision: 1.5 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/02/25 23:07:29 $
+#	CVS REVISION NUMBER:    $Revision: 1.6 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -22,7 +22,7 @@ use MPEG::MP3Info;
 #####
 # CONFIGURATION VARIABLES
 #####
-my $db_name = "comedysportz";           # In the form DBNAME:HOSTNAME:PORT
+my $db_name = "";                       # In the form DBNAME:HOSTNAME:PORT
 my $db_username = "";                   # The username used to connect
                                         # to the database.
 my $db_pass = "";                       # The password used to connect
