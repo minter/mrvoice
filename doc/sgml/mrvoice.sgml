@@ -5,7 +5,7 @@
   <!ENTITY epilogue SYSTEM "troubleshooting.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.47 2004/03/11 16:27:33 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.48 2004/03/11 19:34:02 minter Exp $ 
 -->
 <book status="draft">
 
@@ -82,7 +82,7 @@
         <listitem><para>Clicking inside a lisbox (such as the main box or the Holding Tank), or performing a search, will allow you to use the up and down arrow keys to move around in that listbox.</para></listitem>
         <listitem><para>The Holding Tank features a blue Launch Playlist button that will put the contents of the Holding Tank into a Winamp/XMMS playlist and start playing them.</para></listitem>
         <listitem><para>You can now save and load the contents of the Holding Tank, just like you can with the Hotkeys, from options in the <menuchoice> <guimenu>File</guimenu></menuchoice> menu.</para></listitem>
-        <listitem><para>The former standalone "orphans.pl" script, which searched your file directory for audio files that were no longer referenced by any database entry, has now been included in the main program.  Look for it under <menuchoice> <guimenu>Advanced Search</guimenu> <guimenuitem>Find orphaned files</guimenuitem>.</guimenu></para></listitem>
+        <listitem><para>The former standalone "orphans.pl" script, which searched your file directory for audio files that were no longer referenced by any database entry, has now been included in the main program.  Look for it under <menuchoice> <guimenu>Advanced Search</guimenu> <guimenuitem>Find orphaned files</guimenuitem></menuchoice>.</para></listitem>
         <listitem><para>If music licensing is a concern, you can now assign a Publisher to each song in the database, and restrict searches based on allowed publishers.  The options to restrict the searches are in the <menuchoice> <guimenu>File</guimenu> <guimenuitem>Preferences</guimenuitem> </menuchoice> menu.</para></listitem>
         <listitem><para>Most category buttons now update to show which category you've selected.</para></listitem>
         <listitem><para>The "dropdown" feature of the main search fields (Artist, Title, etc.) have been removed.</para></listitem>
