@@ -27,7 +27,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.121 2002/05/21 13:41:05 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.122 2002/05/21 19:21:49 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -248,6 +248,7 @@ sub bind_hotkeys
   $window->bind("<Key-F10>", [\&play_mp3,"F10"]);
   $window->bind("<Key-F11>", [\&play_mp3,"F11"]);
   $window->bind("<Key-F12>", [\&play_mp3,"F12"]);
+  $window->bind("<Control-Key-p>", [\&play_mp3,"Current"]);
   $window->bind("<Key-Return>", \&do_search);
   $window->bind("<Key-Escape>", \&stop_mp3);
   $window->bind("<Control-Key-x>", \&do_exit);
@@ -867,7 +868,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.121 $';
+  $rev = '$Revision: 1.122 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   infobox($mw, "About Mr. Voice","Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License");
 }
@@ -1200,7 +1201,7 @@ sub stop_mp3
 sub play_mp3 
 {
   # See if the request is coming from one our hotkeys first...
-  if ($_[1])
+  if ($_[1] =~ /^F.*/)
   {
     if ($_[1] eq "F1") { $filename = $f1; }
     elsif ($_[1] eq "F2") { $filename = $f2; }
@@ -1224,8 +1225,14 @@ sub play_mp3
   }
   else
   {
-    # If not, find the selected song.
-    $box = $_[0];
+    if ($_[1] eq "Current")
+    {
+      $box = $mainbox;
+    }
+    else
+    {
+      $box = $_[0];
+    }
     my $id = get_song_id($box);
     if ($id)
     {
