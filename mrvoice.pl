@@ -41,7 +41,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.247 2003/07/25 17:41:51 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.248 2003/07/25 18:11:10 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1921,7 +1921,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.247 $';
+  $rev = '$Revision: 1.248 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2936,8 +2936,7 @@ if (! -W $savedir)
 
 # Check to see if the database is compatible with version 1.7+
 $query = "SELECT time FROM mrvoice LIMIT 1";
-my $sth=$dbh->prepare($query);
-if (! $sth->execute)
+if (! $dbh->do($query))
 {
   $box = $mw->DialogBox(-title=>"Database Update Needed", -buttons=>["Continue","Quit"]);
   $box->Icon(-image=>$icon);
@@ -3047,7 +3046,6 @@ if (! $sth->execute)
     $box->add("Label",-text=>"Renaming tables...SUCCEEDED")->pack();
     $box->add("Label",-text=>"The database has been updated - song times are now stored in the database itself\nIn the future, if you modify a file in $filepath directly,\nyou will need to run the Update Song Times function from the Songs menu.")->pack();
     $box->Show();
-    $sth->finish;
   }
   else
   {
