@@ -37,7 +37,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.201 2003/03/31 16:09:09 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.202 2003/03/31 16:11:32 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -689,7 +689,8 @@ sub open_file
       {
         chomp;
         my ($key,$id) = split(/::/);
-        if (not ($id =~ /^\d+$/))
+        print "The ID is $id\n";
+        if ( (not ($id =~ /^\d+$/)) && (not ($id =~ /^\w*$/)) )
         {
           infobox ($mw, "Invalid Hotkey File","This hotkey file, $selectedfile, is from an old version of Mr. Voice.\nAfter upgrading to Version 1.8, you need to run the converthotkey.pl utility in the\ntools subdirectory to convert to the new format.  This only has to be done once."); 
           return(1);
@@ -1539,7 +1540,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.201 $';
+  $rev = '$Revision: 1.202 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
