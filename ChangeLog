@@ -1,3 +1,6 @@
+Fri  May 24 2002	H. Wade Minter (minter@lunenburg.org)
+     * Putting the framework in place for advanced, date-based searches.
+
 Thu  May 23 2002        H. Wade Minter (minter@lunenburg.org)
      * Added an encoded PNG logo.
      * Fixed a bug WRT static hotkeys.
@@ -254,4 +257,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.48 2002/05/23 14:12:43 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.49 2002/05/24 20:19:51 minter Exp $
