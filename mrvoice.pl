@@ -37,12 +37,13 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.346 2004/03/12 14:29:16 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.347 2004/03/12 18:53:50 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
 
 our %config;    # Holds the config variables
+our $mw;        # Mainwindow
 
 #####
 # YOU SHOULD NOT NEED TO MODIFY ANYTHING BELOW HERE FOR NORMAL USE
@@ -1497,6 +1498,7 @@ sub delete_category
 sub move_file
 {
     my ( $oldfilename, $title, $artist ) = @_;
+    my $newfilename;
 
     if ($artist)
     {
@@ -1543,7 +1545,7 @@ sub add_new_song
     $addsong_publisher = "OTHER";
     while ( $continue != 1 )
     {
-        $box = $mw->DialogBox(
+        my $box = $mw->DialogBox(
             -title   => "Add New Song",
             -buttons => [ "OK", "Cancel" ]
         );
@@ -1554,7 +1556,7 @@ sub add_new_song
               "Enter the following information for the new song, and choose the file to add."
         )->pack();
         $box->add( "Label", -text => "Items in red are required.\n" )->pack();
-        $frame1 = $box->add("Frame")->pack( -fill => 'x' );
+        my $frame1 = $box->add("Frame")->pack( -fill => 'x' );
         $frame1->Label(
             -text       => "Song Title",
             -foreground => "#cdd226132613"
@@ -1563,29 +1565,29 @@ sub add_new_song
             -width        => 30,
             -textvariable => \$addsong_title
         )->pack( -side => 'right' );
-        $frame2 = $box->add("Frame")->pack( -fill => 'x' );
+        my $frame2 = $box->add("Frame")->pack( -fill => 'x' );
         $frame2->Label( -text => "Artist" )->pack( -side => 'left' );
         $frame2->Entry(
             -width        => 30,
             -textvariable => \$addsong_artist
         )->pack( -side => 'right' );
-        $frame3 = $box->add("Frame")->pack( -fill => 'x' );
+        my $frame3 = $box->add("Frame")->pack( -fill => 'x' );
         $frame3->Label(
             -text       => "Category",
             -foreground => "#cdd226132613"
         )->pack( -side => 'left' );
         my $menu = build_category_menubutton( $frame3, \$addsong_cat );
         $menu->pack( -side => 'right' );
-        $frame4 = $box->add("Frame")->pack( -fill => 'x' );
+        my $frame4 = $box->add("Frame")->pack( -fill => 'x' );
         $frame4->Label( -text => "Category Extra Info" )
           ->pack( -side => 'left' );
         $frame4->Entry(
             -width        => 30,
             -textvariable => \$addsong_info
         )->pack( -side => 'right' );
-        $pubframe = $box->add("Frame")->pack( -fill => 'x' );
+        my $pubframe = $box->add("Frame")->pack( -fill => 'x' );
         $pubframe->Label( -text => 'Publisher' )->pack( -side => 'left' );
-        $pubmenu = $pubframe->Menubutton(
+        my $pubmenu = $pubframe->Menubutton(
             -text        => "Choose Publisher",
             -relief      => 'raised',
             -tearoff     => 0,
@@ -1603,12 +1605,12 @@ sub add_new_song
                 }
             );
         }
-        $frame5 = $box->add("Frame")->pack( -fill => 'x' );
+        my $frame5 = $box->add("Frame")->pack( -fill => 'x' );
         $frame5->Label(
             -text       => "File to add",
             -foreground => "#cdd226132613"
         )->pack( -side => 'left' );
-        $frame6 = $box->add("Frame")->pack( -fill => 'x' );
+        my $frame6 = $box->add("Frame")->pack( -fill => 'x' );
         $frame6->Button(
             -text    => "Select File",
             -command => sub {
@@ -1620,11 +1622,11 @@ sub add_new_song
                   get_title_artist($addsong_filename);
             }
         )->pack( -side => 'right' );
-        $songentry = $frame5->Entry(
+        my $songentry = $frame5->Entry(
             -width        => 30,
             -textvariable => \$addsong_filename
         )->pack( -side => 'right' );
-        $frame7 = $box->add("Frame")->pack( -fill => 'x' );
+        my $frame7 = $box->add("Frame")->pack( -fill => 'x' );
         $frame7->Button(
             -text    => "Preview song",
             -command => sub {
@@ -1633,7 +1635,7 @@ sub add_new_song
             }
         )->pack( -side => 'right' );
 
-        $result = $box->Show();
+        my $result = $box->Show();
 
         if ( $result eq "OK" )
         {
@@ -1675,10 +1677,10 @@ sub add_new_song
         }
     }    # End while continue loop
 
-    $newfilename =
+    my $newfilename =
       move_file( $addsong_filename, $addsong_title, $addsong_artist );
 
-    $addsong_title = $dbh->quote($addsong_title);
+    my $addsong_title = $dbh->quote($addsong_title);
     if ( $addsong_info eq "" )
     {
         $addsong_info = "NULL";
@@ -1695,12 +1697,12 @@ sub add_new_song
     {
         $addsong_artist = $dbh->quote($addsong_artist);
     }
-    $time  = get_songlength($addsong_filename);
-    $query =
+    my $time  = get_songlength($addsong_filename);
+    my $query =
       "INSERT INTO mrvoice VALUES (NULL,$addsong_title,$addsong_artist,'$addsong_cat',$addsong_info,'$newfilename','$time',NULL,'$addsong_publisher')";
     if ( $dbh->do($query) )
     {
-        $addsong_filename = Win32::GetLongPathName($addsong_filename)
+        my $addsong_filename = Win32::GetLongPathName($addsong_filename)
           if ( $^O eq "MSWin32" );
         infobox(
             $mw,
@@ -2199,7 +2201,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.346 $';
+    my $rev = '$Revision: 1.347 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -2927,12 +2929,12 @@ sub get_songlength
     {
 
         # It's an MP3 file
-        my $info = get_mp3info("$file");
+        my $info   = get_mp3info("$file");
         my $minute = $info->{MM};
         $minute = "0$minute" if ( $minute < 10 );
         my $second = $info->{SS};
         $second = "0$second" if ( $second < 10 );
-        $time   = "[$minute:$second]";
+        $time = "[$minute:$second]";
     }
     elsif ( $file =~ /\.wav$/i )
     {
@@ -2944,11 +2946,11 @@ sub get_songlength
         if ( !$@ )
         {
             my $audio_seconds = int( $read->length_seconds() );
-            my $minute = int( $audio_seconds / 60 );
+            my $minute        = int( $audio_seconds / 60 );
             $minute = "0$minute" if ( $minute < 10 );
             my $second = $audio_seconds % 60;
             $second = "0$second" if ( $second < 10 );
-            $time   = "[$minute:$second]";
+            $time = "[$minute:$second]";
         }
         else
         {
@@ -2963,11 +2965,11 @@ sub get_songlength
 
         #my $audio_seconds = %{$ogg->info}->{length};
         my $audio_seconds = $ogg->info->{length};
-        my $minute = int( $audio_seconds / 60 );
+        my $minute        = int( $audio_seconds / 60 );
         $minute = "0$minute" if ( $minute < 10 );
         my $second = $audio_seconds % 60;
         $second = "0$second" if ( $second < 10 );
-        $time   = "[$minute:$second]";
+        $time = "[$minute:$second]";
     }
     elsif ( ( $file =~ /\.m3u$/i ) || ( $file =~ /\.pls$/i ) )
     {
@@ -3312,7 +3314,7 @@ $mw->geometry("+0+0");
 $mw->title("Mr. Voice");
 $mw->minsize( 67, 2 );
 $mw->protocol( 'WM_DELETE_WINDOW', \&do_exit );
-$icon = $mw->Pixmap( -data => $icon_data );
+our $icon = $mw->Pixmap( -data => $icon_data );
 $mw->Icon( -image => $icon );
 
 read_rcfile();
