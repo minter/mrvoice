@@ -30,7 +30,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.134 2002/07/02 20:54:10 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.135 2002/07/08 01:26:55 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -84,7 +84,16 @@ $mp3types = [
 if ("$^O" eq "MSWin32")
 {
   $rcfile = "C:\\mrvoice.cfg";
-  eval "use Win32::Process";
+  use Win32::Process;
+  use Win32::GUI;
+  use constant WM_USER => 1024;
+
+  # You have to manually set the time zone for Windows.
+  my ($l_min, $l_hour, $l_year, $l_yday) = (localtime $^T)[1, 2, 5, 7];
+  my ($g_min, $g_hour, $g_year, $g_yday) = (   gmtime $^T)[1, 2, 5, 7];
+  my $tzval = ($l_min - $g_min)/60 + $l_hour - $g_hour + 24 * ($l_year <=> $g_year || $l_yday <=> $g_yday);
+  $tzval=sprintf( "%2.2d00", $tzval);
+  Date_Init("TZ=$tzval");
 }
 else
 {
@@ -319,8 +328,8 @@ sub bind_hotkeys
   $window->bind("<Key-F11>", [\&play_mp3,"F11"]);
   $window->bind("<Key-F12>", [\&play_mp3,"F12"]);
   $window->bind("<Control-Key-p>", [\&play_mp3,"Current"]);
+  $window->bind("<Key-Escape>", [\&stop_mp3]);
   $window->bind("<Key-Return>", \&do_search);
-  $window->bind("<Key-Escape>", \&stop_mp3);
   $window->bind("<Control-Key-x>", \&do_exit);
   $window->bind("<Control-Key-o>", \&open_file);
   $window->bind("<Control-Key-s>", \&save_file);
@@ -332,6 +341,13 @@ sub bind_hotkeys
   #$window->bind("<Alt-Key-g>", [\&play_mp3,"ALT-G"]);
   #$window->bind("<Alt-Key-v>", [\&play_mp3,"ALT-V"]);
   #ENDCSZ
+  if ($^O eq "MSWin32")
+  {
+    $window->bind("<Shift-Key-Escape>", sub {
+    Win32::GUI::SendMessage( $winamphandle, WM_COMMAND, 40147, 0 );
+    Tk->break;
+    });
+  }
 }
 
 sub open_file
@@ -1017,7 +1033,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.134 $';
+  $rev = '$Revision: 1.135 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -1352,7 +1368,15 @@ sub stop_mp3
   # Sends a stop command to the MP3 player.  Works for both xmms and WinAmp,
   # though not particularly cleanly.
 
-  system ("$mp3player --stop");
+  if ($^O eq "MSWin32")
+  {
+    # Use the Win32 API into WinAmp to tell it to stop.
+    Win32::GUI::SendMessage( $winamphandle, WM_COMMAND, 40047, 0 );
+  }
+  else
+  {
+    system ("$mp3player --stop");
+  }
   $status = "Playing Stopped";
 }
 
@@ -1706,6 +1730,7 @@ sub Tank_Drop
 # MAIN PROGRAM
 #########
 $mw = MainWindow->new;
+$mw->withdraw();
 $mw->configure(-menu=>$menubar = $mw->Menu);
 $mw->geometry("+0+0");
 $mw->title("Mr. Voice");
@@ -1768,8 +1793,10 @@ if ("$^O" eq "MSWin32")
 {
   # Start the MP3 player on a Windows system
   my $object;
-  Win32::Process::Create($object, $mp3player,'',0, NORMAL_PRIORITY_CLASS, ".");
+  Win32::Process::Create($object, $mp3player,'',1, NORMAL_PRIORITY_CLASS, ".");
   $mp3_pid=$object->GetProcessID();
+  sleep(1);
+  $winamphandle = Win32::GUI::FindWindow("Winamp v1.x","");
 }
 else
 {
@@ -2135,6 +2162,18 @@ $playbutton->configure(-bg=>'green',
                        -activebackground=>'SpringGreen2');
 $stopbutton = $statusframe->Button(-text=>"Stop Now",
                      -command=>\&stop_mp3)->pack(-side=>'left');
+if ($^O eq "MSWin32")
+{
+  # Windows users can shift-click on the stop button to activate WinAmp's
+  # automatic fadeout function.
+  # It's not changing the relief back after it's done, though.
+  $stopbutton->bindtags([$stopbutton,ref($stopbutton),$stopbutton->toplevel,'all']);
+  $stopbutton->bind("<Shift-ButtonRelease-1>" => sub {
+    Win32::GUI::SendMessage( $winamphandle, WM_COMMAND, 40147, 0 );
+    Tk->break;
+    });
+}
+
 $stopbutton->configure(-bg=>'red',
                        -activebackground=>'tomato3');
 $statusframe->Button(-text=>"Assign Hotkey",
@@ -2151,6 +2190,7 @@ $statusframe->Label(-textvariable=>\$status,
 $searchboxframe->pack(-side=>'bottom',
                       -fill=>'both',
 	              -expand=>1);
+
 
 
 bind_hotkeys($mw);
@@ -2171,4 +2211,6 @@ if (! -x $mp3player)
   $box->Show;
 }
 
+$mw->deiconify();
+$mw->raise();
 MainLoop;
