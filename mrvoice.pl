@@ -2877,6 +2877,12 @@ sub play_mp3
             $filename     = $id_ref->{filename};
             $statustitle  = $id_ref->{title};
             $statusartist = $id_ref->{artist};
+            if ( !-e catfile( $config{'filepath'}, $id_ref->{filename} ) )
+            {
+                $status =
+                  "Cannot play invalid entry - no file on disk to play!";
+                return;
+            }
         }
     }
     if ( $action eq "addsong" )
@@ -3101,7 +3107,7 @@ sub do_search
                 -foreground       => 'red',
                 -selectforeground => 'red'
             );
-            $mainbox->entryconfigure( $row_hashref->{id}, -style => $style, -state=>'disabled' );
+            $mainbox->entryconfigure( $row_hashref->{id}, -style => $style );
             $invalid++;
         }
     }
