@@ -3,11 +3,12 @@
 # DESCRIPTION: A little tool to identify or delete "orphaned" Mr. Voice
 #              files (files that exist on disk but are not referenced 
 #              in the database.
-# CVS ID: $Id: orphans.pl,v 1.2 2003/04/09 14:01:16 minter Exp $
+# CVS ID: $Id: orphans.pl,v 1.3 2003/04/09 18:02:30 minter Exp $
 
 use DBI;
 use DBD::mysql;
 use File::Basename;
+use File::Spec::Functions;
 use File::Glob qw(:globally :nocase);
 use Carp::Heavy;
 use Getopt::Std;
@@ -27,7 +28,7 @@ if ($opt_h)
 # Check to see if we're on Windows or Linux, and set the RC file accordingly.
 if ("$^O" eq "MSWin32")
 {
-  $rcfile = "C:/mrvoice.cfg";
+  $rcfile = "C:\\mrvoice.cfg";
 }
 else
 {
@@ -68,15 +69,11 @@ else
 }
 if ($^O eq "MSWin32")
 {
-  $filepath = $filepath . "\\" unless ($filepath =~ /\\$/);
   $filepath = Win32::GetShortPathName($filepath);
-  $savedir = $savedir . "\\" unless ($savedir =~ /\\$/);
   $savedir = Win32::GetShortPathName($savedir);
-  $mp3player = Win32::GetShortPathName($mp3player);
 }
 else
 {
-  $filepath = $filepath . "/" unless ($filepath =~ /\/$/);
   $savedir =~ s#(.*)/$#$1#;
 }
 
@@ -84,7 +81,12 @@ else
 $dbh = DBI->connect("DBI:mysql:$db_name",$db_username,$db_pass) or die ("Could not connect to database.  Exiting...");
 print "-->Connected to database\n" if ( ($dbh) && ($opt_v) );
 
-@files = glob("$filepath/*.mp3") or die;
+@mp3files = glob( catfile($filepath, "*.mp3") ) or die;
+@oggfiles = glob( catfile($filepath, "*.ogg") ) or die;
+@wavfiles = glob( catfile($filepath, "*.wav") ) or die;
+@m3ufiles = glob( catfile($filepath, "*.m3u") ) or die;
+@plsfiles = glob( catfile($filepath, "*.pls") ) or die;
+@files = (@mp3files, @oggfiles, @wavfiles, @m3ufiles, @plsfiles);
 
 foreach $file (@files)
 {
