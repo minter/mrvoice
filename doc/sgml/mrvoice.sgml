@@ -5,7 +5,7 @@
   <!ENTITY epilogue SYSTEM "troubleshooting.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.35 2002/12/11 22:22:38 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.36 2002/12/12 18:29:02 minter Exp $ 
 -->
 <book status="draft">
 
@@ -34,7 +34,7 @@
       <listitem><para>The newsgroup comp.lang.perl.tk</para></listitem>
     </itemizedlist>
   </para>
-  <para>The following people and groups who have been willing to actually run this software!
+  <para>The following groups who have been willing to actually run this software!
     <itemizedlist>
       <listitem><para><ulink url="http://www.spocomedy.com/">SpoComedy</ulink> (Spokane, WA)</para></listitem>
       <listitem><para><ulink url="http://www.comedysportz.com/portland/">ComedySportz</ulink> (Portland, OR)</para></listitem>
