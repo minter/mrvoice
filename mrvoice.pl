@@ -15,8 +15,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/03/05 00:46:47 $
-#	CVS REVISION NUMBER:    $Revision: 1.18 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/05 00:52:08 $
+#	CVS REVISION NUMBER:    $Revision: 1.19 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -264,6 +264,21 @@ sub delete_category
   }
 
   $del_cat="";
+}
+
+sub add_new_song
+{
+
+}
+
+sub edit_song
+{
+
+}
+
+sub delete_song
+{
+
 }
 
 sub show_about
@@ -608,6 +623,14 @@ $catmenu->AddItems(["command"=>"Add Category",
                    -command=>\&add_category]);
 $catmenu->AddItems(["command"=>"Delete Category",
                    -command=>\&delete_category]);
+$songmenu = $menuframe->Menubutton(-text=>"Songs",
+                                   -tearoff=>0)->pack(-side=>'left');
+$songmenu->AddItems(["command"=>"Add New Song",
+                    -command=>\&add_new_song]);
+$songmenu->AddItems(["command"=>"Edit Currently Selected Song",
+                    -command=>\&edit_song]);
+$songmenu->AddItems(["command"=>"Delete Currently Selected Song",
+                    -command=>\&delete_song]);
 $helpmenu = $menuframe->Menubutton(-text=>"Help",
                                    -tearoff=>0)->pack(-side=>'right');
 $helpmenu->AddItems(["command"=>"About",
