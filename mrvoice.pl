@@ -8,6 +8,7 @@ use Tk::DragDrop;
 use Tk::DropSite;
 use Tk::NoteBook;
 use Tk::BrowseEntry;
+use Tk::ProgressBar;
 use File::Basename;
 use File::Copy;
 use DBI;
@@ -33,7 +34,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.183 2002/12/10 22:09:14 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.184 2002/12/11 15:49:20 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1260,7 +1261,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.183 $';
+  $rev = '$Revision: 1.184 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2124,7 +2125,7 @@ if (! $sth->execute)
   $box->Icon(-image=>$icon);
   $box->add("Label",-text=>"Your database is not compatible with Mr. Voice 1.7")->pack();
   $box->add("Label",-text=>"With the 1.7 release, some database changes were introduced.\nPress the Continue button to automatically update your database, or Quit to exit.")->pack();
-  $box->add("Label",-text=>"Continuing will update your tables and record the song times into the database\nThis process may take upwards of a few minutes, depending on the number of songs\nin your database, so don't panic if it looks like nothing is happening.")->pack();
+  $box->add("Label",-text=>"Continuing will update your tables and record the song times into the database\nThis process may take upwards of a few minutes, depending on the number of songs in your database.")->pack();
   $result = $box->Show();
   if ($result eq "Continue")
   {
@@ -2153,9 +2154,35 @@ if (! $sth->execute)
     {
       $box->add("Label",-text=>"SUCCEEDED")->pack();
     }
+    $sth->finish;
+ 
     $query = "SELECT * from mrvoice";
+    
+    $percent_done = 0;
+    $progressbox=$mw->Toplevel();
+    $progressbox->withdraw();
+    $progressbox->Icon(-image=>$icon);
+    $progressbox->title("Song Conversion Status");
+    $progress = $progressbox->ProgressBar(
+      -width => 20,
+      -length => 200,
+      -from => 0,
+      -to => 100,
+      -blocks => 10,
+      -colors => [0, 'green'],
+      -variable=>\$percent_done)->pack(-side=>'top');
+    $progressbox->Label(-text=>"Song Conversion Status (Percentage)")->pack(-side=>'top');
+    $donebutton = $progressbox->Button(
+      -text => "Done",
+      -state => 'disabled',
+      -command=>sub { $progressbox->destroy})->pack(-side=>'top');
+    $progressbox->deiconify();
+    $progressbox->raise();
+
     $sth=$dbh->prepare($query);
     $sth->execute;
+    $numrows = $sth->rows;
+    $rowcount = 0;
     while (@table_row = $sth->fetchrow_array)
     {
       $tmpid = $dbh->quote($table_row[0]);
@@ -2190,6 +2217,15 @@ if (! $sth->execute)
       $sth2=$dbh->prepare($query);
       $sth2->execute;
       $sth2->finish;
+      $rowcount++;
+      $percent_done = int ( ($rowcount / $numrows) * 100);
+      $progressbox->update();
+    }
+    $donebutton->configure(-state=>'active');
+    $progressbox->update();
+    while (Exists($progressbox))
+    {
+      $progressbox->update();
     }
     $box->add("Label",-text=>"Building new table...SUCCEEDED")->pack();
     $sth->finish;
@@ -2198,6 +2234,7 @@ if (! $sth->execute)
     $box->add("Label",-text=>"Renaming tables...SUCCEEDED")->pack();
     $box->add("Label",-text=>"The database has been updated - song times are now stored in the database itself\nIn the future, if you modify a file in $filepath directly,\nyou will need to run the Update Song Times function from the Songs menu.")->pack();
     $box->Show();
+    $sth->finish;
   }
   else
   {
