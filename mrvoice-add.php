@@ -19,16 +19,16 @@
    $database_username = "USERNAME";
    $database_password = "PASSWORD";
 
-   # CVS ID: $Id: mrvoice-add.php,v 1.4 2001/02/25 18:14:08 minter Exp $
+   # CVS ID: $Id: mrvoice-add.php,v 1.5 2001/02/25 22:11:37 minter Exp $
 ?>
 
 <TITLE>Mr. Voice MP3 Database Insertion</TITLE>
 <BODY BGCOLOR=#FFFFFF>
-<H1>Add a song to the Mr. Voice Database</H1>
-<P>Use this form to add songs to the Mr. Voice database.
+<H1>Add/Modify the Mr. Voice Database</H1>
+
+<P>Use this form to add or modify songs in the Mr. Voice database.
 <HR>
   
-
 <?
   if (!($dblink = mysql_connect($database_host,$database_username,$database_password)))
   { 
@@ -40,8 +40,9 @@
     print "mysql_select_db failed\n";
   }
 
-  if ($action == "Edit")
+  if ($type == "Edit")
   {
+    print "<P>Editing the following entry...\n";
     $query = "SELECT * from mrvoice where id=$id";
     $dbresult = mysql_query($query,$dblink);
     $row = mysql_fetch_array($dbresult);
@@ -51,7 +52,8 @@
     $edit_info = $row["info"];
     $edit_filename = $row["filename"];
   }
-  elseif ($action == "Add")
+
+  if ($action == "Add")
   {
     if ($UploadFile == "none")
     {
@@ -96,7 +98,6 @@
         print "<FONT COLOR=#FF0000>Rename of uploaded file failed!  Aborting!</FONT>\n";
       }
       chmod ("$path/$filename", 0664);
-
     }
         
     $query = "INSERT INTO mrvoice VALUES (0,'$title','$artist','$category','$extrainfo','$filename',NULL)";
@@ -112,6 +113,22 @@
  
   mysql_close($dblink);
   }
+  elseif ($action == "Edit")
+  {
+    $query = "UPDATE mrvoice SET title='$title', artist='$artist', category='$category', info='$extrainfo', filename='$filename' WHERE id=$id";
+    if (!($dbresult = mysql_query($query,$dblink)))
+    {
+      print "<FONT COLOR=#FF0000>mysql_query failed using query $query</FONT>\n";
+      print "<P>The error message was " . mysql_error();
+    }
+    else
+    {
+      print "<FONT COLOR=#00FF00>Edit successful!</FONT>\n";
+    }
+    mysql_close($dblink);
+    print "<META http-equiv=\"Refresh\" CONTENT=\"1; URL=$PHP_SELF?type=Edit&id=$id\">";
+    exit();
+  }
 
 ?>
 
@@ -125,8 +142,8 @@
  
   while ($row = mysql_fetch_array($dbresult))
   {
-    print "<OPTION VALUE={$row[0]} "
-    print "SELECTED" if ($row[0] = $edit_category);
+    print "<OPTION VALUE={$row[0]} ";
+    if ($row[0] == $edit_category) print "SELECTED";
     print ">{$row[1]}\n";
   }
 ?>
@@ -134,14 +151,32 @@
 </SELECT></TD></TR>
 <TR><TD>Category Extra Info.</TD> <TD><INPUT TYPE=text SIZE=25 NAME=extrainfo VALUE='<? print $edit_info ?>'></TD></TR>
 <TR><TD>Artist</TD> <TD><INPUT TYPE=text SIZE=25 NAME=artist VALUE='<? print $edit_artist ?>'></TD></TR>
-<TR><TD>Title</TD> <TD><INPUT TYPE=text SIZE=25 NAME=title VALUE='<? print $edit-title ?>'></TD></TR>
-<TR><TD>File To Upload</TD> <TD><INPUT NAME=UploadFile TYPE=file VALUE='<? print $edit_filename ?>'></TD></TR>
-<? print "<INPUT TYPE=HIDDEN NAME=id VALUE=$id>\n" if ($action == "Edit") ?>
-</TABLE>
-<INPUT TYPE=submit NAME=action VALUE=Add>  
+<TR><TD>Title</TD> <TD><INPUT TYPE=text SIZE=25 NAME=title VALUE='<? print $edit_title ?>'></TD></TR>
+<?
+  if ($type == "Edit")
+  {
+    print "<TR><TD>Filename</TD> <TD><INPUT NAME=filename TYPE=text SIZE=50 VALUE='$edit_filename'></TD></TR>\n";
+  }
+  else
+  {
+    print "<TR><TD>File To Upload</TD> <TD><INPUT NAME=UploadFile TYPE=file></TD></TR>";
+  }
+  if ($type == "Edit") print "<INPUT TYPE=HIDDEN NAME=id VALUE=$id>\n";
+  print "</TABLE>\n";
+  if ($type == "Edit")
+  {
+    print "<INPUT TYPE=submit NAME=action VALUE=Edit>  \n";
+  }
+  else
+  {
+    print "<INPUT TYPE=submit NAME=action VALUE=Add>  \n";
+  }
+?>
+
 </FORM>
   
 
 <HR>
-<I>Designed by <a href=http://www.lunenburg.org/>H. Wade Minter</A> &lt<a href="mailto:minter@lunenburg.org">minter@lunenburg.org</A>&gt.
+<P><A HREF=index.php>Return to Index page</A>
+<P><I>Designed by <a href=http://www.lunenburg.org/>H. Wade Minter</A> &lt<a href="mailto:minter@lunenburg.org">minter@lunenburg.org</A>&gt.
 
