@@ -15,7 +15,7 @@ use MPEG::MP3Info;
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.95 2002/01/08 00:45:01 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.96 2002/01/27 21:14:59 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -60,6 +60,8 @@ $hotkeytypes = [
 
 $mp3types = [
     ['MP3 Files', '*.mp3'],
+    ['WAV Files', '*.wav'],
+    ['Vorbis Files', '*.ogg'],
     ['All Files', '*'],
   ];
 
@@ -496,12 +498,15 @@ sub add_new_song
       }
       $newfilename =~ s/[^a-zA-Z0-9\-]//g;
 
-      if ( -e "$filepath$newfilename.mp3")
+      ($name,$path,$extension) = fileparse($addsong_filename,'\.\w+');
+      $extension=lc($extension);
+
+      if ( -e "$filepath$newfilename$extension")
       {
         $i=0;
         while (1 == 1)
         {
-          if (! -e "$filepath$newfilename-$i.mp3")
+          if (! -e "$filepath$newfilename-$i$extension")
           {
             $newfilename = "$newfilename-$i";
             last;
@@ -509,7 +514,7 @@ sub add_new_song
           $i++;
         }
       }
-      $newfilename = "$newfilename.mp3";
+      $newfilename = "$newfilename$extension";
       $addsong_title = $dbh->quote($addsong_title);
       $addsong_artist = $dbh->quote($addsong_artist);
       $addsong_info = $dbh->quote($addsong_info);
