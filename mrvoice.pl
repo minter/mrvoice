@@ -14,7 +14,7 @@ use MPEG::MP3Info;
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.90 2001/11/17 13:25:29 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.91 2001/12/05 02:29:02 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -158,6 +158,7 @@ sub open_file
   # hotkey_name::mp3_name, and assign the value to the hotkey.
   # Finally, we add this file to our dynamic documents menu.
 
+  my $parentwidget = $_[0];
   my $selectedfile = $_[1];
   if (!$selectedfile)
   {
@@ -256,7 +257,7 @@ sub dynamic_documents
   push (@current, $file);
 
   $dynamicmenu->command(-label=>"$file",
-                        -command => [\&open_file, $file]);
+                        -command => [\&open_file, $mw, $file]);
 
   if ($#current >= $savefile_max)
   {
