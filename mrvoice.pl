@@ -93,7 +93,7 @@ our $artist;                    # The "Artist" search entry field
 our $anyfield;                  # The "Any Field" search entry field
 our $cattext;                   # The "Extra Info" search entry field
 our $authenticated = 0;         # Has the user provided the proper password?
-our $xmlrpc_url = 'http://www.lunenburg.org/mrvoice-online/xmlrpc/mrvoice.cgi';
+our $xmlrpc_url = 'http://www.lunenburg.org/mrvoice-online/xmlrpc/';
 ##########
 
 # Allow searches of all music publishers by default.
@@ -249,7 +249,7 @@ else
 
 #####
 
-my $version = "2.0.4";    # Program version
+my $version = "2.0.9";    # Program version
 our $status = "Welcome to Mr. Voice version $version";
 
 sub get_category
