@@ -10,6 +10,7 @@ use Tk::DropSite;
 use Tk::NoteBook;
 use Tk::BrowseEntry;
 use Tk::ProgressBar;
+use Tk::DirTree;
 use File::Basename;
 use File::Copy;
 use DBI;
@@ -17,6 +18,7 @@ use MPEG::MP3Info;
 use Audio::Wav;
 use Date::Manip;
 use Time::Local;
+use Ogg::Vorbis::Header::PurePerl;
 
 # These modules need to be hardcoded into the script for perl2exe to 
 # find them.
@@ -35,7 +37,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.196 2003/03/27 19:42:40 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.197 2003/03/29 16:04:00 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -112,8 +114,6 @@ else
                      )
               }ex;
   our $rcfile = "$homedir/.mrvoicerc";
-#  require Ogg::Vorbis;
-#  Ogg::Vorbis->import();
 }
 
 #STARTCSZ
@@ -709,9 +709,21 @@ sub bulk_add
   $sth->finish;
   my $box1frame3 = $box1->add("Frame")->pack(-fill=>'x');
   $box1frame3->Label(-text=>"Choose Directory: ")->pack(-side=>'left');
-  $box1frame3->Entry()->pack(-side=>'left');
+  $box1frame3->Entry(-textvariable=>\$directory)->pack(-side=>'left');
+  $box1frame3->Button(-text=>"Select Directory",
+                    -command=>sub { 
+      $XXXdirectory = $box1->Scrolled('DirTree')->pack(-expand=>1, -fill=>'both');
+  })->pack(-side=>'left');
+
 
   my $firstbutton = $box1->Show;
+
+  if ($firstbutton ne "Continue")
+  {
+    $status = "Bulk-Add Cancelled";
+    return;
+  } 
+
 }
 
 sub add_category
@@ -925,15 +937,18 @@ sub add_new_song
         $addsong_title = $tag->{TITLE};
         $addsong_artist = $tag->{ARTIST};
       }
-      elsif ( ($addsong_filename =~ /.ogg/i) && ($^O ne "MSWin32") )
+      elsif ($addsong_filename =~ /.ogg/i)
       {
-        my $ogg = Ogg::Vorbis->new;
-        open (INPUT,$addsong_filename) or die;
-        $ogg->open(INPUT);
-        %comments = %{$ogg->comment};
-        $addsong_title = $comments{title};
-        $addsong_artist = $comments{artist};
-        close (INPUT);
+        my $ogg = Ogg::Vorbis::Header::PurePerl->new($addsong_filename);
+        # HACK!
+        foreach $title ($ogg->comment("title"))
+        {
+          $addsong_title = $title;
+        }
+        foreach $artist ($ogg->comment("artist"))
+        {
+          $addsong_artist = $artist;
+        }
       }
                                   })->pack(-side=>'right');
     $songentry = $frame5->Entry(-width=>30,
@@ -1256,7 +1271,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.196 $';
+  $rev = '$Revision: 1.197 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -1793,19 +1808,16 @@ sub get_songlength
       $time = "[??:??]";
     }
   }
-  elsif ( ($file =~ /\.ogg$/i) && ($^O eq "linux") )
+  elsif ($file =~ /\.ogg$/i)
   {
-    #It's an Ogg Vorbis file.  No Ogg Vorbis module for Windows yet.
-    my $ogg = Ogg::Vorbis->new;
-    open (OGG_IN,$file);
-    $ogg->open(OGG_IN);
-    my $audio_seconds = $ogg->time_total;
+    #It's an Ogg Vorbis file.
+    my $ogg = Ogg::Vorbis::Header::PurePerl->new($file);
+    my $audio_seconds = %{$ogg->info}->{length};
     $minute = int($audio_seconds / 60);
     $minute = "0$minute" if ($minute < 10);
     $second = $audio_seconds % 60;
     $second = "0$second" if ($second < 10);
     $time = "[$minute:$second]";
-    close (OGG_IN);
   }
   elsif ( ($file =~ /\.m3u$/i) || ($file =~ /\.pls$/i) )
   {
@@ -2363,6 +2375,7 @@ sub songsmenu_items
     ['command', 'Add New Song', -command=>\&add_new_song],
     ['command', 'Edit Currently Selected Song', -command=>\&edit_song],
     ['command', 'Delete Currently Selected Song', -command=>\&delete_song],
+    ['command', 'Bulk-Add Songs Into Category', -command=>\&bulk_add],
     ['command', 'Update Song Times', -command=>\&update_time],
   ];
 }
