@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.169 2002/11/07 17:08:24 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.170 2002/11/07 17:12:28 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -483,8 +483,8 @@ sub dump_database
       {
         $dirname = Win32::GetShortPathName(dirname($dumpfile));
         $filename = basename($dumpfile);
-        $dumpfile = "$dirname/$filename";
-        my $rc = system ("C:/mysql/bin/mysqldump --add-drop-table --user=$db_username --password=$db_pass $db_name > $dumpfile");
+        $shortdumpfile = "$dirname/$filename";
+        my $rc = system ("C:/mysql/bin/mysqldump --add-drop-table --user=$db_username --password=$db_pass $db_name > $shortdumpfile");
         infobox($mw, "Database Dumped", "The contents of your database have been dumped to the file:\n$dumpfile\n\nNote: In order to have a full backup, you must also\nback up the files from the directory:\n$filepath\nas well as $rcfile");
         $status = "Database dumped to $dumpfile";
       }
@@ -531,8 +531,8 @@ sub import_database
         {
           $dirname = Win32::GetShortPathName(dirname($dumpfile));
           $filename = basename($dumpfile);
-          $dumpfile = "$dirname/$filename";
-          my $rc = system ("C:/mysql/bin/mysql --user=$db_username --password=$db_pass $db_name < $dumpfile");
+          $shortdumpfile = "$dirname/$filename";
+          my $rc = system ("C:/mysql/bin/mysql --user=$db_username --password=$db_pass $db_name < $shortdumpfile");
           infobox($mw, "Database Imported", "The database backup file $dumpfile\nhas been imported.");
           $status = "Database imported from $dumpfile";
         }
@@ -1198,7 +1198,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.169 $';
+  $rev = '$Revision: 1.170 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
