@@ -1,7 +1,11 @@
 Things I'm currently working on:
 
+* Debug mode - log stuff to a file with the proper switch.
+* Multidrag to the holding tank.
+* Save/load holding tank.
+* Fix DirSelect problem on first run.
 * Drag-And-Drop between the Hotkeys listing and the Holding Tank.
 * General cleanup and pretty-fication.
 
 --
-CVS ID: $Id: TODO,v 1.24 2003/04/04 20:48:33 minter Exp $
+CVS ID: $Id: TODO,v 1.25 2003/11/10 19:09:38 minter Exp $
