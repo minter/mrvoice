@@ -41,7 +41,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.246 2003/07/25 17:30:06 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.247 2003/07/25 17:41:51 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1221,6 +1221,7 @@ sub bulk_add
       my $query = "INSERT INTO mrvoice (id,title,artist,category,filename,time,modtime) VALUES (NULL, $db_title, $db_artist, '$db_cat', '$db_filename', '$time', NULL)";
       my $sth=$dbh->prepare($query);
       $sth->execute or die "can't execute the query: $DBI::errstr\n";
+      $sth->finish;
       push (@accepted, basename(Win32::GetLongPathName($file)));
     }
     else
@@ -1920,7 +1921,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.246 $';
+  $rev = '$Revision: 1.247 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2392,6 +2393,7 @@ sub validate_id
   {
     return (0);
   }
+  $sth->finish;
 }
 
 sub get_title
@@ -2691,6 +2693,7 @@ sub return_longcat
   my $sth=$dbh->prepare($query);
   $sth->execute;
   my @row=$sth->fetchrow_array;
+  $sth->finish;
   my $longcat = $row[0];
   return ($longcat);
 }
