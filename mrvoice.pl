@@ -45,7 +45,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.284 2003/12/30 17:57:35 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.285 2003/12/30 18:11:59 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -840,10 +840,63 @@ sub open_tank
         $tankbox->insert('end',$string);
       }       
     } 
+    close (TANKFILE);
   }
   else
   {
     $status = "Cancelled loading of holding tank file";
+  }
+}
+
+sub save_tank
+{
+  if (!Exists($tankbox))
+  {
+    $status = "Can't save the holding tank before you use it...";
+    return;
+  }
+  my @indices = $tankbox->get(0,'end');
+
+  if ($#indices < 0)
+  {
+    $status = "Not saving an empty holding tank";
+    return;
+  }
+
+  my $selectedfile = $mw->getSaveFile(-title=>'Save a File',
+                                      -defaultextension=>".hld",
+                                      -filetypes=>$holdingtanktypes,
+                                      -initialdir=>"$config{'savedir'}");
+
+  if ($selectedfile)
+  {
+    if ( (! -w $selectedfile) && (-e $selectedfile) )
+    {
+      $status = "Holding tank save failed due to file error";
+      infobox($mw, "File Error!", "Could not open file $selectedfile for writing");
+    }
+    elsif ( ! -w dirname($selectedfile) )
+    {
+      $status = "Holding tank save failed due to directory error";
+      my $directory = dirname($selectedfile);
+      infobox($mw, "Directory Error!", "Could not write new file to directory $directory");
+    }
+    else
+    {
+      $selectedfile = "$selectedfile.hld" unless ($selectedfile =~ /.*\.hld$/);
+      open (TANKFILE,">$selectedfile");
+      foreach my $string (@indices)
+      {
+        my ($id,$desc) = split(/:/, $string);
+        print TANKFILE "$id\n";
+      }
+      close TANKFILE;
+      $status = "Saved holding tank to $selectedfile";
+    }
+  }
+  else
+  {
+    $status = "Cancelled save of holding tank";
   }
 }
 
@@ -2058,7 +2111,7 @@ sub show_docs
   
 sub show_about
 {
-  $rev = '$Revision: 1.284 $';
+  $rev = '$Revision: 1.285 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
