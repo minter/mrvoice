@@ -3911,8 +3911,8 @@ sub do_exit
 sub search_online
 {
     print "My arguments are @_\n";
-    my $win = shift;
-    my $term = shift or return;
+    my $win  = shift;
+    my $term = shift;
     my $xmlrpc;
     unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
     {
@@ -3923,17 +3923,33 @@ sub search_online
     my $search_call = $xmlrpc->call(
         'search_songs',
         {
-            online_key  => $config{online_key},
-            search_term => $term,
+            online_key     => $config{online_key},
+            search_term    => $term,
+            show_publisher => $config{show_publisher},
         }
     );
 
-    if ( !$search_call->result )
+    my $result = $search_call->result;
+    print "DEBUG: My result is $result\n";
+    print "That array is @$result\n";
+
+    if ( !$result )
     {
         chomp( my $error = $search_call->faultstring );
         infobox( $mw, "XMLRPC search error", $error );
         $status = "XMLRPC search error";
         return;
+    }
+
+    foreach my $row (@$result)
+    {
+        print "ROW is $row\n";
+        $mainbox->add(
+            $row->{id},
+            -data => $row->{id},
+            -text => $row->{string}
+        );
+
     }
 
 }
