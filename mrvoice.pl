@@ -14,8 +14,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/03 17:48:51 $
-#	CVS REVISION NUMBER:    $Revision: 1.53 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/03 18:11:33 $
+#	CVS REVISION NUMBER:    $Revision: 1.54 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -929,7 +929,7 @@ read_rcfile();
 $mw = MainWindow->new;
 $mw->geometry("+0+0");
 $mw->title("Mr. Voice");
-#$mw->minsize(730,330);
+$mw->minsize(67,0);
 
 if (! ($dbh = DBI->connect("DBI:mysql:$db_name",$db_username,$db_pass)))
 {
@@ -1082,6 +1082,7 @@ $mainbox->bind("<Double-Button-1>", \&play_mp3);
 #####
 
 $statusframe = $mw->Frame()->pack(-side=>'bottom',
+                                  -anchor=>'s',
                                   -fill=>'x');
 $statusframe->Button(-text=>"Play Now",
                      -command=>[\&play_mp3,"play"])->pack(-side=>'left');
