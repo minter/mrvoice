@@ -11,8 +11,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/02/28 02:53:36 $
-#	CVS REVISION NUMBER:    $Revision: 1.10 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/02/28 03:34:20 $
+#	CVS REVISION NUMBER:    $Revision: 1.11 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -30,7 +30,7 @@ my $db_pass = "";                       # The password used to connect
 $category = "Any";			# The default category to search
                                         # Initial status message
 $mp3player = "/usr/bin/xmms";		# Full path to MP3 player
-$filepath = "";				# Path that will be prepended onto
+$filepath = "/";			# Path that will be prepended onto
 					# the filename retrieved from the
 					# database, to find the actual
 					# MP3 on the local system.
@@ -51,6 +51,14 @@ $filepath = "";				# Path that will be prepended onto
 
 my $version = "0.8";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
+
+sub open_file
+{
+}
+
+sub save_file
+{
+}
 
 sub show_about
 {
@@ -393,6 +401,10 @@ $menuframe=$mw->Frame(-relief=>'ridge',
                                             -expand=>0);
 $filemenu = $menuframe->Menubutton(-text=>"File",
                                    -tearoff=>0)->pack(-side=>'left');
+$filemenu->AddItems(["command"=>"Open Hotkey File",
+                    -command=>\&open_file]); 
+$filemenu->AddItems(["command"=>"Save Hotkey File",
+                    -command=>\&save_file]); 
 $filemenu->AddItems(["command"=>"Exit", 
                      -command=>sub { 
                                      $dbh->disconnect;
