@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.14 2002/04/17 01:57:20 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.15 2002/04/23 21:15:54 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
@@ -143,6 +143,9 @@ mysql>
 		</listitem>
 		<listitem>
 		  <para>From that prompt, run <userinput>search --location=C:\PPM</userinput>.  That should return a list of four packages (DBI, DBD-Mysql, Tk, and MP3-Info).</para>
+		</listitem>
+		<listitem>
+		  <para>Next, you have to tell PPM that your new directory is a valid repository, so run <userinput>set repository local C:\PPM</userinput> to enable the local directory.</para>
 		</listitem>
 		<listitem>
 		  <para>From the <prompt>PPM></prompt> prompt, run <userinput>install DBI DBD-Mysql Tk MP3-Info</userinput>.  Answer "y" to the confirmations.</para>
