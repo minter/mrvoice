@@ -1,4 +1,4 @@
-# CVS ID: $Id: Makefile,v 1.2 2002/02/07 19:53:08 minter Exp $
+# CVS ID: $Id: Makefile,v 1.3 2002/04/17 01:57:47 minter Exp $
 
 # Define Variables
 export BOOK := mrvoice
@@ -6,7 +6,7 @@ export HTML_STYLESHEET := /usr/local/share/sgml/docbook/dsssl/modular/html/docbo
 export PDF_STYLESHEET := /usr/local/share/sgml/docbook/dsssl/modular/print/docbook.dsl
 export CHAPTERS := ../sgml/mrvoice.sgml ../sgml/installing-mrvoice.sgml ../sgml/using-mrvoice.sgml ../sgml/config-mrvoice.sgml
 
-all:	html pdf clean
+all:	html pdf
 
 check:	sgml/$(BOOK).sgml
 	@echo "--> Checking SGML syntax with nsgmls"
@@ -22,12 +22,6 @@ rtf:	check $(BOOK).sgml
 	openjade -t rtf -d $(STYLESHEET_DIR)/print/docbook.dsl $(BOOK).sgml
 
 clean:
-	-rm pdf/$(BOOK).log
-	-rm pdf/$(BOOK).aux
-	-rm pdf/$(BOOK).tex
-	-rm pdf/$(BOOK).out
-
-realclean:	clean
 	-rm pdf/$(BOOK).pdf
 	-rm html/$(BOOK).html
-	-rm html/*.htm
+	-rm html/*.html
