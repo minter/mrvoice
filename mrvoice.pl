@@ -35,7 +35,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.316 2004/03/01 01:40:53 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.317 2004/03/01 01:59:29 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -932,6 +932,7 @@ sub get_title_artist
     }
     elsif ( $filename =~ /.ogg/i )
     {
+        $filename = Win32::GetShortPathName($filename) if ( $^O eq "MSWin32" );
         my $ogg = Ogg::Vorbis::Header::PurePerl->new($filename);
         ($title)  = $ogg->comment('title');
         ($artist) = $ogg->comment('artist');
@@ -2217,7 +2218,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.316 $';
+    my $rev = '$Revision: 1.317 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
