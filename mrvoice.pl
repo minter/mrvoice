@@ -45,7 +45,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.294 2004/01/02 22:12:58 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.295 2004/01/07 22:03:58 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2125,7 +2125,7 @@ sub delete_song
   
 sub show_about
 {
-  $rev = '$Revision: 1.294 $';
+  $rev = '$Revision: 1.295 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -3287,12 +3287,13 @@ if (! $dbh->do($query))
     $sth->execute;
     if ($DBI::err)
     {
+      my $errorbox = $mw->DialogBox(-title=>"Database Update Failed", -buttons=>["Exit"]);
+      $errorbox->Icon(-image=>$icon);
       $string = "$DBI::errstr";
-      $box->add("Label",-text=>"FAILED: $string")->pack();
-    }
-    else
-    {
-      $box->add("Label",-text=>"SUCCEEDED")->pack();
+      $errorbox->add("Label",-text=>"FAILED: $string")->pack();
+      $errorbox->add("Label",-text=>"You must fix this error before you can run Mr. Voice 1.10")->pack();
+      my $result = $errorbox->Show();
+      do_exit if ($result);
     }
     $sth->finish;
   }
