@@ -1,3 +1,16 @@
+Sat  Nov 17 2001        H. Wade Minter (minter@lunenburg.org)
+     * Fixed a bug that was preventing File->Open from working.
+
+Fri  Nov 16 2001        H. Wade Minter (minter@lunenburg.org)
+     * Added a "holding tank" feature, requested by K. Christie and J.
+       Spencer.
+
+Thu  Nov 15 2001        H. Wade Minter (minter@lunenburg.org)
+     * Change the layout of the search fields so that the text boxes
+       are justified.
+     * Added a busy/unbusy call to the search function, so that the cursor
+       changes to a watch while the search is in progress.
+
 Mon  Nov 12 2001        H. Wade Minter (minter@lunenburg.org)
      * Using Win32::Process to start/stop the MP3 player on Windows.  A much
        cleaner (and working!) solution.
@@ -139,4 +152,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.25 2001/11/13 21:09:36 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.26 2001/11/20 19:22:55 minter Exp $
