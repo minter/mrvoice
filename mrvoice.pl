@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.175 2002/11/12 21:02:11 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.176 2002/11/12 21:14:19 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1224,7 +1224,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.175 $';
+  $rev = '$Revision: 1.176 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -1641,8 +1641,8 @@ sub play_mp3
       @result = $sth->fetchrow_array;
       $sth->finish;
       $filename = $result[0];
-      $title = $result[1];
-      $artist = $result[2];
+      $statustitle = $result[1];
+      $statusartist = $result[2];
     }
   }
   if ( ($filename) && ($_[0] eq "addsong") )
@@ -1652,16 +1652,18 @@ sub play_mp3
   }
   elsif ($filename)
   {
-    if ($artist)
+    if ($statusartist)
     {
-      $songstatusstring = "\"$title\" by $artist";
+      $songstatusstring = "\"$statustitle\" by $statusartist";
     }
     else
     {
-      $songstatusstring = "\"$title\"";
+      $songstatusstring = "\"$statustitle\"";
     }
     $status = "Playing $songstatusstring";
     system ("$mp3player $filepath$filename");
+    $statustitle = "";
+    $statusartist = "";
   }
 }
 
