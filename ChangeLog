@@ -1,3 +1,6 @@
+Thu  Mar 18 2004	H. Wade Minter (minter@lunenburg.org)
+     * Released Mr. Voice version 1.10
+
 Wed  Mar 17 2004	H. Wade Minter (minter@lunenburg.org)
      * Add an ugly hack to work around brokenness in getOpenFile and
        getSaveFile with the -initialdir option under Win32.
@@ -609,4 +612,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.128 2004/03/17 17:29:34 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.129 2004/03/18 18:53:50 minter Exp $
