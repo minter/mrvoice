@@ -1,3 +1,8 @@
+Thu  May 23 2002        H. Wade Minter (minter@lunenburg.org)
+     * Added an encoded PNG logo.
+     * Fixed a bug WRT static hotkeys.
+     * Tagged 1.5.3
+
 Tue  May 21 2002	H. Wade Minter (minter@lunenburg.org)
      * Added Control-P as the hotkey to play the currently-selected song.
        Thanks to Randy in KC and Bill in Portland for the idea.
@@ -249,4 +254,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.47 2002/05/21 19:20:51 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.48 2002/05/23 14:12:43 minter Exp $
