@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: using-mrvoice.sgml,v 1.26 2002/05/23 14:32:14 minter Exp $
+  CVS ID: $Id: using-mrvoice.sgml,v 1.27 2002/08/14 18:26:52 minter Exp $
 -->
 
 <chapter><title>Using Mr. Voice</title>
@@ -21,7 +21,7 @@
   <sect1><title>Adding, Deleting, and Editing Songs and Categories</title>
     <para>Mr. Voice lets you set up categories, then put your songs into those categories for later use.  So we'll address the categories first.</para>
     <sect2><title>Categories</title>
-      <para>Category options are very simple.  You can either add a category, or delete a category.  Both options can be found under the <menuchoice> <guimenu>Categories</guimenu> </menuchoice> menu on the main display.</para>
+      <para>Category options are very simple.  You can either add a category, edit its long (descriptive) name, or delete a category.  All options can be found under the <menuchoice> <guimenu>Categories</guimenu> </menuchoice> menu on the main display.</para>
       <para>To add a new category, choose <menuchoice> <guimenu>Categories</guimenu> <guimenuitem>Add Category</guimenuitem> </menuchoice>.  You will then have a box pop up where you can enter two items: The <guilabel>Category Code</guilabel> and the <guilabel>Category Description</guilabel>.  
         <figure>
 	  <title>The Add Category window</title>
@@ -50,6 +50,7 @@
       <important>
         <para>You cannot delete a category if it still has songs in it.  Delete/edit all songs out of the category before trying to delete it.</para>
       </important>
+      <para>Finally, you can edit a category, by choosing the <menuchoice> <guimenu>Categories</guimenu> <guimenuitem>Edit Category</guimenuitem> </menuchoice> menu.  Once there, you can edit the long name, but not the short code, of the category.</para>
     </sect2>
 
     <sect2><title>Songs</title>
@@ -85,8 +86,8 @@
 	</figure>
 	Use this to go to the location of your file, left-click on the name of the file, then click <guibutton>Open</guibutton>.  The name of the file should now be listed in the <guilabel>File To Add</guilabel> box.</para></listitem>
       </itemizedlist> 
-      <para>You can now press the <guibutton>Ok</guibutton> button to add the song.  If all goes well, you should see a message that the file was added to the database.  If not, Mr. Voice should tell you what went wrong.</para>
-      <note><para>Mr. Voice actually makes a copy of the file that you select, renames it to a standard form, and places the new copy in the location given by the <varname>$filepath</varname> variable that you defined in the setup.  Your original audio file is not used after the copy is made, so you can feel free to delete it.</para></note>
+      <para>You can now press the <guibutton>Ok</guibutton> button to add the song.  If all goes well, you should see a message that the file was added to the database.  If not, Mr. Voice should tell you what went wrong, and let you go back and fix the entry.</para>
+      <note><para>Mr. Voice actually makes a copy of the file that you select, renames it to a standard form, and places the new copy in the location given by the <varname>$filepath</varname> variable that you defined in the setup.  Your original audio file is <emphasis>not</emphasis> used after the copy is made, so you can feel free to delete it.</para></note>
       <para>To delete a song, you must have one displayed and selected in the main search results box.  Searching is covered later, but if you hit the <guibutton>Do Search</guibutton> button, it should show you all of the songs in your database.</para>
       <para>Once you have some songs displayed, left-click once on the name of the song that you want to delete, then choose <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Delete Currently Selected Song</guimenuitem> </menuchoice>.  You can also right-click on the name of the song and choose the <guimenuitem>Delete Song</guimenuitem> option.  A box will pop up asking you to confirm the deletion, and also presenting a checkbox labeled <guilabel>Delete File On Disk</guilabel>.   
         <figure>
@@ -121,11 +122,13 @@
       <para><note><para>Note!  If you do a search with the default (Any) category and no qualifiers in any of the entry fields, every song in your database will be displayed.  This could take a while, depending on the size of your database and the speed of your computer.  If you try to do this kind of search, a box will pop up asking you to confirm.</para></note></para>
       <para>After you have filled in the information that you would like to search for, you can either press the <keycap>Enter</keycap> key, or press the <guibutton>Do Search</guibutton> button.  The status bar will tell you how many matching entries your search found, and display the results in the Search Results box.</para>
       <para>If your mouse has a scroll-wheel on it, you can use the wheel to scroll the list of search results up and down.</para>
+      <para>There is also an <guimenu>Advanced Search</guimenu> menu.  On that menu, you can choose to have Mr. Voice show you all the song that have changed during the current day, or over the past 7, 14, or 30 days.  You can also search for songs that were added or changed over an arbitrary date range via the <guimenuitem>Advanced Date Search</guimenuitem> menu.</para>
     </sect2>
     <sect2><title>Playing Songs</title>
       <para>At this point, you have added songs to the database, and you have searched for songs.  Now, with some songs listed in the Search Results box, you're ready to play the songs!</para>
-      <para>To play a song, you can left-click on the song in the Search Results box (the song should become highlighed when you do this), and press the green <guibutton>Play Now</guibutton> button.  While a song is highlighted, you can also press <keycap>Control</keycap> <keycap>P</keycap> to start the song playing.  You can also double-click the song in the Search Results box, or right-click the song and choose the <guimenuitem>Play Song</guimenuitem> option.  When you do this, your MP3 player should spring to life, and you should hear the song coming out of the speakers.  Congratulations!  It works!</para>
+      <para>To play a song, you can left-click on the song in the Search Results box (the song should become highlighed when you do this), and press the green <guibutton>Play Now</guibutton> button.  While a song is highlighted, you can also press <keycombo action='simul'> <keycap>Control</keycap> <keycap>P</keycap></keycombo> to start the song playing.  You can also double-click the song in the Search Results box, or right-click the song and choose the <guimenuitem>Play Song</guimenuitem> option.  When you do this, your MP3 player should spring to life, and you should hear the song coming out of the speakers.  Congratulations!  It works!</para>
       <para>To stop the song, you can either press the red <guibutton>Stop Now</guibutton> button, or press the <keycap>Esc</keycap> key on your keyboard.  Play should then stop.</para>
+      <para>Windows users who have installed the httpQ plugin (and entered its password under the <menuchoice> <guimenu>File</guimenu> <guimenu>Preferences</guimenu> <guimenuitem>Other</guimenuitem> </menuchoice> menu) have an additional option.  Pressing the <keycap>Shift</keycap> key while either clicking on the <guibutton>Stop Now</guibutton> button or pressing the <keycap>Escape</keycap> key will cause the song to fade out before stopping, over a period of a couple of seconds.</para>
     </sect2>
     <sect2><title>Exiting Mr. Voice</title>
       <para>To exit Mr. Voice, choose <menuchoice> <guimenu>File</guimenu> <guimenuitem>Exit</guimenuitem> </menuchoice>, or press <keycombo action='simul'> <keycap>Control</keycap> <keycap>X</keycap> </keycombo>.  Mr. Voice will exit and your MP3 player will close.</para>
