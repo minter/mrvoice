@@ -1,4 +1,7 @@
-Mon  Feb 23 2004        H. Wade Minter (minter@lunenburg.org)
+Tue  Feb 24 2004	H. Wade Minter (minter@lunenburg.org)
+     * Consolidate various get_ functions into one - much simpler that way.
+
+Mon  Feb 23 2004	H. Wade Minter (minter@lunenburg.org)
      * Must raise/deiconify the window on Win32 before popping up the
        database update Dialog, for some reason.
 
@@ -547,4 +550,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.114 2004/02/23 22:07:32 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.115 2004/02/24 21:14:35 minter Exp $
