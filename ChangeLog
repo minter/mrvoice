@@ -1,3 +1,8 @@
+Thu  Jun 13 2002	H. Wade Minter (minter@lunenburg.org)
+     * Fixed a bug in timespan-based searches.
+     * Added an elapsed-time counter for searches.
+     * Significant work on arbitrary-date searches.
+
 Fri  May 24 2002	H. Wade Minter (minter@lunenburg.org)
      * Putting the framework in place for advanced, date-based searches.
 
@@ -257,4 +262,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.49 2002/05/24 20:19:51 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.50 2002/06/13 21:13:40 minter Exp $
