@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/03/06 17:48:06 $
-#	CVS REVISION NUMBER:    $Revision: 1.25 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/06 23:08:12 $
+#	CVS REVISION NUMBER:    $Revision: 1.26 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -271,9 +271,10 @@ sub delete_category
 sub add_new_song
 {
   $box = $mw->DialogBox(-title=>"Add New Song", -buttons=>["OK","Cancel"]);
-  $box->add("Label",-text=>"Enter the following information for the new song,\nand choose the file to add.\n")->pack();
+  $box->add("Label",-text=>"Enter the following information for the new song,\nand choose the file to add.")->pack();
+  $box->add("Label",-text=>"Items marked with a * are required.\n")->pack();
   $frame1 = $box->add("Frame")->pack(-fill=>'x');
-  $frame1->Label(-text=>"Song Title")->pack(-side=>'left');
+  $frame1->Label(-text=>"* Song Title")->pack(-side=>'left');
   $frame1->Entry(-width=>30,
                  -textvariable=>\$addsong_title)->pack(-side=>'right');
   $frame2 = $box->add("Frame")->pack(-fill=>'x');
@@ -281,7 +282,7 @@ sub add_new_song
   $frame2->Entry(-width=>30,
                  -textvariable=>\$addsong_artist)->pack(-side=>'right');
   $frame3 = $box->add("Frame")->pack(-fill=>'x');
-  $frame3->Label(-text=>"Category")->pack(-side=>'left');
+  $frame3->Label(-text=>"* Category")->pack(-side=>'left');
   $menu=$frame3->Menubutton(-text=>"Choose Category",
                             -relief=>'raised',
                             -tearoff=>0,
@@ -303,7 +304,7 @@ sub add_new_song
   $frame4->Entry(-width=>30,
                  -textvariable=>\$addsong_info)->pack(-side=>'right');
   $frame5 = $box->add("Frame")->pack(-fill=>'x');
-  $frame5->Label(-text=>"File to add")->pack(-side=>'left');
+  $frame5->Label(-text=>"* File to add")->pack(-side=>'left');
   $frame6 = $box->add("Frame")->pack(-fill=>'x');
   $frame6->Button(-text=>"Select File",
                   -command=>sub { 
@@ -326,6 +327,10 @@ sub add_new_song
     elsif (! -r $addsong_filename)
     {
       infobox ("File Error","Could not open input file $addsong_filename\nfor reading.  Check file permissions"); 
+    }
+    elsif (! -r $addsong_title)
+    {
+      infobox ("File Error","You must provide the title for the song."); 
     }
     elsif (! -w $filepath)
     {
