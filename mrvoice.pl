@@ -39,7 +39,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.204 2003/04/02 20:12:33 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.205 2003/04/02 23:12:45 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1582,7 +1582,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.204 $';
+  $rev = '$Revision: 1.205 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2961,6 +2961,9 @@ $mainbox->bind("<Button-3>", [\&rightclick_menu]);
 $dnd_token = $mainbox->DragDrop(-event => '<B1-Motion>',
                                 -sitetypes => ['Local'],
                                 -startcommand => sub { StartDrag($dnd_token) });
+
+# This works around brokenness in ActivePerl 5.8.  Thanks Slaven.
+$dnd_token->deiconify; $dnd_token->raise; $dnd_token->withdraw;
 
 &BindMouseWheel($mainbox);
 #
