@@ -4,31 +4,31 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.22 2002/02/05 17:14:33 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.23 2002/02/11 14:14:54 minter Exp $ 
 -->
 <book status="draft">
 
 <bookinfo>
-  <title>Mr. Voice Installation and Reference Manual</title>
+  <title>Mr. Voice 1.4 Installation and Reference Manual</title>
   <author>
     <firstname>H. Wade</firstname><surname>Minter</surname>
     <affiliation>
       <address><email>minter@lunenburg.org</email></address>
     </affiliation>
   </author>
-  <edition>User's Guide for Mr. Voice Version 1.4</edition>
-  <copyright><year>2001</year><holder>H. Wade Minter</holder></copyright>
+  <copyright><year>2000-2002</year><holder>H. Wade Minter</holder></copyright>
 </bookinfo>
 
 <dedication><title>Acknowledgements</title>
   <para>Thanks to my wife, Holly, for encouragement and editorial help.</para>
-  <para>Thanks to all of the voices at <ulink url="http://www.comedyworx.com/">ComedyWorx-Raleigh</ulink>, including (but not limited to) Jack Spencer, Larry Howard, Sam Adams, Bobby Rathbone, Ross White, Leo DiNapoli, and Bryan Cronk, for testing and feedback.</para>
+  <para>Thanks to all of the voices at <ulink url="http://www.comedyworx.com/">ComedyWorx-Raleigh</ulink>, including (but not limited to) Jack Spencer, Larry Howard, Sam Adams, Bobby Rathbone, Ross White, Leo DiNapoli, Jason Matthews, and Bryan Cronk, for testing and feedback.</para>
   <para>Thanks to the ownership and players of <ulink url="http://www.comedyworx.com/">ComedyWorx</ulink> for giving me such a fun place to be a goofball for the past couple of years.</para>
   <para>Thanks to the authors and publishers, and contributors of the following books and newsgroups, without which none of this would have gotten done:
     <itemizedlist>
       <listitem><para><citetitle pubwork="book">Learning Perl, 2nd Edition</citetitle>, by Randal Schwartz and Tom Christiansen, published by O'Reilly and Associates.</para></listitem>
       <listitem><para><citetitle pubwork="book">Programming Perl, 2nd Edition</citetitle>, by Larry Wall, Randal Schwartz and Tom Christiansen, published by O'Reilly and Associates.</para></listitem>
       <listitem><para><citetitle pubwork="book">Learning Perl/TK</citetitle>, by Nancy Walsh, published by O'Reilly and Associates.</para></listitem>
+      <listitem><para><citetitle pubwork="book">Matering Perl/TK</citetitle>, by Steven Liddie and Nancy Walsh, published by O'Reilly and Associates.</para></listitem>
       <listitem><para><citetitle pubwork="book">Programming the Perl DBI</citetitle>, by Alligator Descartes & Tim Bunce, published by O'Reilly and Associates.</para></listitem>
       <listitem><para>The newsgroup comp.lang.perl.tk</para></listitem>
     </itemizedlist>
@@ -95,6 +95,7 @@
       <listitem><para>There needs to be a way to edit categories.</para></listitem>
       <listitem><para>The "last files accessed" menu should be smarter about recognizing if files that are already on the list are being accessed.  Right now, it'll just add another listing for the same file on the bottom of the list.</para></listitem>
       <listitem><para>The file-selector box for Unix ignores the <varname>$savedir</varname> variable, putting you in / instead.  This is a bug with Perl/Tk and will be fixed in Tk800.024.</para></listitem>
+      <listitem><para>The Holding Tank is still very gimpy - more work is needed to figure out how to best use it.</para></listitem>
     </itemizedlist>
   </para>
 </appendix>

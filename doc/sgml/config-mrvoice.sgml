@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: config-mrvoice.sgml,v 1.15 2002/02/07 19:44:29 minter Exp $
+  CVS ID: $Id: config-mrvoice.sgml,v 1.16 2002/02/11 14:14:54 minter Exp $
 -->
 
 <chapter><title>Configuring Mr. Voice</title>
@@ -21,10 +21,10 @@
     <para>The options that you can set in the <menuchoice> <guimenu>File</guimenu> <guimenuitem>Preferences</guimenuitem> </menuchoice> menu are listed below.  After the name of each option, the actual variable name is given in parenthesis, in case you need to edit the configuration files manually (Manual configuration is detailed in section 2.1.1).</para>
     <itemizedlist>
       <listitem>
-        <para><varname>Database Name (db_name)</varname> - This should be set to the name of the database containing the mrvoice and categories tables.  If the database is local to the machine that you are running mrvoice on (as is normally the case), you simply need to supply the database name.  If it is on a remote server, the variable takes the form of "DATABASENAME:HOSTNAME:PORT".</para>
+        <para><varname>Database Name (db_name)</varname> - This should be set to the name of the database containing the mrvoice and categories tables.  You set this up in Chapter 1. If the database is local to the machine that you are running mrvoice on (as is normally the case), you simply need to supply the database name.  If it is on a remote server, the variable takes the form of "DATABASENAME:HOSTNAME:PORT".</para>
       </listitem>
       <listitem>
-        <para><varname>Database User Name (db_username)</varname> - Set to a username that has SELECT access on the tables.  In this configuration guide, that user is named "root".</para>
+        <para><varname>Database Username (db_username)</varname> - Set to a username that has SELECT access on the tables.  In this configuration guide, that user is named "root".</para>
       </listitem>
       <listitem>
         <para><varname>Database Password (db_pass)</varname> - The password in the database for user <varname>db_username</varname>.  You set this up when you configured MySQL in Chapter 1.</para>
@@ -33,10 +33,10 @@
         <para><varname>MP3 Player (mp3player)</varname> - The path to your MP3 player.  Likely options are <filename>/usr/bin/xmms</filename> for Unix systems, and <filename>C:\Program Files\WinAmp\WinAmp.exe</filename> for Windows systems.</para>
       </listitem>
       <listitem>
-        <para><varname>MP3 Directory (filepath)</varname> - The path information that will be prepended to the filename retrieved from the database or, in other words, the directory where you store your MP3 files.  Used to find the actual MP3 files on the local system.  The user who is running Mr. Voice must have write permission into this directory.</para>
+        <para><varname>MP3 Directory (filepath)</varname> - The path information that will be prepended to the filename retrieved from the database or, in other words, the directory where you store your MP3 files.  Used to find the actual MP3 files on the local system.  The user who is running Mr. Voice must have read/write permission into this directory.</para>
       </listitem>
       <listitem>
-        <para><varname>Hotkey Directory (savepath)</varname> - This will be the default directory that hotkey save files will go into.  The user running the program as must have write permission into that directory. Recommended to be different than the Mr. Voice install directory.</para>
+        <para><varname>Hotkey Directory (savepath)</varname> - This will be the default directory that hotkey save files will go into.  The user running the program as must have read/write permission into that directory. Recommended to be different than the Mr. Voice install directory.</para>
       </listitem>
       <listitem>
         <para><varname>Number of Dynamic Documents To Show (savefile_max)</varname> - The number of "most recently accessed hotkey files" to keep available under the <guimenu>File</guimenu> menu.  Defaults to 4.</para>
