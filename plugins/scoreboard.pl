@@ -72,6 +72,8 @@ sub scoreboard_plugin
       ->pack( -side => 'left' );
     $vis_minus->Button( -text => '-10', -command => sub { $vis_score -= 10 } )
       ->pack( -side => 'left' );
+    $vis_side->Button( -text => 'Reset', -command => sub { $vis_score = 0 } )
+      ->pack( -side => 'top', -pady => '5' );
 
     $home_side->Label( -text => 'Home' )->pack( -side => 'top' );
     $home_side->Label(
@@ -95,6 +97,8 @@ sub scoreboard_plugin
         -text    => '-10',
         -command => sub { $home_score -= 10 }
     )->pack( -side => 'left' );
+    $home_side->Button( -text => 'Reset', -command => sub { $home_score = 0 } )
+      ->pack( -side => 'top', -pady => '5' );
 
     $scoreboard->update();
     $scoreboard->deiconify();
