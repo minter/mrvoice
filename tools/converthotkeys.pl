@@ -2,7 +2,7 @@
 # NAME: converthotkeys.pl
 # DESCRIPTION: Converts hotkeys files in your save directory from pre-1.8
 #              format to 1.8 format.
-# CVS ID: $Id: converthotkeys.pl,v 1.3 2003/04/09 18:02:30 minter Exp $
+# CVS ID: $Id: converthotkeys.pl,v 1.4 2003/04/10 15:59:48 minter Exp $
 
 use DBI;
 use DBD::mysql;
@@ -27,7 +27,7 @@ if ($opt_h)
 # Check to see if we're on Windows or Linux, and set the RC file accordingly.
 if ("$^O" eq "MSWin32")
 {
-  $rcfile = "C:/mrvoice.cfg";
+  $rcfile = "C:\\mrvoice.cfg";
 }
 else
 {
