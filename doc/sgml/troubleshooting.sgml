@@ -1,0 +1,53 @@
+<!--
+  CVS ID: $Id: troubleshooting.sgml,v 1.1 2002/08/15 01:55:34 minter Exp $
+-->
+
+<chapter><title>Troubleshooting and FAQs</title>
+  <para>This section will eventually contain answers to frequently asked questions, troubleshooting ideas, and helpful tips.</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><emphasis>I double-click the Mr. Voice icon under Windows, and the program doesn't come up.  What's wrong?</emphasis></para>
+        <para>To diagnose a problem like this, open a DOS/Command prompt, cd to the Mr. Voice directory, and enter "mrvoice.exe".  This will run the program, but send all output to the screen.  You can use that output to figure out what's going wrong, or send it to me so I can debug the problem.</para>
+      </listitem>
+      <listitem>
+        <para><emphasis>My computer crashed while I was using Mr. Voice, and now it won't start!</emphasis></para>
+        <para>First, run Mr. Voice from a DOS prompt to look at the output.  You may see some error messages, ending with a note about "Got error 127 from the table handler."  This indicates that the MySQL database got corrupted when the crash happened.</para>
+        <para>To fix it, cd to the directory C:\mysql\bin, and run the following commands:</para>
+        <para><userinput>myisamchk -r c:\mysql\data\<replaceable>YOUR_DATABASE</replaceable>\categories</userinput></para>
+        <para><userinput>myisamchk -r c:\mysql\data\<replaceable>YOUR_DATABASE</replaceable>\mrvoice</userinput></para>
+        <para>Where <replaceable>YOUR_DATABASE</replaceable> is the name of your Mr. Voice database (check <filename>C:\mrvoice.cfg</filename>, or do run "dir C:\mysql\data" to see the name to use).  This should repair any damage to your database, and you should be able to run Mr. Voice again after those commands have finished.</para>
+      </listitem>
+      <listitem>
+        <para><emphasis>Now that I've got all this stuff in my database, how do I back it up?</emphasis></para>
+        <para>There are two things that need to be taken into account when you do backups: The MP3 files themselves, and the information in the database.</para>
+        <para><emphasis role="strong">BACKING UP THE MP3 FILES</emphasis></para>
+        <para>This is both the easiest and hardest part of the equation.  It's the easiest because backing up the MP3 files involves only copying them to another place, so that you are covered in case something happens to the files themselves (disk crash, accidental deletion, etc.)</para>
+        <para>It's the hardest, though, because you're generally talking about a gigabyte-plus of data, which limits your transfer options.  Some suggestions for MP3 file backups include:
+        <itemizedlist>
+          <listitem><para>A second hard drive in your computer.  Will protect against a drive crash, OS crash, or accidental deletion, but will not protect against on-site disasters (physical damage to the computer, fire, locusts, etc.) * Burning files to CD/DVD.  Easy off-site storage, but requires the purchase of a burner if you don't already have one.</para></listitem>
+          <listitem><para>Copying files to another computer over a network.  This is what I do - I have a network card (~$15) in the voice computer, and use an ethernet cable to copy the files over to my laptop.  Transfer time is fast.  You can also use things like a USB link cable to transfer files between computers.</para></listitem>
+          <listitem><para>Copying the files onto several thousand floppy disks.  Time-consuming and not recommended.  ;-)</para></listitem>
+        </itemizedlist>
+        </para>
+        <para><emphasis role="strong">BACKING UP THE DATABASE</emphasis></para>
+        <para>Backing up the files themselves is good, but there's another step involved.  You need to back up the information in your database, so that all of your meta-data (categories, extra info, etc.) isn't lost.  The database actually drives the Mr. Voice program, too, so if you lose the database data, Mr. Voice will be pretty useless.</para>
+        <para>In the tools/ subdirectory under the mrvoice-x.x directory that was created when you unzipped the Mr. Voice Zip file, you'll fine a file named <filename>mrvoice-backup.bat</filename>.  To use this tool, open the <filename>mrvoice-backup.bat</filename> file up in your
+favorite text editor.  You'll need to change the following lines:
+<screen>
+set DATABASE=comedysportz
+set DB_USER=mrvoice
+set DB_PASS=mypassword
+set BACKUP_DIR=c:\mrvoice-backup
+</screen>
+        </para>
+        <para>The first three lines (DATABASE, DB_USER, DB_PASS) can be found in your <filename>C:\mrvoice.cfg</filename> file, or under the File->Preferences menu within the program.  The fourth line (BACKUP_DIR) needs to point to a directory that exists on your computer, so create that before you run the .bat file.</para>
+        <para>Once you set up those lines and make the BACKUP_DIR directory, you can double-click on the mrvoice-backup file.  It will run and create a file in the BACKUP_DIR named something like <filename>mrvoice-2002-06-19-10-30.sql</filename> (with the numbers being the year-month-date-hour-minute of the backup).  That file can be used to restore the database to the way it was at that point in time.  So I'd advise keeping a copy on the computer, and making a copy to floppy disk and taking it offsite, since the file is small.</para>
+        <para><emphasis role="strong">OTHER THINGS TO BACKUP</emphasis></para>
+        <para>You may also want to back up your saved hotkey files from the directory listed in the <menuchoice> <guimenu>File</guimenu> <guimenuitem>Preferences</guimenuitem></menuchoice> menu, as well as <filename>C:\mrvoice.cfg</filename>.  Backing up all of this data should allow you to completely restore your system in the event that something goes wrong.</para>
+        <para><emphasis role="strong">WHEN TO BACKUP?</emphasis></para>
+        <para>In the event of a system failure, you will lose all of the changes to your system between the last time you backed up, and the time of the failure.  So keep that in mind when you decide how often to back up.  For some, backups every month or two might work, for others, weekly or more frequent.</para>
+      </listitem>
+    </itemizedlist>
+    <para>If you have questions or tips that you think should be addressed here, email them to me.</para>
+</chapter>
