@@ -14,7 +14,7 @@ use MPEG::MP3Info;
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.88 2001/11/15 17:42:40 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.89 2001/11/16 14:28:04 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -606,7 +606,7 @@ sub edit_preferences
 
 sub edit_song
 {
-  my $id = get_song_id();
+  my $id = get_song_id($mainbox);
   $query = "SELECT title,artist,category,info from mrvoice where id=$id";
   ($edit_title,$edit_artist,$edit_category,$edit_info) = $dbh->selectrow_array($query);
 
@@ -676,7 +676,7 @@ sub edit_song
 
 sub delete_song
 {
-  my $id = get_song_id();
+  my $id = get_song_id($mainbox);
   if ($id)
   {  
     $box = $mw->DialogBox(-title=>"Confirm Deletion", 
@@ -789,6 +789,54 @@ sub clear_selected
   $status="Selected hotkeys cleared";
 }
 
+sub holding_tank
+{
+  if (Exists($holdingtank))
+  {
+    # Only once copy on the screen at a time
+    return;
+  }
+  $holdingtank = $mw->Toplevel();
+  bind_hotkeys($holdingtank);              
+  $holdingtank->title("Holding Tank");
+  $holdingtank->Label(-text=>"A place to store songs for later use")->pack;
+  $holdingtank->Label(-text=>"Drag a song here from the main search box to store it")->pack;
+  $tankbox = $holdingtank->Scrolled('Listbox',
+                         -scrollbars=>'osoe',
+			 -width=>50,
+			 -setgrid=>1,
+			 -selectmode=>'extended')->pack(-fill=>'both',
+			                              -expand=>1,
+						      -padx=>10,
+						      -side=>'top');
+  $tankbox->DropSite(-droptypes=>['Local'],
+                     -dropcommand=>[\&Tank_Drop, $dnd_token ]);
+  $tankbox->bind("<Double-Button-1>", \&play_mp3);
+  my $buttonframe = $holdingtank->Frame()->pack(-side=>'bottom',
+                                             -fill=>'x');
+  my $playbutton = $buttonframe->Button(-text=>"Play Now",
+                                        -command=>[\&play_mp3,$tankbox])->pack(-side=>'left');
+  $playbutton->configure(-bg=>'green',
+                       -activebackground=>'SpringGreen2');
+  my $stopbutton = $buttonframe->Button(-text=>"Stop Now",
+                                        -command=>[\&stop_mp3])->pack(-side=>'left');
+  $stopbutton->configure(-bg=>'red',
+                       -activebackground=>'tomato3');
+  $buttonframe->Button(-text=>"Close",
+                       -command=>sub {$holdingtank->destroy})->pack(-side=>'right');
+  $buttonframe->Button(-text=>"Clear Selected",
+                       -command=>[\&clear_tank])->pack(-side=>'right');
+}
+
+sub clear_tank
+{
+  @selected = reverse($tankbox->curselection());
+  foreach $item (@selected)
+  {
+    $tankbox->delete($item);
+  }
+}
+  
 sub list_hotkeys
 {
   if (Exists($hotkeysbox))
@@ -883,7 +931,11 @@ sub get_song_id
   # This gets the current selection from the search results box, and returns
   # the database ID for that song.
 
-  my $selection = $mainbox->get($mainbox->curselection());
+  $box = $_[0];
+  # When playing a song, we only take the first index, even if
+  # multiple selections are allowed
+  my @index = $box->curselection();
+  my $selection = $box->get($index[0]);
   my ($id) = split /:/,$selection;
   return ($id);
 }
@@ -905,7 +957,7 @@ sub get_filename
 
 sub set_hotkey
 {
-  my $id = get_song_id;
+  my $id = get_song_id($mainbox);
   $box = $mw->DialogBox(-title=>"Bind Hotkeys", -buttons=>["Apply","Cancel"]);
   $box->add("Label",-text=>"Choose the keys to bind song $id to:")->pack();
   $box->add("Checkbutton",-text=>"F1",
@@ -1008,7 +1060,8 @@ sub play_mp3
   {
     # If not, find the selected song.
     #@list = $mainbox->curselection();
-    my $id = get_song_id;
+    $box = $_[0];
+    my $id = get_song_id($box);
     if ($id)
     {
       $query = "SELECT filename from mrvoice WHERE id=$id";
@@ -1219,9 +1272,16 @@ sub Hotkey_Drop {
   # Assigns the dragged token to the hotkey that it's dropped onto.
 
   my ($fkey_var, $dnd_source) = @_;
-  my $id = get_song_id($dnd_source->cget(-text));
+  my $id = get_song_id($mainbox, $dnd_source->cget(-text));
   my $filename = get_filename($id);
   $$fkey_var = $filename;
+}
+
+sub Tank_Drop 
+{
+  my ($dnd_source) = @_;
+  my $selection = $mainbox->get($mainbox->curselection());
+  $tankbox->insert(end,$selection);
 }
 
 #########
@@ -1328,6 +1388,8 @@ $hotmenu->AddItems(["command"=>"Show Hotkeys",
 		    -accelerator=>"Ctrl-H"]);
 $hotmenu->AddItems(["command"=>"Clear All Hotkeys",
                     -command=>\&clear_hotkeys]);
+$hotmenu->AddItems(["command"=>"Show Holding Tank",
+                    -command=>\&holding_tank]);
 #STARTCSZ
 #$hotmenu->AddItems(["command"=>"Show Predefined Hotkeys",
 #                    -command=>\&show_predefined_hotkeys]);
@@ -1441,36 +1503,8 @@ $searchbuttonframe->Button(-text=>"Do Search",
 #####
 
 #####
-# Status Frame
-
-$statusframe = $mw->Frame()->pack(-side=>'bottom',
-                                  -anchor=>'s',
-                                  -fill=>'x');
-$playbutton = $statusframe->Button(-text=>"Play Now",
-                     -command=>[\&play_mp3,"play"])->pack(-side=>'left');
-$playbutton->configure(-bg=>'green',
-                       -activebackground=>'SpringGreen2');
-$stopbutton = $statusframe->Button(-text=>"Stop Now",
-                     -command=>[\&stop_mp3])->pack(-side=>'left');
-$stopbutton->configure(-bg=>'red',
-                       -activebackground=>'tomato3');
-$statusframe->Button(-text=>"Assign Hotkey",
-                     -command=>[\&set_hotkey])->pack(-side=>'right');
-
-$statusframe->Label(-textvariable=>\$status,
-                    -relief=>'sunken')->pack(-anchor=>'center',
-                                             -expand=>1,
-                                             -padx=>5,
-                                             -fill=>'x');
-#
-#####
-
-
-#####
 # Main display area - search results
-$searchboxframe=$mw->Frame()->pack(-side=>'bottom',
-                                   -fill=>'both',
-				   -expand=>1);
+$searchboxframe=$mw->Frame();
 $mainbox = $searchboxframe->Scrolled('Listbox',
                        -scrollbars=>'osoe',
                        -width=>100,
@@ -1488,6 +1522,36 @@ $dnd_token = $mainbox->DragDrop(-event => '<B1-Motion>',
 
 #
 #####
+
+#####
+# Status Frame
+
+$statusframe = $mw->Frame()->pack(-side=>'bottom',
+                                  -anchor=>'s',
+                                  -fill=>'x');
+$playbutton = $statusframe->Button(-text=>"Play Now",
+                     -command=>[\&play_mp3,$mainbox])->pack(-side=>'left');
+$playbutton->configure(-bg=>'green',
+                       -activebackground=>'SpringGreen2');
+$stopbutton = $statusframe->Button(-text=>"Stop Now",
+                     -command=>[\&stop_mp3])->pack(-side=>'left');
+$stopbutton->configure(-bg=>'red',
+                       -activebackground=>'tomato3');
+$statusframe->Button(-text=>"Assign Hotkey",
+                     -command=>[\&set_hotkey])->pack(-side=>'right');
+
+$statusframe->Label(-textvariable=>\$status,
+                    -relief=>'sunken')->pack(-anchor=>'center',
+                                             -expand=>1,
+                                             -padx=>5,
+                                             -fill=>'x');
+#
+#####
+
+$searchboxframe->pack(-side=>'bottom',
+                      -fill=>'both',
+	              -expand=>1);
+
 
 bind_hotkeys($mw);
 
