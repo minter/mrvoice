@@ -1,5 +1,6 @@
 Sat  Sep 18  2004	H. Wade Minter (minter@lunenburg.org)
      * Merge trunk changes from 825 to 828.
+     * Add a CWX tag to the Version number.
 
 Fri  Sep 17  2004	H. Wade Minter (minter@lunenburg.org)
      * Get the move_tank function working with the HList.  Thanks to 
