@@ -2766,14 +2766,14 @@ sub get_info_from_id
 
 sub validate_id
 {
-    my $id      = shift;
-    my $query   = "SELECT * FROM mrvoice WHERE id=$id";
-    my $sth = $dbh->prepare($query);
+    my $id    = shift;
+    my $query = "SELECT * FROM mrvoice WHERE id=$id";
+    my $sth   = $dbh->prepare($query);
     $sth->execute;
     my $numrows = 0;
-    while (my @row = $sth->fetchrow_array)
+    while ( my @row = $sth->fetchrow_array )
     {
-      $numrows++;
+        $numrows++;
     }
     return $numrows == 1 ? 1 : 0;
 }
@@ -3896,8 +3896,14 @@ sub orphans
     {
         $file = basename($file);
         my $query = "SELECT * FROM mrvoice WHERE filename='$file'";
-        my $rv    = $dbh->do($query);
-        if ( $rv == 0 )
+        my $sth   = $dbh->prepare($query);
+        $sth->execute;
+        my $row_count = 0;
+        while ( my @row = $sth->fetchrow_array )
+        {
+            $row_count++;
+        }
+        if ( $row_count == 0 )
         {
             push( @orphans, $file );
         }
