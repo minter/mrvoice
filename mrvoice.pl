@@ -2768,7 +2768,13 @@ sub validate_id
 {
     my $id      = shift;
     my $query   = "SELECT * FROM mrvoice WHERE id=$id";
-    my $numrows = $dbh->do($query);
+    my $sth = $dbh->prepare($query);
+    $sth->execute;
+    my $numrows = 0;
+    while (my @row = $sth->fetchrow_array)
+    {
+      $numrows++;
+    }
     return $numrows == 1 ? 1 : 0;
 }
 
