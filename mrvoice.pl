@@ -13,7 +13,6 @@ use Tk::DropSite;
 use Tk::NoteBook;
 use Tk::ProgressBar::Mac;
 use Tk::DirTree;
-use Tk::PNG;
 use File::Basename;
 use File::Copy;
 use File::Spec::Functions;
@@ -36,7 +35,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.313 2004/03/01 01:07:01 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.314 2004/03/01 01:17:24 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -382,30 +381,27 @@ fHqFe2AqS30kpzKJCarHUmt0pir0XLNqGDBkqwEHqnizqx3YZ6lgppjKVR2GUN9Jq8eKQcaKrMvK
 rM3qrM8KrdEqrdNKrdVqrdeKrdmqre8TCAA7
 end_of_data
 
-sub soundicon_png
+sub soundicon_gif
 {
 
-    # FILENAME: /Users/minter/soundicon.png
+    # FILENAME: /Users/minter/soundicon.gif
     # THIS FUNCTION RETURNS A BASE64 ENCODED
     # REPRESENTATION OF THE ABOVE FILE.
     # SUITABLE FOR USE BY THE -data PROPERTY.
     # OF A Perl/Tk PHOTO.
     my $binary_data = <<EOD;
-iVBORw0KGgoAAAANSUhEUgAAABkAAAAgCAYAAADnnNMGAAAAB3RJTUUH1AMBADo2UHSizAAAAAZi
-S0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEgAACxIB0t1+/AAAAgtJREFUSMellr2xwjAQhF2G0xcS
-EtICISGpy6ANQlogJKQFl0ALhA79vGJWs16fpHk8zdycsM192jv9dXPQXq/XPAxDsvP5HNrxeMze
-7XA4ZA/rHPB+vzMA/fW7KX9DPy3P4NX4DoPd73ZrCAHjOKZR+p/UECD6DU97Pp9rJUwRXhCGZxEg
-CuwA2P1+n3dUwqAEoKmSkpoIoP374/FRogr4UQSpWUkJYiYlm9lyOuUZpNC/pIq/c7oQ7Hq9pgfq
-mbpWumpAxErpggIWPvpTLXhL0UqJrgcdtfs07/fDZgpzTRVnF5T4oouABBDiSi6XS5iuD2Qp9HZl
-r2tAwDCMKwgHyOCuqKmEzxRwu83JqxIHUREhfd9vIdp3wLLbbCAOUjVNJREAjRBMTY6eawpWUTLl
-4CxuBFAlOnrOUK9NMV0IjsAwLEg2ADxdUKMpczVFCIJ7IwDvdHYR4mqaEFXCdKn5FPa66DGRIRiN
-tq7rUnBaDaJKtEZUgj0wVAIILQIRovXQVIXpciVoKDgsAjmE9SgtxjRgfhy1COR7V6ke1XXiu6+D
-FKK18HqsaoJlX9q32FcQvM6o1gaZ01Xa5lUVQbBoq4/OlGpNSocYQV4TBfxLCU3P/tKR/VVNouto
-C1BVMgX33W9vkVCSIFDCNICc/HLzQ79lvEL5dUp9VgJQZP3PT8ppzRDE+7o1wX4BQWzxshBv4lAA
-AAAASUVORK5CYII=
+R0lGODlhGQAgAMQAAPfv92NjzjExY5yc/87O/+/v9xghIUpSUq21tTEpKf///+/v797e3s7Ozr29
+va2trZSUlHt7e2NjY1paWkpKSjk5OSkpKRgYGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAA
+GQAgAAAF/6AiiowkTWhKTVTbVlRVjcpiLmNR18Di4wtGYmRrTHy1H0MZZDAcM0XJYWMkf8Gs0/mw
+1CRUxRGJ1S6diMp0KS6Xz1uHBbU6oNjYc/PcnUAefxBUZG9mDzBSPmdXeWYMfTg7QDUMAlk2e48W
+FJFElAKWigsRcF0HnUBBAgGhnEsSTV2cNDiVAQMBP66jXBezO1KrAwS5ukGwmr8kwgQKuWoLE06k
+j746CqDMCsQLrkevCw++kQIDAw4iBNwLFT4U09W/AzTqA6HtDN+k4r/luObmWi2RVkVcFAUYAigE
+aM8HPlekIIwTgaHiwoDsfHxjsO/CQQUOHCS81RAfQWoPMG60owFyZMMfBCX0onBtkkiFoRhwCkJN
+ohdPNW5iGJgF2SOVLMmIxMDE6NGVIiIBEYkFWSyktFItGLTEkU9aURf0EOXo6QgAkhiJgsMAAgYL
+Wx84QPCgrl27fwDp/aPSgt+/Bi4IHiwYQ+ELFSuGAAA7
 EOD
     return ($binary_data);
-}    # END soundicon_png...
+}    # END soundicon_gif...
 
 # This function is redefined due to evilness that keeps the focus on
 # the dragged token.  Thanks to Slaven Rezic <slaven.rezic@berlin.de>
@@ -2221,7 +2217,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.313 $';
+    my $rev = '$Revision: 1.314 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3276,7 +3272,7 @@ sub StartDrag
 {
 
     # Starts the drag for the hotkey drag-and-drop.
-    $sound_icon = $mw->Photo( -data => soundicon_png(), -format => 'png' );
+    $sound_icon = $mw->Photo( -data => soundicon_gif() );
 
     my ($token) = @_;
     $current_token = $token;
