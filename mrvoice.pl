@@ -36,7 +36,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.325 2004/03/04 22:17:17 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.326 2004/03/05 16:42:29 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -477,6 +477,31 @@ sub BindMouseWheel
     }
 
 }    # end BindMouseWheel
+
+sub update_110
+{
+    $query =
+      "ALTER TABLE mrvoice ADD COLUMN publisher VARCHAR(16) NOT NULL DEFAULT 'OTHER'";
+    my $sth = $dbh->prepare($query);
+    $sth->execute;
+    if ($DBI::err)
+    {
+        my $errorbox = $mw->DialogBox(
+            -title   => "Database Update Failed",
+            -buttons => ["Exit"]
+        );
+        $errorbox->Icon( -image => $icon );
+        $string = "$DBI::errstr";
+        $errorbox->add( "Label", -text => "FAILED: $string" )->pack();
+        $errorbox->add( "Label",
+            -text =>
+              "You must fix this error before you can run Mr. Voice 1.10" )
+          ->pack();
+        my $result = $errorbox->Show();
+        do_exit() if ($result);
+    }
+    $sth->finish;
+}
 
 sub bind_hotkeys
 {
@@ -2156,7 +2181,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.325 $';
+    my $rev = '$Revision: 1.326 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3511,7 +3536,7 @@ if ( !$dbh->do($query) )
     $mw->raise();
     $box = $mw->DialogBox(
         -title   => "Database Update Needed",
-        -buttons => [ "Continue", "Quit" ]
+        -buttons => [ "Continue", "Backup", "Quit" ]
     );
     $box->Icon( -image => $icon );
     $box->add( "Label",
@@ -3522,33 +3547,26 @@ if ( !$dbh->do($query) )
           "With the 1.10 release, some database changes were introduced.\nPress the Continue button to automatically update your database, or Quit to exit."
     )->pack();
     $box->add( "Label",
+        -text =>
+          "If you have not taken a backup of your database recently, you should press the Backup button to take one now.\nThat way, if there are any problems withe update, you can get your database back to a known good state."
+    )->pack();
+    $box->add( "Label",
         -text => "Continuing will add a new Publisher field to the database." )
       ->pack();
     $result = $box->Show();
 
     if ( $result eq "Continue" )
     {
-        $query =
-          "ALTER TABLE mrvoice ADD COLUMN publisher VARCHAR(16) NOT NULL DEFAULT 'OTHER'";
-        my $sth = $dbh->prepare($query);
-        $sth->execute;
-        if ($DBI::err)
-        {
-            my $errorbox = $mw->DialogBox(
-                -title   => "Database Update Failed",
-                -buttons => ["Exit"]
-            );
-            $errorbox->Icon( -image => $icon );
-            $string = "$DBI::errstr";
-            $errorbox->add( "Label", -text => "FAILED: $string" )->pack();
-            $errorbox->add( "Label",
-                -text =>
-                  "You must fix this error before you can run Mr. Voice 1.10" )
-              ->pack();
-            my $result = $errorbox->Show();
-            do_exit if ($result);
-        }
-        $sth->finish;
+        update_110();
+    }
+    elsif ( $result eq "Backup" )
+    {
+        dump_database();
+        update_110();
+    }
+    else
+    {
+        do_exit();
     }
 }
 
