@@ -1,5 +1,7 @@
 Tue  Dec 30 2003	H. Wade Minter (minter@lunenburg.org)
      * Use Cwd 'abs_path' to find the root of the docs tree.
+     * Allow the ability to save and load a holding tank, like you can
+       do with hotkeys.
 
 Mon  Dec 29 2003	H. Wade Minter (minter@lunenburg.org)
      * You can launch a m3u playlist from the contents of the Holding 
@@ -522,4 +524,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.108 2003/12/30 12:58:49 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.109 2003/12/30 18:12:38 minter Exp $
