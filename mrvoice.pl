@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.377 2004/04/26 01:55:57 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.378 2004/04/26 13:32:59 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -177,11 +177,11 @@ else
 #STARTCSZ
 # The following variables set the locations of MP3s for static hotkey'd
 # sounds
-#$altt = "TaDa.mp3";
-#$alty = "CalloutMusic.mp3";
-#$altb = "BrownBag.mp3";
-#$altg = "Groaner.mp3";
-#$altv = "PriceIsRightTheme.mp3";
+#our $altt = "TaDa.mp3";
+#our $alty = "CalloutMusic.mp3";
+#our $altb = "BrownBag.mp3";
+#our $altg = "Groaner.mp3";
+#our $altv = "PriceIsRightTheme.mp3";
 #ENDCSZ
 
 #####
@@ -2276,7 +2276,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.377 $';
+    my $rev    = '$Revision: 1.378 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::mysql->VERSION;
