@@ -39,7 +39,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.212 2003/04/08 14:18:37 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.213 2003/04/09 02:53:56 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -849,8 +849,8 @@ sub import_database
         {
           $dirname = Win32::GetShortPathName(dirname($dumpfile));
           $filename = basename($dumpfile);
-          $shortdumpfile = "$dirname/$filename";
-          my $rc = system ("C:/mysql/bin/mysql --user=$db_username --password=$db_pass $db_name < $shortdumpfile");
+          $shortdumpfile = File::Spec->catfile ($dirname, $filename);
+          my $rc = system ("C:\\mysql\\bin\\mysql.exe --user=$db_username --password=$db_pass $db_name < $shortdumpfile");
           infobox($mw, "Database Imported", "The database backup file $dumpfile\nhas been imported.");
           $status = "Database imported from $dumpfile";
         }
@@ -1660,7 +1660,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.212 $';
+  $rev = '$Revision: 1.213 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
