@@ -1,3 +1,9 @@
+Fri  Oct 26 2001	H. Wade Minter (minter@lunenburg.org)
+     * Fixed bug with the dynamic document menu, which would cause
+       the Exit option to get erased.
+     * Had to redefine a Perl/Tk function to fix a problem with
+       dragging-and-dropping.  Thanks to Slaven Rezic <slaven.rezic@berlin.de>
+
 Thu  Oct 25 2001	H. Wade Minter (minter@lunenburg.org)
      * Added label to show you which category is currently selected.
      * Added preferences option to choose the number of dynamic
@@ -108,4 +114,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.21 2001/10/25 19:37:58 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.22 2001/10/29 16:13:31 minter Exp $
