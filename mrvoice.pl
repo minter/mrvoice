@@ -900,8 +900,11 @@ sub dump_database
         {
 
             # Run the SQLite Dump
-            open( DUMPFILE, ">$dumpfile" )
-              or die "Could not open $dumpfile for writing";
+            if ( !open( DUMPFILE, ">$dumpfile" ) )
+            {
+                $status = "Could not open $dumpfile for writing";
+                return;
+            }
 
             # Get the table schema information
             my $query =
@@ -987,10 +990,15 @@ sub import_database
 
             if ( $button eq "Ok" )
             {
-                open( DUMPFILE, $dumpfile )
-                  or die "Cannot open $dumpfile for reading";
-                my $query;
-                my $errstat = 0;
+                if ( !open( DUMPFILE, $dumpfile ) )
+                {
+                    $status = "Cannot open $dumpfile for reading";
+                    return;
+                }
+
+                my $starttime = gettimeofday();
+                my $errstat   = 0;
+                $dbh->do("BEGIN");
                 while ( my $query = <DUMPFILE> )
                 {
                     if ( $query =~ /^--/ )
@@ -1002,10 +1010,13 @@ sub import_database
                     my $sth = $dbh->prepare($query);
                     $errstat = 1 if ( !$sth->execute() );
                 }
-                close(DUMPFILE) or die "Cannot close $dumpfile after reading";
+                close(DUMPFILE);
+                my $endtime = gettimeofday();
+                my $diff = sprintf( "%.2f", $endtime - $starttime );
                 if ( $errstat == 1 )
                 {
-                    $status = "Database import HAD ERRORS";
+                    $status = "File $dumpfile HAD ERRORS - nothing imported";
+                    $dbh->do("ROLLBACK");
                 }
                 elsif ( $errstat == 2 )
                 {
@@ -1013,7 +1024,8 @@ sub import_database
                 }
                 else
                 {
-                    $status = "Database dump $dumpfile imported";
+                    $status = "Imported $dumpfile in $diff seconds";
+                    $dbh->do("COMMIT");
                 }
             }
             else

@@ -1,5 +1,7 @@
 Sat  Sep 18  2004	H. Wade Minter (minter@lunenburg.org)
      * Add a --config flag to point to an alternate mrvoicerc.
+     * Wrap the database SQL import in a transaction for efficency.
+     * Replace spurious die() calls with status updates.
 
 Fri  Sep 17  2004	H. Wade Minter (minter@lunenburg.org)
      * Get the move_tank function working with the HList.  Thanks to 
