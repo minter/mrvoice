@@ -42,7 +42,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.266 2003/09/03 16:37:14 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.267 2003/10/10 19:41:18 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1169,7 +1169,7 @@ sub bulk_add
 		     }
 		     else
 		     {
-		       $directory = $box1->DirSelect(-width=>'50')->Show;
+                       $directory = $box1->DirSelect(-width=>'50')->Show;
 		     }
   })->pack(-side=>'left');
 
@@ -1962,7 +1962,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.266 $';
+  $rev = '$Revision: 1.267 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2512,7 +2512,7 @@ sub play_mp3
   }
   elsif ($filename)
   {
-    if ($_[1] =~ /^F.*/)
+    if (($_[1]) && ($_[1] =~ /^F.*/))
     {
       $fkey = lc($_[1]);
       $songstatusstring = $fkeys{$fkey}->{title};
