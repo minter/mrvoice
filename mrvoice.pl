@@ -41,7 +41,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.250 2003/07/28 13:52:08 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.251 2003/07/28 14:08:41 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -772,6 +772,7 @@ sub bind_hotkeys
   $window->bind("<Control-Key-o>", \&open_file);
   $window->bind("<Control-Key-s>", \&save_file);
   $window->bind("<Control-Key-h>", \&list_hotkeys);
+  $window->bind("<Control-Key-t>", \&holding_tank);
   #STARTCSZ
   #$window->bind("<Alt-Key-t>", [\&play_mp3,"ALT-T"]);
   #$window->bind("<Alt-Key-y>", [\&play_mp3,"ALT-Y"]);
@@ -1928,7 +1929,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.250 $';
+  $rev = '$Revision: 1.251 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -3142,7 +3143,7 @@ sub hotkeysmenu_items
   [
     ['command', 'Show Hotkeys', -command=>\&list_hotkeys, -accelerator=>'Ctrl-H'],
     ['command', 'Clear All Hotkeys', -command=>\&clear_hotkeys],
-    ['command', 'Show Holding Tank', -command=>\&holding_tank],
+    ['command', 'Show Holding Tank', -command=>\&holding_tank, -accelerator=>'Ctrl-T'],
 #STARTCSZ
 #    ['command', 'Show Predefined Hotkeys', -command=>\&show_predefined_hotkeys],
 #ENDCSZ
