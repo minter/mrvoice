@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.332 2004/03/09 17:34:37 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.333 2004/03/09 17:54:14 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -886,10 +886,11 @@ sub import_database
         -filetypes        => $databasefiles
     );
 
-    $dumpfile = Win32::GetShortPathName($dumpfile) if ( $^O eq "MSWin32" );
+    my $shortdumpfile = Win32::GetShortPathName($dumpfile)
+      if ( $^O eq "MSWin32" );
     if ($dumpfile)
     {
-        if ( !-r $dumpfile )
+        if ( !-r $shortdumpfile )
         {
             infobox(
                 $mw,
@@ -916,9 +917,6 @@ sub import_database
             {
                 if ( $^O eq "MSWin32" )
                 {
-                    $dirname  = Win32::GetShortPathName( dirname($dumpfile) );
-                    $filename = basename($dumpfile);
-                    $shortdumpfile = catfile( $dirname, $filename );
                     my $rc =
                       system(
                         "C:\\mysql\\bin\\mysql.exe --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} < $shortdumpfile"
@@ -2199,7 +2197,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.332 $';
+    my $rev = '$Revision: 1.333 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
