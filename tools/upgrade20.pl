@@ -9,12 +9,12 @@ use DBI;
 use Date::Manip;
 use Text::Wrapper;
 
-our %config;           # Configuration hash
-our $mw;               # Tk MainWindow
-our $icon;             # Window icon
-our $homedir;          # Unix home directory
-our $mysql_dbh;        # MySQL database handle
-our $rcfile;           # Config file
+our %config;       # Configuration hash
+our $mw;           # Tk MainWindow
+our $icon;         # Window icon
+our $homedir;      # Unix home directory
+our $mysql_dbh;    # MySQL database handle
+our $rcfile;       # Config file
 our $wrapper = Text::Wrapper->new;
 
 sub get_dbdir
@@ -57,10 +57,19 @@ sub save_rcfile
 
 sub create_new_database
 {
+    if ( -r $config{db_file} )
+    {
+        die
+          "A file already exists at $config{db_file} - are you sure you haven't tried to upgrade before?  Remove this file before attempting to upgrade.\n";
+    }
     my $create_dbh;
     my @queries;
     if (
-        !( $create_dbh = DBI->connect( "dbi:SQLite:dbname=$config{db_file}", "", "" ) ) )
+        !(
+            $create_dbh =
+            DBI->connect( "dbi:SQLite:dbname=$config{db_file}", "", "" )
+        )
+      )
     {
         die "Could not create new database file $config{db_file} via DBI";
     }
@@ -123,10 +132,8 @@ sub read_rcfile
     # the value to the variable name.
     # On MS Windows, it also converts long pathnames to short ones.
 
-    print "DEBUG: The config file is $rcfile\n";
     if ( -r $rcfile )
     {
-        print "DEBUG: Reading rcfile\n";
         open( RCFILE, $rcfile );
         while (<RCFILE>)
         {
@@ -204,7 +211,8 @@ sub upgrade_20
 
     # This migrates the database from MySQL to SQLite
 
-    my $sqlite_dbh = DBI->connect( "dbi:SQLite:dbname=$config{db_file}", "", "" )
+    my $sqlite_dbh =
+      DBI->connect( "dbi:SQLite:dbname=$config{db_file}", "", "" )
       or die
       "Could not connect to SQLite database $config{db_file} - error $DBI::errstr\n\n";
 
@@ -249,8 +257,17 @@ sub upgrade_20
 }
 
 print $wrapper->wrap(
-    "This utility will upgrade your Mr. Voice database from the version 1.x series (MySQL) to the version 2.x series (SQLite).  It should ONLY be run to upgrade an existing Mr. Voice installation.  For new installs, do XXX\n\n"
+    "This utility will upgrade your Mr. Voice database from the version 1.x series (MySQL) to the version 2.x series (SQLite).  It should ONLY be run to upgrade an existing Mr. Voice installation.  For new installs, just run the mrvoice.exe file - it will do all of the database creation for you.\n\n"
 );
+
+print "Continue with Mr. Voice 2.0 Database Migration [y/N]? ";
+
+my $yesno = getc(STDIN);
+
+unless ( $yesno =~ /^y/i )
+{
+    die "Ok.  Nothing ventured, nothing gained.\n\n";
+}
 
 if ( !read_rcfile() )
 {
@@ -289,8 +306,11 @@ print $wrapper->wrap("Database upgraded!\n\n");
 
 save_rcfile();
 
-print $wrapper->wrap("New config file saved as $rcfile\n");
+print $wrapper->wrap("New config file saved as $rcfile\n\n");
 
+print $wrapper->wrap(
+    "Your Mr. Voice database has now been upgraded to the 2.0 level.  When you are confident that the new database is working properly, you can remove MySQL from your system.\n\n"
+);
 print $wrapper->wrap("Press Enter to exit\n");
 my $key = getc(STDIN);
 exit;
