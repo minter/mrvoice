@@ -1,3 +1,6 @@
+Sat  Dec  6 2003	H. Wade Minter (minter@lunenburg.org)
+     * Allow drags to the Hotkeys from either the mainbox or Holding Tank.
+
 Wed  Nov 26 2003	H. Wade Minter (minter@lunenburg.org)
      * Switch the edit/delete category functions from RadioButtons 
        to a Listbox.  This will make the dialog box nicer when there
@@ -507,4 +510,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.103 2003/11/26 16:41:41 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.104 2003/12/07 20:00:46 minter Exp $
