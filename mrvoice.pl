@@ -14,8 +14,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/09/27 14:02:08 $
-#	CVS REVISION NUMBER:    $Revision: 1.45 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/09/27 14:41:01 $
+#	CVS REVISION NUMBER:    $Revision: 1.46 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -853,7 +853,7 @@ sub read_rcfile
   else
   {
     $filepath = $filepath . "/" unless ($filepath =~ /\/$/);
-    $savedir = $savedir . "/" unless ($savedir =~ /\/$/);
+    $savedir =~ s#(.*)/$#$1#;
   }
 }
 
