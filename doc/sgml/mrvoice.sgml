@@ -5,7 +5,7 @@
   <!ENTITY epilogue SYSTEM "troubleshooting.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.36 2002/12/12 18:29:02 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.37 2002/12/12 18:47:41 minter Exp $ 
 -->
 <book status="draft">
 
@@ -72,6 +72,7 @@
         <listitem><para>When you open a saved hotkey file, the Hotkeys window will display automatically.</para></listitem>
         <listitem><para>Added Dump/Restore Database options to the File menu.  You can use these to take backups of your database, or to import a prior backup.</para></listitem>
         <listitem><para>Drag-And-Drop now displays an icon instead of the song name, to band-aid over a problem with the incorrect song name being displayed.</para></listitem>
+        <listitem><para>Removed the "Are you sure you want to display the whole database?" popup search box, as those searches seem to take under a second now.</para></listitem>
       </itemizedlist>
     </para>
   </sect1>
