@@ -3925,7 +3925,7 @@ sub search_online
 {
     my $listbox = shift;
     $listbox->delete('all');
-    my $term = shift;
+    my ( $term, $category, $person ) = @_;
     my $xmlrpc;
     unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
     {
@@ -3938,6 +3938,8 @@ sub search_online
         {
             online_key     => $config{online_key},
             search_term    => $term,
+            category       => $category,
+            person         => $person,
             show_publisher => $config{show_publisher},
         }
     );
@@ -4036,6 +4038,14 @@ sub online_search_window
 
     my $onlinebox;
     my $online_search_term;
+    my $category = 'any';
+    my $person   = 'any';
+    my $xmlrpc;
+    unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
+    {
+        $status = "Could not initialize XMLRPC";
+        return;
+    }
     if ( !Exists($onlinewin) )
     {
         print "The online search window does not exist, so we create it\n"
@@ -4045,6 +4055,93 @@ sub online_search_window
         $onlinewin->withdraw();
         $onlinewin->Icon( -image => $icon );
         bind_hotkeys($onlinewin);
+
+        my $catframe =
+          $onlinewin->Frame()->pack( -fill => 'x', -side => 'top' );
+        $catframe->Label( -text => 'Search category ' )
+          ->pack( -side => 'left' );
+
+        my $catmenu = $catframe->Menubutton(
+            -text        => "Choose Category",
+            -relief      => 'raised',
+            -tearoff     => 0,
+            -indicatoron => 1
+        )->pack( -side => 'left' );
+
+        my $category_call =
+          $xmlrpc->call( 'get_categories',
+            { online_key => $config{online_key}, } );
+
+        my $cat_hashref = $category_call->result;
+
+        if ( !$cat_hashref )
+        {
+            chomp( my $error = $category_call->faultstring );
+            infobox( $mw, "XMLRPC search error", $error );
+            $status = "XMLRPC search error";
+            return;
+        }
+
+        foreach my $key (
+            sort {
+                $cat_hashref->{$a}{description}
+                  cmp $cat_hashref->{$b}{description}
+            } keys %$cat_hashref
+          )
+        {
+            $catmenu->radiobutton(
+                -label    => $cat_hashref->{$key}{description},
+                -value    => $key,
+                -variable => \$category,
+                -command  => sub {
+                    $catmenu->configure(
+                        -text => $cat_hashref->{$category}{description} );
+                },
+            );
+        }
+        $catmenu->configure( -text => $cat_hashref->{$category}{description} );
+
+        my $personframe =
+          $onlinewin->Frame()->pack( -fill => 'x', -side => 'top' );
+        $personframe->Label( -text => 'Uploaded by person ' )
+          ->pack( -side => 'left' );
+
+        my $personmenu = $personframe->Menubutton(
+            -text        => "Choose Person",
+            -relief      => 'raised',
+            -tearoff     => 0,
+            -indicatoron => 1
+        )->pack( -side => 'left' );
+
+        my $person_call =
+          $xmlrpc->call( 'get_people', { online_key => $config{online_key}, } );
+
+        my $person_hashref = $person_call->result;
+
+        if ( !$person_hashref )
+        {
+            chomp( my $error = $person_call->faultstring );
+            infobox( $mw, "XMLRPC search error", $error );
+            $status = "XMLRPC search error";
+            return;
+        }
+
+        foreach my $key (
+            sort { $person_hashref->{$a}{name} cmp $person_hashref->{$b}{name} }
+            keys %$person_hashref
+          )
+        {
+            $personmenu->radiobutton(
+                -label    => $person_hashref->{$key}{name},
+                -value    => $key,
+                -variable => \$person,
+                -command  => sub {
+                    $personmenu->configure(
+                        -text => $person_hashref->{$person}{name} );
+                },
+            );
+        }
+        $personmenu->configure( -text => $person_hashref->{$person}{name} );
 
         my $searchframe =
           $onlinewin->Frame()->pack( -fill => 'x', -side => 'top' );
@@ -4093,8 +4190,15 @@ sub online_search_window
             -text    => 'Search Online',
             -cursor  => 'question_arrow',
             -command => sub {
-                search_online( $onlinebox, $online_search_term );
+                search_online( $onlinebox, $online_search_term, $category,
+                    $person );
                 $online_search_term = undef;
+                $category           = "any";
+                $catmenu->configure(
+                    -text => $cat_hashref->{$category}{description} );
+                $person = "any";
+                $personmenu->configure(
+                    -text => $person_hashref->{$person}{name} );
             }
         )->pack( -side => 'top' );
         $onlinewin->bind(
@@ -4102,6 +4206,12 @@ sub online_search_window
             sub {
                 search_online( $onlinebox, $online_search_term );
                 $online_search_term = undef;
+                $category           = "any";
+                $catmenu->configure(
+                    -text => $cat_hashref->{$category}{description} );
+                $person = "any";
+                $personmenu->configure(
+                    -text => $person_hashref->{$person}{name} );
             }
         );
 
