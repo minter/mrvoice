@@ -4,7 +4,7 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.9 2001/09/26 17:47:00 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.10 2001/09/27 14:06:46 minter Exp $ 
 -->
 <book status="draft">
 
@@ -53,6 +53,7 @@
 <appendix><title>Known Bugs and Issues</title>
   <para>The following items are known as bugs that need to be fixed and/or enhancements that should be made:
     <itemizedlist>
+<listitem><para>On Windows, if things aren't working right, double-check to make sure that you are using the "\" character to separate the path, and also that you are using the "short-form" for the path to your MP3 player.  The short form means that there can be no spaces in the path name, so <filename>C:\progra~1\winamp\winamp.exe</filename> is good, but <filename>C:\program files\winamp\winamp.exe</filename> is bad.  If you need help, run <command>dir /x</command> to see the short names.</para></listitem>
       <listitem><para>Hotkeys will not work unless the main Mr. Voice window is selected and active.  The desired behavior is that hotkeys will work if <emphasis>any</emphasis> Mr. Voice window is selected</para></listitem>
       <listitem><para>The "last files accessed" menu should be smarter about recognizing if files that are already on the list are being accessed.  Right now, it'll just add another listing for the same file on the bottom of the list.</para></listitem>
       <listitem><para>The file-selector box for Unix ignores the <varname>$savedir</varname> variable, putting you in / instead.  This is a bug with Perl/Tk and will be fixed in Tk800.024.</para></listitem>
