@@ -1,3 +1,7 @@
+Tue  Mar 06 2001	H. Wade Minter (minter@lunenburg.org)
+     * Cleaned up a lot of documentation.
+     * Minor fixes in preparation for 1.0 release.
+
 Mon  Mar 05 2001	H. Wade Minter (minter@lunenburg.org)
      * Got song additions working.
      * Got song edits working. 
@@ -52,4 +56,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.10 2001/03/06 03:01:26 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.11 2001/03/07 23:12:10 minter Exp $
