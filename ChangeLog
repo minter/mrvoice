@@ -1,7 +1,13 @@
+Fri  Jun 14 2002	H. Wade Minter (minter@lunenburg.org)
+     * Got the arbitrary-date searching working well enough.
+
 Thu  Jun 13 2002	H. Wade Minter (minter@lunenburg.org)
      * Fixed a bug in timespan-based searches.
      * Added an elapsed-time counter for searches.
      * Significant work on arbitrary-date searches.
+     * Carolina is eliminated in the Stanley Cup finals 4 to 1.  A 
+       disappointing end, but it was an incredible season and a great run
+       through the finals.  Go Canes!
 
 Fri  May 24 2002	H. Wade Minter (minter@lunenburg.org)
      * Putting the framework in place for advanced, date-based searches.
@@ -262,4 +268,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.50 2002/06/13 21:13:40 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.51 2002/06/14 17:12:08 minter Exp $
