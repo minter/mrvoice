@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: using-mrvoice.sgml,v 1.18 2001/12/05 19:09:39 minter Exp $
+  CVS ID: $Id: using-mrvoice.sgml,v 1.19 2001/12/19 20:23:19 minter Exp $
 -->
 
 <chapter><title>Using Mr. Voice</title>
@@ -156,7 +156,7 @@
   <sect1><title>Hotkeys</title>
     <para>Hotkeys are a convenient way of having songs at the ready when you need them.  They can be used for common situations, events where you need a range of songs ready with little notice, and so forth.  You can also save hotkeys to files for later use.</para>
     <sect2><title>Configuring Hotkeys</title>
-      <para>To set up a hotkey, you must first search for a song and have it displayed in the main listbox.  Once you have the song that you want to assign, left-click on the song to highlight it.  Then press the <guibutton>Assign Hotkey</guibutton> button.  When you do that, a box will pop up enabling you to bind the song to one or more keys on your keyboard.  
+      <para>To set up a hotkey, you must first search for a song and have it displayed in the search results box.  Once you have the song that you want to assign, left-click on the song to highlight it.  Then press the <guibutton>Assign Hotkey</guibutton> button.  When you do that, a box will pop up enabling you to bind the song to one or more keys on your keyboard.  
     <figure>
       <title>The Hotkey Assignment window</title>
       <mediaobject>
