@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: using-mrvoice.sgml,v 1.32 2004/03/11 21:40:41 minter Exp $
+  CVS ID: $Id: using-mrvoice.sgml,v 1.33 2004/03/12 03:17:35 minter Exp $
 -->
 
 <chapter><title>Using Mr. Voice</title>
@@ -72,6 +72,7 @@
         <listitem><para><guilabel>Artist</guilabel>: The artist responsible for the song.  This is an <emphasis>optional</emphasis> item.</para></listitem>
         <listitem><para><guilabel>Category</guilabel>:  Pressing the <guilabel>Choose Category</guilabel> button beside this entry will give you a list of the categories that you currently have defined.  You must choose one of these categories to place the song into.</para></listitem>
         <listitem><para><guilabel>Category Extra Info</guilabel>: Kind of a "hodgepodge" entry, this information can be whatever you want.  At ComedyWorx, we use it as a modifier for the category.  So if the category is "Game", the Extra Info is the name of the game.  If the category is for Player Intros, the Extra Info will tell us whether it's specifically for a referee, dimwit, or whatnot.  So, basically it's just free-form for whatever you need, and is an <emphasis>optional</emphasis> field.</para></listitem>
+        <listitem><para><guilabel>Publisher</guilabel>: This field is for the publisher of the song.  Current values are ASCAP, BMI, or Other.  The default value is Other, which should be fine for people who don't want to bother with publisher information.  But if you're using Mr. Voice in an organization that needs this information, here's where you can put it.</para></listitem>
         <listitem><para><guilabel>File To Add</guilabel>:  This is where you give Mr. Voice the path to the actual audio file that you want to add.  Clicking the <guibutton>Select File</guibutton> button will bring up a familiar "file chooser" box.  The screenshot below is from a Linux system - Windows users will see the familiar Windows file chooser box.
         <figure>
 	  <title>The Add Song File Selection window</title>
@@ -139,8 +140,8 @@
         <listitem><para><guilabel>Title</guilabel>: Text in this box will be compared with the "Title" field of the songs.</para></listitem>
         <listitem><para><guilabel>Any Field</guilabel>: Text in this box will be compared to the Title, Artist, and Extra Info fields of each song, and return any song that has a match in any of those fields.  So searching the <guilabel>Any Field</guilabel> box for "eat" will return songs by The Beatles, the song titled "Masterpeace Theatre Theme", or one with the extra info of "Featured".  The only thing that the <guilabel>Any Field</guilabel> does <emphasis>NOT</emphasis> search is the Category - you will need to select that manually.</para></listitem>
       </itemizedlist>
-      <para><note><para>Note!  If you do a search with the default (Any) category and no qualifiers in any of the entry fields, every song in your database will be displayed.  This could take a while, depending on the size of your database and the speed of your computer.  If you try to do this kind of search, a box will pop up asking you to confirm.</para></note></para>
       <para>After you have filled in the information that you would like to search for, you can either press the <keycap>Enter</keycap> key, or press the <guibutton>Do Search</guibutton> button.  The status bar will tell you how many matching entries your search found, and display the results in the Search Results box.</para>
+      <para>If you have chosen in the <menuchoice><guimenu>File</guimenu> <guimenuitem>Preferences</guimenuitem></menuchoice> menu to restrict searches based on the Publisher, that will affect your search results - only searches from your select publisher group will end up displayed.</para>
       <para>If your mouse has a scroll-wheel on it, you can use the wheel to scroll the list of search results up and down.</para>
       <para>There is also an <guimenu>Advanced Search</guimenu> menu.  On that menu, you can choose to have Mr. Voice show you all the song that have changed during the current day, or over the past 7, 14, or 30 days.  You can also search for songs that were added or changed over an arbitrary date range via the <guimenuitem>Advanced Date Search</guimenuitem> menu.</para>
     </sect2>
@@ -159,6 +160,7 @@
     <para>Hotkeys are a convenient way of having songs at the ready when you need them.  They can be used for common situations, events where you need a range of songs ready with little notice, and so forth.  You can also save hotkeys to files for later use.</para>
     <sect2><title>Configuring Hotkeys</title>
       <para>To set up a hotkey, you must first search for a song and have it displayed in the search results box.  The available keys are the function keys <keycap>F1</keycap> through <keycap>F12</keycap>.  You can bind a song to more than one hotkey if you choose.  To assign a song to a hotkey, open the Show Hotkeys window, left-click on a song within the Search Results box, and drag it over to the name of a hotkey (<keycap>F1</keycap> through <keycap>F12</keycap>), and drop it on the name.  The song you dragged will then be assigned to the hotkey that you dropped it on.</para>
+      <para>You can also drags songs from the Holding Tank onto a hotkey, just like you can from the main search box.</para>
       <para>To see which hotkeys you currently have defined, choose <menuchoice> <guimenu>Hotkeys</guimenu> <guimenuitem>Show Hotkeys</guimenuitem> </menuchoice> from the main menu.  You can also press <keycombo action='simul'> <keycap>Control</keycap> <keycap>H</keycap> </keycombo>. That will bring up a menu showing each of the 12 hotkeys, and beside the key name, the filename of the song that is bound to the key.  If you leave this window up, you can see it change as you add or remove hotkeys.</para>
     <figure>
       <title>The Hotkey window</title>
