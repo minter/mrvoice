@@ -32,14 +32,13 @@ use Time::HiRes qw(gettimeofday);
 use Ogg::Vorbis::Header::PurePerl;
 use File::Glob qw(:globally :nocase);
 use File::Temp qw/ tempfile tempdir /;
-use Cwd 'abs_path';
+use Cwd;
 use Getopt::Long;
 use XMLRPC::Lite;
 use MIME::Base64 qw(decode_base64 encode_base64);
 use Digest::MD5 qw(md5_hex);
 use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
 use XML::Simple;
-use Cwd;
 
 use subs
   qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_items advancedmenu_items helpmenu_items/;
@@ -2902,7 +2901,7 @@ sub delete_song
 sub show_about
 {
     my @modules =
-      qw/Tk DBI DBD::SQLite MPEG::MP3Info MP4::Info Audio::Wav Ogg::Vorbis::Header::PurePerl Date::Manip Time::Local Time::HiRes File::Glob File::Temp File::Basename File::Copy XMLRPC::Lite Digest::MD5 MIME::Base64/;
+      qw/Tk DBI DBD::SQLite MPEG::MP3Info MP4::Info Audio::Wav Ogg::Vorbis::Header::PurePerl Date::Manip Time::Local Time::HiRes File::Glob File::Temp File::Basename File::Copy XMLRPC::Lite Digest::MD5 MIME::Base64 Archive::Zip XML::Simple Cwd/;
     push(
         @modules,
         qw/LWP::UserAgent HTTP::Request Win32::Process Win32::FileOp Audio::WMA/
@@ -2944,7 +2943,7 @@ sub show_about
 
     $about_lb->insert( 'end', "Perl Version: $]" );
     $about_lb->insert( 'end', "Operating System: $^O" );
-    foreach my $module (@modules)
+    foreach my $module (sort @modules)
     {
         no strict 'refs';
         my $versionstring = "${module}::VERSION";
