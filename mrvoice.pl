@@ -45,7 +45,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.285 2003/12/30 18:11:59 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.286 2003/12/30 19:17:17 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -816,6 +816,7 @@ sub open_tank
   {
     if (! -r $selectedfile)
     {
+      $status = "Could not open saved file for reading";
       infobox($mw, "File Error", "Could not open file $selectedfile for reading");
     }
     else
@@ -841,6 +842,7 @@ sub open_tank
       }       
     } 
     close (TANKFILE);
+    $status = "Loaded saved holding tank file $selectedfile";
   }
   else
   {
@@ -2111,7 +2113,7 @@ sub show_docs
   
 sub show_about
 {
-  $rev = '$Revision: 1.285 $';
+  $rev = '$Revision: 1.286 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
