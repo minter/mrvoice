@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.161 2002/11/01 15:39:44 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.162 2002/11/01 17:44:35 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -842,8 +842,22 @@ sub add_new_song
   }
   $newfilename = "$newfilename$extension";
   $addsong_title = $dbh->quote($addsong_title);
-  $addsong_artist = $dbh->quote($addsong_artist);
-  $addsong_info = $dbh->quote($addsong_info);
+  if ($addsong_info eq "")
+  {
+    $addsong_info = "NULL";
+  }
+  else
+  {
+    $addsong_info = $dbh->quote($addsong_info);
+  }
+  if ($addsong_artist eq "")
+  {
+    $addsong_artist = "NULL";
+  }
+  else
+  {
+    $addsong_artist = $dbh->quote($addsong_artist);
+  }
   $query = "INSERT INTO mrvoice VALUES (NULL,$addsong_title,$addsong_artist,'$addsong_cat',$addsong_info,'$newfilename',NULL)";
   copy ($addsong_filename,"$filepath$newfilename");
   if ($dbh->do($query))
@@ -1074,7 +1088,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.161 $';
+  $rev = '$Revision: 1.162 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
