@@ -40,7 +40,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.220 2003/04/12 12:49:59 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.221 2003/04/12 13:03:29 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1087,12 +1087,12 @@ sub bulk_add
       my $query = "INSERT INTO mrvoice (id,title,artist,category,filename,time,modtime) VALUES (NULL, $db_title, $db_artist, '$db_cat', '$db_filename', '$time', NULL)";
       my $sth=$dbh->prepare($query);
       $sth->execute or die "can't execute the query: $DBI::errstr\n";
-      push (@accepted, basename($file));
+      push (@accepted, basename(Win32::GetLongPathName($file)));
     }
     else
     {
       # No title, no go.
-      push (@rejected, basename($file));
+      push (@rejected, basename(Win32::GetLongPathName($file)));
     }
   }
   $mw->Unbusy(-recurse=>1);
@@ -1663,7 +1663,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.220 $';
+  $rev = '$Revision: 1.221 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
