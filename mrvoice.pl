@@ -14,8 +14,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/09/26 17:07:11 $
-#	CVS REVISION NUMBER:    $Revision: 1.44 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/09/27 14:02:08 $
+#	CVS REVISION NUMBER:    $Revision: 1.45 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -80,9 +80,6 @@ else
 
 my $version = "1.1.1";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
-
-$filepath = "$filepath/" unless ($filepath =~ "/.*\/$/");
-$savedir = "$savedir/" unless ($savedir =~ "/.*\/$/");
 
 sub open_file
 {
@@ -837,7 +834,6 @@ sub do_exit
 
 sub read_rcfile
 {
-#  $filename = <~/.mrvoicerc>;
   if (-r $rcfile)
   {
     open (RCFILE,$rcfile);
@@ -848,6 +844,16 @@ sub read_rcfile
       $$var1=$var2;
     }
     close (RCFILE);
+  }
+  if ($^O eq "MSWin32")
+  {
+    $filepath = $filepath . "\\" unless ($filepath =~ /\\$/);
+    $savedir = $savedir . "\\" unless ($savedir =~ /\\$/);
+  }
+  else
+  {
+    $filepath = $filepath . "/" unless ($filepath =~ /\/$/);
+    $savedir = $savedir . "/" unless ($savedir =~ /\/$/);
   }
 }
 
