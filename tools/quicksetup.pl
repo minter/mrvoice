@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# $Id: quicksetup.pl,v 1.2 2003/08/22 13:38:34 minter Exp $
+# $Id: quicksetup.pl,v 1.3 2003/09/01 22:21:15 minter Exp $
 
 use warnings;
 use DBI;
@@ -194,3 +194,4 @@ print "MP3 Directory: C:\\mp3\n";
 print "Hotkey Directory: C:\\hotkeys\n";
 print "\nYou can adjust non-password things by going to File->Preferences within\nMr. Voice\n";
 print "At this point, Mr. Voice should be configured.  You may want to add the httpq\nplugin (if you haven't already) and set a password in the preferences.\nOtherwise, run mrvoice.exe and start Voicing!\n";
+do_exit(0);
