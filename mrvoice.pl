@@ -25,6 +25,7 @@ use File::Glob qw(:globally :nocase);
 # These modules need to be hardcoded into the script for perl2exe to 
 # find them.
 use Tk::Photo;
+use Tk::Scrollbar;
 use Tk::Menu;
 use Tk::Menubutton;
 use Tk::Checkbutton;
@@ -39,7 +40,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.213 2003/04/09 02:53:56 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.214 2003/04/09 14:56:21 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1660,7 +1661,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.213 $';
+  $rev = '$Revision: 1.214 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
