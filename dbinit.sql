@@ -22,7 +22,9 @@ CREATE TABLE categories (
    description varchar(255) NOT NULL
 );
 
+# We'll give you a default category to put things in.  It can
+# be deleted from within the program if you don't want it.
 INSERT INTO categories VALUES ('GEN','General Category');
 
 #--
-# CVS ID: $Id: dbinit.sql,v 1.4 2001/03/07 13:15:14 minter Exp $
+# CVS ID: $Id: dbinit.sql,v 1.5 2001/05/08 22:39:03 minter Exp $
