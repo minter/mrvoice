@@ -41,7 +41,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.252 2003/07/28 14:15:56 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.253 2003/07/28 16:45:21 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1128,7 +1128,7 @@ sub restore_hotkeys
 
 sub bulk_add
 {
-  my (@accepted, @rejected, $directory);
+  my (@accepted, @rejected, $directory, $longcat, $db_cat);
   my $box1 = $mw->DialogBox(-title=>"Add all songs in directory",
                             -buttons=>["Continue","Cancel"]);
   $box1->Icon(-image=>$icon);
@@ -1223,12 +1223,26 @@ sub bulk_add
       my $sth=$dbh->prepare($query);
       $sth->execute or die "can't execute the query: $DBI::errstr\n";
       $sth->finish;
-      push (@accepted, basename(Win32::GetLongPathName($file)));
+      if ($^O eq "MSWin32")
+      {
+        push (@accepted, basename(Win32::GetLongPathName($file)));
+      }
+      else
+      {
+        push (@accepted, basename($file));
+      }
     }
     else
     {
       # No title, no go.
-      push (@rejected, basename(Win32::GetLongPathName($file)));
+      if ($^O eq "MSWin32")
+      {
+        push (@rejected, basename(Win32::GetLongPathName($file)));
+      }
+      else
+      {
+        push (@rejected, basename($file));
+      }
     }
   }
   $mw->Unbusy(-recurse=>1);
@@ -1929,7 +1943,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.252 $';
+  $rev = '$Revision: 1.253 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
