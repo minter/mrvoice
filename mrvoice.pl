@@ -11,8 +11,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/02/16 21:02:21 $
-#	CVS REVISION NUMBER:    $Revision: 1.4 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/02/16 21:34:35 $
+#	CVS REVISION NUMBER:    $Revision: 1.5 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -58,8 +58,7 @@ sub show_about
   {
     $aboutbox = $mw->Toplevel();
     $aboutbox->title("About this program");
-    $aboutbox->Button(-image=>$head,
-                      -relief=>'flat',
+    $aboutbox->Button(-relief=>'flat',
                       -state=>'disabled')->pack();
     $aboutbox->Label(-text=>"Mr. Voice version $version\n\nBy H. Wade Minter <minter\@lunenburg.org>")->pack();
     $aboutbox->Button(-text=>"Close",
@@ -391,7 +390,6 @@ $mw = MainWindow->new;
 $mw->geometry("+0+0");
 $mw->title("Mr. Voice");
 $mw->minsize(68,10);
-$head = $mw->Photo(-file=>"/home/minter/head.bmp");
 $menuframe=$mw->Frame(-relief=>'ridge',
                       -borderwidth=>2)->pack(-side=>'top',
                                             -fill=>'x',
