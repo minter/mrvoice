@@ -1,3 +1,7 @@
+Mon  Mar 31 2003	H. Wade Minter (minter@lunenburg.org)
+     * Changed the drag-and-drop icon from GIF to XPM.
+     * Fixed minor coding errors.
+
 Sat  Mar 29 2003        H. Wade Minter (minter@lunenburg.org)
      * Reworked the Ogg Vorbis infrastructure to use the PurePerl module. 
        This module should work on all platforms.
@@ -400,4 +404,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.75 2003/03/29 16:18:23 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.76 2003/03/31 15:51:24 minter Exp $
