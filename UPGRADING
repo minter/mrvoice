@@ -1,8 +1,0 @@
-If you're upgrading from version 0.9 or earlier, the functionality from
-the PHP frontends has been folded into the program itself, so the
-mrvoice.php, index.php, config.php, categories.php and mrvoice-add.php files
-are deprecated.  The mrvoice.php file included now is just a frontend to
-search the database.  
-
---
-CVS ID: $Id: UPGRADING,v 1.4 2001/09/28 00:24:51 minter Exp $
