@@ -5,19 +5,19 @@
   <!ENTITY epilogue SYSTEM "troubleshooting.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.38 2002/12/12 18:55:09 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.39 2003/04/08 14:11:18 minter Exp $ 
 -->
 <book status="draft">
 
 <bookinfo>
-  <title>Mr. Voice 1.7 Installation and Reference Manual</title>
+  <title>Mr. Voice 1.8 Installation and Reference Manual</title>
   <author>
     <firstname>H. Wade</firstname><surname>Minter</surname>
     <affiliation>
       <address><email>minter@lunenburg.org</email></address>
     </affiliation>
   </author>
-  <copyright><year>2000-2002</year><holder>H. Wade Minter</holder></copyright>
+  <copyright><year>2000-2003</year><holder>H. Wade Minter</holder></copyright>
 </bookinfo>
 
 <dedication><title>Acknowledgements</title>
@@ -59,6 +59,17 @@
 <preface>
   <title>What's New</title>
   <para>A quick reference to what's changed between versions.</para>
+  <sect1><title>What's new in Version 1.8</title>
+    <para>
+      <itemizedlist>
+        <listitem><para>There is a <menuchoice> <guimenu>File</guimenu> <guimenuitem>Bulk-Add</guimenuitem> </menuchoice> menu option.  This will allow you to choose a category and a directory full of MP3 or OGG files, and then add all of those files into the specified category, using the ID3 tags to automatically fill in the title and artist.  (Bugzilla ID #8)</para></listitem>
+        <listitem><para>The hotkey listing now shows title and artist, instead of the raw filename.  Note - changing this caused a change in the format of the hotkey files, so you will need to run the <filename>converthotkeys.pl</filename> utility from the tools subdirectory once before you can use hotkeys under 1.8.</para></listitem>
+        <listitem><para>A bug that affected the F10 hotkey under Windows has been fixed - that key should work like the other hotkeys now.</para></listitem>
+        <listitem><para>Better support for Ogg Vorbis files under Windows.</para></listitem>
+        <listitem><para>Verified that Mr. Voice runs under MacOS X 10.2 with Perl 5.8 and X11.app.</para></listitem>
+      </itemizedlist>
+    </para>
+  </sect1>
   <sect1><title>What's new in Version 1.7</title>
     <para>
       <itemizedlist>
@@ -88,26 +99,6 @@
         <listitem><para>The Add Song box will now, if it finds an error, keep the stuff you've already entered and let you fix the error, rather than making you start over completely.  (Suggested by Bill C. in Portland)</para></listitem>
         <listitem><para>Added better handling for displaying the playing time of <ulink url="http://www.vorbis.com/">Ogg Vorbis</ulink> files under Linux.  Windows/ActivePerl doesn't have the Ogg::Vorbis module yet, so it's currently Linux-only.</para></listitem> 
         <listitem><para>Added the option to use the <ulink url="http://www.csc.uvic.ca/~karvanit/">httpQ</ulink> WinAmp plugin.  If you install and configure the plugin (see Windows installation section), you can shift-click on the <guibutton>Stop</guibutton> button, or press <keycombo action='simul'> <keycap>Shift</keycap> <keycap>Escape</keycap> </keycombo>, and the currently-playing song will fade out and stop over a couple of seconds, instead of stopping abruptly.  <emphasis>This is a Windows/WinAmp-only feature.</emphasis>  (Suggested by Randy in KC)</para></listitem> 
-      </itemizedlist>
-    </para>
-  </sect1>
-  <sect1><title>What's new in Version 1.5.3</title>
-    <para>
-      <itemizedlist>
-        <listitem><para>The scroll-wheel on scroll-wheel mice is now supported in the main search box.  (Suggested by Bling-Bling in Raleigh).</para></listitem>
-	<listitem><para>Added a warning popup when you do a blank search, which would display the entire database and could take quite a bit of time.  (Suggested by Randy in KC)</para></listitem>
-	<listitem><para>Added a hotkey (<keycombo action='simul'> <keycap>Control</keycap> <keycap>P</keycap></keycombo>) that will play the currently-selected song.  (Suggested by Randy in KC and Bill in Portland)</para></listitem>
-      </itemizedlist>
-    </para>
-  </sect1>
-  <sect1><title>What's New In Version 1.5</title>
-    <para>
-      <itemizedlist>
-        <listitem><para>There is a requirement for a new perl module - Audio::Wav.  This module lets the program handle WAV files better.</para></listitem>
-        <listitem><para>The Windows version of the software now contains the <filename>mrvoice.exe</filename> file.  This is an experimental binary build of the software using perl2exe.  If it works like it's supposed to, that one file replaces the need to have ActivePerl and all of the perl modules, which should make installation easier.</para></listitem>
-        <listitem><para>If a hotkey file named <filename>default.mrv</filename> exists in your hotkey save directory, Mr. Voice will automatically load those hotkeys when the program starts.</para></listitem>
-        <listitem><para>Fixed a bug where the count of items returned might not agree with the number of items in the search box.</para></listitem>
-        <listitem><para>Other minor bugfixes and GUI cleanups.</para></listitem>
       </itemizedlist>
     </para>
   </sect1>
