@@ -17,6 +17,7 @@
         <listitem><para>The <ulink url="http://www.rarewares.org/mp4.html">AAC plugin</ulink> for WinAmp.  <emphasis>Optional, but required if you want to use AAC/MP4 files</emphasis></para></listitem>
       </itemizedlist>
       </para>
+      <para>If, for some reason, you do not want to run the prebuilt <filename>mrvoice.exe</filename> file, and want to install all of the Perl modules that Mr. Voice requires by hand, follow the Unix/Linux instructions below and either build the modules by hand, or install the appropriate ActiveState PPM packages.  But I doubt many Windows users will want to do that.</para>
     </sect2>
     
     <sect2><title>Unix/Linux/BSD</title>
@@ -32,13 +33,16 @@
                 <para><ulink url="http://www.cpan.org/modules/by-module/Date/">Date::Manip</ulink></para>
               </listitem>
               <listitem>
-                <para><ulink url="http://www.cpan.org/modules/by-module/DBD/">DBD </ulink> driver for your database (SQLite 1.0 and higher supported)</para>
+                <para><ulink url="http://www.cpan.org/modules/by-module/DBD/">DBD </ulink> driver for your database (DBD::SQLite 1.0 and higher supported)</para>
               </listitem>
               <listitem>
                 <para><ulink url="http://www.cpan.org/modules/by-module/DBI/">DBI</ulink></para>
               </listitem>
               <listitem>
                 <para><ulink url="http://www.cpan.org/modules/by-module/MPEG/">MPEG::MP3-Info</ulink></para>
+              </listitem>
+              <listitem>
+                <para><ulink url="http://www.cpan.org/modules/by-module/MP4/">MP4::Info</ulink></para>
               </listitem>
               <listitem>
                 <para><ulink url="http://www.cpan.org/modules/by-module/Ogg/">Ogg::Vorbis::Header::PurePerl</ulink></para>
@@ -51,9 +55,6 @@
               </listitem>
               <listitem>
                 <para><ulink url="http://www.cpan.org/modules/by-module/Tk/">Tk::ProgressBar::Mac</ulink></para>
-              </listitem>
-              <listitem>
-                <para><ulink url="http://www.cpan.org/modules/by-module/MP4/">MP4::Info</ulink></para>
               </listitem>
             </itemizedlist>
           </para>
@@ -75,6 +76,9 @@
       <para>Mr. Voice 2.0 involves a migration from the old database backend (MySQL) used in Mr. Voice 1.10.6 and before, to a new database backend (SQLite).  In order to migrate your data from the old database to the new one, you need to run the migration utility.</para>
       <para>Windows users should double-click on the <filename>upgrade20.exe</filename> file.  It will open up a DOS box.  Follow the instructions on-screen and, if there are no errors, it will create the new Mr. Voice database file and update your configuration to point to it.  If there are errors, your MySQL database will not be modified, so you can always use 1.10.6 or lower as usual while I'm working on the problem.</para>
       <para>Unix users should run the <filename>tools/upgrade20.pl</filename> script, and it will do the same as in the Windows instructions.</para>
+      <para>Once you are comfortable that the upgrade worked properly and that you're set up in Mr. Voice 2.0, you can delete your old MySQL installation to save disk space and system resources.</para>  
+      <para>Windows users can disable the MySQL service, while keeping the software installed, by right-clicking on the stoplight in the system tray and choosing <menuchoice> <guimenu>WinNT</guimenu> <guimenuitem>Stop Service</guimenuitem> </menuchoice>.  This will leave your old data alone, but the MySQL service will not be running and using system resources.  To completely remove MySQL from your system, go to Add/Remove Programs, choose MySQL, and hit "Remove".  Then, you can delete the <filename>C:\mysql</filename> directory.  Once that is done, MySQL is gone, along with your old database.</para>
+      <para>For Unix users, you may want to go into the MySQL command shell and "drop database mrvoice", and/or uninstall MySQL from your system completely (if it was only being used for Mr. Voice, of course)</para>
       <para>If you are installing Mr. Voice 2.0 on a new system for the first time, you do <emphasis>not</emphasis> need to do these upgrade steps</para>
     </sect2>
     <sect2><title>Unix Installation Instructions</title>
