@@ -110,6 +110,13 @@ IV.  CONFIGURING:
         to the database - playing music, adding, deleting, and editing must 
         all be done from within the program itself.
 
+        The PHP frontend provides a link to download the MP3.  To use this 
+        feature, you must have an alias in your HTTPD config file pointing
+        $pathname in your web tree to $pathname on the disk.  So, if your
+        MP3 files live in /mp3/ on your disk, then http://www.yourhost.com/mp3/
+        must point to /mp3/ on the disk.  You can do this with either an
+        Alias declaration in your httpd.conf file, or a symlink.
+
 V.   POPULATING THE DATABASE:
      Before you can use mrvoice, you must populate two tables in the 
      database.  The first is the categories table, the second is the mrvoice 
@@ -239,4 +246,4 @@ VIII. REPORTING BUGS:
 
 --------------------------------------------------------------------------
 
-CVS ID: $Id: README,v 1.11 2001/03/07 13:14:09 minter Exp $
+CVS ID: $Id: README,v 1.12 2001/03/07 23:15:24 minter Exp $
