@@ -49,7 +49,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# SVN ID: $Id: mrvoice.pl 770 2004-07-13 18:47:37Z minter $
+# SVN ID: $Id$
 # CHANGELOG:
 #   See ChangeLog file
 ##########
