@@ -19,13 +19,14 @@
    $database_username = "USERNAME";
    $database_password = "PASSWORD";
  
-   # CVS ID: $Id: mrvoice.php,v 1.3 2001/02/21 03:00:44 minter Exp $
+   # CVS ID: $Id: mrvoice.php,v 1.4 2001/02/21 03:06:17 minter Exp $
 ?>
 
 <TITLE>Mr. Voice MP3 Database</TITLE>
 <BODY BGCOLOR=#FFFFFF>
 <CENTER><H1>Online Mr. Voice MP3 Database</H1></CENTER>
 <P>You can search the Mr. Voice database from this form.  
+<P>To add a song to the database, use <a href=mrvoice-add.php>this form</A>.
 <?
   $thismonth = date("n");
   $thisday = date("d");
