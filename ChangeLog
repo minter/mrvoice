@@ -1,5 +1,6 @@
 Wed  May 26 2004	H. Wade Minter (minter@lunenburg.org)
      * Switch from DBD::MySQL to DBD::SQLite
+     * Move database schema into the __DATA__ block of mrvoice.pl
 
 Tue  May 25 2004	H. Wade Minter (minter@lunenburg.org)
      * Display invalid songs (where there is an entry in the database, but
@@ -655,4 +656,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.138 2004/05/26 15:06:10 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.139 2004/05/26 18:54:47 minter Exp $
