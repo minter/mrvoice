@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.comedyworx.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/11/08 22:00:54 $
-#	CVS REVISION NUMBER:    $Revision: 1.80 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/11/10 21:41:42 $
+#	CVS REVISION NUMBER:    $Revision: 1.81 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -137,6 +137,10 @@ sub bind_hotkeys
   $window->bind("<Key-F12>", [\&play_mp3,"F12"]);
   $window->bind("<Key-Return>", [\&do_search]);
   $window->bind("<Key-Escape>", [\&stop_mp3]);
+  $window->bind("<Control-Key-x>", [\&do_exit]);
+  $window->bind("<Control-Key-o>", [\&open_file]);
+  $window->bind("<Control-Key-s>", [\&save_file]);
+  $window->bind("<Control-Key-h>", [\&list_hotkeys]);
   #STARTCSZ
   #$window->bind("<Alt-Key-t>", [\&play_mp3,"ALT-T"]);
   #$window->bind("<Alt-Key-y>", [\&play_mp3,"ALT-Y"]);
@@ -156,19 +160,20 @@ sub open_file
   # hotkey_name::mp3_name, and assign the value to the hotkey.
   # Finally, we add this file to our dynamic documents menu.
 
-  my $selectedfile = $_[0];
+  my $window = $_[0];
+  my $selectedfile = $_[1];
   if (!$selectedfile)
   {
-     $selectedfile = $mw->getOpenFile(-filetypes=>$hotkeytypes,
-                                      -initialdir=>$savedir,
-                                      -title=>'Open a File');
+     $selectedfile = $window->getOpenFile(-filetypes=>$hotkeytypes,
+                                          -initialdir=>$savedir,
+                                          -title=>'Open a File');
   }
                       
   if ($selectedfile)
   {
     if (! -r $selectedfile)
     {
-      infobox($mw, "File Error", "Could not open file $selectedfile for reading");
+      infobox($window, "File Error", "Could not open file $selectedfile for reading");
     }
     else
     {
@@ -230,7 +235,7 @@ sub save_file
       print HOTKEYFILE "f11::$f11\n";
       print HOTKEYFILE "f12::$f12\n";
       close (HOTKEYFILE);
-      $status = "Finished saving hotkeys to $selectedfile\n";
+      $status = "Finished saving hotkeys to $selectedfile";
       dynamic_documents($selectedfile);
     }
   }
@@ -254,7 +259,7 @@ sub dynamic_documents
   push (@current, $file);
 
   $dynamicmenu->command(-label=>"$file",
-                        -command => [\&open_file, $file]);
+                        -command => [\&open_file, $mw, $file]);
 
   if ($#current >= $savefile_max)
   {
@@ -788,6 +793,11 @@ sub clear_selected
 
 sub list_hotkeys
 {
+  if (Exists($hotkeysbox))
+  {
+    # We only want one copy on the screen at a time.
+    return;
+  }
   $hotkeysbox=$mw->Toplevel();
   bind_hotkeys($hotkeysbox);
   $hotkeysbox->title("Hotkeys");
@@ -1106,7 +1116,16 @@ sub do_exit
  # exits the program.
 
  $dbh->disconnect;
- close (XMMS);
+ if ("$^O" eq "MSWin32")
+ {
+   # Close the MP3 player on a Windows system (borken)
+   close (MP3PLAYER);
+ }
+ else
+ {
+   # Close the MP3 player on a Unix system.
+   kill (15,$mp3_pid);
+ }
  Tk::exit;
 } 
 
@@ -1258,7 +1277,23 @@ if (! -W $savedir)
 
 # We use the following statement to open the MP3 player asynchronously
 # when the Mr. Voice app starts.
-open (XMMS,"$mp3player|");
+
+if ("$^O" eq "MSWin32")
+{
+  # Start the MP3 player on a Windows system
+  open (MP3PLAYER,"$mp3player|");
+}
+else
+{
+  # Start the MP3 player on a Unix system using fork/exec
+  $mp3_pid = fork();
+  if ($mp3_pid == 0) 
+  {
+    # We're the child of the fork
+    exec ("$mp3player");
+  }
+}
+
 
 $menuframe=$mw->Frame(-relief=>'ridge',
                       -borderwidth=>2)->pack(-side=>'top',
@@ -1268,24 +1303,25 @@ $filemenu = $menuframe->Menubutton(-text=>"File",
                                    -tearoff=>0)->pack(-side=>'left');
 $dynamicmenu=$filemenu->menu->Menu(-tearoff=>0);
 $filemenu->AddItems(["command"=>"Open Hotkey File",
-                    -command=>\&open_file]); 
+                    -command=>\&open_file,
+		    -accelerator=>"Ctrl-O"]); 
 $filemenu->AddItems(["command"=>"Save Hotkeys To A File",
-                    -command=>\&save_file]); 
+                    -command=>\&save_file,
+		    -accelerator=>"Ctrl-S"]); 
 $filemenu->AddItems("-");
 $filemenu->AddItems(["command"=>"Preferences",
                     -command=>\&edit_preferences]);
 $filemenu->cascade(-label=>"Recent Files");
 $filemenu->entryconfigure("Recent Files", -menu=>$dynamicmenu);
 $filemenu->AddItems("-");
-$filemenu->AddItems(["command"=>"Exit", 
-                     -command=>sub { 
-                                     $dbh->disconnect;
-                                      Tk::exit;
-                                    }]);
+$exititem = $filemenu->AddItems(["command"=>"Exit", 
+                                -command=>\&do_exit,
+				-accelerator=>"Ctrl-X"]);
 $hotmenu = $menuframe->Menubutton(-text=>"Hotkeys",
                                   -tearoff=>0)->pack(-side=>'left');
 $hotmenu->AddItems(["command"=>"Show Hotkeys",
-                    -command=>\&list_hotkeys]);
+                    -command=>\&list_hotkeys,
+		    -accelerator=>"Ctrl-H"]);
 $hotmenu->AddItems(["command"=>"Clear All Hotkeys",
                     -command=>\&clear_hotkeys]);
 #STARTCSZ
