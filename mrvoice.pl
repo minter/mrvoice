@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.372 2004/04/22 20:25:48 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.373 2004/04/22 20:34:31 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -62,6 +62,9 @@ our %oldfkeys;       # Used when restoring hotkeys
 our %fkeys_cb;       # The checkboxes in the Hotkeys box
 our @current;        # Array holding the dynamic documents
 our $mp3_pid;        # The Process ID of the MP3 player
+our $hotkeysbox;     # The hotkey display Toplevel
+our $tank_token;     # The Holding Tank D&D Token
+our $dnd_token;      # The main Search Box D&D Token
 ##########
 
 our $current_token;
@@ -2282,7 +2285,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.372 $';
+    my $rev    = '$Revision: 1.373 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::mysql->VERSION;
@@ -2543,7 +2546,7 @@ sub list_hotkeys
         my %fkeys_frame;
         my %fkeys_chkb;
         my %fkeys_label;
-        my $hotkeysbox = $mw->Toplevel();
+        $hotkeysbox = $mw->Toplevel();
         $hotkeysbox->withdraw();
         $hotkeysbox->Icon( -image => $icon );
         bind_hotkeys($hotkeysbox);
@@ -3211,7 +3214,8 @@ sub Tank_Drop
 #########
 $mw = MainWindow->new;
 $mw->withdraw();
-$mw->configure( -menu => $menubar = $mw->Menu );
+my $menubar = $mw->Menu;
+$mw->configure( -menu => $menubar );
 $mw->geometry("+0+0");
 $mw->title("Mr. Voice");
 $mw->minsize( 67, 2 );
