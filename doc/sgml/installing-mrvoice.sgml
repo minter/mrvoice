@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.22 2003/08/31 19:23:02 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.23 2003/09/01 20:24:55 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
@@ -36,6 +36,9 @@
                 <para><ulink url="http://www.cpan.org/modules/by-module/Tk/">Tk</ulink></para>
               </listitem>
               <listitem>
+                <para><ulink url="http://www.cpan.org/modules/by-module/Tk/SREZIC/">Patch-SREZIC-Tk</ulink></para>
+              </listitem>
+              <listitem>
                 <para><ulink url="http://www.cpan.org/modules/by-module/MPEG/">MPEG::MP3-Info</ulink></para>
               </listitem>
               <listitem>
@@ -49,6 +52,9 @@
               </listitem>
               <listitem>
                 <para><ulink url="http://www.cpan.org/modules/by-module/Tk/">Tk::ProgressBar::Mac</ulink></para>
+              </listitem>
+              <listitem>
+                <para><ulink url="http://www.cpan.org/authors/id/K/KR/KRISTI/">Tk::DirSelect</ulink></para>
               </listitem>
             </itemizedlist>
           </para>
