@@ -1,9 +1,9 @@
-# CVS ID: $Id: Makefile,v 1.1 2001/12/21 19:15:03 minter Exp $
+# CVS ID: $Id: Makefile,v 1.2 2002/02/07 19:53:08 minter Exp $
 
 # Define Variables
 export BOOK := mrvoice
 export HTML_STYLESHEET := /usr/local/share/sgml/docbook/dsssl/modular/html/docbook.dsl
-export PDF_STYLESHEET := /usr/local/share/sgml/docbook/dsssl/cygnus/cygnus-both.dsl
+export PDF_STYLESHEET := /usr/local/share/sgml/docbook/dsssl/modular/print/docbook.dsl
 export CHAPTERS := ../sgml/mrvoice.sgml ../sgml/installing-mrvoice.sgml ../sgml/using-mrvoice.sgml ../sgml/config-mrvoice.sgml
 
 all:	html pdf clean
