@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: using-mrvoice.sgml,v 1.8 2001/09/26 17:07:48 minter Exp $
+  CVS ID: $Id: using-mrvoice.sgml,v 1.9 2001/09/28 16:09:53 minter Exp $
 -->
 
 <chapter><title>Using Mr. Voice</title>
@@ -71,8 +71,7 @@
       <para>If you clear all hotkeys, the <menuchoice> <guimenu>Hotkeys</guimenu> <guimenuitem>Restore Hotkeys</guimenuitem> </menuchoice> option becomes available.  It allows you to return your hotkeys to the state they were in immediately prior to the clearing.  This exists in case you accidentally clear hotkeys that you don't mean to.  Note that the Restore Hotkeys feature currently only works for the Clear All Hotkeys and Open Hotkey File (discussed below) options.</para>
     </sect2>
     <sect2><title>Using Hotkeys</title>
-      <para>To use hotkeys once you have defined them, simply make sure that the main Mr. Voice window is selected, and press the hotkey for the song that you want.  The song should immediately begin playing.
-        <important><para>If you have any other window besides the main window selected when you press the hotkey, it will not play.  The main window must be the one selected for hotkeys to work - click once on the main window to be sure that it's selected if you have problems playing via a hotkey.  This bug should be addressed in a later release.</para></important>
+      <para>To use hotkeys once you have defined them, simply make sure that a Mr. Voice window is selected, and press the hotkey for the song that you want.  The song should immediately begin playing.
       </para>
     </sect2>
     <sect2><title>Saving and Loading Hotkeys</title>
