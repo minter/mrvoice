@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.384 2004/05/26 17:08:37 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.385 2004/05/26 18:21:59 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2289,7 +2289,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.384 $';
+    my $rev    = '$Revision: 1.385 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::SQLite->VERSION;
@@ -3275,6 +3275,43 @@ sub Tank_Drop
     }
 }
 
+sub create_new_database
+{
+    my $dbfile = shift;
+    my $create_dbh;
+    my @queries;
+    if (
+        !( $create_dbh = DBI->connect( "dbi:SQLite:dbname=$dbfile", "", "" ) ) )
+    {
+        die "Could not create new database file $dbfile via DBI";
+    }
+
+    my $query;
+    while ( my $line = <DATA> )
+    {
+        chomp($line);
+        next if ( ( $line =~ /^\s*#/ ) || ( $line =~ /^\s+$/ ) );
+
+        if ( $line =~ /\);/ )
+        {
+            push( @queries, "$query \)\;" );
+            $query = "";
+        }
+        else
+        {
+            $query .= $line;
+        }
+    }
+
+    foreach my $query (@queries)
+    {
+        my $sth = $create_dbh->prepare($query);
+        $sth->execute or die "Could not run database query $query";
+    }
+
+    $status = "New database $dbfile initialized successfully";
+}
+
 #########
 # MAIN PROGRAM
 #########
@@ -3305,6 +3342,30 @@ if ( !defined $config{db_file} )
     {
         edit_preferences();
         die "Died because database file not set";
+    }
+}
+
+if ( !( -e $config{db_file} ) )
+{
+    my $box = $mw->DialogBox(
+        -title          => "Database Error",
+        -buttons        => [ "Create", "Cancel" ],
+        -default_button => "Cancel"
+    );
+    $box->Icon( -image => $icon );
+    $box->add( "Label",
+        -text =>
+          "You have chosen $config{db_file} as your database file,\nbut it does not exist.\n\nYou can either create and initialize a new Mr. Voice database at that location, or\nCancel and select the proper location of your database file"
+    )->pack();
+    my $result = $box->Show();
+    if ( $result eq "Create" )
+    {
+        create_new_database( $config{db_file} );
+    }
+    else
+    {
+        edit_preferences();
+        die "Died because we could not access database file $config{db_file}";
     }
 }
 
@@ -4323,3 +4384,30 @@ if ( -r catfile( $config{'savedir'}, "default.mrv" ) )
 $mw->deiconify();
 $mw->raise();
 MainLoop;
+
+__DATA__
+# This is the Mr. Voice database schema
+# 
+
+CREATE TABLE mrvoice (
+   id INTEGER PRIMARY KEY,
+   title varchar(255) NOT NULL,
+   artist varchar(255),
+   category varchar(8) NOT NULL,
+   info varchar(255),
+   filename varchar(255) NOT NULL,
+   time varchar(10),
+   modtime timestamp(6),
+   publisher varchar(16)
+);
+
+CREATE TABLE categories (
+   code varchar(8) NOT NULL,
+   description varchar(255) NOT NULL
+);
+
+# We'll give you a default category to put things in.  It can
+# be deleted from within the program if you don't want it.
+INSERT INTO categories VALUES (
+  'GEN','General Category'
+);
