@@ -15,7 +15,7 @@ use MPEG::MP3Info;
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.92 2001/12/08 19:44:58 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.93 2001/12/20 02:09:32 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -134,12 +134,12 @@ sub bind_hotkeys
   $window->bind("<Key-F10>", [\&play_mp3,"F10"]);
   $window->bind("<Key-F11>", [\&play_mp3,"F11"]);
   $window->bind("<Key-F12>", [\&play_mp3,"F12"]);
-  $window->bind("<Key-Return>", [\&do_search]);
-  $window->bind("<Key-Escape>", [\&stop_mp3]);
-  $window->bind("<Control-Key-x>", [\&do_exit]);
-  $window->bind("<Control-Key-o>", [\&open_file]);
-  $window->bind("<Control-Key-s>", [\&save_file]);
-  $window->bind("<Control-Key-h>", [\&list_hotkeys]);
+  $window->bind("<Key-Return>", \&do_search);
+  $window->bind("<Key-Escape>", \&stop_mp3);
+  $window->bind("<Control-Key-x>", \&do_exit);
+  $window->bind("<Control-Key-o>", \&open_file);
+  $window->bind("<Control-Key-s>", \&save_file);
+  $window->bind("<Control-Key-h>", \&list_hotkeys);
   #STARTCSZ
   #$window->bind("<Alt-Key-t>", [\&play_mp3,"ALT-T"]);
   #$window->bind("<Alt-Key-y>", [\&play_mp3,"ALT-Y"]);
@@ -842,13 +842,13 @@ sub holding_tank
   $playbutton->configure(-bg=>'green',
                        -activebackground=>'SpringGreen2');
   my $stopbutton = $buttonframe->Button(-text=>"Stop Now",
-                                        -command=>[\&stop_mp3])->pack(-side=>'left');
+                                        -command=>\&stop_mp3)->pack(-side=>'left');
   $stopbutton->configure(-bg=>'red',
                        -activebackground=>'tomato3');
   $buttonframe->Button(-text=>"Close",
                        -command=>sub {$holdingtank->destroy})->pack(-side=>'right');
   $buttonframe->Button(-text=>"Clear Selected",
-                       -command=>[\&clear_tank])->pack(-side=>'right');
+                       -command=>\&clear_tank)->pack(-side=>'right');
 }
 
 sub clear_tank
@@ -946,7 +946,7 @@ sub list_hotkeys
   $hotkeysbox->Button(-text=>"Close",
                       -command=>sub { $hotkeysbox->destroy})->pack(-side=>'left');
   $hotkeysbox->Button(-text=>"Clear Selected",
-                      -command=>[\&clear_selected])->pack(-side=>'right');
+                      -command=>\&clear_selected)->pack(-side=>'right');
 }
 
 sub get_song_id
@@ -1557,11 +1557,11 @@ $playbutton = $statusframe->Button(-text=>"Play Now",
 $playbutton->configure(-bg=>'green',
                        -activebackground=>'SpringGreen2');
 $stopbutton = $statusframe->Button(-text=>"Stop Now",
-                     -command=>[\&stop_mp3])->pack(-side=>'left');
+                     -command=>\&stop_mp3)->pack(-side=>'left');
 $stopbutton->configure(-bg=>'red',
                        -activebackground=>'tomato3');
 $statusframe->Button(-text=>"Assign Hotkey",
-                     -command=>[\&set_hotkey])->pack(-side=>'right');
+                     -command=>\&set_hotkey)->pack(-side=>'right');
 
 $statusframe->Label(-textvariable=>\$status,
                     -relief=>'sunken')->pack(-anchor=>'center',
