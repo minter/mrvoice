@@ -15,7 +15,7 @@ use MPEG::MP3Info;
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.94 2001/12/20 19:32:09 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.95 2002/01/08 00:45:01 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1520,7 +1520,7 @@ $searchbuttonframe=$mw->Frame()->pack(-side=>'top',
                                       -fill=>'x');
 $searchbuttonframe->Button(-text=>"Do Search",
                            -cursor=>'question_arrow',
-                           -command=>\&do_search)->pack(-fill=>'x',-expand=>1);
+                           -command=>\&do_search)->pack();
 #
 #####
 
