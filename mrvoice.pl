@@ -17,7 +17,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.98 2002/02/04 21:18:29 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.99 2002/02/04 21:29:53 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1395,21 +1395,21 @@ else
 
 # Menu bar
 # Using the new-style menubars from "Mastering Perl/Tk"
-$filemenu = $menubar->cascade(-label=>'~File',
+$filemenu = $menubar->cascade(-label=>'File',
                               -tearoff=>0,
                               -menuitems=> filemenu_items);
 $dynamicmenu=$menubar->entrycget('File', -menu)->entrycget('Recent Files', -menu);
-$hotkeysmenu = $menubar->cascade(-label=>'~Hotkeys',
+$hotkeysmenu = $menubar->cascade(-label=>'Hotkeys',
                                  -tearoff=>0,
                                  -menuitems=> hotkeysmenu_items);
 $hotkeysmenu->menu->entryconfigure("Restore Hotkeys", -state=>"disabled");
-$categoriesmenu = $menubar->cascade(-label=>'~Categories',
+$categoriesmenu = $menubar->cascade(-label=>'Categories',
                                     -tearoff=>0,
                                     -menuitems=> categoriesmenu_items);
-$songsmenu = $menubar->cascade(-label=>'~Songs',
+$songsmenu = $menubar->cascade(-label=>'Songs',
                                -tearoff=>0,
                                -menuitems=> songsmenu_items);
-$helpmenu = $menubar->cascade(-label=>'~Help',
+$helpmenu = $menubar->cascade(-label=>'Help',
                               -tearoff=>0,
                               -menuitems=> helpmenu_items);
 
