@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/03/05 22:34:40 $
-#	CVS REVISION NUMBER:    $Revision: 1.22 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/06 02:59:33 $
+#	CVS REVISION NUMBER:    $Revision: 1.23 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -58,7 +58,7 @@ $savedir = "/tmp/";				# The default directory where
 
 #####
 
-my $version = "0.9devel";			# Program version
+my $version = "1.0pre";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
 
 $filepath = "$filepath/" unless ($filepath =~ "/.*\/$/");
@@ -341,6 +341,20 @@ sub add_new_song
         $newfilename = $addsong_title;
       }
       $newfilename =~ s/[^a-zA-Z0-9\-]//g;
+
+      if ( -e "$filepath$newfilename.mp3")
+      {
+        $i=0;
+        while (1 == 1)
+        {
+          if (! -e "$filepath$newfilename-$i.mp3")
+          {
+            $newfilename = "$newfilename-$i";
+            last;
+          }
+          $i++;
+        }
+      }
       $newfilename = "$newfilename.mp3";
       $addsong_title = $dbh->quote($addsong_title);
       $addsong_artist = $dbh->quote($addsong_artist);
@@ -414,7 +428,20 @@ sub edit_song
 
   if ($result eq "Edit")
   {
-    
+    $edit_artist = $dbh->quote($edit_artist);
+    $edit_title = $dbh->quote($edit_title);
+    $edit_info = $dbh->quote($edit_info);
+    $query = "UPDATE mrvoice SET artist=$edit_artist, title=$edit_title, info=$edit_info, category='$edit_category' WHERE id=$id";
+    if ($dbh->do($query))
+    {
+      infobox ("Song Edited Successfully","The song was edited successfully.");
+      $status = "Edited song successfully";
+    }
+    else
+    {
+      infobox ("Error","There was an error editing the song.\nNo changes made.");
+      $status = "Error editing song - no changes made";
+    }
   }
   else
   {
@@ -590,88 +617,74 @@ sub get_song_id
 
 sub set_hotkey
 {
-  #@list = $mainbox->curselection();
   my $id = get_song_id;
+  $box = $mw->DialogBox(-title=>"Bind Hotkeys", -buttons=>["Apply","Cancel"]);
+  $box->add("Label",-text=>"Choose the keys to bind song $id to:")->pack();
+  $box->add("Checkbutton",-text=>"F1",
+                          -variable=>\$f1_cb)->pack();
+  $box->add("Checkbutton",-text=>"F2",
+                          -variable=>\$f2_cb)->pack();
+  $box->add("Checkbutton",-text=>"F3",
+                          -variable=>\$f3_cb)->pack();
+  $box->add("Checkbutton",-text=>"F4",
+                          -variable=>\$f4_cb)->pack();
+  $box->add("Checkbutton",-text=>"F5",
+                          -variable=>\$f5_cb)->pack();
+  $box->add("Checkbutton",-text=>"F6",
+                          -variable=>\$f6_cb)->pack();
+  $box->add("Checkbutton",-text=>"F7",
+                          -variable=>\$f7_cb)->pack();
+  $box->add("Checkbutton",-text=>"F8",
+                          -variable=>\$f8_cb)->pack();
+  $box->add("Checkbutton",-text=>"F9",
+                          -variable=>\$f9_cb)->pack();
+  $box->add("Checkbutton",-text=>"F10",
+                          -variable=>\$f10_cb)->pack();
+  $box->add("Checkbutton",-text=>"F11",
+                          -variable=>\$f11_cb)->pack();
+  $box->add("Checkbutton",-text=>"F12",
+                          -variable=>\$f12_cb)->pack();
+  $result = $box->Show();
 
-  if (! Exists($hotkeybox))
+  if ($result eq "Apply")
   {
-    $hotkeybox = $mw->Toplevel();
-    $hotkeybox->title("Bind hotkeys");
-    $hotkeybox->Label(-text=>"Choose the keys to bind the song:")->pack();
-    $hotkeybox->Label(-textvariable=>\$selection)->pack();
-    $hotkeybox->Checkbutton(-text=>"F1",
-                            -variable=>\$f1_cb)->pack();
-    $hotkeybox->Checkbutton(-text=>"F2",
-                            -variable=>\$f2_cb)->pack();
-    $hotkeybox->Checkbutton(-text=>"F3",
-                            -variable=>\$f3_cb)->pack();
-    $hotkeybox->Checkbutton(-text=>"F4",
-                            -variable=>\$f4_cb)->pack();
-    $hotkeybox->Checkbutton(-text=>"F5",
-                            -variable=>\$f5_cb)->pack();
-    $hotkeybox->Checkbutton(-text=>"F6",
-                            -variable=>\$f6_cb)->pack();
-    $hotkeybox->Checkbutton(-text=>"F7",
-                            -variable=>\$f7_cb)->pack();
-    $hotkeybox->Checkbutton(-text=>"F8",
-                            -variable=>\$f8_cb)->pack();
-    $hotkeybox->Checkbutton(-text=>"F9",
-                            -variable=>\$f9_cb)->pack();
-    $hotkeybox->Checkbutton(-text=>"F10",
-                            -variable=>\$f10_cb)->pack();
-    $hotkeybox->Checkbutton(-text=>"F11",
-                            -variable=>\$f11_cb)->pack();
-    $hotkeybox->Checkbutton(-text=>"F12",
-                            -variable=>\$f12_cb)->pack();
-    $hotkeybox->Button(-text=>"Apply",
-                       -command=>[\&do_hotkey,"$id"])->pack(-side=>'left');
-    $hotkeybox->Button(-text=>"Cancel",
-                       -command=> sub { $hotkeybox->withdraw(); })->pack(-side=>'right');
+    my $query = "SELECT filename FROM mrvoice WHERE id=$id";
+    my $sth=$dbh->prepare($query);
+    $sth->execute or die "can't execute the query: $DBI::errstr\n";
+    @result = $sth->fetchrow_array;
+    $sth->finish;
+    $filename = $result[0];
+    $f1=$filename if ($f1_cb);
+    $f2=$filename if ($f2_cb);
+    $f3=$filename if ($f3_cb);
+    $f4=$filename if ($f4_cb);
+    $f5=$filename if ($f5_cb);
+    $f6=$filename if ($f6_cb);
+    $f7=$filename if ($f7_cb);
+    $f8=$filename if ($f8_cb);
+    $f9=$filename if ($f9_cb);
+    $f10=$filename if ($f10_cb);
+    $f11=$filename if ($f11_cb);
+    $f12=$filename if ($f12_cb);
+    $f1_cb=0;
+    $f2_cb=0;
+    $f3_cb=0;
+    $f4_cb=0;
+    $f5_cb=0;
+    $f6_cb=0;
+    $f7_cb=0;
+    $f8_cb=0;
+    $f9_cb=0;
+    $f10_cb=0;
+    $f11_cb=0;
+    $f12_cb=0;
+    $status = "Hotkey assigned";
   }
   else
   {
-    $hotkeybox->deiconify();
-    $hotkeybox->raise();
+    $status = "Hotkey assignment cancelled";
   }
-}
 
-sub do_hotkey
-{
-  # Do the actual assignment of the hotkey in this function.  We only 
-  # have the file ID number, so we have to get the filename from that.
-  my $id = $_[0];
-  my $query = "SELECT filename FROM mrvoice WHERE id=$id";
-  my $sth=$dbh->prepare($query);
-  $sth->execute or die "can't execute the query: $DBI::errstr\n";
-  @result = $sth->fetchrow_array;
-  $sth->finish;
-  $filename = $result[0];
-  $f1=$filename if ($f1_cb);
-  $f2=$filename if ($f2_cb);
-  $f3=$filename if ($f3_cb);
-  $f4=$filename if ($f4_cb);
-  $f5=$filename if ($f5_cb);
-  $f6=$filename if ($f6_cb);
-  $f7=$filename if ($f7_cb);
-  $f8=$filename if ($f8_cb);
-  $f9=$filename if ($f9_cb);
-  $f10=$filename if ($f10_cb);
-  $f11=$filename if ($f11_cb);
-  $f12=$filename if ($f12_cb);
-  $f1_cb=0;
-  $f2_cb=0;
-  $f3_cb=0;
-  $f4_cb=0;
-  $f5_cb=0;
-  $f6_cb=0;
-  $f7_cb=0;
-  $f8_cb=0;
-  $f9_cb=0;
-  $f10_cb=0;
-  $f11_cb=0;
-  $f12_cb=0;
-  $hotkeybox->destroy;
-  $status = "Hotkey assigned";
 }
 
 sub stop_mp3
