@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.383 2004/05/26 15:00:17 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.384 2004/05/26 17:08:37 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2289,7 +2289,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.383 $';
+    my $rev    = '$Revision: 1.384 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::SQLite->VERSION;
@@ -2683,18 +2683,16 @@ sub update_time
 
     my $count        = 0;
     my $query        = "SELECT id,filename,time FROM mrvoice";
-    my $get_rows_sth = $dbh->prepare($query);
-    $get_rows_sth->execute;
-    my $numrows = TrueRows($get_rows_sth);
-    $get_rows_sth = $dbh->prepare($query);
-    $get_rows_sth->execute;
+    my $arrayref     = $dbh->selectall_arrayref($query);
     my $update_query =
       "UPDATE mrvoice SET time=?, modtime=(SELECT strftime('%s','now')) WHERE id=?";
     my $update_sth = $dbh->prepare($update_query);
+    my $numrows    = scalar @$arrayref;
 
-    while ( my @table_row = $get_rows_sth->fetchrow_array )
+    while ( my $table_row = shift @$arrayref )
     {
-        my ( $id, $filename, $time ) = @table_row;
+        my ( $id, $filename, $time ) = @$table_row;
+        next if ( !-r catfile( $config{filepath}, $filename ) );
         my $newtime =
           get_songlength( catfile( $config{'filepath'}, $filename ) );
         if ( $newtime ne $time )
@@ -2707,7 +2705,6 @@ sub update_time
         $pb->set($percent_done);
         $progressbox->update();
     }
-    $get_rows_sth->finish;
     $donebutton->configure( -state => 'active' );
     $donebutton->focus;
     $progressbox->update();
