@@ -27,7 +27,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.117 2002/05/03 16:59:10 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.118 2002/05/09 15:12:59 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -108,7 +108,7 @@ else
 
 #####
 
-my $version = "1.5";			# Program version
+my $version = "1.5.1";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
 
 # Define 32x32 XPM icon data
@@ -190,6 +190,45 @@ sub Tk::DragDrop::Mapped
    $token->FindSite($X,$Y,$e);
   }
 }
+
+sub BindMouseWheel {
+ 
+  my($w) = @_;
+  
+  if ($^O eq 'MSWin32') 
+  {
+    $w->bind('<MouseWheel>' =>
+    [ sub { $_[0]->yview('scroll', -($_[1] / 120) * 3, 'units') },
+    Ev('D') ]);
+  } 
+  else 
+  {
+    # Support for mousewheels on Linux commonly comes through
+    # mapping the wheel to buttons 4 and 5.  If you have a
+    # mousewheel ensure that the mouse protocol is set to
+    # "IMPS/2" in your /etc/X11/XF86Config (or XF86Config-4)
+    # file:
+    #
+    # Section "InputDevice"
+    #     Identifier  "Mouse0"
+    #     Driver      "mouse"
+    #     Option      "Device" "/dev/mouse"
+    #     Option      "Protocol" "IMPS/2"
+    #     Option      "Emulate3Buttons" "off"
+    #     Option      "ZAxisMapping" "4 5"
+    # EndSection
+    
+    $w->bind('<4>' => sub {
+      $_[0]->yview('scroll', -3, 'units') unless $Tk::strictMotif;
+    });
+     
+    $w->bind('<5>' => sub {
+      $_[0]->yview('scroll', +3, 'units') unless $Tk::strictMotif;
+    });
+  }
+      
+} # end BindMouseWheel
+
 
 sub bind_hotkeys
 {
@@ -828,7 +867,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.117 $';
+  $rev = '$Revision: 1.118 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   infobox($mw, "About Mr. Voice","Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License");
 }
@@ -927,6 +966,7 @@ sub holding_tank
   $tankbox->DropSite(-droptypes=>['Local'],
                      -dropcommand=>[\&Tank_Drop, $dnd_token ]);
   $tankbox->bind("<Double-Button-1>", \&play_mp3);
+  &BindMouseWheel($tankbox);
   my $buttonframe = $holdingtank->Frame()->pack(-side=>'bottom',
                                              -fill=>'x');
   my $playbutton = $buttonframe->Button(-text=>"Play Now",
@@ -1694,6 +1734,7 @@ $dnd_token = $mainbox->DragDrop(-event => '<B1-Motion>',
                                 -sitetypes => ['Local'],
                                 -startcommand => sub { StartDrag($dnd_token) });
 
+&BindMouseWheel($mainbox);
 #
 #####
 
