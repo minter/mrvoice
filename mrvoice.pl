@@ -4,6 +4,7 @@ use Tk;
 use Tk::DialogBox;
 use Tk::FileDialog;
 use File::Basename;
+use File::Copy;
 use DBI;
 use MPEG::MP3Info;
 
@@ -15,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/03/05 02:05:32 $
-#	CVS REVISION NUMBER:    $Revision: 1.20 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/05 21:03:18 $
+#	CVS REVISION NUMBER:    $Revision: 1.21 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -268,7 +269,98 @@ sub delete_category
 
 sub add_new_song
 {
+  $box = $mw->DialogBox(-title=>"Add New Song", -buttons=>["OK","Cancel"]);
+  $box->add("Label",-text=>"Enter the following information for the new song,\nand choose the file to add.\n")->pack();
+  $frame1 = $box->add("Frame")->pack(-fill=>'x');
+  $frame1->Label(-text=>"Song Title")->pack(-side=>'left');
+  $frame1->Entry(-width=>30,
+                 -textvariable=>\$addsong_title)->pack(-side=>'right');
+  $frame2 = $box->add("Frame")->pack(-fill=>'x');
+  $frame2->Label(-text=>"Artist")->pack(-side=>'left');
+  $frame2->Entry(-width=>30,
+                 -textvariable=>\$addsong_artist)->pack(-side=>'right');
+  $frame3 = $box->add("Frame")->pack(-fill=>'x');
+  $frame3->Label(-text=>"Category")->pack(-side=>'left');
+  $menu=$frame3->Menubutton(-text=>"Choose Category",
+                            -relief=>'raised',
+                            -tearoff=>0,
+                            -indicatoron=>1)->pack(-side=>'right');
+    $query="SELECT * from categories ORDER BY description";
+    my $sth=$dbh->prepare($query);
+    $sth->execute or die "can't execute the query: $DBI::errstr\n";
+    while (@table_row = $sth->fetchrow_array)
+    {
+      $code=$table_row[0];
+      $name=$table_row[1];
+      $menu->radiobutton(-label=>$name,
+                         -value=>$code,
+                         -variable=>\$addsong_cat);
+    }
+    $sth->finish;
+  $frame4 = $box->add("Frame")->pack(-fill=>'x');
+  $frame4->Label(-text=>"Category Extra Info")->pack(-side=>'left');
+  $frame4->Entry(-width=>30,
+                 -textvariable=>\$addsong_info)->pack(-side=>'right');
+  $frame5 = $box->add("Frame")->pack(-fill=>'x');
+  $frame5->Label(-text=>"File to add")->pack(-side=>'left');
+  $frame5->Button(-text=>"Select File",
+                  -command=>sub { 
+                     $fileselectw = $mw->FileDialog(-Title=>'Select a File',
+                                                    -FPat=>"*.mp3");
+                     $addsong_filename = $fileselectw->Show;
 
+                                })->pack(-side=>'right');
+  $frame5->Entry(-width=>30,
+                 -textvariable=>\$addsong_filename)->pack(-side=>'right');
+
+  $result = $box->Show();
+  
+  if ($result eq "OK")
+  {
+    if (! $addsong_cat)
+    {
+      infobox("Error","Could not add new song\n\nYou must choose a category");
+    }
+    elsif (! -r $addsong_filename)
+    {
+      infobox ("File Error","Could not open input file $addsong_filename\nfor reading.  Check file permissions"); 
+    }
+    elsif (! -w $filepath)
+    {
+      infobox ("File Error","Could not write file to directory $filepath\nPlease check the permissions");
+    }
+    else
+    {
+      if ($addsong_artist)
+      {
+        $newfilename = "$addsong_artist-$addsong_title";
+      }
+      else
+      {
+        $newfilename = $addsong_title;
+      }
+      $newfilename =~ s/[^a-zA-Z0-9\-]//g;
+      $newfilename = "$newfilename.mp3";
+      $addsong_title =~ s/([\'\\\(\)]\;)/\\$1/g;
+      $addsong_artist =~ s/([\'\\\(\)\;])/\\$1/g;
+      $query = "INSERT INTO mrvoice VALUES (NULL,'$addsong_title','$addsong_artist','$addsong_cat','$addsong_info','$newfilename',NULL)";
+      copy ($addsong_filename,"$filepath$newfilename");
+      if ($dbh->do($query))
+      {
+        infobox ("File Added Successfully","Successfully added new song into database");
+        print "Copied $addsong_filename to $filepath$newfilename, and ran query $query\n";
+      }
+      else
+      {
+        infobox ("Error","Could not add song into database");
+      }
+    }
+  }
+  $addsong_title="";
+  $addsong_artist="";
+  $addsong_info="";
+  $addsong_cat="";
+  $addsong_filename="";
 }
 
 sub edit_song
