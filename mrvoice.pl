@@ -14,8 +14,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/19 14:53:35 $
-#	CVS REVISION NUMBER:    $Revision: 1.57 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/19 15:04:42 $
+#	CVS REVISION NUMBER:    $Revision: 1.58 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1055,6 +1055,16 @@ if (! -W $filepath)
     edit_preferences();
     die ("Error accessing MP3 directory\n");
   }
+}
+
+if (! -W $savedir)
+{
+  $box = $mw->DialogBox(-title=>"Warning", -buttons=>["Continue"]);
+  $box->add("Label",-text=>"Hotkey save directory unavailable")->pack();
+  $box->add("Label",-text=>"The hotkey save directory is unset or you do not\nhave permission to write to it.")->pack();
+  $box->add("Label",-text=>"While this will not impact the operation of Mr. Voice,\nyou should probably fix it in the File->Preferences menu.")->pack();
+  $box->add("Label",-text=>"Current Hotkey Directory: $savedir")->pack();
+  $result = $box->Show();
 }
 
 # We use the following statement to open the MP3 player asynchronously
