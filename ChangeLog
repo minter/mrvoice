@@ -1,3 +1,6 @@
+Thu  Mar 10 2005	H. Wade Minter (minter@lunenburg.org)
+     * Get most XML-RPC stuff working in the basic case.
+
 Tue  Mar  8 2005        H. Wade Minter (minter@lunenburg.org)
      * Add initial XML-RPC upload code.
 
