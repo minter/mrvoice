@@ -1,3 +1,7 @@
+Mon  Sep 13  2004	H. Wade Minter (minter@lunenburg.org)
+     * Make nice white backgrounds by default for listboxes and entry 
+       widgets.
+
 Sun  Sep 12  2004	H. Wade Minter (minter@lunenburg.org)
      * Add a Publisher choice to the bulk_add routine.
      * Refactor a couple of looped database queries to use placeholders.
