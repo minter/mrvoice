@@ -2,150 +2,220 @@
 				by H. Wade Minter
 				minter@lunenburg.org
 
-ABOUT THIS SOFTWARE:
-This program was written with a very specific purpose in mind - to be the
-GUI frontend for an MP3 database I designed for the Great American
-Comedy Company in Raleigh, NC.  As such, it may not be much use for anyone
-else, but I figured I'd put it out there in case anyone wanted it.
+--------------------------------------------------------------------------
+TABLE OF CONTENTS:
+I.    About This Software
+II.   Required Components
+III.  Installing
+IV.   Configuration
+  A.  Configuring mrvoice.pl
+  B.  Configuring the PHP frontend
+V.    Populating the database
+  A.  The Easy Way
+     1. Adding Categories
+     2. Deleting Categories
+     3. Adding Songs
+     4. Deleting Songs
+     5. Editing Songs
+  B.  The Hard Way (or:  Database internals)
+VI.   Running the program
+VII.  Contributing
+VIII. Bug Reports
 
-REQUIRED COMPONENTS:
-* Unix-like operating system (Linux/*BSD/etc.).  May possibly work 
-  under Windows or Mac, but I haven't tested it.
-* Perl 5 
-  REQUIRED PERL MODULES (tested versions in parentheses) 
-  Get them from http://www.cpan.org/
-  + DBI (DBI-1.14)
-  + DBD driver for your database (Msql-Mysql-modules-1.2215)
-  + Data-Dumper (Data-Dumper-2.101)
-  + TK (Tk800.022)
-  + MPEG-MP3Info (MPEG-MP3Info-0.71)
-  + Tk::FileDialog (Tk-FileDialog-1.3)
-* Relational database, with available perl DBI module (Tested with MySQL)
-  If you use something other than MySQL, you'll need to do some
-  modifications.
-* TCL/TK
-* xmms, or other MP3 player that plays songs from the command line.
-* class.id3.php (http://leknor.com/code/) if you're using the PHP
-  frontends.
+--------------------------------------------------------------------------
 
-INSTALLING:
-1) Compile and/or install any required software from above (perl modules, etc.)
-2) Set up a database for the program to use.  It needs two tables in a
-   database, so you can either use an existing database or create one
-   expressly for mrvoice.
-3) Run the following MySQL command, where DATABASE_USER is the name of 
-   a user with administrative access over the database named DATABASE_NAME:
-   mysql -u DATABASE_USER -p DATABASE < dbinit.sql
-   For other databases (Postgres, etc.), adjust to taste.
-   This creates two tables in DATABASE_NAME: mrvoice and categories.
-4) If you will be using the PHP frontends, install class.id3.php3 
-   (available from the URL above) into your PHP include path.
-5) If you will be using the PHP frontends, copy the .php files into
-   their own directory in your web tree.  The index.php file uses
-   relative URLs, so if they're all together in the same directory,
-   they'll work fine.
+I.   ABOUT THIS SOFTWARE:
+     This program was written with a very specific purpose in mind - to be 
+     the GUI frontend for an MP3 database I designed for the Great American
+     Comedy Company in Raleigh, NC.  As such, it may not be much use for 
+     anyone else, but I figured I'd put it out there in case anyone wanted it.
 
-CONFIGURING:
-The following configuration settings can/should be adjusted in the mrvoice.pl
-file itself:
+II.  REQUIRED COMPONENTS:
+     * Unix-like operating system (Linux/*BSD/etc.).  A Windows port should
+       also be available with release 1.0.
+     * Perl 5 
+       REQUIRED PERL MODULES (tested versions in parentheses) 
+       Get them from http://www.cpan.org/
+       + DBI (DBI-1.14)
+       + DBD driver for your database (Msql-Mysql-modules-1.2215)
+       + Data-Dumper (Data-Dumper-2.101)
+       + TK (Tk800.022)
+       + MPEG-MP3Info (MPEG-MP3Info-0.71)
+       + Tk::FileDialog (Tk-FileDialog-1.3)
+     * Relational database, with available perl DBI module (Tested with MySQL)
+       If you use something other than MySQL, you'll need to do some
+       modifications.
+     * TK version 8
+     * xmms, or other MP3 player that plays songs from the command line.
+     * class.id3.php (http://leknor.com/code/) if you're using the PHP
+       frontend.
 
-First, make sure that the first line of the file points to your perl binary.
-It is set up by default to look for /usr/bin/perl.  
+III. INSTALLING:
+     1) Compile and/or install any required software from above (perl 
+        modules, etc.)
+     2) Set up a database for the program to use.  It needs two tables in a
+        database, so you can either use an existing database or create one
+        expressly for mrvoice.
+     3) Run the following MySQL command from the mrvoice-x.x directory, where 
+        DATABASE_USER is the name of a user with administrative access over 
+        the database named 
+        DATABASE_NAME:
+ 
+        mysql -u DATABASE_USER -p DATABASE < dbinit.sql
 
-The following variables need to be altered to reflect your setup:
-$db_name - This should be set to the name of the database containing the
-           mrvoice and categories tables.  If the database is local to the 
-           machine that you are running mrvoice on, you simply need to supply 
-           the database name.  If it is on a remote server, the variable 
-           takes the form of "DATABASENAME:HOSTNAME:PORT".
-$db_username - Set to a username that has SELECT access on the tables.
-$db_pass - The password for user $db_username
-$mp3player - The path to your MP3 player.  Set to /usr/bin/xmms by default.
-$category - The default category to search.  Set to "Any" by default, a
-            meta-category that means, shockingly enough, any category.  Must
-            match a category code set up in the categories database, or "Any".
-$filepath - The path information that will be prepended to the filename
-            retrieved from the database.  Used to find the actual MP3 files
-	    on the local system.  If a directory, it MUST contain a trailing
-            "/".  (ie. "/usr/local/mp3/" is valid, but "/usr/local/mp3"
-            is not).
-$savepath - This will be the default directory that hotkey save files
-            will go into.  The user you're running the program as must
-            have write permission into that directory.
+        For other databases (Postgres, etc.), adjust to taste.  This creates 
+        two tables in DATABASE_NAME: mrvoice and categories.
+     4) If you will be using the PHP frontend, install class.id3.php3 
+        (available from the URL above) into your PHP include path.
+     5) If you will be using the PHP frontend, copy the mrvoice.php files 
+        into your web tree.  
 
-CONFIGURING THE PHP FRONTENDS:
-To configure the PHP frontends, edit the file config.php.  It sets
-configuration variables for the frontend scripts.
+IV.  CONFIGURING:
+     A. CONFIGURING MRVOICE.PL
+        The following configuration settings can/should be adjusted in the 
+        mrvoice.pl file itself:
 
-If you get an error when you access one of the frontend scripts about 
-config.php not being in the include path, you either need to edit
-your php.ini file so that directory "." in in the include path, or copy
-config.php to a directory in the include path.
+        First, make sure that the first line of the file points to your 
+        perl binary.  It is set up by default to look for /usr/bin/perl.  
 
-POPULATING THE DATABASE:
-Before you can use mrvoice, you must populate two tables in the database. 
-The first is the categories table, the second is the mrvoice table itself.
+        The following variables need to be altered to reflect your setup:
+        $db_name - This should be set to the name of the database containing 
+                   the mrvoice and categories tables.  If the database is 
+                   local to the machine that you are running mrvoice on, you 
+                   simply need to supply the database name.  If it is on a 
+                   remote server, the variable takes the form of 
+                   "DATABASENAME:HOSTNAME:PORT".
+        $db_username - Set to a username that has SELECT access on the tables.
+        $db_pass - The password for user $db_username
+        $mp3player - The path to your MP3 player.  Set to /usr/bin/xmms by 
+                     default.
+        $category - The default category to search.  Set to "Any" by default, 
+                    a meta-category that means, shockingly enough, any 
+                    category.  This string must match a category code as set 
+                    up in the categories database, or "Any".
+        $filepath - The path information that will be prepended to the filename
+                    retrieved from the database.  Used to find the actual MP3 
+                    files on the local system.  If a directory, it MUST 
+                    contain a trailing "/".  (ie. "/usr/local/mp3/" is valid, 
+                    but "/usr/local/mp3" is not).
+        $savepath - This will be the default directory that hotkey save files
+                    will go into.  The user you're running the program as must
+                    have write permission into that directory.
 
-The categories table has two fields: the "code" field and the "description" 
-field.  To populate it, use the mysql tool to log into the database 
-that contains the categories table, and run:
+     B. CONFIGURING THE PHP FRONTEND:
+        To configure the PHP frontend, edit the file mrvoice.php.  At the 
+        top, you will find variables similar to the ones in mrvoice.pl.  Set 
+        them appropriately.  The PHP frontend only provides a search interface 
+        to the database - playing music, adding, deleting, and editing must 
+        all be done from within the program itself.
 
-"INSERT INTO categories VALUES ('CODE','The description of the code');"
+V.   POPULATING THE DATABASE:
+     Before you can use mrvoice, you must populate two tables in the 
+     database.  The first is the categories table, the second is the mrvoice 
+     table itself.
 
-where CODE is an 8-letter-or-less code, and the description is the more
-verbose description.  For example, if I had a category for general games
-stuff, I may use:
+     A. THE EASY WAY:
+        The mrvoice.pl program has a "Categories" menu item and a "Songs" menu
+        item.  Under each you will find ways to add/delete/modify.
 
-"INSERT INTO categories VALUES ('GAMES','General Games');"
+        1. ADDING CATEGORIES
+           Under "Categories", you can add and delete.  To add, select
+           "Categories-->Add Category".  You will have to enter a code and a
+           description.  The code is a short (under 6 character) code used 
+           internally by the database, and the description is what you'll 
+           actually see.
 
-Note that the description is what you will actually see in all of the 
-frontends, so don't make it too long.
+        2. DELETING CATEGORIES
+           To delete a category, choose "Categories-->Delete Category", and 
+           select the category you wish to delete.  The program won't let you 
+           delete a category that still has song entries using it, so make 
+           sure you empty the category out before you try to delete it.
 
-If you are using the PHP frontend, all of this is done for you in the
-background.
+        3. ADDING SONGS
+           To add a song, choose "Songs-->Add New Song".  A window will pop up 
+           with the standard information (title, artist, category, extra info, 
+           etc.).  You will also need to choose the file to add.  You can 
+           either enter the file path into the "File to add" box, or press 
+           the "Select File" button to bring up an "explorer"-type file 
+           selector.  Once you have everything you need filled in, press "Ok" 
+           to add.  
+           NOTE: You must provide at least a title, a filename, and a category.
 
-For the mrvoice table, there are the following fields:
-id - An auto-increment field that will contain a unique number for the entry.
-title - The title of the entry
-artist - Performing artist of the entry
-category - A category that matches a CODE entry in the categories table.
-info - Extra info for the entry.
-filename - The filename of the MP3.  Must match what you have on disk.
-modtime - Records the last time the database information for this entry
-          was modified.
+        4. DELETING SONGS
+           To delete an entry from the database, choose "Songs-->Delete 
+           Currently Selected Song".  Note that you will have to have a song 
+           selected in the search result box for anything to happen.  If so, 
+           a box will pop up asking you to confirm that you wish to delete the 
+           song.  There is also a checkbox asking you if you wish to delete 
+           the MP3 file from the disk as well.  
+           Pressing the "Delete" button will remove the song from the database 
+           and (if selected) the file from your disk.
 
-If you're using the PHP frontend to add songs, all of this will be done
-for you in the background.  If you're doing this the manual way, you'll 
-need to make sure that the information is correct.  A typical manual entry
-will look like this:
+        5. EDITING SONGS
+           To edit a song, choose "Songs-->Edit Currently Selected Song".  
+           Much like the Delete Song function above, you must have an entry 
+           selected in the search result box for anything to happen.  If you 
+           do, the Edit box will pop up, and allow you to edit the title, 
+           artist, extra info, or category.
 
-"INSERT INTO mrvoice VALUES (0,'Fly South','Eddie From Ohio','GAMES','',
- 'EddieFromOhio-FlySouth.mp3',NULL);"
+     B. THE HARD WAY:
+        The categories table has two fields: the "code" field and the 
+        "description" field.  To populate it, use the mysql tool to log into 
+        the database that contains the categories table, and run:
 
-The 0 in the first field tells the database to assign the next free number
-for ID, and the NULL at the end says to update the timestamp with the
-current time.
+     "INSERT INTO categories VALUES ('CODE','The description of the code');"
 
-RUNNING THE PROGRAM:
-After you've done all of the above, it's time to run the program!  Make
-sure that the mrvoice.pl program has execute permissions, and run it. 
-If all has gone well, you should see the mrvoice window, along with 
-XMMS (or your MP3 player of choice).  Congratulations!
+        where CODE is an 8-letter-or-less code, and the description is the 
+        more verbose description.  For example, if I had a category for 
+        general games stuff, I may use:
 
-CONTRIBUTING: 
-If you like this program, and know of a way to make it better, feel free
-to modify it.  This software is released under the GNU General Public
-License, so read the COPYING file or visit http://www.gnu.org/ for
-information on license conditions.
+     "INSERT INTO categories VALUES ('GAMES','General Games');"
 
-If you make a cool modification to this program, feel free to send a diff
-to me, and I'll incorporate it into the main body of the program.
+        Note that the description is what you will actually see in all of the 
+        frontends, so don't make it too long.
 
-REPORTING BUGS:
-Feel free to report any bugs, feature requests, etc. to me at 
-minter@lunenburg.org.  As this is a specific-purpose project, there's no
-guarantee that I'll do it, but I'm glad to listen to any suggestions.  Check
-the TODO file to see stuff I'm currently working on.
+        For the mrvoice table, there are the following fields:
+        id - An auto-increment field that will contain a unique number for the 
+             entry.
+        title - The title of the entry
+        artist - Performing artist of the entry
+        category - A category that matches a CODE entry in the categories 
+                   table.
+        info - Extra info for the entry.
+        filename - The filename of the MP3.  Must match what you have on disk.
+        modtime - Records the last time the database information for this entry
+                  was modified.
 
---
-CVS ID: $Id: README,v 1.8 2001/03/04 15:09:07 minter Exp $
+        A typical manual entry will look like this:
+
+     "INSERT INTO mrvoice VALUES (NULL,'Fly South','Eddie From Ohio','GAMES',
+      '','EddieFromOhio-FlySouth.mp3',NULL);"
+
+        The NULL in the first field tells the database to assign the next free 
+        number for ID, and the NULL at the end says to update the timestamp 
+        with the current time.
+
+VI.   RUNNING THE PROGRAM:
+      After you've done all of the above, it's time to run the program!  Make
+      sure that the mrvoice.pl program has execute permissions, and run it. 
+      If all has gone well, you should see the mrvoice window, along with 
+      XMMS (or your MP3 player of choice).  Congratulations!
+
+VII.  CONTRIBUTING: 
+      If you like this program, and know of a way to make it better, feel free
+      to modify it.  This software is released under the GNU General Public
+      License, so read the COPYING file or visit http://www.gnu.org/ for
+      information on license conditions.
+
+      If you make a cool modification to this program, feel free to send a 
+      diff to me, and I'll incorporate it into the main body of the program.
+
+VIII. REPORTING BUGS:
+      Feel free to report any bugs, feature requests, etc. to me at 
+      minter@lunenburg.org.  As this is a specific-purpose project, there's no
+      guarantee that I'll do it, but I'm glad to listen to any suggestions.  
+      Check the TODO file to see stuff I'm currently working on.
+
+--------------------------------------------------------------------------
+
+CVS ID: $Id: README,v 1.9 2001/03/06 23:08:55 minter Exp $
