@@ -15,8 +15,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/05/07 23:21:58 $
-#	CVS REVISION NUMBER:    $Revision: 1.35 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/05/08 22:40:32 $
+#	CVS REVISION NUMBER:    $Revision: 1.36 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -47,6 +47,10 @@ $savedir = "";				# The default directory where
 # YOU SHOULD NOT NEED TO MODIFY ANYTHING BELOW HERE FOR NORMAL USE
 #####
 
+$savefile_count = 0;			# Counter variables
+$savefile_max = 4;			# The maximum number of files to
+					# keep in the "recently used" list.
+
 # The following variables set the locations of MP3s for static hotkey'd 
 # sounds
 #$altt = "TaDa.mp3";
@@ -65,11 +69,15 @@ $savedir = "$savedir/" unless ($savedir =~ "/.*\/$/");
 
 sub open_file
 {
-  $fileselectw = $mw->FileDialog(-Title=>'Open a File',
-                                 -FPat=>"*.mrv",
-                                 -OKButtonLabel=>"Open File",
-                                 -Path=>$savedir);
-  $selectedfile = $fileselectw->Show;
+  $selectedfile = $_[0];
+  if (!$selectedfile)
+  {
+    $fileselectw = $mw->FileDialog(-Title=>'Open a File',
+                                   -FPat=>"*.mrv",
+                                   -OKButtonLabel=>"Open File",
+                                   -Path=>$savedir);
+    $selectedfile = $fileselectw->Show;
+  }
                       
   if ($selectedfile)
   {
@@ -81,6 +89,7 @@ sub open_file
     }
     else
     {
+      backup_hotkeys();
       open (HOTKEYFILE,$selectedfile);
       while (<HOTKEYFILE>)
       {
@@ -90,7 +99,8 @@ sub open_file
       }
       close (HOTKEYFILE);
       $status = "Loaded hotkey file $selectedfile successfully";
-    } 
+      dynamic_documents($selectedfile);
+    }
   }
   else
   {
@@ -138,6 +148,7 @@ sub save_file
       print HOTKEYFILE "f12::$f12\n";
       close (HOTKEYFILE);
       $status = "Finished saving hotkeys to $selectedfile\n";
+      dynamic_documents($selectedfile);
     }
   }
   else
@@ -146,11 +157,63 @@ sub save_file
   }
 }
 
+sub dynamic_documents
+{
+  $file = $_[0];
+  $savefile_count++;
+
+  push (@current, $file);
+
+  $filemenu->command(-label=>"$file",
+                     -command => [\&open_file, $file]);
+
+  if ($#current >= $savefile_max)
+  {
+    $filemenu->menu->delete(5);
+    shift (@current);
+  }
+}
+
 sub infobox
 {
   $box = $mw->DialogBox(-title=>"$_[0]", -buttons=>["OK"]);
   $box->add("Label",-text=>"$_[1]")->pack();
   $box->Show;
+}
+
+sub backup_hotkeys
+{
+  $old_f1 = $f1;
+  $old_f2 = $f2;
+  $old_f3 = $f3;
+  $old_f4 = $f4;
+  $old_f5 = $f5;
+  $old_f6 = $f6;
+  $old_f7 = $f7;
+  $old_f8 = $f8;
+  $old_f9 = $f9;
+  $old_f10 = $f10;
+  $old_f11 = $f11;
+  $old_f12 = $f12;
+  $hotmenu->menu->entryconfigure(3, -state=>"normal");
+}
+
+sub restore_hotkeys
+{
+  $f1 = $old_f1;
+  $f2 = $old_f2;
+  $f3 = $old_f3;
+  $f4 = $old_f4;
+  $f5 = $old_f5;
+  $f6 = $old_f6;
+  $f7 = $old_f7;
+  $f8 = $old_f8;
+  $f9 = $old_f9;
+  $f10 = $old_f10;
+  $f11 = $old_f11;
+  $f12 = $old_f12;
+  $status = "Previous hotkeys restored.";
+  $hotmenu->menu->entryconfigure(3, -state=>"disabled");
 }
 
 sub add_category
@@ -827,6 +890,7 @@ $filemenu->AddItems(["command"=>"Exit",
                                      $dbh->disconnect;
                                       exit;
                                     }]);
+$filemenu->AddItems("-");
 $hotmenu = $menuframe->Menubutton(-text=>"Hotkeys",
                                   -tearoff=>0)->pack(-side=>'left');
 $hotmenu->AddItems(["command"=>"Show Hotkeys",
@@ -835,6 +899,10 @@ $hotmenu->AddItems(["command"=>"Clear All Hotkeys",
                     -command=>\&clear_hotkeys]);
 #$hotmenu->AddItems(["command"=>"Show Predefined Hotkeys",
 #                    -command=>\&show_predefined_hotkeys]);
+$hotmenu->AddItems("-");
+$hotmenu->AddItems(["command"=>"Restore Hotkeys",
+                   -command=>\&restore_hotkeys]);
+$hotmenu->menu->entryconfigure(3, -state=>"disabled");
 $catmenu = $menuframe->Menubutton(-text=>"Categories",
                                   -tearoff=>0)->pack(-side=>'left');
 $catmenu->AddItems(["command"=>"Add Category",
