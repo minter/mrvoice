@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.19 2002/08/15 01:56:29 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.20 2002/12/11 22:23:03 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
@@ -12,8 +12,9 @@
       <para>The following components are required to run Mr. Voice under Windows 95 or higher.
       <itemizedlist>
         <listitem><para>The <ulink url= "http://www.mysql.com/">MySQL</ulink> database engine.</para></listitem>
-        <listitem> <para>An MP3 player.  <ulink url="http://www.winamp.com/">WinAmp</ulink> is recommended.</para></listitem>
-        <listitem><para>The <ulink url="http://www.csc.uvic.ca/~karvanit/">httpQ plugin</ulink> for WinAmp.  <emphasis>Optional, but recommended</emphasis></para></listitem>
+        <listitem> <para>An MP3 player.  <ulink url="http://www.winamp.com/">WinAmp</ulink> is recommended.  <emphasis>There are known issues with WinAmp Version 3.  Until they are resolved, WinAmp Version 2 is the supported release to use</emphasis></para></listitem>
+        <listitem><para>The <ulink url="http://www.lunenburg.org/mrvoice/files/">httpQ plugin</ulink> for WinAmp.  <emphasis>Optional, but recommended</emphasis></para></listitem>
+        <listitem><para>The <ulink url="http://www.lunenburg.org/mrvoice/files/">Ogg Vorbis plugin</ulink> for WinAmp.  <emphasis>Optional, but recommended</emphasis></para></listitem>
       </itemizedlist>
       <important><para>Windows users need to have at least minimal TCP/IP networking set up for MySQL to work.</para></important>
       </para>
