@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.178 2002/11/13 17:22:49 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.179 2002/11/13 17:52:00 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -693,6 +693,28 @@ sub bulk_add
   $box1->Icon(-image=>$icon);
   my $box1frame1 = $box1->add("Frame")->pack(-fill=>'x');
   $box1frame1->Label(-text=>"This will allow you to add all songs in a directory to a particular\ncategory, using the information stored in MP3 or OGG files to fill in\nthe title and artist.  You will have to go back after the fact to add Extra Info or do any\nediting.  If a file does not have at least a title embedded in it, it will not be added.\n\nChoose your directory and category below.")->pack(-side=>'top');
+  my $box1frame2 = $box1->add("Frame")->pack(-fill=>'x');
+  $box1frame2->Label(-text=>"Add To Category: ")->pack(-side=>'left');
+  my $menu = $box1frame2->Menubutton(-text=>"Choose Category",
+                                     -relief=>'raised',
+                                     -tearoff=>0,
+                                     -indicatoron=>1)->pack(-side=>'left');
+  my $query="SELECT * from categories ORDER BY description";
+  my $sth=$dbh->prepare($query);
+  $sth->execute or die "can't execute the query: $DBI::errstr\n";
+  while (@table_row = $sth->fetchrow_array)
+  {
+    $code=$table_row[0];
+    $name=$table_row[1];
+    $menu->radiobutton(-label=>$name,
+                       -value=>$code,
+                       -variable=>\$addsong_cat);
+  }
+  $sth->finish;
+  my $box1frame3 = $box1->add("Frame")->pack(-fill=>'x');
+  $box1frame3->Label(-text=>"Choose Directory: ")->pack(-side=>'left');
+  $box1frame3->Entry()->pack(-side=>'left');
+
   my $firstbutton = $box1->Show;
 }
 
@@ -1234,7 +1256,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.178 $';
+  $rev = '$Revision: 1.179 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
