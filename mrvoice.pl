@@ -30,7 +30,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.137 2002/07/09 11:52:34 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.138 2002/07/09 16:05:57 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -335,7 +335,6 @@ sub bind_hotkeys
   $window->bind("<Key-F10>", [\&play_mp3,"F10"]);
   $window->bind("<Key-F11>", [\&play_mp3,"F11"]);
   $window->bind("<Key-F12>", [\&play_mp3,"F12"]);
-  $window->bind("<Control-Key-p>", [\&play_mp3,"Current"]);
   $window->bind("<Key-Escape>", [\&stop_mp3]);
   $window->bind("<Key-Return>", \&do_search);
   $window->bind("<Control-Key-x>", \&do_exit);
@@ -1041,7 +1040,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.137 $';
+  $rev = '$Revision: 1.138 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -1132,6 +1131,7 @@ sub holding_tank
   $holdingtank->withdraw();
   $holdingtank->Icon(-image=>$icon);
   bind_hotkeys($holdingtank);              
+  $holdingtank->bind("<Control-Key-p>", [\&play_mp3,"Holding"]);
   $holdingtank->title("Holding Tank");
   $holdingtank->Label(-text=>"A place to store songs for later use")->pack;
   $holdingtank->Label(-text=>"Drag a song here from the main search box to store it")->pack;
@@ -1146,6 +1146,7 @@ sub holding_tank
   $tankbox->DropSite(-droptypes=>['Local'],
                      -dropcommand=>[\&Tank_Drop, $dnd_token ]);
   $tankbox->bind("<Double-Button-1>", \&play_mp3);
+#  $tankbox->bind("<Control-Key-p>", [\&play_mp3, "Holding"]);
   &BindMouseWheel($tankbox);
   my $buttonframe = $holdingtank->Frame()->pack(-side=>'bottom',
                                              -fill=>'x');
@@ -1183,6 +1184,7 @@ sub list_hotkeys
     $hotkeysbox->withdraw();
     $hotkeysbox->Icon(-image=>$icon);
     bind_hotkeys($hotkeysbox);
+    $hotkeysbox->bind("<Control-Key-p>", [\&play_mp3,"Current"]);
     $hotkeysbox->title("Hotkeys");
     $hotkeysbox->Label(-text=>"Currently defined hotkeys:")->pack;
     my $f1_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
@@ -1418,6 +1420,10 @@ sub play_mp3
     if ($_[1] eq "Current")
     {
       $box = $mainbox;
+    }
+    elsif ($_[1] eq "Holding")
+    {
+      $box = $tankbox;
     }
     else
     {
@@ -2202,6 +2208,7 @@ $searchboxframe->pack(-side=>'bottom',
 
 
 bind_hotkeys($mw);
+$mw->bind("<Control-Key-p>", [\&play_mp3,"Current"]);
 
 # If the default hotkey file exists, load that up.
 if (-r "$savedir/default.mrv")
