@@ -45,7 +45,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.289 2003/12/31 18:18:19 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.290 2003/12/31 18:57:41 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -144,8 +144,6 @@ else
                      )
               }ex;
   our $rcfile = "$homedir/.mrvoicerc";
-  require Tk::DirSelect;
-  Tk::DirSelect->import();
 }
 
 #STARTCSZ
@@ -1254,7 +1252,7 @@ sub bulk_add
                             -buttons=>["Continue","Cancel"]);
   $box1->Icon(-image=>$icon);
   my $box1frame1 = $box1->add("Frame")->pack(-fill=>'x');
-  $box1frame1->Label(-text=>"This will allow you to add all songs in a directory to a particular category, using the information stored in MP3 or OGG files to fill in the title and artist.  You will have to go back after the fact to add Extra Info or do any editing.  If a file does not have at least a title embedded in it, it will not be added.\n\nChoose your directory and category below.\n\n")->pack(-side=>'top');
+  $box1frame1->Label(-text=>"This will allow you to add all songs in a directory to a particular\ncategory, using the information stored in MP3 or OGG files to fill in the title and\nartist.  You will have to go back after the fact to add Extra Info or do any editing.\nIf a file does not have at least a title embedded in it, it will not be added.\n\nChoose your directory and category below.\n\n")->pack(-side=>'top');
   my $box1frame2 = $box1->add("Frame")->pack(-fill=>'x');
   $box1frame2->Label(-text=>"Add To Category: ")->pack(-side=>'left');
   my $menu = $box1frame2->Menubutton(-text=>"Choose Category",
@@ -1281,16 +1279,7 @@ sub bulk_add
   $box1frame3->Entry(-textvariable=>\$directory)->pack(-side=>'left');
   $box1frame3->Button(-text=>"Select Source Directory",
                     -command=>sub { 
-		     if ($^O eq "MSWin32")
-		     {
-		        $directory = BrowseForFolder("Choose Directory", CSIDL_DESKTOP);
-			$directory =~ s|\\|/|g;
-			$directory = Win32::GetShortPathName($directory);
-		     }
-		     else
-		     {
-                       $directory = $box1->DirSelect(-width=>'50')->Show;
-		     }
+                     $directory = $box1->chooseDirectory;
   })->pack(-side=>'left');
 
   my $firstbutton = $box1->Show;
@@ -1801,15 +1790,9 @@ sub edit_preferences
   $mp3dir_frame->Label(-text=>"MP3 Directory")->pack(-side=>'left');
   $mp3dir_frame->Button(-text=>"Select MP3 Directory",
                         -command=>sub {
-                          if ($^O eq "MSWin32")
-                          {
-                            $config{'filepath'} = BrowseForFolder("Choose Directory", CSIDL_DESKTOP);
-                            $config{'filepath'} =~ s|\\|/|g;
-                            $config{'filepath'} = Win32::GetShortPathName($config{'filepath'});
-                          }
-                          else
-                          {
-                            $config{'filepath'} = $box->DirSelect(-width=>'50')->Show;
+                          if ($filepath = $box->chooseDirectory)
+                          { 
+                            $config{'filepath'} = $filepath;
                           }
                         })->pack(-side=>'right');
 
@@ -1820,15 +1803,9 @@ sub edit_preferences
   $hotkeydir_frame->Label(-text=>"Hotkey Save Directory")->pack(-side=>'left');
   $hotkeydir_frame->Button(-text=>"Select Hotkey Directory",
                         -command=>sub {
-                          if ($^O eq "MSWin32")
-                          {
-                            $config{'savedir'} = BrowseForFolder("Choose Directory", CSIDL_DESKTOP);
-                            $config{'savedir'} =~ s|\\|/|g;
-                            $config{'savedir'} = Win32::GetShortPathName($config{'savedir'});
-                          }
-                          else
-                          {
-                            $config{'savedir'} = $box->DirSelect(-width=>'50')->Show;
+                          if ($savedir = $box->chooseDirectory)
+                          { 
+                            $config{'savedir'} = $savedir;
                           }
                         })->pack(-side=>'right');
   $hotkeydir_frame->Entry(-width=>30,
@@ -1913,8 +1890,8 @@ sub edit_song
   {
     # We're looking to edit one song, so we can choose everything
     my $id = get_song_id($mainbox,$selected[0]);
-    $query = "SELECT title,artist,category,info from mrvoice where id=$id";
-    ($edit_title,$edit_artist,$edit_category,$edit_info) = $dbh->selectrow_array($query);
+    $query = "SELECT title,artist,category,info,publisher from mrvoice where id=$id";
+    ($edit_title,$edit_artist,$edit_category,$edit_info,$edit_publisher) = $dbh->selectrow_array($query);
 
     $box = $mw->DialogBox(-title=>"Edit Song", -buttons=>["Edit","Cancel"],
                                                -default_button=>"Edit");
@@ -1951,6 +1928,18 @@ sub edit_song
     $frame4->Label(-text=>"Extra Info")->pack(-side=>'left');
     $frame4->Entry(-width=>30,
                    -textvariable=>\$edit_info)->pack(-side=>'right');
+    $pubframe = $box->add("Frame")->pack(-fill=>'x');
+    $pubframe->Label(-text=>'Publisher')->pack(-side=>'left');
+    $pubmenu = $pubframe->Menubutton(-text=>'Choose Publisher',
+                                     -relief=>'raised',
+                                     -tearoff=>0,
+                                     -indicatoron=>1)->pack(-side=>'right');
+    foreach my $item (@publishers)
+    {
+      $pubmenu->radiobutton(-label=>$item,
+                            -value=>$item,
+                            -variable=>\$edit_publisher);
+    }
     $result = $box->Show();
     if ($result eq "Edit")
     {
@@ -1980,7 +1969,7 @@ sub edit_song
     # We're editing multiple songs, so only put up a subset
     # First, convert the indices to song ID's
     my @songids;
-    my ($edit_artist_cb, $edit_info_cb, $edit_artist,$edit_info,$edit_category);;
+    my ($clear_artist_cb, $clear_info_cb, $edit_artist,$edit_info,$edit_category);;
     foreach $id (@selected)
     {
       my $songid = get_song_id($mainbox,$id);
@@ -2021,14 +2010,27 @@ sub edit_song
                          -variable=>\$clear_info_cb)->pack(-side=>'right');
     $frame4->Entry(-width=>30,
                    -textvariable=>\$edit_info)->pack(-side=>'right');
+    $pubframe = $box->add("Frame")->pack(-fill=>'x');
+    $pubframe->Label(-text=>'Publisher')->pack(-side=>'left');
+    $pubmenu = $pubframe->Menubutton(-text=>'Choose Publisher',
+                                     -relief=>'raised',
+                                     -tearoff=>0,
+                                     -indicatoron=>1)->pack(-side=>'right');
+    foreach my $item (@publishers)
+    {
+      $pubmenu->radiobutton(-label=>$item,
+                            -value=>$item,
+                            -variable=>\$edit_publisher);
+    }
     $result = $box->Show();
-    if ( ($result eq "Edit") && ( $edit_artist || $edit_category || $edit_info || $clear_artist_cb || $clear_info_cb ) )
+    if ( ($result eq "Edit") && ( $edit_artist || $edit_category || $edit_info || $edit_publisher || $clear_artist_cb || $clear_info_cb ) )
     {
       # Go into edit loop
       my @querystring;
       my $string;
       $edit_artist = "artist=" . $dbh->quote($edit_artist) if $edit_artist;
       $edit_info = "info=" . $dbh->quote($edit_info) if $edit_info;
+      $edit_publisher = "publisher=" . $dbh->quote($edit_publisher) if $edit_publisher;
       $edit_category = "category=" . $dbh->quote($edit_category) if $edit_category;
 
       $edit_artist = "artist=NULL" if ($clear_artist_cb == 1);
@@ -2036,6 +2038,7 @@ sub edit_song
 
       push (@querystring, $edit_artist) if $edit_artist;
       push (@querystring, $edit_info) if $edit_info;
+      push (@querystring, $edit_publisher) if $edit_publisher;
       push (@querystring, $edit_category) if $edit_category;
 
       $string = join (", ", @querystring);
@@ -2061,6 +2064,7 @@ sub edit_song
   $edit_title="";
   $edit_artist="";
   $edit_category="";
+  $edit_publisher="";
   $edit_info="";
 }
 
@@ -2156,7 +2160,7 @@ sub show_docs
   
 sub show_about
 {
-  $rev = '$Revision: 1.289 $';
+  $rev = '$Revision: 1.290 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
