@@ -14,8 +14,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/09/27 18:22:03 $
-#	CVS REVISION NUMBER:    $Revision: 1.48 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/09/28 01:09:40 $
+#	CVS REVISION NUMBER:    $Revision: 1.49 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -24,22 +24,24 @@ use MPEG::MP3Info;
 
 #####
 # CONFIGURATION VARIABLES
+# It is probably best to set this in your external config file, either
+# ~/.mrvoicerc (Unix) or C:\mrvoice.cfg (Windows)
 #####
-$db_name = "";				# In the form DBNAME:HOSTNAME:PORT
-$db_username = "";                      # The username used to connect
+$db_name = '';				# In the form DBNAME:HOSTNAME:PORT
+$db_username = '';                      # The username used to connect
                                         # to the database.
-$db_pass = "";                      	# The password used to connect
+$db_pass = '';                      	# The password used to connect
                                         # to the database.
-$category = "Any";			# The default category to search
+$category = 'Any';			# The default category to search
                                         # Initial status message
 
-$mp3player = "/usr/bin/xmms";		# Full path to MP3 player
-$filepath = "";				# Path that will be prepended onto
+$mp3player = '/usr/bin/xmms';		# Full path to MP3 player
+$filepath = '';				# Path that will be prepended onto
 					# the filename retrieved from the
 					# database, to find the actual
 					# MP3 on the local system.
 					# MUST END WITH TRAILING /
-$savedir = "";				# The default directory where 
+$savedir = '';				# The default directory where 
                                         # hotkey save files will live.
 
 #####
