@@ -8,17 +8,18 @@ I.    About This Software
 II.   Required Components
 III.  Installing
 IV.   Configuration
-  A.  Configuring mrvoice.pl
-  B.  Configuring the PHP frontend
+  A. Configuring mrvoice.pl
+  B. Configuring the PHP frontend
 V.    Populating the database
-  A.  The Easy Way
-     1. Adding Categories
-     2. Deleting Categories
-     3. Adding Songs
-     4. Deleting Songs
-     5. Editing Songs
-  B.  The Hard Way (or:  Database internals)
+  A. The Easy Way
+    1. Adding Categories
+    2. Deleting Categories
+    3. Adding Songs
+    4. Deleting Songs
+    5. Editing Songs
+  B. The Hard Way (or:  Database internals)
 VI.   Running the program
+  A. Hotkeys
 VII.  Contributing
 VIII. Bug Reports
 
@@ -204,6 +205,23 @@ VI.   RUNNING THE PROGRAM:
       If all has gone well, you should see the mrvoice window, along with 
       XMMS (or your MP3 player of choice).  Congratulations!
 
+     A. HOTKEYS
+        Hotkeys are a quick and easy way to play songs.  When you have a 
+        song selected in the search results box, you can press the "Assign
+        Hotkey" button to assign that song to a hotkey.  The hotkeys are
+        F1 through F12.
+         
+        After you assign the song to a hotkey, you can press that key to 
+        begin playing the song immediately.
+        
+        To see the hotkeys you have currently defined, use the "Show Hotkeys"
+        function that is under the "Hotkeys" menu item.  It will bring up
+        a box listing the keys and the songs assigned to them.  From this
+        box you may also activate the checkbox beside a hotkey and press 
+        the "Clear Selected" button to reset just the hotkeys that you have
+        selected.  If you wish to clear all of the hotkeys in one fell 
+        swoop, choose "Clear All Hotkeys" from under the Hotkeys menu.
+
 VII.  CONTRIBUTING: 
       If you like this program, and know of a way to make it better, feel free
       to modify it.  This software is released under the GNU General Public
@@ -221,4 +239,4 @@ VIII. REPORTING BUGS:
 
 --------------------------------------------------------------------------
 
-CVS ID: $Id: README,v 1.10 2001/03/07 00:36:14 minter Exp $
+CVS ID: $Id: README,v 1.11 2001/03/07 13:14:09 minter Exp $
