@@ -194,7 +194,7 @@ else
 
 #####
 
-my $version = "2.0pre1";    # Program version
+my $version = "2.0pre2";    # Program version
 our $status = "Welcome to Mr. Voice version $version";
 
 sub get_rows
@@ -2797,10 +2797,10 @@ sub stop_mp3
 
     system("$config{'mp3player'} --stop");
     $status = "Playing Stopped";
-    $widget->focus();
+#    $widget->focus();
 
     # Manually give the mainbox focus
-    $mainbox->focus();
+#    $mainbox->focus();
 }
 
 sub play_mp3
