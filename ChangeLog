@@ -1,5 +1,7 @@
 Fri  Jun 14 2002	H. Wade Minter (minter@lunenburg.org)
      * Got the arbitrary-date searching working well enough.
+     * Incorporated a Tk::Wm patch from c.l.p.tk to compensate for
+       some KDE braindead-ness.
 
 Thu  Jun 13 2002	H. Wade Minter (minter@lunenburg.org)
      * Fixed a bug in timespan-based searches.
@@ -268,4 +270,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.51 2002/06/14 17:12:08 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.52 2002/06/14 20:40:19 minter Exp $
