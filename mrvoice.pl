@@ -2212,15 +2212,19 @@ sub authenticate_user
     print "Attempting to authenticate user\n" if $debug;
     my $password;
     my $authbox = $mw->DialogBox(
-        -title   => "Please Enter Your Password",
+        -title   => "Please Enter The Password",
         -buttons => [ "Authenticate", "Cancel" ]
     );
     $authbox->Icon( -image => $icon );
     $authbox->Label( -text =>
-          "You must provide a password in order to access this function.\nPlease enter it below."
+          "You must provide a password in order to access this function.\n\nPlease enter it below."
     )->pack( -side => 'top' );
-    $authbox->Entry( -width => 8, -textvariable => \$password, -show => '*' )
-      ->pack( -side => 'top' );
+    $authbox->Entry(
+        -background   => 'white',
+        -width        => 8,
+        -textvariable => \$password,
+        -show         => '*'
+    )->pack( -side => 'top' );
     my $choice = $authbox->Show;
     return if ( $choice eq "Cancel" );
 
