@@ -4,7 +4,7 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id 
+  CVS ID: $Id: mrvoice.sgml,v 1.2 2001/09/23 20:36:06 minter Exp $ 
 -->
 <book>
 
