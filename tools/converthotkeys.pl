@@ -2,14 +2,16 @@
 # NAME: converthotkeys.pl
 # DESCRIPTION: Converts hotkeys files in your save directory from pre-1.8
 #              format to 1.8 format.
-# CVS ID: $Id: converthotkeys.pl,v 1.1 2003/04/08 17:04:15 minter Exp $
+# CVS ID: $Id: converthotkeys.pl,v 1.2 2003/04/09 14:01:16 minter Exp $
 
 use DBI;
+use DBD::mysql;
 use File::Basename;
 use File::Copy;
 use File::Spec::Functions;
 use File::Glob qw(:globally :nocase);
 use Getopt::Std;
+use Carp::Heavy;
 
 getopts('hv');
 

@@ -3,10 +3,13 @@
 # DESCRIPTION: A little tool to identify or delete "orphaned" Mr. Voice
 #              files (files that exist on disk but are not referenced 
 #              in the database.
-# CVS ID: $Id: orphans.pl,v 1.1 2001/12/19 20:20:00 minter Exp $
+# CVS ID: $Id: orphans.pl,v 1.2 2003/04/09 14:01:16 minter Exp $
 
 use DBI;
+use DBD::mysql;
 use File::Basename;
+use File::Glob qw(:globally :nocase);
+use Carp::Heavy;
 use Getopt::Std;
 
 getopts('dhv');
