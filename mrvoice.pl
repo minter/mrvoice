@@ -186,7 +186,7 @@ else
 
 #####
 
-my $version = "2.0pre4";    # Program version
+my $version = "2.0";    # Program version
 our $status = "Welcome to Mr. Voice version $version";
 
 sub get_rows
