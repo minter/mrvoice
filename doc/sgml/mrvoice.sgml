@@ -5,12 +5,12 @@
   <!ENTITY epilogue SYSTEM "troubleshooting.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.45 2003/11/06 18:51:51 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.46 2004/03/05 16:31:56 minter Exp $ 
 -->
 <book status="draft">
 
 <bookinfo>
-  <title>Mr. Voice 1.9.2 Installation and Reference Manual</title>
+  <title>Mr. Voice 1.10 Installation and Reference Manual</title>
   <author>
     <firstname>H. Wade</firstname><surname>Minter</surname>
     <affiliation>
@@ -73,6 +73,21 @@
       </itemizedlist>
     </para>
   </sect1>
+  <sect1><title>What's new in Version 1.10?</title>
+    <para>
+      <itemizedlist>
+        <listitem><para>You can <keycap>Control</keycap>-click in the main listbox to select multiple files, then drag all of those files at once into the Holding Tank.</para></listitem>
+        <listitem><para>The structure of the Edit/Delete Category boxes has changed to make them fit on the screen a bit better.</para></listitem>
+        <listitem><para>You can drag songs from either the main listbox or the Holding Tank onto a hotkey.</para></listitem>
+        <listitem><para>Clicking inside a lisbox (such as the main box or the Holding Tank), or performing a search, will allow you to use the up and down arrow keys to move around in that listbox.</para></listitem>
+        <listitem><para>The Holding Tank features a blue Launch Playlist button that will put the contents of the Holding Tank into a Winamp/XMMS playlist and start playing them.</para></listitem>
+        <listitem><para>You can now save and load the contents of the Holding Tank, just like you can with the Hotkeys, from options in the <menuchoice> <guimenu>File</guimenu></menuchoice> menu.</para></listitem>
+        <listitem><para>If music licensing is a concern, you can now assign a Publisher to each song in the database, and restrict searches based on allowed publishers.  The options to restrict the searches are in the <menuchoice> <guimenu>File</guimenu> <guimenuitem>Preferences</guimenuitem> </menuchoice> menu.</para></listitem>
+        <listitem><para>Most category buttons now update to show which category you've selected.</para></listitem>
+        <listitem><para>The "dropdown" feature of the main search fields (Artist, Title, etc.) have been removed.</para></listitem>
+      </itemizedlist>
+    </para>
+  </sect1>
   <sect1><title>What's new in Version 1.9?</title>
     <para>
       <itemizedlist>
@@ -99,23 +114,6 @@
         <listitem><para>Better support for Ogg Vorbis files under Windows.</para></listitem>
         <listitem><para>Fixed a Windows bug where the database import/export didn't, in a word, work.  It should now.</para></listitem>
         <listitem><para>Verified that Mr. Voice runs under MacOS X 10.2 with Perl 5.8 and X11.app.</para></listitem>
-      </itemizedlist>
-    </para>
-  </sect1>
-  <sect1><title>What's new in Version 1.7</title>
-    <para>
-      <itemizedlist>
-        <listitem><para>The length of a song is now stored in the database, to greatly speed up search times.  If you edit or replace the raw MP3/OGG/WAV file without deleting and re-adding the song, you will need to run the Update Song Times function from the Songs menu.</para></listitem>
-        <listitem><para>With that change, the database structure has also changed.  The first time you run version 1.7, Mr. Voice will detect the change and update your database automatically.  This should only happen once.</para></listitem>
-        <listitem><para>Added support for Winamp/XMMS playlist files (files with .pls or .m3u suffixes)</para></listitem>
-        <listitem><para>Added a "preview song" feature to the Add New Song window</para></listitem>
-        <listitem><para>If the file you select in the Add New Song window has valid ID3/OGG information on title and artist, those fields will be filled in automatically (So select your file before entering the title and artist)</para></listitem>
-        <listitem><para>Added Alt-key accelerators for the main menu items (ie. <keycombo action='simul'> <keycap>Alt</keycap> <keycap>F</keycap> </keycombo> will get you the File menu)</para></listitem>
-        <listitem><para>The first result returned by a search is now active, so you can press <keycombo action='simul'> <keycap>Control</keycap> <keycap>P</keycap> </keycombo> to start playing quickly.</para></listitem>
-        <listitem><para>When you open a saved hotkey file, the Hotkeys window will display automatically.</para></listitem>
-        <listitem><para>Added Dump/Restore Database options to the File menu.  You can use these to take backups of your database, or to import a prior backup.</para></listitem>
-        <listitem><para>Drag-And-Drop now displays an icon instead of the song name, to band-aid over a problem with the incorrect song name being displayed.</para></listitem>
-        <listitem><para>Removed the "Are you sure you want to display the whole database?" popup search box, as those searches seem to take under a second now.</para></listitem>
       </itemizedlist>
     </para>
   </sect1>
