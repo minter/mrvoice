@@ -39,7 +39,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.210 2003/04/04 22:45:07 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.211 2003/04/06 21:04:58 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1642,7 +1642,8 @@ sub delete_song
       $sth->finish;
       if ($delete_file_cb == 1)
       {
-        infobox($mw, "File Deletion Error","Could not delete file $filepath$filename from the disk\n\nEntry was removed from the database") unless ( unlink("$filepath$filename") );
+	my $file = File::Spec->catfile($filepath, $filename);
+        infobox($mw, "File Deletion Error","Could not delete file $file from the disk\n\nEntry was removed from the database") unless ( unlink("$file") );
       }
       infobox($mw, "Song Deleted","Deleted song with ID $id");
       $status = "Deleted song id $id";
@@ -1661,7 +1662,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.210 $';
+  $rev = '$Revision: 1.211 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -1993,7 +1994,7 @@ sub update_time
   while (@table_row = $sth->fetchrow_array)
   {
     ($id,$filename,$time) = @table_row;
-    $newtime = get_songlength("$filepath/$filename");
+    $newtime = get_songlength(File::Spec->catfile($filepath,$filename));
     if ($newtime ne $time)
     {
       $query = "UPDATE mrvoice SET time='$newtime' WHERE id='$id'";
@@ -2153,7 +2154,8 @@ sub play_mp3
       $songstatusstring = "\"$statustitle\"";
     }
     $status = "Playing $songstatusstring";
-    system ("$mp3player $filepath$filename");
+    my $file = File::Spec->catfile($filepath,$filename);
+    system ("$mp3player $file");
     $statustitle = "";
     $statusartist = "";
   }
@@ -2284,13 +2286,12 @@ sub do_search
   $numrows = $sth->rows;
   while (@table_row = $sth->fetchrow_array)
   {
-    if (-e "$filepath$table_row[5]")
+    if (-e File::Spec->catfile($filepath,$table_row[5]))
     {
       $string="$table_row[0]:($table_row[1]";
       $string = $string . " - $table_row[2]" if ($table_row[2]);
       $string = $string . ") - \"$table_row[4]\"";
       $string = $string. " by $table_row[3]" if ($table_row[3]);
-      #my $songstring = get_songlength("$filepath$table_row[5]");
       $string = $string . " $table_row[6]";
       $mainbox->insert('end',$string); 
     }
@@ -2431,17 +2432,18 @@ sub read_rcfile
   }
   if ($^O eq "MSWin32")
   {
-    $filepath = $filepath . "\\" unless ($filepath =~ /\\$/);
+#    $filepath = $filepath . "\\" unless ($filepath =~ /\\$/);
     $filepath = Win32::GetShortPathName($filepath);
-    $savedir = $savedir . "\\" unless ($savedir =~ /\\$/);
+#    $savedir = $savedir . "\\" unless ($savedir =~ /\\$/);
     $savedir = Win32::GetShortPathName($savedir);
     $mp3player = Win32::GetShortPathName($mp3player);
   }
   else
   {
-    $filepath = $filepath . "/" unless ($filepath =~ /\/$/);
+#    $filepath = $filepath . "/" unless ($filepath =~ /\/$/);
     $savedir =~ s#(.*)/$#$1#;
   }
+
 }
 
 sub StartDrag
@@ -2640,7 +2642,7 @@ if (! $sth->execute)
         $query .= "$tmpinfo,";
       }
       $query .= "$tmpfilename,";
-      $length = get_songlength("$filepath$table_row[5]");
+      $length = get_songlength(File::Spec->catfile($filepath,$table_row[5]));
       $query .= "'$length',$tmpmodtime)";
       $sth4=$dbh->prepare($query);
       $sth4->execute;
@@ -3093,9 +3095,9 @@ bind_hotkeys($mw);
 $mw->bind("<Control-Key-p>", [\&play_mp3,"Current"]);
 
 # If the default hotkey file exists, load that up.
-if (-r "$savedir/default.mrv")
+if (-r File::Spec->catfile($savedir, "default.mrv"))
 {
-  open_file ($mw,"$savedir/default.mrv");
+  open_file ($mw, File::Spec->catfile($savedir, "default.mrv"));
 }
 
 if (! -x $mp3player)
