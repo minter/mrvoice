@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.339 2004/03/10 20:51:57 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.340 2004/03/10 20:56:50 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2199,7 +2199,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.339 $';
+    my $rev = '$Revision: 1.340 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3843,7 +3843,7 @@ sub advanced_search
     )->pack( -side => "left" );
     my $start_year_menu = $start_year_button->menu( -tearoff => 0 );
     $start_year_button->configure( -menu => $start_year_menu );
-    for ( my $i = 2000 ; $i <= 2003 ; $i++ )
+    for ( my $i = $start_year ; $i <= $end_year ; $i++ )
     {
         $start_year_menu->radiobutton(
             -label    => $i,
@@ -3905,7 +3905,7 @@ sub advanced_search
     )->pack( -side => "left" );
     my $end_year_menu = $end_year_button->menu( -tearoff => 0 );
     $end_year_button->configure( -menu => $end_year_menu );
-    for ( my $i = 2000 ; $i <= 2003 ; $i++ )
+    for ( my $i = $start_year ; $i <= $end_year ; $i++ )
     {
         $end_year_menu->radiobutton(
             -label    => $i,
