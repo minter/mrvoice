@@ -638,6 +638,40 @@ sub BindMouseWheel
 
 }    # end BindMouseWheel
 
+sub check_version
+{
+    my $xmlrpc;
+    unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
+    {
+        $status = "Could not initialize XMLRPC";
+        return;
+    }
+
+    my $search_call = $xmlrpc->call(
+        'check_version',
+        {
+            os      => $^O,
+            version => $version
+        }
+    );
+
+    my $result = $search_call->result;
+    if ( !$result )
+    {
+        chomp( my $error = $search_call->faultstring );
+        infobox( $mw, "XMLRPC version check error", $error );
+        $status = "XMLRPC version check error";
+        return;
+    }
+
+    if ( $result->{needupgrade} == 1 )
+    {
+        infobox( $mw, "A Newer Version of Mr. Voice is Available",
+            $result->{message} );
+    }
+
+}
+
 sub check_md5
 {
     my $md5 = shift or return;
@@ -5929,6 +5963,11 @@ unless ( $dbh->do("SELECT md5 FROM mrvoice LIMIT 1") )
 foreach my $file ( glob( catfile( $config{plugin_dir}, "*.pl" ) ) )
 {
     require $file;
+}
+
+if ( $config{check_version} == 1 )
+{
+    check_version();
 }
 
 MainLoop;
