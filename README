@@ -22,7 +22,8 @@ REQUIRED COMPONENTS:
 * Relational database, with available perl DBI module (Tested with MySQL)
 * TCL/TK
 * xmms, or other MP3 player that plays songs from the command line.
-* class.id3.php (http://leknor.com/code/)
+* class.id3.php (http://leknor.com/code/) if you're using the PHP
+  frontends.
 
 INSTALLING:
 1) Compile and install any required software from above (perl modules, etc.)
@@ -36,6 +37,10 @@ INSTALLING:
    This creates two tables in DATABASE_NAME: mrvoice and categories.
 4) If you will be using the PHP frontends, install class.id3.php3 
    (available from the URL above) into your PHP include path.
+5) If you will be using the PHP frontends, copy the .php files into
+   their own directory in your web tree.  The index.php file uses
+   relative URLs, so if they're all together in the same directory,
+   they'll work fine.
 
 CONFIGURING:
 The following configuration settings can/should be adjusted in the mrvoice.pl
@@ -89,6 +94,9 @@ stuff, I may use:
 Note that the description is what you will actually see in all of the 
 frontends, so don't make it too long.
 
+If you are using the PHP frontend, all of this is done for you in the
+background.
+
 For the mrvoice table, there are the following fields:
 id - An auto-increment field that will contain a unique number for the entry.
 title - The title of the entry
@@ -124,4 +132,4 @@ guarantee that I'll do it, but I'm glad to listen to any suggestions.  Check
 the TODO file to see stuff I'm currently working on.
 
 --
-CVS ID: $Id: README,v 1.4 2001/02/21 03:24:17 minter Exp $
+CVS ID: $Id: README,v 1.5 2001/02/25 22:24:28 minter Exp $
