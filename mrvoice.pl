@@ -229,6 +229,7 @@ sub get_rows
     my $rows = 0;
     my $sth  = $dbh->prepare($query);
     $sth->execute;
+    print "$query executed\n" if $debug;
     while ( my @row = $sth->fetchrow_array )
     {
         $rows++;
@@ -620,6 +621,7 @@ sub bind_hotkeys
 
     if ( $^O eq "MSWin32" )
     {
+        print "Binding Shift-Escape on Windows\n" if $debug;
         $window->bind(
             "<Shift-Key-Escape>",
             sub {
@@ -636,6 +638,7 @@ sub bind_hotkeys
 
 sub open_tank
 {
+    print "Opening saved holding tank file\n" if $debug;
 
     # Opens a saved holding tank file, overwriting the current contents
     # UGLY HACK
@@ -644,6 +647,7 @@ sub open_tank
     {
         $initialdir =~ s#/#\\#;
     }
+    print "Setting initialdir to $initialdir\n" if $debug;
 
     # UGLY HACK
 
@@ -654,33 +658,44 @@ sub open_tank
     );
     if ($selectedfile)
     {
+        print "Selected file $selectedfile\n" if $debug;
         if ( !-r $selectedfile )
         {
+            print "Could not read holding tank file $selectedfile\n" if $debug;
             $status = "Could not open saved file for reading";
             infobox( $mw, "File Error",
                 "Could not open file $selectedfile for reading" );
         }
         else
         {
-            holding_tank() if ( !Exists($holdingtank) );
+            print "Displaying holding tank (unless it's already up)\n"
+              if $debug;
+            holding_tank()              if ( !Exists($holdingtank) );
+            print "Wiping tank clean\n" if $debug;
             wipe_tank();
+            print "Opening tankfile $selectedfile\n" if $debug;
             open( TANKFILE, $selectedfile );
             while ( my $id = <TANKFILE> )
             {
                 chomp($id);
+                print "Read song id $id from tankfile\n" if $debug;
                 next unless ( validate_id($id) );
                 my $query =
                   "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.time from mrvoice,categories where mrvoice.category=categories.code AND mrvoice.id=$id";
+                print "Running selectrow_hashref query $query\n" if $debug;
                 my $tank_ref = $dbh->selectrow_hashref($query);
-                my $string   = "($tank_ref->{description}";
+                print "Query run\n" if $debug;
+                my $string = "($tank_ref->{description}";
                 $string = $string . " - $tank_ref->{info}"
                   if ( $tank_ref->{info} );
                 $string = $string . ") - \"$tank_ref->{title}\"";
                 $string = $string . " by $tank_ref->{artist}"
                   if ( $tank_ref->{artist} );
                 $string = $string . " $tank_ref->{time}";
+                print "Built string $string, adding to tankbox\n" if $debug;
 
                 $tankbox->add( $id, -data => $id, -text => $string );
+                print "Added string $string as id $id\n" if $debug;
             }
         }
         close(TANKFILE);
@@ -688,21 +703,26 @@ sub open_tank
     }
     else
     {
+        print "Cancelled loading of holding tank file\n" if $debug;
         $status = "Cancelled loading of holding tank file";
     }
 }
 
 sub save_tank
 {
+    print "Starting save_tank routine\n" if $debug;
     if ( !Exists($tankbox) )
     {
+        print "Returning because tankbox doesn't exist yet\n" if $debug;
         $status = "Can't save the holding tank before you use it...";
         return;
     }
+    print "Getting all indices for tankbox\n" if $debug;
     my @indices = return_all_indices($tankbox);
 
     if ( $#indices < 0 )
     {
+        print "Nothing in the tank, returning\n" if $debug;
         $status = "Not saving an empty holding tank";
         return;
     }
@@ -713,6 +733,7 @@ sub save_tank
     {
         $initialdir =~ s#/#\\#;
     }
+    print "Using initialdir $initialdir\n" if $debug;
     my $selectedfile = $mw->getSaveFile(
         -title            => 'Save a Holding Tank file',
         -defaultextension => ".hld",
@@ -722,14 +743,19 @@ sub save_tank
 
     if ($selectedfile)
     {
+        print "Using selected file $selectedfile\n" if $debug;
         if ( ( !-w $selectedfile ) && ( -e $selectedfile ) )
         {
+            print "Could not open $selectedfile for writing\n" if $debug;
             $status = "Holding tank save failed due to file error";
             infobox( $mw, "File Error!",
                 "Could not open file $selectedfile for writing" );
         }
         elsif ( !-w dirname($selectedfile) )
         {
+            print "Could not write to directory "
+              . dirname($selectedfile) . "\n"
+              if $debug;
             $status = "Holding tank save failed due to directory error";
             my $directory = dirname($selectedfile);
             $directory = Win32::GetShortPathName($directory)
@@ -744,11 +770,14 @@ sub save_tank
         {
             $selectedfile = "$selectedfile.hld"
               unless ( $selectedfile =~ /.*\.hld$/ );
+            print "Now selectedfile is $selectedfile.  Opening for writing.\n";
             open( TANKFILE, ">$selectedfile" );
             foreach my $string (@indices)
             {
+                print "Got string $string\n" if $debug;
                 my ( $id, $desc ) = split( /:/, $string );
                 print TANKFILE "$id\n";
+                print "Wrote ID $id to tankfile\n" if $debug;
             }
             close TANKFILE;
             $status = "Saved holding tank to $selectedfile";
@@ -756,12 +785,15 @@ sub save_tank
     }
     else
     {
+        print "Cancelled save of holding tank\n" if $debug;
         $status = "Cancelled save of holding tank";
     }
 }
 
 sub open_file
 {
+
+    print "Opening a saved hotkey file\n" if $debug;
 
     # Used to open a saved hotkey file.
     # Takes an optional argument.  If the argument is given, we attempt
@@ -773,6 +805,7 @@ sub open_file
 
     if ( $lock_hotkeys == 1 )
     {
+        print "Hotkeys were locked.  Returning.\n" if $debug;
         $status = "Can't open saved hotkeys - current hotkeys locked";
         return;
     }
@@ -780,14 +813,21 @@ sub open_file
     my $parentwidget = shift;
     my $selectedfile = shift;
 
+    print "Got selectedfile $selectedfile\n" if $debug;
+
     # UGLY HACK
     my $initialdir = $config{'savedir'};
     if ( $^O eq "MSWin32" )
     {
         $initialdir =~ s#/#\\#;
     }
+
+    print "Initialdir is $initialdir\n" if $debug;
+
     if ( !$selectedfile )
     {
+        print "No selectedfile passed in, popping up a file selector.\n"
+          if $debug;
         $selectedfile = $mw->getOpenFile(
             -filetypes  => $hotkeytypes,
             -initialdir => $initialdir,
@@ -797,19 +837,24 @@ sub open_file
 
     if ($selectedfile)
     {
+        print "Now selectedfile is $selectedfile\n" if $debug;
         if ( !-r $selectedfile )
         {
+            print "$selectedfile is not readable\n" if $debug;
             infobox( $mw, "File Error",
                 "Could not open file $selectedfile for reading" );
         }
         else
         {
+            print "Clearing hotkeys\n" if $debug;
             clear_hotkeys();
+            print "Opening $selectedfile\n" if $debug;
             open( HOTKEYFILE, $selectedfile );
             while (<HOTKEYFILE>)
             {
                 chomp;
                 my ( $key, $id ) = split(/::/);
+                print "Got key $key and ID $id\n" if $debug;
                 if ( ( not( $id =~ /^\d+$/ ) ) && ( not( $id =~ /^\w*$/ ) ) )
                 {
                     infobox(
@@ -821,15 +866,19 @@ sub open_file
                 }
                 elsif ( ($id) && ( validate_id($id) ) )
                 {
+                    print "ID $id validated\n" if $debug;
                     $fkeys{$key}->{id}    = $id;
                     $fkeys{$key}->{title} = get_info_from_id($id)->{fulltitle};
                     $fkeys{$key}->{filename} =
                       get_info_from_id($id)->{filename};
+                    print "Got filename $fkeys{$key}->{filename}\n" if $debug;
                 }
             }
             close(HOTKEYFILE);
             $status = "Loaded hotkey file $selectedfile";
+            print "Adding $selectedfile to dynamic documents\n" if $debug;
             dynamic_documents($selectedfile);
+            print "Raising hotkeys window" if $debug;
             list_hotkeys();
         }
     }
@@ -842,6 +891,8 @@ sub open_file
 sub save_file
 {
 
+    print "Saving hotkey file\n" if $debug;
+
     # Used to save a set of hotkeys to a file on disk.
     # We pop up a save file dialog box to get the filename and path. We
     # then write out the data in the form of hotkey_number::id.
@@ -853,6 +904,7 @@ sub save_file
     {
         $initialdir =~ s#/#\\#;
     }
+    print "Using initialdir $initialdir\n" if $debug;
     my $selectedfile = $mw->getSaveFile(
         -title            => 'Save a Hotkey file',
         -defaultextension => ".mrv",
@@ -860,10 +912,13 @@ sub save_file
         -initialdir       => $initialdir,
     );
 
+    print "Got selectedfile $selectedfile\n" if $debug;
+
     if ($selectedfile)
     {
         if ( ( !-w $selectedfile ) && ( -e $selectedfile ) )
         {
+            print "$selectedfile is not writable\n" if $debug;
             infobox( $mw, "File Error!",
                 "Could not open file $selectedfile for writing" );
         }
@@ -872,6 +927,7 @@ sub save_file
             my $directory = dirname($selectedfile);
             $directory = Win32::GetShortPathName($directory)
               if ( $^O eq "MSWin32" );
+            print "Could not write to directory $directory\n" if $debug;
             infobox(
                 $mw,
                 "Directory Error!",
@@ -882,15 +938,20 @@ sub save_file
         {
             $selectedfile = "$selectedfile.mrv"
               unless ( $selectedfile =~ /.*\.mrv$/ );
+            print
+              "Now selectedfile is $selectedfile.  Opening file for writing.\n"
+              if $debug;
             open( HOTKEYFILE, ">$selectedfile" );
             foreach my $num ( 1 .. 12 )
             {
                 my $keynum = "f$num";
                 print HOTKEYFILE "$keynum";
                 print HOTKEYFILE "::$fkeys{$keynum}->{id}\n";
+                print "Wrote $keynum and $fkeys{$keynum}->{id}\n" if $debug;
             }
             close(HOTKEYFILE);
             $status = "Finished saving hotkeys to $selectedfile";
+            print "Adding $selectedfile to dynamic_documents\n" if $debug;
             dynamic_documents($selectedfile);
         }
     }
@@ -902,32 +963,39 @@ sub save_file
 
 sub dump_database
 {
+    print "Dumping database\n" if $debug;
     my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) =
       localtime();
     $year += 1900;
     $mon  += 1;
     my $defaultfilename = "database-$year-$mon-$mday.sql";
-    my $dumpfile        = $mw->getSaveFile(
+    print "Default filename is $defaultfilename\n" if $debug;
+    my $dumpfile = $mw->getSaveFile(
         -title            => 'Choose Database Export File',
         -defaultextension => ".sql",
         -initialfile      => $defaultfilename,
         -initialdir       => ( $^O eq "MSWin32" ) ? "C:\\" : get_homedir(),
         -filetypes        => $databasefiles
     );
+    print "Got dumpfile $dumpfile\n" if $debug;
     my $dirname = dirname($dumpfile);
     $dirname = Win32::GetShortPathName($dirname) if ( $^O eq "MSWin32" );
+    print "Got directory $dirname\n" if $debug;
     my $shortdumpfile = basename($dumpfile);
     $shortdumpfile = catfile( $dirname, $shortdumpfile );
+    print "Short dumpfile is $shortdumpfile\n" if $debug;
 
     if ($dumpfile)
     {
         if ( ( !-w $shortdumpfile ) && ( -e $shortdumpfile ) )
         {
+            print "Short dumpfile $shortdumpfile is not writable\n" if $debug;
             infobox( $mw, "File Error!",
                 "Could not open file $dumpfile for writing" );
         }
         elsif ( !-w $dirname )
         {
+            print "Dirname $dirname is not writable\n" if $debug;
             infobox(
                 $mw,
                 "Directory Error!",
@@ -937,9 +1005,12 @@ sub dump_database
         else
         {
 
+            print "Running the SQLite dump. Opening file\n" if $dumpfile;
+
             # Run the SQLite Dump
             if ( !open( DUMPFILE, ">$dumpfile" ) )
             {
+                print "Opening $dumpfile for writing failed\n" if $debug;
                 $status = "Could not open $dumpfile for writing";
                 return;
             }
@@ -947,34 +1018,44 @@ sub dump_database
             # Get the table schema information
             my $query =
               "SELECT tbl_name,sql FROM sqlite_master WHERE sql NOT NULL";
+            print "Running schema query $query\n" if $debug;
             my $sth = $dbh->prepare($query);
             $sth->execute;
+            print "Query executed\n" if $debug;
             while ( my $row = $sth->fetchrow_hashref )
             {
                 print DUMPFILE "DROP TABLE $row->{tbl_name};\n";
                 my $schema = $row->{sql};
                 $schema =~ s/\n//g;
                 print DUMPFILE "$schema;\n";
+                print "Wrote table $row->{tbl_name} with schema $schema\n"
+                  if $debug;
 
                 my $data_query = "SELECT * FROM $row->{tbl_name}";
-                my $data_sth   = $dbh->prepare($data_query);
+                print "Running data query $data_query\n" if $debug;
+                my $data_sth = $dbh->prepare($data_query);
                 $data_sth->execute();
+                print "Executed data query\n" if $debug;
                 while ( my @row = $data_sth->fetchrow_array )
                 {
                     my @quoted;
                     print DUMPFILE "INSERT INTO $row->{tbl_name} VALUES (";
                     foreach my $item (@row)
                     {
+                        print "Pushing and quoting $item\n" if $debug;
                         push( @quoted, $dbh->quote($item) );
+                        print "Pushed " . $dbh->quote($item) . "\n" if $debug;
                     }
 
                     print DUMPFILE join( ",", @quoted ) . ");\n";
+                    print "Ouptut data to dumpfile\n" if $debug;
                 }
 
             }
 
             close DUMPFILE or die("Could not close $dumpfile after writing");
 
+            print "Displaying infobox\n" if $debug;
             infobox(
                 $mw,
                 "Database Dumped",
@@ -991,6 +1072,7 @@ sub dump_database
 
 sub import_database
 {
+    print "Importing database\n" if $debug;
     my $dumpfile = $mw->getOpenFile(
         -title            => 'Choose Database Export File',
         -defaultextension => ".sql",
@@ -1000,11 +1082,13 @@ sub import_database
 
     my $shortdumpfile =
       $^O eq "MSWin32" ? Win32::GetShortPathName($dumpfile) : $dumpfile;
+    print "Turning $dumpfile into $shortdumpfile\n" if $debug;
 
     if ($dumpfile)
     {
         if ( !-r $shortdumpfile )
         {
+            print "Couldn't read $shortdumpfile\n" if $debug;
             infobox(
                 $mw,
                 "File Error",
@@ -1013,6 +1097,8 @@ sub import_database
         }
         else
         {
+
+            print "Displaying warning box\n" if $debug;
 
             # We can read the file - pop up a warning before continuing.
             my $box = $mw->Dialog(
@@ -1028,8 +1114,10 @@ sub import_database
 
             if ( $button eq "Ok" )
             {
-                if ( !open( DUMPFILE, $dumpfile ) )
+                print "Got an 'Ok' from the warning box\n" if $debug;
+                if ( !open( DUMPFILE, $shortdumpfile ) )
                 {
+                    print "Open of $shortdumpfile failed\n" if $debug;
                     $status = "Cannot open $dumpfile for reading";
                     return;
                 }
@@ -1037,16 +1125,22 @@ sub import_database
                 my $starttime = gettimeofday();
                 my $errstat   = 0;
                 $dbh->do("BEGIN");
+                print "Begun transaction\n" if $debug;
                 while ( my $query = <DUMPFILE> )
                 {
                     if ( $query =~ /^--/ )
                     {
+                        print
+                          "This was a MySQL export, setting errstat and ending\n"
+                          if $debug;
                         $errstat = 2;
                         last;
                     }
                     chomp $query;
                     my $sth = $dbh->prepare($query);
+                    print "Prepared query $query\n" if $debug;
                     $errstat = 1 if ( !$sth->execute() );
+                    print "Executed with errstat $errstat\n" if $debug;
                 }
                 close(DUMPFILE);
                 my $endtime = gettimeofday();
@@ -1055,6 +1149,7 @@ sub import_database
                 {
                     $status = "File $dumpfile HAD ERRORS - nothing imported";
                     $dbh->do("ROLLBACK");
+                    print "Executed ROLLBACK because of errors\n" if $debug;
                 }
                 elsif ( $errstat == 2 )
                 {
@@ -1064,6 +1159,7 @@ sub import_database
                 {
                     $status = "Imported $dumpfile in $diff seconds";
                     $dbh->do("COMMIT");
+                    print "Did COMMIT\n" if $debug;
                 }
             }
             else
@@ -1083,48 +1179,62 @@ sub import_database
 sub get_title_artist
 {
 
+    print "Getting title and artist\n" if $debug;
+
     # Returns the title and artist of an MP3 or OGG file
     my $filename = shift;
+    print "Got filename $filename\n" if $debug;
     my $title;
     my $artist;
 
     if ( $filename =~ /.mp3$/i )
     {
+        print "Getting mp3 tag info\n" if $debug;
         $filename = Win32::GetShortPathName($filename) if ( $^O eq "MSWin32" );
         my $tag = get_mp3tag($filename);
         $title  = $tag->{TITLE};
         $artist = $tag->{ARTIST};
+        print "It's a mp3 with title $title and artist $artist\n" if $debug;
     }
     elsif ( $filename =~ /.ogg/i )
     {
+        print "Getting ogg tag info\n" if $debug;
         $filename = Win32::GetShortPathName($filename) if ( $^O eq "MSWin32" );
         my $ogg = Ogg::Vorbis::Header::PurePerl->new($filename);
         ($title)  = $ogg->comment('title');
         ($artist) = $ogg->comment('artist');
+        print "Got ogg title $title and artist $artist\n" if $debug;
     }
     elsif ( $filename =~ /.wma/i )
     {
+        print "Getting wma tag info\n" if $debug;
         $filename = Win32::GetShortPathName($filename) if ( $^O eq "MSWin32" );
         my $wma     = Audio::WMA->new($filename);
         my $comment = $wma->comment();
         $title  = $comment->{TITLE};
         $artist = $comment->{AUTHOR};
+        print "Got wma title $title and artist $artist\n" if $debug;
     }
     elsif ( ( $filename =~ /.m4a/i ) || ( $filename =~ /.mp4/i ) )
     {
+        print "It's a AAC file\n" if $debug;
         $filename = Win32::GetShortPathName($filename) if ( $^O eq "MSWin32" );
         my $tag = get_mp4tag($filename);
         $title  = $tag->{NAM};
         $artist = $tag->{ART};
+        print "Got AAC title $title and artist $artist\n" if $debug;
     }
     $title  =~ s/^\s*// if $title;
     $artist =~ s/^\s*// if $artist;
 
+    print "Returning title $title and artist $artist\n" if $debug;
     return ( $title, $artist );
 }
 
 sub dynamic_documents
 {
+
+    print "Doing dynamic documents\n" if $debug;
 
     # This function takes a filename as an argument.  It then increments
     # a counter to keep track of how many documents we've accessed in this
@@ -1133,14 +1243,18 @@ sub dynamic_documents
     # over the user-specified limit, removes the oldest file from the list.
 
     my $file = shift;
+    print "Using file $file\n" if $debug;
 
     my $fileentry;
     my $counter = 0;
     my $success = 0;
     foreach my $fileentry (@current)
     {
+        print "Using $fileentry from the current array\n" if $debug;
         if ( $fileentry eq $file )
         {
+
+            print "We have match with a file already in the list\n" if $debug;
 
             # The item is currently in the list.  Move it to the front of
             # the line.
@@ -1158,6 +1272,8 @@ sub dynamic_documents
     if ( $success != 1 )
     {
 
+        print "The file isn't in our list, so we will add it\n" if $debug;
+
         # The file isn't in our current list, so we need to add it.
         unshift @current, $file;
         $savefile_count++;
@@ -1169,9 +1285,11 @@ sub dynamic_documents
     }
 
     # Get rid of the old menu and rebuild from our array
+    print "Deleting the old menu and rebuilding\n" if $debug;
     $dynamicmenu->delete( 0, 'end' );
     foreach $fileentry (@current)
     {
+        print "Adding $fileentry to the menu\n" if $debug;
         $dynamicmenu->command(
             -label   => "$fileentry",
             -command => [ \&open_file, $mw, $fileentry ]
@@ -1187,6 +1305,9 @@ sub infobox
     # formatted string of data to display.
 
     my ( $parent_window, $title, $string, $type ) = @_;
+    print
+      "Popping up a generic infobox with parent window $parent_window, title $title, string $string, and type $type\n"
+      if $debug;
     $type = "info" if !$type;
     my $box = $parent_window->Dialog(
         -title   => "$title",
@@ -1195,17 +1316,22 @@ sub infobox
         -buttons => ["OK"]
     );
     $box->Icon( -image => $icon );
+    print "Showing infobox\n" if $debug;
     $box->Show;
+    print "Finished showing infobox\n" if $debug;
 }
 
 sub backup_hotkeys
 {
+
+    print "Backing up hotkeys\n" if $debug;
 
     # This saves the contents of the hotkeys to temporary variables, so
     # you can restore them after a file open, etc.
 
     foreach my $key (%fkeys)
     {
+        print "Setting old hotkey $key\n" if $debug;
         $oldfkeys{$key}->{title}    = $fkeys{$key}->{title};
         $oldfkeys{$key}->{id}       = $fkeys{$key}->{id};
         $oldfkeys{$key}->{filename} = $fkeys{$key}->{filename};
@@ -1216,9 +1342,12 @@ sub backup_hotkeys
 sub restore_hotkeys
 {
 
+    print "Restoring old hotkeys\n" if $debug;
+
     # Replaces the hotkeys with the old ones from backup_hotkeys()
     foreach my $key (%oldfkeys)
     {
+        print "Restoring fkey $key\n" if $debug;
         $fkeys{$key}->{title}    = $oldfkeys{$key}->{title};
         $fkeys{$key}->{id}       = $oldfkeys{$key}->{id};
         $fkeys{$key}->{filename} = $oldfkeys{$key}->{filename};
@@ -1230,6 +1359,7 @@ sub restore_hotkeys
 
 sub build_category_menubutton
 {
+    print "Building category menubutton\n" if $debug;
     my $parent  = shift;
     my $var_ref = shift;
     my $menu    = $parent->Menubutton(
@@ -1240,10 +1370,15 @@ sub build_category_menubutton
     );
     my $query = "SELECT * from categories ORDER BY description";
     my $sth   = $dbh->prepare($query);
+    print "Preparing category query $query\n" if $debug;
     $sth->execute or die "can't execute the query: $DBI::errstr\n";
+    print "Executed category query\n" if $debug;
 
     while ( my $cat_hashref = $sth->fetchrow_hashref )
     {
+        print
+          "Using description $cat_hashref->{description} and code $cat_hashref->{code}\n"
+          if $debug;
         $menu->radiobutton(
             -label    => $cat_hashref->{description},
             -value    => $cat_hashref->{code},
@@ -1260,6 +1395,7 @@ sub build_category_menubutton
 
 sub bulk_add
 {
+    print "Using bulk add\n";
     my ( @accepted, @rejected, $directory, $longcat, $db_cat );
     my $bulkadd_publisher = "OTHER";
     my $box1              = $mw->DialogBox(
@@ -1313,6 +1449,7 @@ sub bulk_add
     )->pack( -side => 'left' );
 
     my $firstbutton = $box1->Show;
+    print "Got a response from the first box\n" if $debug;
 
     if ( $firstbutton ne "Continue" )
     {
@@ -1321,8 +1458,10 @@ sub bulk_add
     }
 
     $directory = Win32::GetShortPathName($directory) if ( $^O eq "MSWin32" );
+    print "Got directory $directory\n" if $debug;
     if ( !-r $directory )
     {
+        print "Directory unreadable, returning\n" if $debug;
         infobox(
             $mw,
             "Directory unreadable",
@@ -1334,6 +1473,7 @@ sub bulk_add
 
     if ( !$db_cat )
     {
+        print "Didn't get a category, returning until we get one\n" if $debug;
         infobox(
             $mw,
             "Select a category",
@@ -1350,23 +1490,29 @@ sub bulk_add
     my @mp4glob = glob( catfile( $directory, "*.mp4" ) );
     my @wmaglob = glob( catfile( $directory, "*.wma" ) )
       if ( $^O eq "MSWin32" );
+    print "Globbed everything\n" if $debug;
 
     my @list = ( @mp3glob, @oggglob, @m4aglob, @mp4glob );
     push( @list, @wmaglob ) if ( $^O eq "MSWin32" );
 
     $mw->Busy( -recurse => 1 );
+    print "Gone busy\n" if $debug;
     my $query =
       "INSERT INTO mrvoice (id,title,artist,category,filename,time,modtime,publisher) VALUES (NULL, ?, ?, ?, ?, ?, (SELECT strftime('%s','now')),?)";
     my $sth = $dbh->prepare($query);
+    print "Preparing query $query\n" if $debug;
     foreach my $file (@list)
     {
         $file = Win32::GetShortPathName($file) if ( $^O eq "MSWin32" );
+        print "Using file $file\n" if $debug;
         my ( $title, $artist ) = get_title_artist($file);
+        print "Got title $title and artist $artist\n" if $debug;
         if ($title)
         {
 
             # Valid title, all we need
-            my $time     = get_songlength($file);
+            my $time = get_songlength($file);
+            print "Got time $time\n" if $debug;
             my $db_title = $dbh->quote($title);
             my $db_artist;
             if ( ($artist) && ( $artist !~ /^\s*$/ ) )
@@ -1378,9 +1524,11 @@ sub bulk_add
                 $db_artist = "NULL";
             }
             my $db_filename = move_file( $file, $title, $artist );
+            print "Moved file to $db_filename\n" if $debug;
             $sth->execute( $db_title, $db_artist, $db_cat, $db_filename, $time,
                 $bulkadd_publisher )
               or die "can't execute the query: $DBI::errstr\n";
+            print "Executed sth\n" if $debug;
             $sth->finish;
             if ( $^O eq "MSWin32" )
             {
@@ -1394,6 +1542,8 @@ sub bulk_add
         else
         {
 
+            print "Didn't have a title for this file\n" if $debug;
+
             # No title, no go.
             if ( $^O eq "MSWin32" )
             {
@@ -1406,10 +1556,13 @@ sub bulk_add
         }
     }
     $mw->Unbusy( -recurse => 1 );
+    print "Going unbusy\n" if $debug;
 
     # Final Summary
+    print "Creating summarybox\n" if $debug;
     my $summarybox = $mw->Toplevel( -title => "Bulk-Add Summary" );
     $summarybox->withdraw();
+    print "Withdrawed summarybox\n" if $debug;
     $summarybox->Icon( -image => $icon );
     my $lb = $summarybox->Scrolled(
         "Listbox",
@@ -1421,6 +1574,7 @@ sub bulk_add
         -selectmode => "single"
     )->pack();
     $lb->insert( 'end', "===> The following items were successfully added" );
+
     foreach my $good (@accepted)
     {
         $lb->insert( 'end', $good );
@@ -1436,13 +1590,16 @@ sub bulk_add
             $summarybox->destroy if Tk::Exists($summarybox);
         }
     )->pack();
+    print "Updating, deiconifying, and raising\n" if $debug;
     $summarybox->update();
     $summarybox->deiconify();
     $summarybox->raise();
+    print "Done Updating, deiconifying, and raising\n" if $debug;
 }
 
 sub add_category
 {
+    print "Adding new category\n" if $debug;
     my ( $addcat_code, $addcat_desc );
     my $box = $mw->DialogBox(
         -title   => "Add a category",
@@ -1468,10 +1625,13 @@ sub add_category
 
     if ( $button eq "Ok" )
     {
+        print "Got an Ok from addcategory box\n" if $debug;
         if ( ($addcat_code) && ($addcat_desc) )
         {
             $addcat_desc = $dbh->quote($addcat_desc);
             $addcat_code =~ tr/a-z/A-Z/;
+            print "Got addcat_desc $addcat_desc and addcat_code $addcat_code\n"
+              if $debug;
 
             # Check to see if there's a duplicate of either entry
 
@@ -1479,6 +1639,7 @@ sub add_category
               "SELECT * FROM categories WHERE (code='$addcat_code' OR description=$addcat_desc)";
             if ( get_rows($checkquery) > 0 )
             {
+                print "Got a duplicate from query $checkquery\n" if $debug;
                 infobox(
                     $mw,
                     "Category Error",
@@ -1490,8 +1651,10 @@ sub add_category
                 my $query =
                   "INSERT INTO categories VALUES ('$addcat_code',$addcat_desc)";
                 my $insert_sth = $dbh->prepare($query);
+                print "Preparing insert query $query\n" if $debug;
                 if ( !$insert_sth->execute )
                 {
+                    print "Got error on execute\n" if $debug;
                     my $error_message = $insert_sth->errstr();
                     infobox(
                         $mw,
@@ -1501,6 +1664,7 @@ sub add_category
                 }
                 else
                 {
+                    print "Inserted category successfully\n" if $debug;
                     $status = "Added category $addcat_desc";
                     infobox( $mw, "Success", "Category added." );
                 }
@@ -1521,6 +1685,7 @@ sub add_category
 
 sub edit_category
 {
+    print "Editing category\n" if $debug;
     my $edit_cat;
     my $box = $mw->DialogBox(
         -title   => "Choose a category to edit",
@@ -1533,6 +1698,7 @@ sub edit_category
     )->pack();
     my $query = "SELECT * from categories ORDER BY description";
     my $sth   = $dbh->prepare($query);
+    print "Preparing category query $query\n" if $debug;
     $sth->execute or die "can't execute the query: $DBI::errstr\n";
     my $editbox = $box->add(
         "Scrolled", "Listbox",
@@ -1548,8 +1714,10 @@ sub edit_category
     {
         my $string = "$cat_hashref->{code} - $cat_hashref->{description}";
         $editbox->insert( 'end', "$string" );
+        print "Inserting string $string\n" if $debug;
     }
     $sth->finish;
+    print "Showing box\n" if $debug;
     my $choice = $box->Show();
     if ( ( $choice ne "Cancel" ) && ( defined( $editbox->curselection() ) ) )
     {
@@ -1557,6 +1725,7 @@ sub edit_category
         # Throw up another dialog box to do the actual editing
         my ( $code, $desc ) =
           split( / - /, $editbox->get( $editbox->curselection() ) );
+        print "Editing code $code, desc $desc\n" if $debug;
         my $editbox = $mw->DialogBox(
             -title   => "Edit a category",
             -buttons => [ "Ok", "Cancel" ]
@@ -1575,6 +1744,7 @@ sub edit_category
             -width        => 25,
             -textvariable => \$new_desc
         )->pack( -side => 'left' );
+        print "Showing editbox\n" if $debug;
         my $editchoice = $editbox->Show();
 
         if ( $editchoice ne "Cancel" )
@@ -1582,6 +1752,7 @@ sub edit_category
             $query =
               "UPDATE categories SET description='$new_desc' WHERE code='$code'";
             $sth = $dbh->prepare($query);
+            print "Preparing edit query $query\n" if $debug;
             if ( !$sth->execute )
             {
                 my $error_message = $sth->errstr();
@@ -1607,6 +1778,7 @@ sub edit_category
 
 sub delete_category
 {
+    print "Deleting category\n" if $debug;
     my $box = $mw->DialogBox(
         -title   => "Delete a category",
         -buttons => [ "Ok", "Cancel" ]
@@ -1616,6 +1788,7 @@ sub delete_category
 
     my $query = "SELECT * from categories ORDER BY description";
     my $sth   = $dbh->prepare($query);
+    print "Preparing category query $query\n" if $debug;
     $sth->execute or die "Cannot execute the query: $DBI::errstr\n";
     my $deletebox = $box->add(
         "Scrolled", "Listbox",
@@ -1626,21 +1799,25 @@ sub delete_category
         -width      => 30,
         -selectmode => "single"
     )->pack();
+
     while ( my $cat_hashref = $sth->fetchrow_hashref )
     {
         $deletebox->insert( 'end',
             "$cat_hashref->{code} - $cat_hashref->{description}" );
     }
     $sth->finish;
+    print "Showing delete category box\n" if $debug;
     my $choice = $box->Show();
 
     if ( ( $choice ne "Cancel" ) && ( defined( $deletebox->curselection() ) ) )
     {
         my ( $del_cat, $del_desc ) =
           split( / - /, $deletebox->get( $deletebox->curselection() ) );
+        print "Deleting category $del_cat, description $del_desc\n" if $debug;
         $query = "SELECT * FROM mrvoice WHERE category='$del_cat'";
         if ( get_rows($query) > 0 )
         {
+            print "No rows match with query $query\n" if $debug;
             infobox( $mw, "Error",
                 "Could not delete category $del_cat because there are still entries in the database using it.  Delete all entries using this category before deleting the category"
             );
@@ -1650,6 +1827,9 @@ sub delete_category
         {
             $query = "DELETE FROM categories WHERE code='$del_cat'";
             my $delete_sth = $dbh->prepare($query);
+            print
+              "There are rows with that category, so delete with query $query\n"
+              if $debug;
             if ( $delete_sth->execute )
             {
                 $status = "Deleted category $del_desc";
@@ -1667,8 +1847,11 @@ sub delete_category
 
 sub move_file
 {
+    print "In move_file function\n" if $debug;
     my ( $oldfilename, $title, $artist ) = @_;
     my $newfilename;
+    print "Got old filename $oldfilename, title $title, artist $artist\n"
+      if $debug;
 
     if ($artist)
     {
@@ -1679,19 +1862,24 @@ sub move_file
         $newfilename = $title;
     }
     $newfilename =~ s/[^a-zA-Z0-9\-]//g;
+    print "Using new filename $newfilename\n" if $debug;
 
     my ( $name, $path, $extension ) = fileparse( $oldfilename, '\.\w+' );
     $extension = lc($extension);
+    print "Using extension $extension\n" if $debug;
 
     if ( -e catfile( $config{'filepath'}, "$newfilename$extension" ) )
     {
+        print "The file $newfilename$extension already exists\n" if $debug;
         my $i = 0;
         while ( 1 == 1 )
         {
+            print "Using extension $i\n" if $debug;
             if ( !-e catfile( $config{'filepath'}, "$newfilename-$i$extension" )
               )
             {
                 $newfilename = "$newfilename-$i";
+                print "Found an unused filename at $newfilename\n" if $debug;
                 last;
             }
             $i++;
@@ -1700,13 +1888,16 @@ sub move_file
 
     $newfilename = "$newfilename$extension";
 
+    print "Starting file copy\n" if $debug;
     copy( $oldfilename, catfile( $config{'filepath'}, "$newfilename" ) );
+    print "Copy finished\n" if $debug;
 
     return ($newfilename);
 }
 
 sub add_new_song
 {
+    print "Adding new song\n" if $debug;
     my (
         $addsong_title, $addsong_artist,   $addsong_info,
         $addsong_cat,   $addsong_filename, $addsong_publisher
@@ -1715,6 +1906,7 @@ sub add_new_song
     $addsong_publisher = "OTHER";
     while ( $continue != 1 )
     {
+        print "Building the Add Song dialog box\n" if $debug;
         my $box = $mw->DialogBox(
             -title   => "Add New Song",
             -buttons => [ "OK", "Cancel" ]
@@ -1814,17 +2006,26 @@ sub add_new_song
             -activebackground => 'SpringGreen2'
         );
 
+        print "Showing the Add Song dialog box\n" if $debug;
         my $result = $box->Show();
+        print "Showed the Add Song dialog box\n" if $debug;
 
         if ( $result eq "OK" )
         {
+            print "Got 'Ok' from dialog box\n" if $debug;
             if ( !$addsong_cat )
             {
+                print
+                  "Addsong_cat was $addsong_cat, so we didn't get a category\n"
+                  if $debug;
                 infobox( $mw, "Error",
                     "Could not add new song\n\nYou must choose a category" );
             }
             elsif ( !-r $addsong_filename )
             {
+                print
+                  "Addsong_filename was $addsong_filename and not readable\n"
+                  if $debug;
                 infobox(
                     $mw,
                     "File Error",
@@ -1833,11 +2034,16 @@ sub add_new_song
             }
             elsif ( !$addsong_title )
             {
+                print
+                  "Addsong_title was $addsong_title, so we didn't get a title\n"
+                  if $debug;
                 infobox( $mw, "File Error",
                     "You must provide the title for the song." );
             }
             elsif ( !-w $config{'filepath'} )
             {
+                print "The filepath ($config{filepath}) was not writable\n"
+                  if $debug;
                 infobox(
                     $mw,
                     "File Error",
@@ -1879,8 +2085,10 @@ sub add_new_song
     my $time  = get_songlength($addsong_filename);
     my $query =
       "INSERT INTO mrvoice VALUES (NULL,$addsong_title,$addsong_artist,'$addsong_cat',$addsong_info,'$newfilename','$time',(SELECT strftime('%s','now')),'$addsong_publisher')";
+    print "Using INSERT query -->$query<--\n" if $debug;
     if ( $dbh->do($query) )
     {
+        print "dbh->do successful\n" if $debug;
         my $addsong_filename = Win32::GetLongPathName($addsong_filename)
           if ( $^O eq "MSWin32" );
         infobox(
@@ -1892,6 +2100,7 @@ sub add_new_song
     }
     else
     {
+        print "dbh->do failed\n" if $debug;
         infobox( $mw, "Error", "Could not add song into database" );
         $status = "File add exited on database error";
     }
@@ -1899,6 +2108,7 @@ sub add_new_song
 
 sub edit_preferences
 {
+    print "Editing preferences\n" if $debug;
     my $box = $mw->DialogBox(
         -title          => "Edit Preferences",
         -buttons        => [ "Ok", "Cancel" ],
@@ -2067,7 +2277,9 @@ sub edit_preferences
         -pady   => 5,
         -side   => "top"
     );
+    print "Displaying preferences dialog\n" if $debug;
     my $result = $box->Show();
+    print "Displayed preferences dialog\n" if $debug;
 
     if ( $result eq "Ok" )
     {
@@ -2076,22 +2288,27 @@ sub edit_preferences
             || ( !$config{'savedir'} )
             || ( !$config{'mp3player'} ) )
         {
+            print
+              "All fields not filled in: db_file is $config{db_file}, filepath is $config{filepath}, savedir is $config{savedir}, mp3player is $config{mp3player}\n"
+              if $debug;
             infobox( $mw, "Warning", "All fields must be filled in\n" );
             edit_preferences();
         }
-        if ( !open( RCFILE, ">$rcfile" ) )
+        if ( !open( my $rcfile_fh, ">", $rcfile ) )
         {
+            print "Couldn't open $rcfile for writing\n" if $debug;
             infobox( $mw, "Warning",
                 "Could not open $rcfile for writing. Your preferences will not be saved\n"
             );
         }
         else
         {
+            print "Writing config to $rcfile\n" if $debug;
             foreach my $key ( sort keys %config )
             {
-                print RCFILE "$key" . "::$config{$key}\n";
+                print "Writing key $key and value $config{$key}\n" if $debug;
+                print $rcfile_fh "$key" . "::$config{$key}\n";
             }
-            close(RCFILE);
         }
     }
     read_rcfile();
@@ -2099,15 +2316,18 @@ sub edit_preferences
 
 sub edit_song
 {
+    print "Editing song\n" if $debug;
     my (@selected) = $mainbox->info('selection');
+    print "Selected items are " . join( ", ", @selected ) . "\n" if $debug;
     my ( $edit_title, $edit_artist, $edit_category, $edit_publisher,
         $edit_info );
-    my $count = $#selected + 1;
+    my $count = scalar @selected;
     if ( $count == 1 )
     {
 
         # We're looking to edit one song, so we can choose everything
         my $id = $mainbox->info( 'data', $selected[0] );
+        print "Got song ID $id\n" if $debug;
         my $query =
           "SELECT title,artist,category,info,publisher from mrvoice where id=$id";
         my (
@@ -2115,6 +2335,9 @@ sub edit_song
             $edit_info,  $edit_publisher
           )
           = $dbh->selectrow_array($query);
+        print
+          "Got the following information about the song.  title: $edit_title, artist: $edit_artist, category: $edit_category, info: $edit_info, publisher: $edit_publisher\n"
+          if $debug;
 
         my $box = $mw->DialogBox(
             -title          => "Edit Song",
@@ -2173,7 +2396,9 @@ sub edit_song
             );
         }
         $pubmenu->configure( -text => $edit_publisher );
+        print "Showing dialog box..." if $debug;
         my $result = $box->Show();
+        print "Showed\n" if $debug;
         if ( $result eq "Edit" )
         {
             $edit_artist = $dbh->quote($edit_artist);
@@ -2182,8 +2407,10 @@ sub edit_song
 
             my $query =
               "UPDATE mrvoice SET artist=$edit_artist, title=$edit_title, info=$edit_info, category='$edit_category',modtime=(SELECT strftime('%s','now')) WHERE id=$id";
+            print "Using update query $query\n" if $debug;
             if ( $dbh->do($query) )
             {
+                print "Update query succeeded\n" if $debug;
                 infobox(
                     $mw,
                     "Song Edited Successfully",
@@ -2193,6 +2420,8 @@ sub edit_song
             }
             else
             {
+                print "There was an error with update query: $dbh->errstr\n"
+                  if $debug;
                 infobox( $mw, "Error",
                     "There was an error editing the song. No changes made." );
                 $status = "Error editing song - no changes made";
@@ -2206,6 +2435,8 @@ sub edit_song
     elsif ( $count > 1 )
     {
 
+        print "Editing multiple songs\n" if $debug;
+
         # We're editing multiple songs, so only put up a subset
         # First, convert the indices to song ID's
         my @songids;
@@ -2216,6 +2447,7 @@ sub edit_song
         foreach my $id (@selected)
         {
             my $songid = $mainbox->info( 'data', $id );
+            print "Using Song ID $songid\n" if $debug;
             push( @songids, $songid );
         }
         my $box = $mw->DialogBox(
@@ -2275,7 +2507,9 @@ sub edit_song
                 }
             );
         }
+        print "Showing dialog box..." if $debug;
         my $result = $box->Show();
+        print "Showed\n" if $debug;
         if (
             ( $result eq "Edit" )
             && (   $edit_artist
@@ -2312,7 +2546,9 @@ sub edit_song
             foreach my $songid (@songids)
             {
                 my $query = "UPDATE mrvoice SET $string WHERE id=$songid";
+                print "Running UPDATE query -->$query<-- ..." if $debug;
                 $dbh->do($query);
+                print "Error code: $dbh->errstr\n" if $debug;
             }
             $status = "Edited $count songs";
         }
@@ -2329,14 +2565,17 @@ sub edit_song
 
 sub delete_song
 {
+    print "Deleting song\n" if $debug;
     my (@selection) = $mainbox->info('selection');
-    my $count = $#selection + 1;
+    print "Deleting songs " . join( ", ", @selection ) . "\n" if $debug;
+    my $count = scalar @selection;
     my @ids;
     my $delete_file_cb;
     foreach my $index (@selection)
     {
         push( @ids, $mainbox->info( 'data', $index ) );
     }
+    print "Got song IDs " . join( ", ", @ids ) . "\n" if $debug;
     if ( $count >= 1 )
     {
         my $box = $mw->DialogBox(
@@ -2364,7 +2603,9 @@ sub delete_song
             -text     => "Delete file on disk",
             -variable => \$delete_file_cb
         )->pack();
+        print "Showing delete songs dialog box..." if $debug;
         my $result = $box->Show();
+        print "Showed\n" if $debug;
         if ( $result eq "Delete" )
         {
             my $query = "DELETE FROM mrvoice WHERE id=?";
@@ -2377,11 +2618,15 @@ sub delete_song
                     my $filequery = "SELECT filename FROM mrvoice WHERE id=$id";
                     ($filename) = $dbh->selectrow_array($filequery);
                 }
+                print "Executing query -->$query<-- for song id $id\n"
+                  if $debug;
                 $sth->execute($id);
                 $sth->finish;
+                print "STH finished with error code: $sth->errstr\n" if $debug;
                 if ( $delete_file_cb == 1 )
                 {
                     my $file = catfile( $config{'filepath'}, $filename );
+                    print "Deleting file $file\n" if $debug;
                     if ( -e $file )
                     {
                         unlink("$file");
@@ -2403,6 +2648,7 @@ sub delete_song
 
 sub show_about
 {
+    print "Showing about box\n" if $debug;
     my $rev    = '$LastChangedRevision$';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
@@ -2432,6 +2678,7 @@ sub show_about
 
 sub wipe_tank
 {
+    print "Deleting all files from tankbox\n" if $debug;
 
     # Clears the holding tank
     $tankbox->delete('all');
@@ -2440,10 +2687,13 @@ sub wipe_tank
 sub clear_hotkeys
 {
 
+    print "Clearing hotkeys\n" if $debug;
+
     # Backs up the hotkeys, then deletes all of them.
 
     if ( $lock_hotkeys == 1 )
     {
+        print "Lock Hotkeys is $lock_hotkeys, so doing nothing\n" if $debug;
         $status = "Can't clear all hotkeys - hotkeys locked";
         return;
     }
@@ -2452,6 +2702,7 @@ sub clear_hotkeys
     foreach my $fkeynum ( 1 .. 12 )
     {
         my $fkey = "f$fkeynum";
+        print "Clearing $fkey\n" if $debug;
         $fkeys{$fkey}->{id}       = '';
         $fkeys{$fkey}->{filename} = '';
         $fkeys{$fkey}->{title}    = '';
@@ -2461,8 +2712,10 @@ sub clear_hotkeys
 
 sub clear_selected
 {
+    print "Clearing selected hotkeys\n" if $debug;
     if ( $lock_hotkeys == 1 )
     {
+        print "Lock Hotkeys is $lock_hotkeys, so doing nothing\n" if $debug;
         $status = "Can't clear selected hotkeys - hotkeys locked";
         return;
     }
@@ -2475,6 +2728,7 @@ sub clear_selected
         my $fkey = "f$num";
         if ( $fkeys_cb{$fkey} == 1 )
         {
+            print "Clearing key $fkey\n" if $debug;
             $fkeys{$fkey}->{title}    = '';
             $fkeys{$fkey}->{id}       = '';
             $fkeys{$fkey}->{filename} = '';
@@ -2487,6 +2741,7 @@ sub clear_selected
 
 sub return_all_indices
 {
+    print "Returning all indices for a hlist\n" if $debug;
     my $hlist = shift;
     my @indexes;
     my $curr_entry = ( $hlist->info("children") )[0];
@@ -2496,32 +2751,40 @@ sub return_all_indices
         push( @indexes, $data );
         $curr_entry = $hlist->info( "next", $curr_entry );
     }
+    print "Returning " . join( ", " => @indexes ) . "\n";
     return (@indexes);
 }
 
 sub launch_tank_playlist
 {
 
+    print "Launching an M3U playlist from the holding tank\n" if $debug;
+
     # Launch an m3u playlist from the contents of the holding tank
 
     my @indices = return_all_indices($tankbox);
     return if ( $#indices < 0 );
     my ( $fh, $filename ) = tempfile( SUFFIX => '.m3u', UNLINK => 1 );
+    print "Using temp filename $filename\n" if $debug;
     print $fh "#EXTM3U\n";
     foreach my $item (@indices)
     {
         my $file = get_info_from_id($item)->{filename};
         my $path = catfile( $config{filepath}, $file );
         print $fh "$path\n";
+        print "Writing $path to m3u\n" if $debug;
     }
     close($fh) or die;
+    print "Sending playlist command to MP3 player\n" if $debug;
     system("$config{'mp3player'} $filename");
 }
 
 sub holding_tank
 {
+    print "Showing holding tank\n" if $debug;
     if ( !Exists($holdingtank) )
     {
+        print "Holding tank does not exist yet, creating it\n" if $debug;
         my $arrowdown = $mw->Photo( -data => <<'EOF');
 R0lGODlhFgAWAIUAAPwCBAQCBAQGBBwaHDQyNExKTHx6fGxqbFxeXGRiZFRSVDw+PAwKDJSWlOzu7LSytJyenJSSlISGhISChIyOjFRWVDw6PPz+/MTCxLS2tGRmZDQ2NAwODJyanKSmpKSipIyKjHRydBQSFERCRExOTFxaXAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAWABYAAAasQIBwSCwah4FkQKBsDpoBIqFgOCASCYRWm1AUFgRGkdBwPCARiWRCaTwOFYvYSIhcMOiJpJGZaDYcR0IEHXceEQ0fICEWIoJDhHcQHxIHgI9SEHeVG46YUh8OISOen1INCqWmUnOYTUxQAU9NUlRWWFtbCiRgrYNlZ2lriG8lYUd1khETE24gCZeCkRgeFBAQIAeNn9OTlXKrBJoYnKrcoaPmpmSpq3S+7u50QQAh/mhDcmVhdGVkIGJ5IEJNUFRvR0lGIFBybyB2ZXJzaW9uIDIuNQ0KqSBEZXZlbENvciAxOTk3LDE5OTguIEFsbCByaWdodHMgcmVzZXJ2ZWQuDQpodHRwOi8vd3d3LmRldmVsY29yLmNvbQA7
 EOF
@@ -2531,6 +2794,7 @@ R0lGODlhFgAWAIUAAPwCBAQCBGReZDQyNMTCxHx6fPz+/JyWnKyurHx2fDw6PJSSlISGhIyKjIyGjISC
 EOF
 
         $holdingtank = $mw->Toplevel();
+        print "Created toplevel\n" if $debug;
         $holdingtank->minsize( 35, 2 );
         $holdingtank->withdraw();
         $holdingtank->Icon( -image => $icon );
@@ -2614,23 +2878,30 @@ EOF
             -text    => "Clear Selected",
             -command => \&clear_tank
         )->pack( -side => 'right' );
+        print "Updating, deiconifying, and raising..." if $debug;
         $holdingtank->update();
         $holdingtank->deiconify();
         $holdingtank->raise();
+        print "Done\n" if $debug;
     }
     else
     {
+        print "Holding tank exists.  Deiconifying and raising..." if $debug;
         $holdingtank->deiconify();
         $holdingtank->raise();
+        print "Done\n" if $debug;
     }
 }
 
 sub move_tank
 {
 
+    print "Reordering an item in the holding tank\n" if $debug;
+
     # Function courtesy of Kyle at sickduck.org
     my $h         = $tankbox;
     my $direction = shift;
+    print "Moving in the direction: $direction\n" if $debug;
 
     #Do nothing unless an item is selected in the HList
     return unless my $target = $h->infoAnchor;
@@ -2645,6 +2916,7 @@ sub move_tank
     {
         $neighbor = $h->infoNext($target);
     }
+    print "Neighbor is $neighbor\n" if $debug;
 
     #infoNext/infoPrev returns no value if there is no item after/before the
     #target entry.  This generally means we're already at the end/beginning
@@ -2655,6 +2927,7 @@ sub move_tank
     my $targettext = $h->entrycget( $target, '-text' );
 
     #Now we can delete the entry...
+    print "Deleting $targettext\n" if $debug;
     $h->delete( 'entry', $target );
 
     #then we use the passed direction ("-before" or "-after") to add
@@ -2666,9 +2939,12 @@ sub move_tank
         $direction, $neighbor
     );
 
+    print "Re-adding $targettext in the proper location\n" if $debug;
+
     my $info = get_info_from_id($target);
     if ( !-e catfile( $config{'filepath'}, $info->{filename} ) )
     {
+        print "This item is inavlid, so turn it red\n" if $debug;
         my $style = $tankbox->ItemStyle(
             'text',
             -foreground       => 'red',
@@ -2679,30 +2955,37 @@ sub move_tank
     }
 
     #...and assumedly we want the newly re-inserted item to be selected...
+    print "Anchorsetting..." if $debug;
     $h->anchorSet($target);
 
     #...and assumedly, in a scrolling list, we want to have the re-inserted
     #item be visible.
+    print "and seeing\n" if $debug;
     $h->see($target);
     return;
 }
 
 sub clear_tank
 {
+    print "Clearing holding tank\n" if $debug;
     my @selected = reverse( $tankbox->info('selection') );
     foreach my $item (@selected)
     {
+        print "Deleting $item\n" if $debug;
         $tankbox->delete( 'entry', $item );
     }
 }
 
 sub list_hotkeys
 {
+    print "Showing the hotkeys window\n" if $debug;
     if ( !Exists($hotkeysbox) )
     {
+        print "The hotkeys window does not exist, so we create it\n" if $debug;
         my %fkeys_frame;
         my %fkeys_chkb;
         my %fkeys_label;
+        print "Creating toplevel\n" if $debug;
         $hotkeysbox = $mw->Toplevel();
         $hotkeysbox->withdraw();
         $hotkeysbox->Icon( -image => $icon );
@@ -2748,23 +3031,31 @@ sub list_hotkeys
             -text    => "Clear Selected",
             -command => \&clear_selected
         )->pack( -side => 'right' );
+        print "Updating, deiconifying, and raising..." if $debug;
         $hotkeysbox->update();
         $hotkeysbox->deiconify();
         $hotkeysbox->raise();
+        print "Done\n" if $debug;
     }
     else
     {
+        print "Hotkeys window exists, so deiconify and raise..." if $debug;
         $hotkeysbox->deiconify();
         $hotkeysbox->raise();
+        print "Done\n" if $debug;
     }
 }
 
 sub update_time
 {
+    print "Updating song times\n";
     $mw->Busy( -recurse => 1 );
+    print "Mainwindow now busy\n" if $debug;
     my $percent_done = 0;
     my $updated      = 0;
-    my $progressbox  = $mw->Toplevel();
+    print "Creating progressbox toplevel..." if $debug;
+    my $progressbox = $mw->Toplevel();
+    print "Done\n" if $debug;
     $progressbox->withdraw();
     $progressbox->Icon( -image => $icon );
     $progressbox->title("Time Update");
@@ -2781,9 +3072,11 @@ sub update_time
         -state   => 'disabled',
         -command => sub { $progressbox->destroy }
     )->pack( -side => 'bottom' );
+    print "Updating, deiconifying, and raising..." if $debug;
     $progressbox->update();
     $progressbox->deiconify();
     $progressbox->raise();
+    print "Done\n" if $debug;
 
     my $count        = 0;
     my $query        = "SELECT id,filename,time FROM mrvoice";
@@ -2802,6 +3095,9 @@ sub update_time
           get_songlength( catfile( $config{'filepath'}, $filename ) );
         if ( $newtime ne $time )
         {
+            print
+              "Song ID $id has database time $time but file time $newtime, so updating\n"
+              if $debug;
             $update_sth->execute( $newtime, $id );
             $updated++;
         }
@@ -2813,15 +3109,19 @@ sub update_time
     $donebutton->focus;
     $progressbox->update();
     $mw->Unbusy( -recurse => 1 );
+    print "Updated $updated files\n" if $debug;
     $status = "Updated times on $updated files";
 }
 
 sub get_info_from_id
 {
 
+    print "Getting info from ID\n" if $debug;
+
     # Returns a hash reference containing all the info for a specified ID
 
     my $id = shift;
+    print "Got song ID $id\n" if $debug;
     my %info;
     my $query          = "SELECT * FROM mrvoice WHERE id=$id";
     my $result_hashref = $dbh->selectrow_hashref($query);
@@ -2837,19 +3137,30 @@ sub get_info_from_id
         $info{fulltitle} = $info{title};
     }
     $info{info} = $result_hashref->{info};
+    if ($debug)
+    {
+        foreach my $key ( keys %info )
+        {
+            print "Got info key $key, value $info{$key}\n";
+        }
+    }
     return \%info;
 }
 
 sub validate_id
 {
-    my $id      = shift;
+    print "Validating ID\n" if $debug;
+    my $id = shift;
+    print "Got ID $id\n" if $debug;
     my $query   = "SELECT * FROM mrvoice WHERE id=$id";
     my $numrows = get_rows($query);
+    print "Got result $numrows\n" if $debug;
     return $numrows == 1 ? 1 : 0;
 }
 
 sub stop_mp3
 {
+    print "Stopping MP3\n" if $debug;
 
     my $widget = shift;
 
@@ -2860,16 +3171,20 @@ sub stop_mp3
     $status = "Playing Stopped";
 
     # Manually give the mainbox focus
+    print "Focusing on mainbox\n" if $debug;
     $mainbox->focus();
 }
 
 sub play_mp3
 {
 
+    print "Playing MP3\n" if $debug;
     my ( $statustitle, $statusartist, $filename );
     my $songstatusstring;
     my $widget = shift;
     my $action = shift;
+
+    print "The action is $action\n" if $debug;
 
     # See if the request is coming from one our hotkeys first...
     if ( $action =~ /^f\d+/ )
@@ -2944,6 +3259,7 @@ sub play_mp3
         {
             $songstatusstring = "\"$statustitle\"";
         }
+        print "Playing file $filename\n" if $debug;
         $status = "Playing $songstatusstring";
         my $file = catfile( $config{'filepath'}, $filename );
         system("$config{'mp3player'} $file");
@@ -2952,14 +3268,18 @@ sub play_mp3
 
 sub get_songlength
 {
+    print "Getting the length of a song\n" if $debug;
 
     #Generic function to return the length of a song in mm:ss format.
     #Currently supports OGG, MP3 and WAV, with the appropriate modules.
 
     my $file = shift;
+    print "File is $file\n" if $debug;
     my $time = "";
     if ( $file =~ /.*\.mp3$/i )
     {
+
+        print "It's an MP3 file\n" if $debug;
 
         # It's an MP3 file
         my $info   = get_mp3info("$file");
@@ -2968,9 +3288,12 @@ sub get_songlength
         my $second = $info->{SS};
         $second = "0$second" if ( $second < 10 );
         $time = "[$minute:$second]";
+        print "Got time $time\n" if $debug;
     }
     elsif ( $file =~ /\.wav$/i )
     {
+
+        print "It's a WAV file\n" if $debug;
 
         # It's a WAV file
         my $wav = new Audio::Wav;
@@ -2989,9 +3312,12 @@ sub get_songlength
         {
             $time = "[??:??]";
         }
+        print "Time is $time\n" if $debug;
     }
     elsif ( $file =~ /\.ogg$/i )
     {
+
+        print "It's an OGG file\n" if $debug;
 
         #It's an Ogg Vorbis file.
         my $ogg = Ogg::Vorbis::Header::PurePerl->new($file);
@@ -3002,9 +3328,12 @@ sub get_songlength
         my $second = $audio_seconds % 60;
         $second = "0$second" if ( $second < 10 );
         $time = "[$minute:$second]";
+        print "Time is $time\n" if $debug;
     }
     elsif ( ( $file =~ /\.wma$/i ) && ( $^O eq "MSWin32" ) )
     {
+
+        print "It's a WMA file\n" if $debug;
 
         # It's a Windows Media file
         my $wma           = Audio::WMA->new($file);
@@ -3015,22 +3344,30 @@ sub get_songlength
         my $second = $audio_seconds % 60;
         $second = "0$second" if ( $second < 10 );
         $time = "[$minute:$second]";
+        print "Time is $time\n" if $debug;
     }
     elsif ( ( $file =~ /\.m4a/i ) || ( $file =~ /\.mp4/i ) )
     {
 
+        print "It's an AAC file\n" if $debug;
+
         # AAC/MP4 File
         my $info = get_mp4info($file);
         $time = "[$info->{TIME}]";
+        print "Time is $time\n" if $debug;
     }
     elsif ( ( $file =~ /\.m3u$/i ) || ( $file =~ /\.pls$/i ) )
     {
+
+        print "It's a playlist\n" if $debug;
 
         #It's a playlist
         $time = "[PLAYLIST]";
     }
     else
     {
+
+        print "It's a nonsupported file type\n" if $debug;
 
         # Unsupported file type
         $time = "[??:??]";
@@ -3040,21 +3377,25 @@ sub get_songlength
 
 sub do_search
 {
+    print "Doing search\n" if $debug;
     my ( $datestring, $startdate, $enddate );
     my $modifier = shift;
+    print "Modifier is $modifier\n" if $debug;
     if ( $modifier eq "timespan" )
     {
         my $span = shift;
+        print "Timespan is $span\n" if $debug;
         my $date;
-        if ( $span eq "0 days" )
+        if ( $span eq "0" )
         {
-            $date = ParseDate("midnight");
+            $date = DateTime->now;
         }
         else
         {
             $date = DateCalc( "today", "- $span" );
         }
         $datestring = UnixDate( $date, "%s" );
+        print "Datestring is $datestring\n" if $debug;
 
         #        $date =~ /^(\d{4})(\d{2})(\d{2}).*?/;
         #        my $year  = $1;
@@ -3066,6 +3407,7 @@ sub do_search
     {
         $startdate = shift;
         $enddate   = shift;
+        print "Start date is $startdate and end date is $enddate\n" if $debug;
     }
     $anyfield =~ s/^\s*(.*?)\s*$/$1/ if ($anyfield);
     $title    =~ s/^\s*(.*?)\s*$/$1/ if ($title);
@@ -3102,8 +3444,10 @@ sub do_search
     $query = $query . "ORDER BY category,info,title";
     my $starttime = gettimeofday();
     my $sth       = $dbh->prepare($query);
+    print "Prepared query $query\n" if $debug;
     if ( !$sth->execute )
     {
+        print "Database error: $sth->errstr\n" if $debug;
         infobox(
             $mw,
             "Database Error",
@@ -3128,6 +3472,7 @@ sub do_search
         $string = $string . " $row_hashref->{time}";
         $string = $string . " ($row_hashref->{publisher})"
           if ( $config{'show_publisher'} == 1 );
+        print "Adding ID $row_hashref->{id} and string $string\n" if $debug;
         $mainbox->add(
             $row_hashref->{id},
             -data => $row_hashref->{id},
@@ -3137,6 +3482,7 @@ sub do_search
 
         if ( !-e catfile( $config{'filepath'}, $row_hashref->{filename} ) )
         {
+            print "$row_hashref->{id} is invalid, turning it red\n" if $debug;
             my $style = $mainbox->ItemStyle(
                 'text',
                 -foreground       => 'red',
@@ -3163,6 +3509,7 @@ sub do_search
     $category = "Any";
     $longcat  = "Any Category";
     $mw->Unbusy( -recurse => 1 );
+    print "MainWindow unbusy now\n" if $debug;
 
     $status = sprintf( "Displaying %d search result%s ",
         $numrows, $numrows == 1 ? "" : "s" );
@@ -3175,14 +3522,19 @@ sub do_search
 
 sub return_longcat
 {
+    print "Returning the long name of a category\n" if $debug;
     my $category = shift;
     my $query    = "SELECT description FROM categories WHERE code='$category'";
+    print "Running query $query\n" if $debug;
     my $longcat_ref = $dbh->selectrow_hashref($query);
+    print "Returning $longcat_ref->{description}\n" if $debug;
     return ( $longcat_ref->{description} );
 }
 
 sub build_main_categories_menu
 {
+
+    print "Building the main categories menu\n" if $debug;
 
     # This builds the categories menu in the search area.  First, it deletes
     # all entries from the menu.  Then it queries the categories table in
@@ -3209,6 +3561,9 @@ sub build_main_categories_menu
     $sth->execute or die "can't execute the query: $DBI::errstr\n";
     while ( my $cat_hashref = $sth->fetchrow_hashref )
     {
+        print
+          "Adding radio button with label $cat_hashref->{description} and value $cat_hashref->{code}\n"
+          if $debug;
         $catmenu->radiobutton(
             -label    => $cat_hashref->{description},
             -value    => $cat_hashref->{code},
@@ -3224,6 +3579,8 @@ sub build_main_categories_menu
 sub do_exit
 {
 
+    print "Doing exit\n" if $debug;
+
     # Disconnects from the database, attempts to close the MP3 player, and
     # exits the program.
 
@@ -3238,17 +3595,20 @@ sub do_exit
 
     if ( $choice =~ /yes/i )
     {
+        print "Disconnecting from $dbh\n" if $debug;
         $dbh->disconnect;
         if ( "$^O" eq "MSWin32" )
         {
 
             # Close the MP3 player on a Windows system
+            print "Killing process $mp3_pid on Win32\n" if $debug;
             Win32::Process::KillProcess( $mp3_pid, 1 );
         }
         else
         {
 
             # Close the MP3 player on a Unix system.
+            print "Kill -15 $mp3_pid\n" if $debug;
             kill( 15, $mp3_pid );
         }
         Tk::exit;
@@ -3260,6 +3620,8 @@ sub do_exit
 sub rightclick_menu
 {
 
+    print "Display menu on right click\n" if $debug;
+    ###TAG###
     # Bound to the search results box, this function binds the creation
     # of a popup menu to the right mouse button. The menu allows you to
     # play, edit, or delete the current song.  The right-click finds the
@@ -3283,6 +3645,7 @@ sub rightclick_menu
         -tearoff => 0
     );
 
+    print "Created menu, setting Popup\n" if $debug;
     $rightmenu->Popup(
         -popover   => 'cursor',
         -popanchor => 'nw'
@@ -3292,6 +3655,8 @@ sub rightclick_menu
 sub read_rcfile
 {
 
+    print "Reading config file\n" if $debug;
+
     # Opens the configuration file, of the form var_name::value, and assigns
     # the value to the variable name.
     # On MS Windows, it also converts long pathnames to short ones.
@@ -3299,16 +3664,15 @@ sub read_rcfile
     if ( -r $rcfile )
     {
         print "rcfile $rcfile is readable\n" if $debug;
-        open( RCFILE, $rcfile );
+        open( my $rcfile_fh, "<", $rcfile );
         print "rcfile open\n" if $debug;
-        while (<RCFILE>)
+        while (<$rcfile_fh>)
         {
             chomp;
             my ( $key, $value ) = split(/::/);
             print "Read key $key, value $value from rcfile\n" if $debug;
             $config{$key} = $value;
         }
-        close(RCFILE);
     }
     else
     {
@@ -3445,14 +3809,18 @@ sub read_rcfile
 sub StartDrag
 {
 
+    print "Starting the drag\n" if $debug;
+
     # Starts the drag for the hotkey drag-and-drop.
     my $sound_icon = $mw->Photo( -data => soundicon_gif() );
 
     my $token = shift;
+    print "The token is $token\n" if $debug;
     $current_token = $token;
     my $widget = $current_token->parent;
     my $event  = $widget->XEvent;
     my $index  = $widget->nearest( $event->y );
+    print "The index is $index\n" if $debug;
     if ( defined $index )
     {
         $current_token->configure( -image => $sound_icon );
@@ -3466,19 +3834,24 @@ sub StartDrag
 sub Hotkey_Drop
 {
 
+    print "Dropping onto a hotkey\n" if $debug;
+
     # Assigns the dragged token to the hotkey that it's dropped onto.
 
     if ( $lock_hotkeys == 1 )
     {
+        print "Hotkeys are locked, doing nothing\n" if $debug;
         $status = "Can't drop hotkey - hotkeys locked";
         return;
     }
-    my $fkey_var    = shift;
+    my $fkey_var = shift;
+    print "Fkey var is $fkey_var\n" if $debug;
     my $widget      = $current_token->parent;
     my (@selection) = $widget->info('selection');
     my $id          = $widget->info( 'data', $selection[0] );
-    my $filename    = get_info_from_id($id)->{filename};
-    my $title       = get_info_from_id($id)->{fulltitle};
+    print "Got ID $id\n" if $debug;
+    my $filename = get_info_from_id($id)->{filename};
+    my $title    = get_info_from_id($id)->{fulltitle};
     $fkeys{$fkey_var}->{id}       = $id;
     $fkeys{$fkey_var}->{filename} = $filename;
     $fkeys{$fkey_var}->{title}    = $title;
@@ -3486,11 +3859,13 @@ sub Hotkey_Drop
 
 sub Tank_Drop
 {
+    print "Dropping onto the holding tank\n" if $debug;
     my $dnd_source = shift;
     my $parent     = $dnd_source->parent;
     my (@indices)  = $parent->info('selection');
     foreach my $index (@indices)
     {
+        print "Dropping index $index\n" if $debug;
         my $text = $parent->itemCget( $index, 0, '-text' );
         my $id = $parent->info( 'data', $index );
         $tankbox->add( $id, -data => $id, -text => $text );
