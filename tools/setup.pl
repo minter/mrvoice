@@ -1,12 +1,13 @@
 #!/usr/bin/perl 
 
 # The perl source for the Win32 setup/installer
-# CVS ID: $Id: setup.pl,v 1.1 2003/08/07 20:32:11 minter Exp $
+# CVS ID: $Id: setup.pl,v 1.2 2003/08/08 01:49:56 minter Exp $
 
 use warnings;
 use Tk;
 use Tk::Dialog;
 use Tk::DialogBox;
+use Tk::Frame;
 
 our $logo_photo_data = <<end_of_data;
 R0lGODlhqwGzAMYAAP+bm3h4ePn5+XEAAP+oqOrq6lVVVePj4//IyKR/f0IAAP+5ueYAAMvLy9XV
@@ -286,14 +287,14 @@ sub start_setup
   $box1->add("Label", -text=>"Now, we start setting up Mr. Voice for Windows.  Don't worry if you make a mistake, you'll get a chance to review at the end.\n")->pack(-side=>'top');
   $box1->add("Label", -text=>"Enter your Superuser password, Database username, and Database password.  The Superuser password will only be used if you")->pack(-side=>'top');
   $b1f1 = $box1->add("Frame")->pack(-side=>'top');
-  $b1f1->add("Label", -text=>"Superuser Password")->pack(-side=>"left");
-  $b1f1->add("Entry", -textvariable=>\$superuser_pw)->pack(-side=>'right');
+  $b1f1->Label(-text=>"Superuser Password")->pack(-side=>"left");
+  $b1f1->Entry(-textvariable=>\$superuser_pw)->pack(-side=>'right');
   $b1f2 = $box1->add("Frame")->pack(-side=>'top');
-  $b1f2->add("Label", -text=>"Database Username")->pack(-side=>"left");
-  $b1f2->add("Entry", -textvariable=>\$database_user)->pack(-side=>'right');
+  $b1f2->Label(-text=>"Database Username")->pack(-side=>"left");
+  $b1f2->Entry(-textvariable=>\$database_user)->pack(-side=>'right');
   $b1f3 = $box1->add("Frame")->pack(-side=>'top');
-  $b1f3->add("Label", -text=>"Database Password")->pack(-side=>"left");
-  $b1f3->add("Entry", -textvariable=>\$database_pw)->pack(-side=>'right');
+  $b1f3->Label(-text=>"Database Password")->pack(-side=>"left");
+  $b1f3->Entry(-textvariable=>\$database_pw)->pack(-side=>'right');
 
   my $answer1 = $box1->Show();
 }
