@@ -2,7 +2,7 @@
 # NAME: converthotkeys.pl
 # DESCRIPTION: Converts hotkeys files in your save directory from pre-1.8
 #              format to 1.8 format.
-# CVS ID: $Id: converthotkeys.pl,v 1.4 2003/04/10 15:59:48 minter Exp $
+# SVN ID: $Id$
 
 use DBI;
 use DBD::mysql;

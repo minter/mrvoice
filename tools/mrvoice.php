@@ -19,7 +19,7 @@
    $database_username = "";
    $database_password = "";
  
-   # CVS ID: $Id: mrvoice.php,v 1.1 2001/12/20 15:28:00 minter Exp $
+   # SVN ID: $Id$
 ?>
 
 <TITLE>Mr. Voice MP3 Database</TITLE>

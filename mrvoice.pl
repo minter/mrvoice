@@ -38,7 +38,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.388 2004/07/07 11:53:05 minter Exp $
+# SVN ID: $Id$
 # CHANGELOG:
 #   See ChangeLog file
 ##########

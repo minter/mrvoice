@@ -1,6 +1,6 @@
 @echo off
 rem Mr. Voice Database Backup for Windows
-rem CVS ID: $Id: mrvoice-backup.bat,v 1.1 2002/06/21 18:16:39 minter Exp $
+rem SVN ID: $Id$
 rem
 rem You need to set the following variables (most can be found in
 rem your C:\MRVOICE.CFG file.

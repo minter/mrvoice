@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# $Id: quicksetup.pl,v 1.4 2004/03/15 17:24:54 minter Exp $
+# SVN ID: $Id$
 
 use warnings;
 use DBI;

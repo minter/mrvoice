@@ -1,4 +1,4 @@
-# CVS ID: $Id: Makefile,v 1.2 2002/04/17 01:57:47 minter Exp $
+# SVN ID: $Id$
 
 all:    mrvoice.pdf
 
