@@ -10,6 +10,8 @@ use Tk '804.026';
 use Tk::DialogBox;
 use Tk::Dialog;
 use Tk::DragDrop;
+use Tk::DragDrop::XDNDSite;
+use Tk::DragDrop::SunSite;
 use Tk::DropSite;
 use Tk::NoteBook;
 use Tk::ProgressBar::Mac;
@@ -136,6 +138,7 @@ my $result = GetOptions(
     'debug'     => \$debug,
     'help'      => \$help
 );
+$debug = 1 if ($^O eq "darwin");
 
 if ($help)
 {
@@ -215,12 +218,14 @@ else
         }
     }
     my $homedir = get_homedir();
+    print "DEBUG: Home Directory is $homedir\n";
     $rcfile = ( $userrcfile eq "" ) ? "$homedir/.mrvoicerc" : $userrcfile;
     if ( ( defined($logfile) ) || ( $^O eq "darwin" ) )
     {
         $logfile = ( $logfile eq "" ) ? "$homedir/mrvoice.log" : $logfile;
-        open( STDOUT, ">$logfile" );
-        open( STDERR, ">&STDOUT" );
+        print "DEBUG: Logfile is $logfile\n";
+        open( STDOUT, ">$logfile" ) or die;
+        open( STDERR, ">&STDOUT" ) or die;
         print "Using Unix logfile $logfile\n"
           if ( $debug || ( $^O eq "darwin" ) );
     }
@@ -3849,7 +3854,7 @@ sub do_exit
 
     if ( $choice =~ /yes/i )
     {
-        print "Disconnecting from $dbh\n" if $debug;
+        print "Disconnecting from dbh\n" if $debug;
         $dbh->disconnect;
         if ( $^O eq "MSWin32" )
         {
@@ -4216,6 +4221,7 @@ print "Reading rcfile\n" if $debug;
 read_rcfile();
 print "Read rcfile\n" if $debug;
 
+print "Checking if db_file is set\n" if $debug;
 if ( !defined $config{db_file} )
 {
     print "db_file not defined, doing database configuration\n" if $debug;
@@ -4241,6 +4247,7 @@ if ( !defined $config{db_file} )
     }
 }
 
+print "Checking if db_file exists\n" if $debug;
 if ( !( -e $config{db_file} ) )
 {
     print "db_file $config{db_file} configured, but file does not exist\n"
@@ -4276,6 +4283,7 @@ if ( !( -e $config{db_file} ) )
     }
 }
 
+print "Checking if db_file is writable\n" if $debug;
 if ( !( -w $config{db_file} ) )
 {
     print "Could not write to db_file $config{db_file}\n" if $debug;
@@ -4298,6 +4306,7 @@ if ( !( -w $config{db_file} ) )
     }
 }
 
+print "Connecting via DBI\n" if $debug;
 if ( !( $dbh = DBI->connect( "dbi:SQLite:dbname=$config{db_file}", "", "" ) ) )
 {
     print
@@ -4331,6 +4340,7 @@ if ( !( $dbh = DBI->connect( "dbi:SQLite:dbname=$config{db_file}", "", "" ) ) )
     }
 }
 
+print "Checking if filepath is writable\n" if $debug;
 if ( !-W $config{'filepath'} )
 {
     print "Could not write to MP3 directory $config{'filepath'}\n" if $debug;
@@ -4367,6 +4377,7 @@ if ( !-W $config{'filepath'} )
     }
 }
 
+print "Checking if savedir is writable\n" if $debug;
 if ( !-W $config{'savedir'} )
 {
     print "Could not write to hotkey directory $config{savedir}\n" if $debug;
@@ -4391,6 +4402,7 @@ if ( !-W $config{'savedir'} )
 # We use the following statement to open the MP3 player asynchronously
 # when the Mr. Voice app starts.
 
+print "Starting MP3 Player\n" if $debug;
 if ( ( !-x $config{'mp3player'} ) && ( $^O ne "darwin" ) )
 {
     print "Could not execute MP3 player $config{'mp3player'}\n" if $debug;
@@ -4417,7 +4429,9 @@ else
     }
     elsif ( $^O eq "darwin" )
     {
-        RunAppleScript(qq( tell application "Audion 3" to activate));
+        print "Starting AppleScript\n" if $debug;
+        RunAppleScript(qq( tell application "Audion 3" to activate)) or die;
+        print "Finished AppleScript\n" if $debug;
     }
     else
     {
