@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.154 2002/09/05 18:58:26 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.155 2002/09/16 21:44:35 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1051,7 +1051,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.154 $';
+  $rev = '$Revision: 1.155 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -1600,6 +1600,10 @@ sub do_search
     {
       $numrows--;
     }
+  }
+  if ($numrows > 0)
+  {
+    $mainbox->selectionSet(0);
   }
   $sth->finish;
   my $endtime = timelocal(localtime());
