@@ -40,7 +40,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.229 2003/07/11 16:06:41 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.230 2003/07/17 18:17:07 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1812,7 +1812,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.229 $';
+  $rev = '$Revision: 1.230 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2559,21 +2559,29 @@ sub build_categories_menu
 
 sub do_exit
 {
- # Disconnects from the database, attempts to close the MP3 player, and 
- # exits the program.
+  # Disconnects from the database, attempts to close the MP3 player, and 
+  # exits the program.
 
- $dbh->disconnect;
- if ("$^O" eq "MSWin32")
- {
-   # Close the MP3 player on a Windows system
-   Win32::Process::KillProcess($mp3_pid,1);
- }
- else
- {
-   # Close the MP3 player on a Unix system.
-   kill (15,$mp3_pid);
- }
- Tk::exit;
+  $choice = $mw->messageBox(-default=>"No",
+                            -icon=>"question",
+                            -type=>"YesNo",
+                            -title=>"Exit Mr. Voice?",
+                            -message=>"Do you wish to exit Mr. Voice?");
+  if ($choice eq "Yes")
+  {
+    $dbh->disconnect;
+    if ("$^O" eq "MSWin32")
+    {
+      # Close the MP3 player on a Windows system
+      Win32::Process::KillProcess($mp3_pid,1);
+    }
+    else
+    {
+      # Close the MP3 player on a Unix system.
+      kill (15,$mp3_pid);
+    }
+    Tk::exit;
+  }
 } 
 
 sub rightclick_menu
