@@ -35,7 +35,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.310 2004/02/28 03:37:02 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.311 2004/02/28 03:39:54 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2490,7 +2490,7 @@ sub delete_song
 
 sub show_about
 {
-    $rev = '$Revision: 1.310 $';
+    $rev = '$Revision: 1.311 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3333,7 +3333,6 @@ sub do_search
         $query = $query . "AND artist LIKE '%$artist%' " if ($artist);
     }
     $query = $query . "ORDER BY category,info,title";
-    print "DEBUG: The query is $query\n";
     my $starttime = timelocal( localtime() );
     my $sth       = $dbh->prepare($query);
     $sth->execute or die "can't execute the query: $DBI::errstr\n";
