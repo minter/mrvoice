@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.337 2004/03/09 18:20:18 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.338 2004/03/10 19:43:51 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -50,11 +50,11 @@ our %config;    # Holds the config variables
 
 our $current_token;
 our $lock_hotkeys   = 0;
-our $savefile_count = 0;    # Counter variables
-our $savefile_max   = 4;    # The maximum number of files to
-                            # keep in the "recently used" list.
-$category = 'Any';          # The default category to search
-$longcat  = 'Any';          # The default category to search
+our $savefile_count = 0;        # Counter variables
+our $savefile_max   = 4;        # The maximum number of files to
+                                # keep in the "recently used" list.
+our $category       = 'Any';    # The default category to search
+our $longcat        = 'Any';    # The default category to search
 
 # Allow searches of all music publishers by default.
 $config{'search_ascap'}   = 1;
@@ -1512,7 +1512,7 @@ sub move_file
 
     if ( -e catfile( $config{'filepath'}, "$newfilename$extension" ) )
     {
-        $i = 0;
+        my $i = 0;
         while ( 1 == 1 )
         {
             if ( !-e catfile( $config{'filepath'}, "$newfilename-$i$extension" )
@@ -2014,7 +2014,7 @@ sub edit_song
             $clear_artist_cb, $clear_info_cb, $edit_artist,
             $edit_info,       $edit_category
         );
-        foreach $id (@selected)
+        foreach my $id (@selected)
         {
             my $songid = get_song_id( $mainbox, $id );
             push( @songids, $songid );
@@ -2166,7 +2166,7 @@ sub delete_song
         $result = $box->Show();
         if ( $result eq "Delete" )
         {
-            foreach $id (@ids)
+            foreach my $id (@ids)
             {
                 if ( $delete_file_cb == 1 )
                 {
@@ -2198,7 +2198,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.337 $';
+    my $rev = '$Revision: 1.338 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -2515,7 +2515,7 @@ sub move_tank
 sub clear_tank
 {
     @selected = reverse( $tankbox->curselection() );
-    foreach $item (@selected)
+    foreach my $item (@selected)
     {
         $tankbox->delete($item);
     }
@@ -3324,7 +3324,7 @@ sub Tank_Drop
 #########
 # MAIN PROGRAM
 #########
-$mw = MainWindow->new;
+our $mw = MainWindow->new;
 $mw->withdraw();
 $mw->configure( -menu => $menubar = $mw->Menu );
 $mw->geometry("+0+0");
@@ -3804,7 +3804,7 @@ sub advanced_search
     $start_month_menu = $start_month_button->menu( -tearoff => 0 );
     $start_month_button->configure( -menu => $start_month_menu );
 
-    for ( $i = 1 ; $i <= 12 ; $i++ )
+    for ( my $i = 1 ; $i <= 12 ; $i++ )
     {
         $start_month_menu->radiobutton(
             -label    => $i,
@@ -3824,7 +3824,7 @@ sub advanced_search
     )->pack( -side => "left" );
     $start_date_menu = $start_date_button->menu( -tearoff => 0 );
     $start_date_button->configure( -menu => $start_date_menu );
-    for ( $i = 1 ; $i <= 31 ; $i++ )
+    for ( my $i = 1 ; $i <= 31 ; $i++ )
     {
         $start_date_menu->radiobutton(
             -label    => $i,
@@ -3842,7 +3842,7 @@ sub advanced_search
     )->pack( -side => "left" );
     $start_year_menu = $start_year_button->menu( -tearoff => 0 );
     $start_year_button->configure( -menu => $start_year_menu );
-    for ( $i = 2000 ; $i <= 2003 ; $i++ )
+    for ( my $i = 2000 ; $i <= 2003 ; $i++ )
     {
         $start_year_menu->radiobutton(
             -label    => $i,
@@ -3867,7 +3867,7 @@ sub advanced_search
     )->pack( -side => "left" );
     $end_month_menu = $end_month_button->menu( -tearoff => 0 );
     $end_month_button->configure( -menu => $end_month_menu );
-    for ( $i = 1 ; $i <= 12 ; $i++ )
+    for ( my $i = 1 ; $i <= 12 ; $i++ )
     {
         $end_month_menu->radiobutton(
             -label    => $i,
@@ -3886,7 +3886,7 @@ sub advanced_search
     )->pack( -side => "left" );
     $end_date_menu = $end_date_button->menu( -tearoff => 0 );
     $end_date_button->configure( -menu => $end_date_menu );
-    for ( $i = 1 ; $i <= 31 ; $i++ )
+    for ( my $i = 1 ; $i <= 31 ; $i++ )
     {
         $end_date_menu->radiobutton(
             -label    => $i,
@@ -3904,7 +3904,7 @@ sub advanced_search
     )->pack( -side => "left" );
     $end_year_menu = $end_year_button->menu( -tearoff => 0 );
     $end_year_button->configure( -menu => $end_year_menu );
-    for ( $i = 2000 ; $i <= 2003 ; $i++ )
+    for ( my $i = 2000 ; $i <= 2003 ; $i++ )
     {
         $end_year_menu->radiobutton(
             -label    => $i,
