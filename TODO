@@ -1,7 +1,11 @@
 Things I'm currently working on:
 
-* General cleanup and pretty-fication.
+* A better way to recover from errors in the Add Song section
+* Display database-based information in the Hotkeys listing, instead of
+  just the MP3 filename.
+* Drag-And-Drop between the Hotkeys listing and the Holding Tank.
 * Reporting tools within the GUI
+* General cleanup and pretty-fication.
 
 --
-CVS ID: $Id: TODO,v 1.19 2002/07/08 20:04:22 minter Exp $
+CVS ID: $Id: TODO,v 1.20 2002/07/09 18:08:40 minter Exp $
