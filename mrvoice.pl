@@ -46,7 +46,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.307 2004/02/24 21:19:14 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.308 2004/02/24 21:41:01 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -837,15 +837,14 @@ sub open_tank
                 chomp($id);
                 my $query =
                   "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.time from mrvoice,categories where mrvoice.category=categories.code AND mrvoice.id=$id";
-                my $sth = $dbh->prepare($query);
-                $sth->execute or die "can't execute the query: $DBI::errstr\n";
-                @table_row = $sth->fetchrow_array;
-                $sth->finish;
-                $string = "$id:($table_row[1]";
-                $string = $string . " - $table_row[2]" if ( $table_row[2] );
-                $string = $string . ") - \"$table_row[4]\"";
-                $string = $string . " by $table_row[3]" if ( $table_row[3] );
-                $string = $string . " $table_row[5]";
+                my $tank_ref = $dbh->selectrow_hashref($query);
+                $string = "$id:($tank_ref->{description}";
+                $string = $string . " - $tank_ref->{info}"
+                  if ( $tank_ref->{info} );
+                $string = $string . ") - \"$tank_ref->{title}\"";
+                $string = $string . " by $tank_ref->{artist}"
+                  if ( $tank_ref->{artist} );
+                $string = $string . " $tank_ref->{time}";
 
                 $tankbox->insert( 'end', $string );
             }
@@ -2502,7 +2501,7 @@ sub delete_song
 
 sub show_about
 {
-    $rev = '$Revision: 1.307 $';
+    $rev = '$Revision: 1.308 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3195,14 +3194,10 @@ sub play_mp3
         my $id = get_song_id( $box, $selection[0] );
         if ($id)
         {
-            $query = "SELECT filename,title,artist from mrvoice WHERE id=$id";
-            my $sth = $dbh->prepare($query);
-            $sth->execute or die "can't execute the query: $DBI::errstr\n";
-            @result = $sth->fetchrow_array;
-            $sth->finish;
-            $filename     = $result[0];
-            $statustitle  = $result[1];
-            $statusartist = $result[2];
+            my $id_ref = get_info_from_id($id);
+            $filename     = $id_ref->{filename};
+            $statustitle  = $id_ref->{title};
+            $statusartist = $id_ref->{artist};
         }
     }
     if ( ($filename) && ( $_[0] eq "addsong" ) )
@@ -3425,12 +3420,8 @@ sub return_longcat
 {
     my $category = $_[0];
     my $query    = "SELECT description FROM categories WHERE code='$category'";
-    my $sth      = $dbh->prepare($query);
-    $sth->execute;
-    my @row = $sth->fetchrow_array;
-    $sth->finish;
-    my $longcat = $row[0];
-    return ($longcat);
+    my $longcat_ref = $dbh->selectrow_hashref($query);
+    return ( $longcat_ref->{description} );
 }
 
 sub build_categories_menu
@@ -4091,11 +4082,8 @@ sub songsmenu_items
 sub advanced_search
 {
     my $query = "select modtime from mrvoice order by modtime asc limit 1";
-    my $sth   = $dbh->prepare($query);
-    $sth->execute or die "can't execute the query: $DBI::errstr\n";
-    my @table_row = $sth->fetchrow_array;
-    my $firstdate = $table_row[0];
-    $sth->finish;
+    my $firstdate_ref = $dbh->selectrow_hashref($query);
+    my $firstdate     = $firstdate_ref->{modtime};
 
     $firstdate =~ /(\d\d)(\d\d)(\d\d)/;
 
