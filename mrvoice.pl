@@ -4,7 +4,7 @@ no warnings 'redefine';
 
 #use diagnostics;
 
-#use strict; # Yeah right
+#use strict;    # Yeah right
 use Encode::Unicode;
 use Tk;
 use Tk::DialogBox;
@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.338 2004/03/10 19:43:51 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.339 2004/03/10 20:51:57 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -55,6 +55,7 @@ our $savefile_max   = 4;        # The maximum number of files to
                                 # keep in the "recently used" list.
 our $category       = 'Any';    # The default category to search
 our $longcat        = 'Any';    # The default category to search
+our $rcfile;                    # Resource file
 
 # Allow searches of all music publishers by default.
 $config{'search_ascap'}   = 1;
@@ -94,7 +95,7 @@ our $mp3types = [
 # Check to see if we're on Windows or Linux, and set the RC file accordingly.
 if ( "$^O" eq "MSWin32" )
 {
-    our $rcfile = "C:\\mrvoice.cfg";
+    $rcfile = "C:\\mrvoice.cfg";
 
     BEGIN
     {
@@ -134,7 +135,7 @@ else
                         || (getpwuid($>))[7]
                      )
               }ex;
-    our $rcfile = "$homedir/.mrvoicerc";
+    $rcfile = "$homedir/.mrvoicerc";
 }
 
 #STARTCSZ
@@ -2198,7 +2199,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.338 $';
+    my $rev = '$Revision: 1.339 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3472,7 +3473,7 @@ if ( !$dbh->do($query) )
         $query = "SELECT * from mrvoice";
 
         $percent_done = 0;
-        $progressbox  = $mw->Toplevel();
+        my $progressbox = $mw->Toplevel();
         $progressbox->withdraw();
         $progressbox->Icon( -image => $icon );
         $progressbox->title("Song Conversion Status");
@@ -3771,14 +3772,14 @@ sub advanced_search
 
     $firstdate =~ /(\d\d)(\d\d)(\d\d)/;
 
-    $start_month = $2;
-    $start_date  = $3;
-    $start_year  = "20$1";
+    my $start_month = $2;
+    my $start_date  = $3;
+    my $start_year  = "20$1";
 
-    my @today = localtime();
-    $end_month = $today[4] + 1;
-    $end_date  = $today[3];
-    $end_year  = $today[5] + 1900;
+    my @today     = localtime();
+    my $end_month = $today[4] + 1;
+    my $end_date  = $today[3];
+    my $end_year  = $today[5] + 1900;
 
     my $box = $mw->DialogBox(
         -title   => "Advanced Search",
@@ -3801,7 +3802,7 @@ sub advanced_search
         -relief      => 'raised',
         -indicatoron => 1
     )->pack( -side => "left" );
-    $start_month_menu = $start_month_button->menu( -tearoff => 0 );
+    my $start_month_menu = $start_month_button->menu( -tearoff => 0 );
     $start_month_button->configure( -menu => $start_month_menu );
 
     for ( my $i = 1 ; $i <= 12 ; $i++ )
@@ -3822,7 +3823,7 @@ sub advanced_search
         -relief      => 'raised',
         -indicatoron => 1
     )->pack( -side => "left" );
-    $start_date_menu = $start_date_button->menu( -tearoff => 0 );
+    my $start_date_menu = $start_date_button->menu( -tearoff => 0 );
     $start_date_button->configure( -menu => $start_date_menu );
     for ( my $i = 1 ; $i <= 31 ; $i++ )
     {
@@ -3840,7 +3841,7 @@ sub advanced_search
         -relief      => 'raised',
         -indicatoron => 1
     )->pack( -side => "left" );
-    $start_year_menu = $start_year_button->menu( -tearoff => 0 );
+    my $start_year_menu = $start_year_button->menu( -tearoff => 0 );
     $start_year_button->configure( -menu => $start_year_menu );
     for ( my $i = 2000 ; $i <= 2003 ; $i++ )
     {
@@ -3865,7 +3866,7 @@ sub advanced_search
         -relief      => 'raised',
         -indicatoron => 1
     )->pack( -side => "left" );
-    $end_month_menu = $end_month_button->menu( -tearoff => 0 );
+    my $end_month_menu = $end_month_button->menu( -tearoff => 0 );
     $end_month_button->configure( -menu => $end_month_menu );
     for ( my $i = 1 ; $i <= 12 ; $i++ )
     {
@@ -3884,7 +3885,7 @@ sub advanced_search
         -relief      => 'raised',
         -indicatoron => 1
     )->pack( -side => "left" );
-    $end_date_menu = $end_date_button->menu( -tearoff => 0 );
+    my $end_date_menu = $end_date_button->menu( -tearoff => 0 );
     $end_date_button->configure( -menu => $end_date_menu );
     for ( my $i = 1 ; $i <= 31 ; $i++ )
     {
@@ -3902,7 +3903,7 @@ sub advanced_search
         -relief      => 'raised',
         -indicatoron => 1
     )->pack( -side => "left" );
-    $end_year_menu = $end_year_button->menu( -tearoff => 0 );
+    my $end_year_menu = $end_year_button->menu( -tearoff => 0 );
     $end_year_button->configure( -menu => $end_year_menu );
     for ( my $i = 2000 ; $i <= 2003 ; $i++ )
     {
@@ -4110,8 +4111,8 @@ $searchbuttonframe->Button(
 
 #####
 # Main display area - search results
-$searchboxframe = $mw->Frame();
-$mainbox        = $searchboxframe->Scrolled(
+our $searchboxframe = $mw->Frame();
+$mainbox = $searchboxframe->Scrolled(
     'Listbox',
     -scrollbars => 'osoe',
     -width      => 100,
@@ -4150,7 +4151,7 @@ $statusframe = $mw->Frame()->pack(
     -anchor => 's',
     -fill   => 'x'
 );
-$playbutton = $statusframe->Button(
+our $playbutton = $statusframe->Button(
     -text    => "Play Now",
     -command => [ \&play_mp3, $mainbox ]
 )->pack( -side => 'left' );
@@ -4158,7 +4159,7 @@ $playbutton->configure(
     -bg               => 'green',
     -activebackground => 'SpringGreen2'
 );
-$stopbutton = $statusframe->Button(
+our $stopbutton = $statusframe->Button(
     -text    => "Stop Now",
     -command => \&stop_mp3
 )->pack( -side => 'right' );
