@@ -5,12 +5,12 @@
   <!ENTITY epilogue SYSTEM "troubleshooting.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.51 2004/03/12 03:17:35 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.52 2004/03/25 21:28:08 minter Exp $ 
 -->
 <book status="draft">
 
 <bookinfo>
-  <title>Mr. Voice 1.10 Installation and Reference Manual</title>
+  <title>Mr. Voice 1.10.2 Installation and Reference Manual</title>
   <author>
     <firstname>H. Wade</firstname><surname>Minter</surname>
     <affiliation>
@@ -66,6 +66,14 @@
 <preface>
   <title>What's New</title>
   <para>A quick reference to what's changed between versions.</para>
+  <sect1><title>What's new in Version 1.10.2?</title>
+    <para>
+      <itemizedlist>
+        <listitem><para>Fixed a bug where, after doing a search, the main listbox got the focus instead of the search box you just typed into.</para></listitem>
+        <listitem><para>Updated to the final Tk-804 production release, Tk-804.026</para></listitem>
+       </itemizedlist>
+    </para>
+  </sect1>
   <sect1><title>What's new in Version 1.10?</title>
     <para>
       <itemizedlist>
