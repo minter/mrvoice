@@ -11,5 +11,17 @@ you run "orphans.pl -d", it will delete the orphaned files.  Adding a
 "-v" flag to either of those options will cause the script to become
 more verbose in its output, to possibly help you track down any problems.
 
+###### mrvoice.php ######
+This is a PHP utility to provide a web frontend to your database.  You
+can search for songs, show songs added within a particular date range,
+and download songs.
+
+This script does NOT use your normal config file, so you must manually
+set up the variables at the top of the script.  
+
+This utility requires a webserver with PHP (http://www.php.net/) compiled
+into it, PHP with MySQL support, the class.id3.php file, and the ability
+to connect to your database.
+
 ###### END ######
-# CVS ID: $Id: README,v 1.1 2001/12/19 21:18:43 minter Exp $
+# CVS ID: $Id: README,v 1.2 2001/12/20 15:36:06 minter Exp $
