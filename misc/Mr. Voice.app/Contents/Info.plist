@@ -19,7 +19,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>$Id$</string>
+	<string>2.0.2</string>
 	<key>CFBundleShortVersionString</key>
 	<string>2.0.2</string>
 </dict>
