@@ -40,7 +40,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.236 2003/07/21 20:32:45 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.237 2003/07/21 20:57:34 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1855,35 +1855,44 @@ sub edit_song
 
 sub delete_song
 {
-  my $id = get_song_id($mainbox);
-  if ($id)
+  my @selection = $mainbox->curselection();
+  my $count = $#selection + 1;
+  my @ids;
+  my $index;
+  foreach $index (@selection)
+  {
+    push (@ids, get_song_id($mainbox,$index));
+  }
+  if ($count >= 1)
   {  
     $box = $mw->DialogBox(-title=>"Confirm Deletion", 
                           -default_button=>"Cancel",
                           -buttons=>["Delete","Cancel"]);
     $box->Icon(-image=>$icon);
-    $box->add("Label",-text=>"About to delete song id $id from the database\nBe sure this is what you want to do!")->pack();
+    $box->add("Label",-text=>"About to delete $count songs from the database.\nBe sure this is what you want to do!")->pack();
     $box->add("Checkbutton",-text=>"Delete file on disk",
                             -variable=>\$delete_file_cb)->pack();
     $result = $box->Show();
     if ($result eq "Delete")
     {
-      if ($delete_file_cb == 1)
+      foreach $id (@ids)
       {
-        $filequery = "SELECT filename FROM mrvoice WHERE id=$id";
-        ($filename) = $dbh->selectrow_array($filequery);
+        if ($delete_file_cb == 1)
+        {
+          $filequery = "SELECT filename FROM mrvoice WHERE id=$id";
+          ($filename) = $dbh->selectrow_array($filequery);
+        }
+        $query = "DELETE FROM mrvoice WHERE id=$id";
+        my $sth=$dbh->prepare($query);
+        $sth->execute;
+        $sth->finish;
+        if ($delete_file_cb == 1)
+        {
+          my $file = File::Spec->catfile($filepath, $filename);
+          unlink("$file");
+        }
+        $status = "Deleted $count songs";
       }
-      $query = "DELETE FROM mrvoice WHERE id=$id";
-      my $sth=$dbh->prepare($query);
-      $sth->execute;
-      $sth->finish;
-      if ($delete_file_cb == 1)
-      {
-	my $file = File::Spec->catfile($filepath, $filename);
-        infobox($mw, "File Deletion Error","Could not delete file $file from the disk\n\nEntry was removed from the database") unless ( unlink("$file") );
-      }
-      infobox($mw, "Song Deleted","Deleted song with ID $id");
-      $status = "Deleted song id $id";
     } 
     else
     {
@@ -1899,7 +1908,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.236 $';
+  $rev = '$Revision: 1.237 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2214,7 +2223,6 @@ sub get_song_id
 
   $box = $_[0];
   $index = $_[1];
-  print "DEBUG: Box is $box, Index is $index, leftover is $_[2]\n";
   my $selection = $box->get($index);
   my ($id) = split /:/,$selection;
   return ($id);
@@ -3061,8 +3069,8 @@ sub songsmenu_items
 {
   [
     ['command', 'Add New Song', -command=>\&add_new_song],
-    ['command', 'Edit Currently Selected Song', -command=>\&edit_song],
-    ['command', 'Delete Currently Selected Song', -command=>\&delete_song],
+    ['command', 'Edit Currently Selected Song(s)', -command=>\&edit_song],
+    ['command', 'Delete Currently Selected Song(s)', -command=>\&delete_song],
     ['command', 'Bulk-Add Songs Into Category', -command=>\&bulk_add],
     ['command', 'Update Song Times', -command=>\&update_time],
   ];
