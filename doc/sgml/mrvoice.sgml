@@ -4,7 +4,7 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.15 2001/10/29 17:54:21 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.16 2001/11/14 14:44:19 minter Exp $ 
 -->
 <book status="draft">
 
@@ -48,6 +48,18 @@
 <preface>
   <title>What's New</title>
   <para>A quick reference to what's changed between versions.</para>
+  <sect1>
+    <title>What's New In Version 1.4</title>
+    <para>
+      <itemizedlist>
+        <listitem><para>There are now keyboard shortcuts to open (Control-O) or save (Control-S) hotkey files, exit Mr. Voice (Control-X), and open the Hotkeys listing (Control-H).</para></listitem>
+        <listitem><para>The Do Search button is bigger.</para></listitem>
+        <listitem><para>The <guimenu>Recent Files</guimenu> menu is now a sub-menu off of the <guimenu>File</guimenu> menu, instead of just hanging off the end of <guimenu>File</guimenu>.</para></listitem>
+        <listitem><para>Exiting Mr. Voice now also closes the MP3 player.</para></listitem>
+      </itemizedlist>
+    </para>
+  </sect1>
+
   <sect1>
     <title>What's New In Version 1.3</title>
     <para>
