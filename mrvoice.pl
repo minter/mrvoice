@@ -563,17 +563,6 @@ sub BindMouseWheel
 
 }    # end BindMouseWheel
 
-sub TrueRows($)
-{
-    my ($sth) = @_;
-    my $count = 0;
-    while ( $sth->fetchrow_arrayref )
-    {
-        ++$count;
-    }
-    return $count;
-}
-
 sub update_110
 {
     my $query =
@@ -3583,7 +3572,7 @@ if ( !$dbh->do($query_17) )
 
         my $select_all_sth = $dbh->prepare($selectall_query);
         $select_all_sth->execute;
-        my $numrows = TrueRows($select_all_sth);
+        my $numrows = get_rows($select_all_sth);
         $select_all_sth = $dbh->prepare($selectall_query);
         $select_all_sth->execute;
         my $rowcount = 0;
