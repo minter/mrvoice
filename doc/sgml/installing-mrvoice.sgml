@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.24 2004/03/11 21:54:18 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.25 2004/04/19 16:59:16 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
@@ -12,7 +12,7 @@
       <para>The following components are required to run Mr. Voice under Windows 95 or higher.
       <itemizedlist>
         <listitem><para>The <ulink url= "http://www.mysql.com/">MySQL</ulink> database engine version 4.X.</para></listitem>
-        <listitem> <para>An MP3 player.  <ulink url="http://www.winamp.com/">WinAmp</ulink> version 5 is recommended.</para></listitem>
+        <listitem> <para>An MP3 player.  <ulink url="http://www.winamp.com/">WinAmp</ulink> version 5 is recommended.  If you plan on playing Windows Media Audio (WMA) files, you will need at least WinAmp Version 5, Full install (not "Lite")</para></listitem>
         <listitem><para>The <ulink url="http://www.kostaa.com/winamp/index.html">httpQ plugin</ulink> for WinAmp.  <emphasis>Optional, but recommended</emphasis></para></listitem>
         <listitem><para>The <ulink url="http://www.lunenburg.org/mrvoice/files/">Ogg Vorbis plugin</ulink> for WinAmp.  <emphasis>Optional, but recommended</emphasis></para></listitem>
       </itemizedlist>
