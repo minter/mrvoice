@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/03/06 04:07:58 $
-#	CVS REVISION NUMBER:    $Revision: 1.24 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/06 17:48:06 $
+#	CVS REVISION NUMBER:    $Revision: 1.25 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -30,7 +30,7 @@ use MPEG::MP3Info;
 my $db_name = "comedysportz";			# In the form DBNAME:HOSTNAME:PORT
 my $db_username = "root";                   # The username used to connect
                                         # to the database.
-my $db_pass = "rangers";                       # The password used to connect
+my $db_pass = "";                       # The password used to connect
                                         # to the database.
 $category = "Any";			# The default category to search
                                         # Initial status message
@@ -194,8 +194,9 @@ sub add_category
   {
     if (($addcat_code) && ($addcat_desc))
     {
+      $addcat_desc = $dbh->quote($addcat_desc);
       $addcat_code =~ tr/a-z/A-Z/;
-      $query = "INSERT INTO categories VALUES ('$addcat_code','$addcat_desc')";
+      $query = "INSERT INTO categories VALUES ('$addcat_code',$addcat_desc)";
       my $sth=$dbh->prepare($query);
       if (! $sth->execute)
       {
@@ -789,16 +790,27 @@ sub do_exit
 #########
 # MAIN PROGRAM
 #########
-
-$dbh = DBI->connect("DBI:mysql:$db_name",$db_username,$db_pass) or die "Couldn't connect to database: $DBI::errstr\n";
-# We use the following statement to open the MP3 player asynchronously
-# when the Mr. Voice app starts.
-open (XMMS,"$mp3player|");
-
 $mw = MainWindow->new;
 $mw->geometry("+0+0");
 $mw->title("Mr. Voice");
 $mw->minsize(68,10);
+
+if (! ($dbh = DBI->connect("DBI:mysql:$db_name",$db_username,$db_pass)))
+{
+  $box = $mw->DialogBox(-title=>"Fatal Error", -buttons=>["Exit"]);
+  $box->add("Label",-text=>"Could not connect to database.")->pack();
+  $box->add("Label",-text=>"Make sure your database configuration is correct,\nand that your database is running.")->pack();
+  $box->add("Label",-text=>"Database returned error: $DBI::errstr")->pack();
+  $result = $box->Show();
+  if ($result)
+  {
+    die "Died with database error $DBI::errstr\n";
+  }
+}
+# We use the following statement to open the MP3 player asynchronously
+# when the Mr. Voice app starts.
+open (XMMS,"$mp3player|");
+
 $menuframe=$mw->Frame(-relief=>'ridge',
                       -borderwidth=>2)->pack(-side=>'top',
                                             -fill=>'x',
