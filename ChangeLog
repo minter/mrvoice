@@ -1,3 +1,8 @@
+Sun  Feb 29 2004	H. Wade Minter (minter@lunenburg.org)
+     * Lots of minor cleanup while working on the TPJ article.
+     * Switched the XPM of the sound icon over to a GIF for a space 
+       savings.
+
 Fri  Feb 27 2004	H. Wade Minter (minter@lunenburg.org)
      * Switching the BrowseEntry search fields back to plain Entry widgets - 
        the embedded xbm was causing problems with PAR, and I don't think 
@@ -562,4 +567,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.118 2004/02/28 03:38:08 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.119 2004/03/01 03:58:22 minter Exp $
