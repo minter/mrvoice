@@ -3,6 +3,8 @@ Things I'm currently working on:
 * General cleanup and pretty-fication.
 * Add "Edit Category" feature.
 * Tighter integration with WinAmp for Windows version.  Win32::GUI?
+* Reporting tools within the GUI
+* Wheelmouse support
 
 --
-CVS ID: $Id: TODO,v 1.15 2002/05/03 16:24:00 minter Exp $
+CVS ID: $Id: TODO,v 1.16 2002/05/08 15:46:05 minter Exp $
