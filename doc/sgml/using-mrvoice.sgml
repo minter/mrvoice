@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: using-mrvoice.sgml,v 1.2 2001/09/24 19:48:47 minter Exp $
+  CVS ID: $Id: using-mrvoice.sgml,v 1.3 2001/09/24 19:53:43 minter Exp $
 -->
 
 <chapter><title>Using Mr. Voice</title>
@@ -49,12 +49,12 @@
     <sect2><title>Configuring Hotkeys</title>
       <para>To set up a hotkey, you must first search for a song and have it displayed in the main listbox.  Once you have the song that you want to assign, left-click on the song to highlight it.  Then press the <guibutton>Assign Hotkey</guibutton> button.  When you do that, a box will pop up asking you to choose the keys to bind the song to, and the keys are the function keys F1 through F12.  You can bind a song to more than one hotkey if you want to.  After you select the keys to bind, press the <guibutton>Apply</guibutton> button.  The hotkey box will disappear, and the status line of the main window will read "Hotkey assigned".  You can repeat this as needed, and you can have up to 12 hotkeys assigned at any time.</para>
       <para>To see which hotkeys you currently have defined, choose <menuchoice> <guimenu>Hotkeys</guimenu> <guimenuitem>Show Hotkeys</guimenuitem> </menuchoice> from the main menu.  That will bring up a menu showing each of the 12 hotkeys, and under the key name, the filename of the song that is bound to the key.  If you leave this window up, you can see it change as you add or remove hotkeys.</para>
-      <para>To remove hotkeys, you have two choices: Remove keys individually, or remove them all in one fell swoop.  To remove all hotkeys, choose <menuchoice> <guimenu>Hotkeys</guimenu> <guimenuitem>Clear All Hotkeys</guimenuitem> </menuchoice> from the main menubar.  This will do exactly what it implies - reset all hotkeys back to empty.  You can also, from the <menuchoice> <guimenu>Hotkeys</guimenu> <guimenuitem>Show Hotkeys</guimenuitem> menu, press the buttons beside any key listing, and choose the <guibutton>Clear Selected</guibutton> button to clear out just the keys that you select, while leaving the others alone.</para>
+      <para>To remove hotkeys, you have two choices: Remove keys individually, or remove them all in one fell swoop.  To remove all hotkeys, choose <menuchoice> <guimenu>Hotkeys</guimenu> <guimenuitem>Clear All Hotkeys</guimenuitem> </menuchoice> from the main menubar.  This will do exactly what it implies - reset all hotkeys back to empty.  You can also, from the <menuchoice> <guimenu>Hotkeys</guimenu> <guimenuitem>Show Hotkeys</guimenuitem> </menuchoice> menu, press the buttons beside any key listing, and choose the <guibutton>Clear Selected</guibutton> button to clear out just the keys that you select, while leaving the others alone.</para>
       <para>If you clear all hotkeys, the <menuchoice> <guimenu>Hotkeys</guimenu> <guimenuitem>Restore Hotkeys</guimenuitem> </menuchoice> option becomes available.  It allows you to return your hotkeys to the state they were in immediately prior to the clearing.  This exists in case you accidentally clear hotkeys that you don't mean to.  Note that the Restore Hotkeys feature currently only works for the Clear All Hotkeys and Open Hotkey File (discussed below) options.</para>
     </sect2>
     <sect2><title>Using Hotkeys</title>
       <para>To use hotkeys once you have defined them, simply make sure that the main Mr. Voice window is selected, and press the hotkey for the song that you want.  The song should immediately begin playing.
-        <important>If you have any other window besides the main window selected when you press the hotkey, it will not play.  The main window must be the one selected for hotkeys to work - click once on the main window to be sure that it's selected if you have problems playing via a hotkey.  This bug should be addressed in a later release.</important>
+        <important><para>If you have any other window besides the main window selected when you press the hotkey, it will not play.  The main window must be the one selected for hotkeys to work - click once on the main window to be sure that it's selected if you have problems playing via a hotkey.  This bug should be addressed in a later release.</para></important>
       </para>
     </sect2>
     <sect2><title>Saving and Loading Hotkeys</title>
