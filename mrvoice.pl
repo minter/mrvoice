@@ -14,8 +14,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/17 22:18:45 $
-#	CVS REVISION NUMBER:    $Revision: 1.56 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/19 14:53:35 $
+#	CVS REVISION NUMBER:    $Revision: 1.57 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -68,14 +68,15 @@ if ("$^O" eq "MSWin32")
 }
 else
 {
-  $rcfile = "~/.mrvoicerc";
-  $rcfile =~ s{ ^ ~ ( [^/]* ) }
+  $homedir = "~";
+  $homedir =~ s{ ^ ~ ( [^/]* ) }
               { $1 
                    ? (getpwnam($1))[7] 
                    : ( $ENV{HOME} || $ENV{LOGDIR} 
                         || (getpwuid($>))[7]
                      )
               }ex;
+  $rcfile = "$homedir/.mrvoicerc";
 }
 
 #STARTCSZ
@@ -311,12 +312,17 @@ sub add_category
   $addcat_desc="";
 }
 
+sub edit_category
+{
+
+}
+
 sub delete_category
 {
-  $box = $mw->DialogBox(-title=>"Delete a category",-buttons=>["Ok","Cancel"]);
+  my $box = $mw->DialogBox(-title=>"Delete a category",-buttons=>["Ok","Cancel"]);
   $box->add("Label",-text=>"Choose a category to delete.")->pack();
 
-  $query="SELECT * from categories ORDER BY description";
+  my $query="SELECT * from categories ORDER BY description";
   my $sth=$dbh->prepare($query);
   $sth->execute or die "can't execute the query: $DBI::errstr\n";
   while (@table_row = $sth->fetchrow_array)
@@ -328,7 +334,7 @@ sub delete_category
                             -variable=>\$del_cat)->pack(-anchor=>"w");
   }
   $sth->finish;
-  $choice = $box->Show();
+  my $choice = $box->Show();
   
   if ($choice ne "Cancel")
   {
@@ -398,6 +404,7 @@ sub add_new_song
   $frame6->Button(-text=>"Select File",
                   -command=>sub { 
                      $addsong_filename = $mw->getOpenFile(-title=>'Select File',
+                                                          -initialdir=>$homedir,
                                                           -filetypes=>$mp3types);
                                 })->pack(-side=>'right');
   $frame5->Entry(-width=>30,
@@ -536,6 +543,7 @@ sub edit_preferences
       close(RCFILE);
     }
   }
+  read_rcfile();
 }
 
 sub edit_song
@@ -904,15 +912,15 @@ sub do_search
   $query = $query . "AND category='$category' " if ($category ne "Any");
   if ($anyfield)
   {
-    $query = $query . "AND ( info LIKE '%$anyfield%' OR title LIKE '%$anyfield%' OR artist LIKE '%$anyfield%')";
+    $query = $query . "AND ( info LIKE '%$anyfield%' OR title LIKE '%$anyfield%' OR artist LIKE '%$anyfield%') ";
   }
   else
   {
     $query = $query . "AND info LIKE '%$cattext%' " if ($cattext);
     $query = $query . "AND title LIKE '%$title%' " if ($title);
     $query = $query . "AND artist LIKE '%$artist%' " if ($artist);
-    $query = $query . "ORDER BY category,info,title";
   }
+  $query = $query . "ORDER BY category,info,title";
   my $sth=$dbh->prepare($query);
   $sth->execute or die "can't execute the query: $DBI::errstr\n";
   while (@table_row = $sth->fetchrow_array)
@@ -1022,11 +1030,30 @@ if (! ($dbh = DBI->connect("DBI:mysql:$db_name",$db_username,$db_pass)))
   $box = $mw->DialogBox(-title=>"Fatal Error", -buttons=>["Exit"]);
   $box->add("Label",-text=>"Could not connect to database.")->pack();
   $box->add("Label",-text=>"Make sure your database configuration is correct,\nand that your database is running.")->pack();
+  $box->add("Label",-text=>"The preferences menu will now pop up for you to\ncheck or set any configuration options.")->pack();
+  $box->add("Label",-text=>"After you set the preferences, Mr. Voice will exit.\nYou will need to restart to test your changes.")->pack();
   $box->add("Label",-text=>"Database returned error: $DBI::errstr")->pack();
   $result = $box->Show();
   if ($result)
   {
+    edit_preferences();
     die "Died with database error $DBI::errstr\n";
+  }
+}
+
+if (! -W $filepath)
+{
+  $box = $mw->DialogBox(-title=>"Fatal Error", -buttons=>["Exit"]);
+  $box->add("Label",-text=>"MP3 Directory unavailable")->pack();
+  $box->add("Label",-text=>"The MP3 directory that you set is unavailable.  Check\nto make sure the directory is correct, and you have\npermission to access it.")->pack();
+  $box->add("Label",-text=>"The preferences menu will now pop up for you to\ncheck or set any configuration options.")->pack();
+  $box->add("Label",-text=>"After you set the preferences, Mr. Voice will exit.\nYou will need to restart to test your changes.")->pack();
+  $box->add("Label",-text=>"Current MP3 Directory: $filepath")->pack();
+  $result = $box->Show();
+  if ($result)
+  {
+    edit_preferences();
+    die ("Error accessing MP3 directory\n");
   }
 }
 
@@ -1073,6 +1100,8 @@ $catmenu = $menuframe->Menubutton(-text=>"Categories",
                                   -tearoff=>0)->pack(-side=>'left');
 $catmenu->AddItems(["command"=>"Add Category",
                    -command=>\&add_category]);
+$catmenu->AddItems(["command"=>"Edit Category",
+                   -command=>\&edit_category]);
 $catmenu->AddItems(["command"=>"Delete Category",
                    -command=>\&delete_category]);
 
