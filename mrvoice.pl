@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.352 2004/03/12 20:46:30 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.353 2004/03/15 17:59:12 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1796,6 +1796,8 @@ sub edit_preferences
         -command => sub {
             if ( my $filepath = $box->chooseDirectory )
             {
+                $filepath = Win32::GetShortPathName($filepath)
+                  if ( $^O eq "MSWin32" );
                 $config{'filepath'} = $filepath;
             }
         }
@@ -1814,6 +1816,8 @@ sub edit_preferences
         -command => sub {
             if ( my $savedir = $box->chooseDirectory )
             {
+                $savedir = Win32::GetShortPathName($savedir)
+                  if ( $^O eq "MSWin32" );
                 $config{'savedir'} = $savedir;
             }
         }
@@ -2219,7 +2223,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.352 $';
+    my $rev = '$Revision: 1.353 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
