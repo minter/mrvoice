@@ -4,7 +4,7 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.8 2001/09/26 17:08:28 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.9 2001/09/26 17:47:00 minter Exp $ 
 -->
 <book status="draft">
 
@@ -20,9 +20,28 @@
   <copyright><year>2001</year><holder>H. Wade Minter</holder></copyright>
 </bookinfo>
 
+<dedication><title>Acknowledgements</title>
+  <para>Thanks to my wife, Holly, for encouragement and editorial help.</para>
+  <para>Thanks to all of the voices at ComedyWorx-Raleigh, including (but not limited to) Jack Spencer, Sam Adams, Bobby Rathbone, Ross White, Leo DiNapoli, and Bryan Cronk, for testing and feedback.</para>
+  <para>Thanks to the ownership and players of ComedyWorx for giving me such a fun place to be a goofball for the past couple of years.</para>
+  <para>Thanks to the authors and publishers of the following books, without whom none of this would have gotten done:
+    <itemizedlist>
+      <listitem><para><citetitle pubwork="book">Learning Perl, 2nd Edition</citetitle>, by Randal Schwartz and Tom Christiansen, published by O'Reilly and Associates.</para></listitem>
+      <listitem><para><citetitle pubwork="book">Programming Perl, 2nd Edition</citetitle>, by Larry Wall, Randal Schwartz and Tom Christiansen, published by O'Reilly and Associates.</para></listitem>
+      <listitem><para><citetitle pubwork="book">Learning Perl/TK</citetitle>, by Nancy Walsh, published by O'Reilly and Associates.</para></listitem>
+      <listitem><para><citetitle pubwork="book">Programming the Perl DBI</citetitle>, by Alligator Descartes & Tim Bunce, published by O'Reilly and Associates.</para></listitem>
+    </itemizedlist>
+  </para>
+  <para>And thanks to the Open Source and Free Software movements, letting people write software that doesn't suck!</para>
+</dedication>
+
 <preface>
   <title>Foreword</title>
-  <para>This program was written with a very specific purpose in mind - to be the GUI frontend for an MP3 database I designed for the ComedyWorx Improv comedy group (formerly the Great American Comedy Company, formerly ComedySportz) in Raleigh, NC.  As such, it may not be much use for anyone else, but I figured I'd put it out there in case anyone wanted it.</para>
+  <para>Mr. Voice was written with a very specific purpose in mind - to be the GUI frontend for an MP3 database I designed for the ComedyWorx Improv comedy group (formerly the Great American Comedy Company, formerly ComedySportz) in Raleigh, NC.</para>
+  <para>The Voices there over the ten years prior to my joining the club had worked out a very nice system of tapes and CDs that they used during ComedySportz shows.  However, I ran into some issues: It was hard to have a variety of music available at a moment's notice, and there were problems with tapes not getting rewound.  Being a computer geek, I wanted to use MP3s, but I couldn't find anything on the net written with my kind of situation in mind.  So, armed with some books and Red Hat Linux 6.2 on my laptop, I got to work in the winter of 2000.</para>
+  <para>Because I wrote Mr. Voice in Perl/TK, it had the ability to go cross-platform, even though I was writing it for Linux.  That led to me getting my first work on the Windows version of Perl.</para>
+  <para>Eventually, something useful began to take shape, and I put the first versions into production at ComedyWorx in early 2001.  And it seems to, by and large, be working pretty well.</para>
+  <para>And so it goes.  Because this was written for such a specific purpose, I have my doubts whether anyone else will find it useful.  But it's out there, and if you're taking the time to read this, I hope you'll get something out of it!</para>
 </preface>
 
 &chapter1
