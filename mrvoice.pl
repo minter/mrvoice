@@ -46,7 +46,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.298 2004/01/13 22:26:27 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.299 2004/01/15 18:15:41 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2246,7 +2246,10 @@ sub edit_song
             $menu->radiobutton(
                 -label    => $name,
                 -value    => $code,
-                -variable => \$edit_category
+                -variable => \$edit_category,
+                -command  => sub {
+                    $menu->configure( -text => return_longcat($edit_category) );
+                }
             );
         }
         $sth->finish;
@@ -2271,7 +2274,10 @@ sub edit_song
             $pubmenu->radiobutton(
                 -label    => $item,
                 -value    => $item,
-                -variable => \$edit_publisher
+                -variable => \$edit_publisher,
+                -command  => sub {
+                    $pubmenu->configure( -text => $edit_publisher );
+                }
             );
         }
         $result = $box->Show();
@@ -2358,7 +2364,10 @@ sub edit_song
             $menu->radiobutton(
                 -label    => $name,
                 -value    => $code,
-                -variable => \$edit_category
+                -variable => \$edit_category,
+                -command  => sub {
+                    $menu->configure( -text => return_longcat($edit_category) );
+                }
             );
         }
         $sth->finish;
@@ -2387,7 +2396,10 @@ sub edit_song
             $pubmenu->radiobutton(
                 -label    => $item,
                 -value    => $item,
-                -variable => \$edit_publisher
+                -variable => \$edit_publisher,
+                -command  => sub {
+                    $pubmenu->configure( -text => $edit_publisher );
+                }
             );
         }
         $result = $box->Show();
@@ -2520,7 +2532,7 @@ sub delete_song
 
 sub show_about
 {
-    $rev = '$Revision: 1.298 $';
+    $rev = '$Revision: 1.299 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
