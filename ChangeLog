@@ -3,6 +3,8 @@ Thu  Mar 24 2005	H. Wade Minter (minter@lunenburg.org)
      * Fix the Return key binding in Online Search.
      * Move the config file writing into its own subroutine to it can
        be used by the version check.
+     * Add some prepackaged online searches.
+     * Fix an inconsistency in the get_md5 subroutine.
 
 Wed  Mar 23 2005	H. Wade Minter (minter@lunenburg.org)
      * Add code to do an XML-RPC version check on start.
