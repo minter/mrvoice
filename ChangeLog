@@ -1,3 +1,8 @@
+Mon  Jul 15 2002	H. Wade Minter (minter@lunenburg.org)
+     * Added a feature so that if you get an error while adding a new
+       song, you can start over with the already-supplied information
+       filled in.  Suggested by Bill C. in Portland.
+
 Tue  Jul  9 2002	H. Wade Minter (minter@lunenburg.org)
      * Fixed it so that Ctrl-P will play the currently-selected song in
        the holding tank, if the holding tank window is the active one.
@@ -295,4 +300,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.57 2002/07/09 16:07:12 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.58 2002/07/15 16:43:01 minter Exp $
