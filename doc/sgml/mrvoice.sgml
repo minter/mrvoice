@@ -4,7 +4,7 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.7 2001/09/26 14:17:56 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.8 2001/09/26 17:08:28 minter Exp $ 
 -->
 <book status="draft">
 
@@ -36,7 +36,6 @@
     <itemizedlist>
       <listitem><para>Hotkeys will not work unless the main Mr. Voice window is selected and active.  The desired behavior is that hotkeys will work if <emphasis>any</emphasis> Mr. Voice window is selected</para></listitem>
       <listitem><para>The "last files accessed" menu should be smarter about recognizing if files that are already on the list are being accessed.  Right now, it'll just add another listing for the same file on the bottom of the list.</para></listitem>
-      <listitem><para>There is no equivalent of the Unix <filename>~/.mrvoicerc</filename> file for Windows use.</para></listitem>
       <listitem><para>The file-selector box for Unix ignores the <varname>$savedir</varname> variable, putting you in / instead.  This is a bug with Perl/Tk and will be fixed in Tk800.024.</para></listitem>
     </itemizedlist>
   </para>
