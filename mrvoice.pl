@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.comedyworx.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/31 17:06:27 $
-#	CVS REVISION NUMBER:    $Revision: 1.74 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/31 17:31:48 $
+#	CVS REVISION NUMBER:    $Revision: 1.75 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1328,7 +1328,7 @@ $searchframe4->Entry(-textvariable=>\$anyfield)->pack(-side=>'left');
 # Search Button
 $mw->Button(-text=>"Do Search",
             -cursor=>'question_arrow',
-            -command=>\&do_search)->pack();
+            -command=>\&do_search)->pack(-fill=>'x',-expand=>1);
 #
 #####
 
@@ -1362,18 +1362,18 @@ $statusframe->Label(-textvariable=>\$status,
 $searchboxframe=$mw->Frame()->pack(-side=>'bottom',
                                    -fill=>'both',
 				   -expand=>1);
-$searchboxframe->Scrolled('Listbox',
+$mainbox = $searchboxframe->Scrolled('Listbox',
                        -scrollbars=>'osoe',
                        -width=>100,
                        -setgrid=>1,
                        -selectmode=>"single")->pack(-fill=>'both',
                                                     -expand=>1,
                                                     -side=>'top');
-$searchboxframe->bind("<Double-Button-1>", \&play_mp3);
+$mainbox->bind("<Double-Button-1>", \&play_mp3);
 
-$searchboxframe->bind("<Button-3>", [\&rightclick_menu]);
+$mainbox->bind("<Button-3>", [\&rightclick_menu]);
 
-$dnd_token = $searchboxframe->DragDrop(-event => '<B1-Motion>',
+$dnd_token = $mainbox->DragDrop(-event => '<B1-Motion>',
                                 -sitetypes => ['Local'],
                                 -startcommand => sub { StartDrag($dnd_token) });
 
