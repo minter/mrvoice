@@ -18,5 +18,7 @@ CREATE TABLE categories (
    description varchar(255) NOT NULL
 );
 
+INSERT INTO categories VALUES ('GEN','General Category');
+
 #--
-# CVS ID: $Id: dbinit.sql,v 1.2 2001/02/16 21:41:10 minter Exp $
+# CVS ID: $Id: dbinit.sql,v 1.3 2001/02/21 03:01:46 minter Exp $
