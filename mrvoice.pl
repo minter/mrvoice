@@ -37,13 +37,14 @@ use Carp::Heavy;
 
 use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_items advancedmenu_items helpmenu_items/;
 
+
 #########
 # AUTHOR: H. Wade Minter <minter@lunenburg.org>
 # TITLE: mrvoice.pl
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.279 2003/12/29 19:50:28 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.280 2003/12/29 21:08:57 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -61,7 +62,7 @@ our $savefile_max = 4;			# The maximum number of files to
 					# keep in the "recently used" list.
     $category = 'Any';			# The default category to search
     $longcat  = 'Any';			# The default category to search
-                                        # Initial status message
+
 our $hotkeytypes = [
     ['Mr. Voice Hotkey Files', '.mrv'],
     ['All Files', '*'],
@@ -1977,9 +1978,38 @@ sub delete_song
   $delete_file_cb = 0;
 }
 
+sub show_docs
+{
+  my $basedir = dirname($0);
+  $docbase = catfile($basedir,"doc","html");
+  if (! -r catfile($docbase,"index.html"))
+  {
+    $status = "Could not find HTML documentation in $docbase";
+    return;
+  }
+
+  use Tk::Web;
+  use URI::URL;
+
+  $docsbox=$mw->Toplevel();
+  $docsbox->withdraw();
+  $docsbox->Icon(-image=>$icon);
+  my $web = Tk::Web->new($docsbox);
+  $web->pack(-expand => 1, -fill => 'both');
+  $web->url("/home/minter/mrvoice/doc/html/index.html");
+  $docsbox->AddScrollbars($web);
+  $docsbox->configure(-scrollbars => 'e');
+
+
+  $docsbox->update();
+  $docsbox->deiconify();
+  $docsbox->raise();
+}
+
+  
 sub show_about
 {
-  $rev = '$Revision: 1.279 $';
+  $rev = '$Revision: 1.280 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -3395,6 +3425,7 @@ sub helpmenu_items
 {
   [
     ['command', 'About', -command=>\&show_about],
+    ['command', 'View Simple HTML Documentation', -command=>\&show_docs],
   ];
 }
 			      
