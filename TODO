@@ -1,5 +1,8 @@
-* Allow saving/loading of hotkeys
-* Better way to add files into the database
+Things I'm currently working on:
+
+* Allow saving/loading of hotkeys.
+* Better way to add files into the database.
+* Frontends for Category/Song modification and deletion.
 
 --
-CVS ID: $Id: TODO,v 1.1 2001/02/16 19:19:57 minter Exp $
+CVS ID: $Id: TODO,v 1.2 2001/02/16 21:43:58 minter Exp $
