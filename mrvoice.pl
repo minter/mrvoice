@@ -41,7 +41,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.255 2003/07/28 18:56:56 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.256 2003/07/29 15:36:43 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1792,6 +1792,7 @@ sub edit_song
       $edit_artist = $dbh->quote($edit_artist);
       $edit_title = $dbh->quote($edit_title);
       $edit_info = $dbh->quote($edit_info);
+ 
       $query = "UPDATE mrvoice SET artist=$edit_artist, title=$edit_title, info=$edit_info, category='$edit_category' WHERE id=$id";
       if ($dbh->do($query))
       {
@@ -1814,6 +1815,7 @@ sub edit_song
     # We're editing multiple songs, so only put up a subset
     # First, convert the indices to song ID's
     my @songids;
+    my ($edit_artist_cb, $edit_info_cb, $edit_artist,$edit_info,$edit_category);;
     foreach $id (@selected)
     {
       my $songid = get_song_id($mainbox,$id);
@@ -1822,9 +1824,11 @@ sub edit_song
     $box = $mw->DialogBox(-title=>"Edit $count Songs", -buttons=>["Edit","Cancel"],
                                                        -default_button=>"Edit");
     $box->Icon(-image=>$icon);
-    $box->add("Label",-text=>"You are editing the attributes of $count songs.\nAny changes you make here will be applied to all $count.\n")->pack();
+    $box->add("Label",-text=>"You are editing the attributes of $count songs.\nAny changes you make here will be applied to all $count.\n\nTo completely erase a field, use the checkbox beside the field\n")->pack();
     $frame2 = $box->add("Frame")->pack(-fill=>'x');
     $frame2->Label(-text=>"Artist")->pack(-side=>'left');
+    $frame2->Checkbutton(-text=>"Clear Field",
+                         -variable=>\$clear_artist_cb)->pack(-side=>'right');
     $frame2->Entry(-width=>30,
                    -textvariable=>\$edit_artist)->pack(-side=>'right');
     $frame3 = $box->add("Frame")->pack(-fill=>'x');
@@ -1848,23 +1852,29 @@ sub edit_song
 
     $frame4 = $box->add("Frame")->pack(-fill=>'x');
     $frame4->Label(-text=>"Extra Info")->pack(-side=>'left');
+    $frame4->Checkbutton(-text=>"Clear Field",
+                         -variable=>\$clear_info_cb)->pack(-side=>'right');
     $frame4->Entry(-width=>30,
                    -textvariable=>\$edit_info)->pack(-side=>'right');
     $result = $box->Show();
-    if ( ($result eq "Edit") && ( $edit_artist || $edit_category || $edit_info ) )
+    if ( ($result eq "Edit") && ( $edit_artist || $edit_category || $edit_info || $clear_artist_cb || $clear_info_cb ) )
     {
       # Go into edit loop
       my @querystring;
       my $string;
-      my $edit_artist = "artist=" . $dbh->quote($edit_artist) if $edit_artist;
-      my $edit_info = "info=" . $dbh->quote($edit_info) if $edit_info;
-      my $edit_category = "category=" . $dbh->quote($edit_category) if $edit_category;
+      $edit_artist = "artist=" . $dbh->quote($edit_artist) if $edit_artist;
+      $edit_info = "info=" . $dbh->quote($edit_info) if $edit_info;
+      $edit_category = "category=" . $dbh->quote($edit_category) if $edit_category;
+
+      $edit_artist = "artist=NULL" if ($clear_artist_cb == 1);
+      $edit_info = "info=NULL" if ($clear_info_cb == 1);
 
       push (@querystring, $edit_artist) if $edit_artist;
       push (@querystring, $edit_info) if $edit_info;
       push (@querystring, $edit_category) if $edit_category;
 
       $string = join (", ", @querystring);
+
 
       foreach $songid (@songids)
       {
@@ -1947,7 +1957,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.255 $';
+  $rev = '$Revision: 1.256 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
