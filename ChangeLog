@@ -1,3 +1,10 @@
+Wed  Jan  5 2005	H. Wade Minter (minter@lunenburg.org)
+     * Change some hardcoded paths into File::Spec calls to hopefully help things
+       out on Win98.
+
+Tue  Jan  4 2005	H. Wade Minter (minter@lunenburg.org)
+     * Commit the framework for the Mac application bundle.
+
 Mon  Jan  3 2005	H. Wade Minter (minter@lunenburg.org)
      * Make things much more MacOS X friendly.  Use the now-free Audion
        instead of XMMS under X11, and use Mac::AppleScript to send AppleScript
