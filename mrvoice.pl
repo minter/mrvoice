@@ -14,7 +14,7 @@ use Tk::ProgressBar::Mac;
 use Tk::DirTree;
 use File::Basename;
 use File::Copy;
-use File::Spec;
+use File::Spec::Functions;
 use DBI;
 use MPEG::MP3Info;
 use Audio::Wav;
@@ -42,7 +42,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.267 2003/10/10 19:41:18 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.268 2003/10/20 13:43:12 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -932,7 +932,7 @@ sub dump_database
       {
         $dirname = Win32::GetShortPathName(dirname($dumpfile));
         $filename = basename($dumpfile);
-        $shortdumpfile = File::Spec->catfile ($dirname, $filename);
+        $shortdumpfile = catfile ($dirname, $filename);
         my $rc = system ("C:\\mysql\\bin\\mysqldump.exe --add-drop-table --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} > $shortdumpfile");
         infobox($mw, "Database Dumped", "The contents of your database have been dumped to the file:\n$dumpfile\n\nNote: In order to have a full backup, you must also\nback up the files from the directory:\n$config{'filepath'}\nas well as $rcfile and, optionally, the hotkeys from $config{'savedir'}");
         $status = "Database dumped to $dumpfile";
@@ -980,7 +980,7 @@ sub import_database
         {
           $dirname = Win32::GetShortPathName(dirname($dumpfile));
           $filename = basename($dumpfile);
-          $shortdumpfile = File::Spec->catfile ($dirname, $filename);
+          $shortdumpfile = catfile ($dirname, $filename);
           my $rc = system ("C:\\mysql\\bin\\mysql.exe --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} < $shortdumpfile");
           infobox($mw, "Database Imported", "The database backup file $dumpfile\nhas been imported.");
           $status = "Database imported from $dumpfile";
@@ -1195,8 +1195,8 @@ sub bulk_add
     return(1);
   }
 
-  my @mp3glob = glob(File::Spec->catfile($directory, "*.mp3"));
-  my @oggglob = glob(File::Spec->catfile($directory, "*.ogg"));
+  my @mp3glob = glob(catfile($directory, "*.mp3"));
+  my @oggglob = glob(catfile($directory, "*.ogg"));
 
   my @list = (@mp3glob, @oggglob);
 
@@ -1459,12 +1459,12 @@ sub move_file
   my ($name,$path,$extension) = fileparse($oldfilename,'\.\w+');
   $extension=lc($extension);
 
-  if ( -e File::Spec->catfile($config{'filepath'}, "$newfilename$extension") ) 
+  if ( -e catfile($config{'filepath'}, "$newfilename$extension") ) 
   {
     $i=0;
     while (1 == 1)
     {
-      if (! -e File::Spec->catfile($config{'filepath'}, "$newfilename-$i$extension"))
+      if (! -e catfile($config{'filepath'}, "$newfilename-$i$extension"))
       {
         $newfilename = "$newfilename-$i";
         last;
@@ -1475,7 +1475,7 @@ sub move_file
 
   $newfilename = "$newfilename$extension";
 
-  copy ($oldfilename, File::Spec->catfile($config{'filepath'}, "$newfilename"));
+  copy ($oldfilename, catfile($config{'filepath'}, "$newfilename"));
 
   return ($newfilename);
 }
@@ -1942,7 +1942,7 @@ sub delete_song
         $sth->finish;
         if ($delete_file_cb == 1)
         {
-          my $file = File::Spec->catfile($config{'filepath'}, $filename);
+          my $file = catfile($config{'filepath'}, $filename);
           unlink("$file");
         }
         $status = "Deleted $count songs";
@@ -1962,7 +1962,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.267 $';
+  $rev = '$Revision: 1.268 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2359,7 +2359,7 @@ sub update_time
   while (@table_row = $sth->fetchrow_array)
   {
     ($id,$filename,$time) = @table_row;
-    my $newtime = get_songlength(File::Spec->catfile($config{'filepath'},$filename));
+    my $newtime = get_songlength(catfile($config{'filepath'},$filename));
     if ($newtime ne $time)
     {
       my $query = "UPDATE mrvoice SET time='$newtime' WHERE id='$id'";
@@ -2526,7 +2526,7 @@ sub play_mp3
       $songstatusstring = "\"$statustitle\"";
     }
     $status = "Playing $songstatusstring";
-    my $file = File::Spec->catfile($config{'filepath'},$filename);
+    my $file = catfile($config{'filepath'},$filename);
     system ("$config{'mp3player'} $file");
     $statustitle = "";
     $statusartist = "";
@@ -2658,7 +2658,7 @@ sub do_search
   $numrows = $sth->rows;
   while (@table_row = $sth->fetchrow_array)
   {
-    if (-e File::Spec->catfile($config{'filepath'},$table_row[5]))
+    if (-e catfile($config{'filepath'},$table_row[5]))
     {
       $string="$table_row[0]:($table_row[1]";
       $string = $string . " - $table_row[2]" if ($table_row[2]);
@@ -3031,7 +3031,7 @@ if (! $dbh->do($query))
         $query .= "$tmpinfo,";
       }
       $query .= "$tmpfilename,";
-      $length = get_songlength(File::Spec->catfile($config{'filepath'},$table_row[5]));
+      $length = get_songlength(catfile($config{'filepath'},$table_row[5]));
       $query .= "'$length',$tmpmodtime)";
       $sth4=$dbh->prepare($query);
       $sth4->execute;
@@ -3492,9 +3492,9 @@ bind_hotkeys($mw);
 $mw->bind("<Control-Key-p>", [\&play_mp3,"Current"]);
 
 # If the default hotkey file exists, load that up.
-if (-r File::Spec->catfile($config{'savedir'}, "default.mrv"))
+if (-r catfile($config{'savedir'}, "default.mrv"))
 {
-  open_file ($mw, File::Spec->catfile($config{'savedir'}, "default.mrv"));
+  open_file ($mw, catfile($config{'savedir'}, "default.mrv"));
 }
 
 $mw->deiconify();
