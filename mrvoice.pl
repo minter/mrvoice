@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/25 17:23:45 $
-#	CVS REVISION NUMBER:    $Revision: 1.65 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/25 19:27:08 $
+#	CVS REVISION NUMBER:    $Revision: 1.66 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -821,8 +821,7 @@ sub list_hotkeys
 
 sub get_song_id
 {
-  @list = $mainbox->curselection();
-  my $selection = $mainbox->get($list['end']);
+  my $selection = $mainbox->get($mainbox->curselection());
   my ($id) = split /:/,$selection;
   return ($id);
 }
