@@ -2838,14 +2838,19 @@ sub delete_song
 
 sub show_about
 {
+    my @modules =
+      qw/Tk DBI DBD::SQLite MPEG::MP3Info MP4::Info Audio::Wav Ogg::Vorbis::Header::PurePerl Date::Manip Time::Local Time::HiRes File::Glob File::Temp File::Basename File::Copy/;
+    push( @modules,
+        qw/LWP::UserAgent HTTP::Request Win32::Process Win32::FileOp Audio::WMA/
+      )
+      if ( $^O eq "MSWin32" );
+    push( @modules, "Mac::Applescript" ) if ( $^O eq "darwin" );
+
     print "Showing about box\n" if $debug;
-    my $rev    = '$LastChangedRevision$';
-    my $tkver  = Tk->VERSION;
-    my $dbiver = DBI->VERSION;
-    my $dbdver = DBD::SQLite->VERSION;
+    my $rev = '$LastChangedRevision$';
     $rev =~ s/.*: (\d+).*/$1/;
     my $string =
-      "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\nTk Version: $tkver\nDBI Version: $dbiver\nSQLite DBD Version: $dbdver\n\n(c)2001-2004, Released under the GNU General Public License";
+      "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001-2005, Released under the GNU General Public License.\n\n\nTechnical information below:";
     my $box = $mw->DialogBox(
         -title      => "About Mr. Voice",
         -buttons    => ["OK"],
@@ -2863,6 +2868,25 @@ sub show_about
         -text       => "$string",
         -background => 'white'
     )->pack();
+    my $about_lb = $box->Scrolled(
+        "Listbox",
+        -scrollbars => "osoe",
+        -background => 'white',
+        -setgrid    => 1,
+        -width      => 40,
+        -height     => 8,
+        -selectmode => "single"
+    )->pack();
+
+    $about_lb->insert( 'end', "Perl Version: $]" );
+    $about_lb->insert( 'end', "Operating System: $^O" );
+    foreach my $module (@modules)
+    {
+        no strict 'refs';
+        my $versionstring = "${module}::VERSION";
+        $about_lb->insert( 'end', "$module Version: $$versionstring" );
+    }
+
     $box->Show;
 }
 
