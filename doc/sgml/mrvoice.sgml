@@ -4,7 +4,7 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.14 2001/10/29 17:48:13 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.15 2001/10/29 17:54:21 minter Exp $ 
 -->
 <book status="draft">
 
@@ -22,8 +22,8 @@
 
 <dedication><title>Acknowledgements</title>
   <para>Thanks to my wife, Holly, for encouragement and editorial help.</para>
-  <para>Thanks to all of the voices at ComedyWorx-Raleigh, including (but not limited to) Jack Spencer, Sam Adams, Bobby Rathbone, Ross White, Leo DiNapoli, and Bryan Cronk, for testing and feedback.</para>
-  <para>Thanks to the ownership and players of ComedyWorx for giving me such a fun place to be a goofball for the past couple of years.</para>
+  <para>Thanks to all of the voices at <ulink url="http://www.comedyworx.com/">ComedyWorx-Raleigh</ulink>, including (but not limited to) Jack Spencer, Larry Howard, Sam Adams, Bobby Rathbone, Ross White, Leo DiNapoli, and Bryan Cronk, for testing and feedback.</para>
+  <para>Thanks to the ownership and players of <ulink url="http://www.comedyworx.com/">ComedyWorx</ulink> for giving me such a fun place to be a goofball for the past couple of years.</para>
   <para>Thanks to the authors and publishers of the following books, without which none of this would have gotten done:
     <itemizedlist>
       <listitem><para><citetitle pubwork="book">Learning Perl, 2nd Edition</citetitle>, by Randal Schwartz and Tom Christiansen, published by O'Reilly and Associates.</para></listitem>
@@ -32,6 +32,7 @@
       <listitem><para><citetitle pubwork="book">Programming the Perl DBI</citetitle>, by Alligator Descartes & Tim Bunce, published by O'Reilly and Associates.</para></listitem>
     </itemizedlist>
   </para>
+  <para>Kasey Christie at <ulink url="http://www.spocomedy.com/">SpoComedy</ulink>, for feature suggestions and actually being willing to use this software!</para>
   <para>And thanks to the Open Source and Free Software movements, letting people write software that doesn't suck!</para>
 </dedication>
 
