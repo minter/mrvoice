@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.342 2004/03/11 15:46:05 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.343 2004/03/11 16:18:28 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2199,7 +2199,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.342 $';
+    my $rev = '$Revision: 1.343 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3790,7 +3790,6 @@ sub orphans
     }
     $mw->Unbusy( -recurse => 1 );
     $progressbox->destroy();
-    print "DEBUG: The orphan files are " . join( "\n", @orphans ) . "\n";
 
     # Create a listbox with the orphans
     my $orphanbox = $mw->Toplevel( -title => "Orphaned Files" );
@@ -3827,7 +3826,6 @@ sub orphans
                 foreach my $index (@list)
                 {
                     my $filename = $lb->get($index);
-                    print "DEBUG: Deleting file "
                       . catfile( $config{filepath}, $filename ) . "\n";
                     unlink( catfile( $config{filepath}, $filename ) );
                     $deleted++;
