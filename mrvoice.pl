@@ -199,10 +199,18 @@ our $status = "Welcome to Mr. Voice version $version";
 
 sub get_rows
 {
+
+    # $sth->rows support still appears to be wonky under Win32.  Go
+    # back to the manual way for now.
     my $query = shift;
+    my $rows  = 0;
     my $sth   = $dbh->prepare($query);
     $sth->execute;
-    return $sth->rows;
+    while ( my @row = $sth->fetchrow_array )
+    {
+        $rows++;
+    }
+    return $rows;
 }
 
 sub get_homedir
