@@ -17,6 +17,13 @@ our $mysql_dbh;    # MySQL database handle
 our $rcfile;       # Config file
 our $wrapper = Text::Wrapper->new;
 
+sub do_exit
+{
+    print $wrapper->wrap("Press Enter to exit\n");
+    my $key = <STDIN>;
+    exit;
+}
+
 sub get_dbdir
 {
     my $homedir;
@@ -42,8 +49,9 @@ sub save_rcfile
 {
     if ( !open( RCFILE, ">$rcfile" ) )
     {
-        die
+        print
           "Could not open $rcfile for writing. Your preferences will not be saved\n";
+        do_exit;
     }
     else
     {
@@ -57,11 +65,6 @@ sub save_rcfile
 
 sub create_new_database
 {
-    if ( -r $config{db_file} )
-    {
-        die
-          "A file already exists at $config{db_file} - are you sure you haven't tried to upgrade before?  Remove this file before attempting to upgrade.\n";
-    }
     my $create_dbh;
     my @queries;
     if (
@@ -71,7 +74,8 @@ sub create_new_database
         )
       )
     {
-        die "Could not create new database file $config{db_file} via DBI";
+        print "Could not create new database file $config{db_file} via DBI";
+        do_exit;
     }
 
     my $query;
@@ -94,7 +98,11 @@ sub create_new_database
     foreach my $query (@queries)
     {
         my $sth = $create_dbh->prepare($query);
-        $sth->execute or die "Could not run database query $query";
+        if ( !$sth->execute )
+        {
+            print "Could not run database query $query";
+            do_exit;
+        }
     }
 }
 
@@ -166,10 +174,14 @@ sub upgrade_20
 
     # This migrates the database from MySQL to SQLite
 
-    my $sqlite_dbh =
-      DBI->connect( "dbi:SQLite:dbname=$config{db_file}", "", "" )
-      or die
-      "Could not connect to SQLite database $config{db_file} - error $DBI::errstr\n\n";
+    my $sqlite_dbh;
+    unless ( $sqlite_dbh =
+        DBI->connect( "dbi:SQLite:dbname=$config{db_file}", "", "" ) )
+    {
+        print
+          "Could not connect to SQLite database $config{db_file} - error $DBI::errstr\n\n";
+        do_exit;
+    }
 
     my $mysql_cats = "SELECT * FROM categories";
     my $cats_sth   = $mysql_dbh->prepare($mysql_cats);
@@ -182,7 +194,11 @@ sub upgrade_20
 
         my $outquery   = "INSERT INTO categories VALUES ($code,$description)";
         my $sqlite_sth = $sqlite_dbh->prepare($outquery);
-        $sqlite_sth->execute or die "Died on query -->$outquery<-- $!";
+        if ( !$sqlite_sth->execute )
+        {
+            print "Died on query -->$outquery<-- $!";
+            do_exit;
+        }
     }
 
     my $mysql_query = "SELECT * FROM mrvoice";
@@ -207,7 +223,11 @@ sub upgrade_20
         my $outquery =
           "INSERT INTO mrvoice VALUES ($in->{id}, $title, $artist, $category, $info, '$in->{filename}', '$time', $epoch, '$pub')";
         my $sqlite_sth = $sqlite_dbh->prepare($outquery);
-        $sqlite_sth->execute or die "Died on query -->$outquery<-- $!";
+        if ( !$sqlite_sth->execute )
+        {
+            print "Died on query -->$outquery<-- $!";
+            do_exit;
+        }
         if ( ( $insert_count % 500 ) == 0 )
         {
 
@@ -233,25 +253,33 @@ print $wrapper->wrap(
 
 print "Continue with Mr. Voice 2.0 Database Migration [y/N]? ";
 
-my $yesno = getc(STDIN);
+my $yesno = <STDIN>;
 
 unless ( $yesno =~ /^y/i )
 {
-    die "Ok.  Nothing ventured, nothing gained.\n\n";
+    print "Ok.  Nothing ventured, nothing gained.\n\n";
+    do_exit;
 }
 
 if ( !read_rcfile() )
 {
-    die
+    print
       "FATAL ERROR - We could not find your Mr. Voice configuration file, so we cannot upgrade\n\n";
+    do_exit;
 }
 
 # Connect to the MySQL database
-$mysql_dbh =
-  DBI->connect( "DBI:mysql:$config{db_name}", $config{db_username},
-    $config{db_pass} )
-  or die
-  "Could not connect to your current MySQL database.  Using Database Name $config{db_name}, User $config{db_username}, Password $config{db_pass}.  MySQL error returned: $DBI::errstr\n\n";
+unless (
+    $mysql_dbh = DBI->connect(
+        "DBI:mysql:$config{db_name}", $config{db_username},
+        $config{db_pass}
+    )
+  )
+{
+    print
+      "Could not connect to your current MySQL database.  Using Database Name $config{db_name}, User $config{db_username}, Password $config{db_pass}.  MySQL error returned: $DBI::errstr\n\n";
+    do_exit;
+}
 
 # Check to see if we're at the minimum database levels
 
@@ -259,13 +287,39 @@ my $dbdir = get_dbdir;
 $config{db_file} = "$dbdir/mrvoice.db";
 
 print $wrapper->wrap(
-    "Your new SQLite Mr. Voice 2.0 database will be created at:\n$config{db_file}\nYou can move this file after the upgrade if you want it somewhere else.\n\n"
+    "\n\nYour new SQLite Mr. Voice 2.0 database will be created at:\n$config{db_file}\nYou can move this file after the upgrade if you want it somewhere else.\n\n"
 );
+
+if ( -r $config{db_file} )
+{
+    print $wrapper->wrap(
+        "There is an existing file at $config{db_file}!  This could be a result of a previous execution or upgrade of Mr. Voice 2.0.  If this file does not contain real data, then you must remove this file before this upgrade can proceed.\n\n"
+    );
+    print "What do you want to do?  [D]elete file or [Q]uit? ";
+    my $answer = <STDIN>;
+    if ( $answer =~ /^d/i )
+    {
+        if ( unlink $config{db_file} )
+        {
+            print "File deleted.\n\n";
+        }
+        else
+        {
+            print "Could not delete $config{db_file} - exiting.\n";
+            do_exit;
+        }
+    }
+    else
+    {
+        print "Exiting upgrade\n";
+        do_exit;
+    }
+}
 
 create_new_database;
 
 print $wrapper->wrap(
-    "New SQLite database created - we will now migrate your MySQL data to it.\n\n"
+    "New SQLite database created - we will now migrate your MySQL data to it..."
 );
 
 upgrade_20();
@@ -279,9 +333,8 @@ print $wrapper->wrap("New config file saved as $rcfile\n\n");
 print $wrapper->wrap(
     "Your Mr. Voice database has now been upgraded to the 2.0 level.  When you are confident that the new database is working properly, you can remove MySQL from your system.\n\n"
 );
-print $wrapper->wrap("Press Enter to exit\n");
-my $key = getc(STDIN);
-exit;
+
+do_exit;
 
 __DATA__
 # This is the Mr. Voice database schema
