@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.comedyworx.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/29 21:51:13 $
-#	CVS REVISION NUMBER:    $Revision: 1.73 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/31 17:06:27 $
+#	CVS REVISION NUMBER:    $Revision: 1.74 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -698,7 +698,7 @@ sub delete_song
 
 sub show_about
 {
-  infobox("About Mr. Voice","Mr. Voice Version $version\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\n(c)2001, Released under the GNU General Public License");
+  infobox("About Mr. Voice","Mr. Voice Version $version\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License");
 }
 
 #STARTCSZ
@@ -1209,8 +1209,7 @@ open (XMMS,"$mp3player|");
 $menuframe=$mw->Frame(-relief=>'ridge',
                       -borderwidth=>2)->pack(-side=>'top',
                                             -fill=>'x',
-                                            -anchor=>'n',
-                                            -expand=>0);
+                                            -anchor=>'n');
 $filemenu = $menuframe->Menubutton(-text=>"File",
                                    -tearoff=>0)->pack(-side=>'left');
 $filemenu->AddItems(["command"=>"Open Hotkey File",
@@ -1334,24 +1333,7 @@ $mw->Button(-text=>"Do Search",
 #####
 
 #####
-# Main display area - search results
-$mainbox=$mw->Scrolled('Listbox',
-                       -scrollbars=>'osoe',
-                       -width=>100,
-                       -setgrid=>1,
-                       -selectmode=>"single")->pack(-fill=>'both',
-                                                    -expand=>1,
-                                                    -side=>'top');
-$mainbox->bind("<Double-Button-1>", \&play_mp3);
-
-$mainbox->bind("<Button-3>", [\&rightclick_menu]);
-
-$dnd_token = $mainbox->DragDrop(-event => '<B1-Motion>',
-                                -sitetypes => ['Local'],
-                                -startcommand => sub { StartDrag($dnd_token) });
-
-#
-#####
+# Status Frame
 
 $statusframe = $mw->Frame()->pack(-side=>'bottom',
                                   -anchor=>'s',
@@ -1369,10 +1351,34 @@ $statusframe->Button(-text=>"Assign Hotkey",
 
 $statusframe->Label(-textvariable=>\$status,
                     -relief=>'sunken')->pack(-side=>'bottom',
-                                             -expand=>1,
                                              -padx=>5,
                                              -fill=>'x');
+#
+#####
 
+
+#####
+# Main display area - search results
+$searchboxframe=$mw->Frame()->pack(-side=>'bottom',
+                                   -fill=>'both',
+				   -expand=>1);
+$searchboxframe->Scrolled('Listbox',
+                       -scrollbars=>'osoe',
+                       -width=>100,
+                       -setgrid=>1,
+                       -selectmode=>"single")->pack(-fill=>'both',
+                                                    -expand=>1,
+                                                    -side=>'top');
+$searchboxframe->bind("<Double-Button-1>", \&play_mp3);
+
+$searchboxframe->bind("<Button-3>", [\&rightclick_menu]);
+
+$dnd_token = $searchboxframe->DragDrop(-event => '<B1-Motion>',
+                                -sitetypes => ['Local'],
+                                -startcommand => sub { StartDrag($dnd_token) });
+
+#
+#####
 
 bind_hotkeys($mw);
 
