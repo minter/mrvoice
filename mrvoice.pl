@@ -31,7 +31,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.127 2002/06/13 21:12:34 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.128 2002/06/14 17:09:59 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -923,7 +923,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.127 $';
+  $rev = '$Revision: 1.128 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -1360,6 +1360,11 @@ sub do_search
     $date = $3;
     $datestring = "$year-$month-$date";
   }
+  elsif ($_[0] eq "range")
+  {
+    $startdate = $_[1];
+    $enddate = $_[2];
+  }
   elsif ( (! $anyfield) && (! $title) && (! $artist) && (! $cattext) && ($category eq "Any") )
   {
     my $box = $mw->DialogBox(-title=>"Confirm full search", -buttons=>["Ok","Cancel"],-default_button=>"Cancel");
@@ -1381,6 +1386,7 @@ sub do_search
   $mainbox->delete(0,'end');
   my $query = "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.filename from mrvoice,categories where mrvoice.category=categories.code ";
   $query = $query . "AND modtime >= '$datestring'" if ($_[0] eq "timespan");
+  $query = $query . "AND modtime >= '$startdate' AND modtime <= '$enddate'" if ($_[0] eq "range");
   $query = $query . "AND category='$category' " if ($category ne "Any");
   if ($anyfield)
   {
@@ -1746,15 +1752,16 @@ sub advanced_search
   $start_year = "20$1"; 
 
   my @today = localtime();
-  $end_month = $today[4];
+  $end_month = $today[4] + 1;
   $end_date = $today[3];
   $end_year = $today[5] + 1900;
 
   my $box = $mw->DialogBox(-title=>"Advanced Search", -buttons=>["Ok","Cancel"]);
   $box->Icon(-image=>$icon);
   $box->add("Label",-text=>"Use this form to search for songs modified between specific dates.")->pack();
-  my $adv_searchframe_start = $box->add("Frame")->pack(-side=>'top',
-                                             -anchor=>'n',
+  my $adv_searchframe_start = $box->add("Frame",-borderwidth=>5)
+                                      ->pack(-side=>'top',
+                                             -anchor=>'w',
 					     -fill=>'x');
   $adv_searchframe_start->Label(-text=>"Start date: ")->pack(-side=>'left');
   my $start_month_button = $adv_searchframe_start->Menubutton(-text=>"Month ($start_month)",
@@ -1766,7 +1773,8 @@ sub advanced_search
   {
     $start_month_menu->radiobutton(-label=>$i,
                                    -value=>$i,
-                                   -variable=>\$start_month);
+                                   -variable=>\$start_month,
+				   -command=>sub {update_button($start_month_button, "Month", $start_month); });
   }
   $adv_searchframe_start->Label(-text=>"/")->pack(-side=>'left');
 
@@ -1779,7 +1787,8 @@ sub advanced_search
   {
     $start_date_menu->radiobutton(-label=>$i,
                                    -value=>$i,
-                                   -variable=>\$start_date);
+                                   -variable=>\$start_date,
+				   -command=>sub {update_button($start_date_button, "Date", $start_date); });
   }
   $adv_searchframe_start->Label(-text=>"/")->pack(-side=>'left');
   my $start_year_button = $adv_searchframe_start->Menubutton(-text=>"Year ($start_year)",
@@ -1791,11 +1800,13 @@ sub advanced_search
   {
     $start_year_menu->radiobutton(-label=>$i,
                                    -value=>$i,
-                                   -variable=>\$start_year);
+                                   -variable=>\$start_year,
+				   -command=>sub {update_button($start_year_button, "Year", $start_year); });
   }
 
-  my $adv_searchframe_end = $box->add("Frame")->pack(-side=>'top',
-                                                     -anchor=>'n',
+  my $adv_searchframe_end = $box->add("Frame",-borderwidth=>5)
+                                                     ->pack(-side=>'top',
+                                                     -anchor=>'w',
   				                     -fill=>'x');
   $adv_searchframe_end->Label(-text=>"End date:   ")->pack(-side=>'left');
   my $end_month_button = $adv_searchframe_end->Menubutton(-text=>"Month ($end_month)",
@@ -1807,7 +1818,8 @@ sub advanced_search
   {
     $end_month_menu->radiobutton(-label=>$i,
                                    -value=>$i,
-                                   -variable=>\$end_month);
+                                   -variable=>\$end_month,
+				   -command=>sub {update_button($end_month_button, "Month", $end_month); });
   }
   $adv_searchframe_end->Label(-text=>"/")->pack(-side=>'left');
 
@@ -1820,7 +1832,8 @@ sub advanced_search
   {
     $end_date_menu->radiobutton(-label=>$i,
                                    -value=>$i,
-                                   -variable=>\$end_date);
+                                   -variable=>\$end_date,
+				   -command=>sub {update_button($end_date_button, "Date", $end_date); });
   }
   $adv_searchframe_end->Label(-text=>"/")->pack(-side=>'left');
   my $end_year_button = $adv_searchframe_end->Menubutton(-text=>"Year ($end_year)",
@@ -1832,37 +1845,63 @@ sub advanced_search
   {
     $end_year_menu->radiobutton(-label=>$i,
                                 -value=>$i,
-                                -variable=>\$end_year);
+                                -variable=>\$end_year,
+                                -command=>sub {update_button($end_year_button, "Year", $end_year); });
   }
 
   my $button = $box->Show;
 
   if ($button eq "Ok")
   {
-    print "--> You want to search between $start_month/$start_date/$start_year and $end_month/$end_date/$end_year <--\n";
+    my $errorcode = 0;
+    my $errorstring = "";
+
+    # Check for invalid dates before we send stuff over to the database
     if ( ! ParseDate("$start_month/$start_date/$start_year") )
     {
-      print "Your start date of $start_month/$start_date/$start_year is invalid!\n";
+      $errorcode = 1; 
+      $errorstring .= "Your start date of $start_month/$start_date/$start_year is invalid!\n";
     }
     if ( ! ParseDate("$end_month/$end_date/$end_year") )
     {
-      print "Your end date of $end_month/$end_date/$end_year is invalid!\n";
+      $errorcode = 1;
+      $errorstring .= "Your end date of $end_month/$end_date/$end_year is invalid!\n";
+    }
+
+    if ($errorcode == 1)
+    {
+      $errorstring .= "Search cancelled - please try again.";
+      infobox($mw,"Invalid dates entered",$errorstring);
+    }
+    else
+    {
+      # Go on and do the search - data checks out
+      do_search("range","$start_year-$start_month-$start_date","$end_year-$end_month-$end_date");
     }
   }
+
   else
   {
     $status = "Advanced Search Cancelled";
   }
 }
 
+sub update_button()
+{
+  $button = $_[0];
+  $label = $_[1];
+  $value = $_[2];
+  $button->configure(-text=>"$label ($value)");
+}
+
 sub advancedmenu_items
 {
   [
-    ['command','Advanced Search', -command=>\&advanced_search],
     ['command','Show songs added/changed today', -command=>[\&do_search,"timespan","0 days"]],
     ['command','Show songs added/changed in past 7 days', -command=>[\&do_search,"timespan","7 days"]],
     ['command','Show songs added/changed in past 14 days', -command=>[\&do_search,"timespan","14 days"]],
     ['command','Show songs added/changed in past 30 days', -command=>[\&do_search,"timespan","30 days"]],
+    ['command','Advanced date search', -command=>\&advanced_search],
   ];
 }
 
