@@ -1,3 +1,28 @@
+Mon  Oct 21 2002	H. Wade Minter (minter@lunenburg.org)
+     * Auto-populate the Title/Artist if the ID3 tags exist on 
+       the file that you're adding.
+
+Thu  Oct 17 2002	H. Wade Minter (minter@lunenburg.org)
+     * Added support for .m3u or .pls playlist files.
+     * Added alt-key accelerators for the top menu bar.  Suggested by 
+       Rick in Spokane.
+     * Added a "preview song" feature to the Add New Song box.
+
+Mon  Sep 16 2002	H. Wade Minter (minter@lunenburg.org)
+     * By default, make the first selection of a search active.
+
+Thu  Sep  5 2002	H. Wade Minter (minter@lunenburg.org)
+     * Changed the hotkey box so that it removes from the right when 
+       the box is resized narrower, instead of from both sides.
+
+Mon  Sep  2 2002	H. Wade Minter (minter@lunenburg.org)
+     * Fixed a bug where the file selector box in "Add File" wouldn't 
+       leave you in the directory you want.
+
+Fri  Aug 30 2002	H. Wade Minter (minter@lunenburg.org)
+     * Made "Ok" the default button in the Edit Song dialog, instead
+       of "Cancel"
+
 Wed  Aug 13 2002	H. Wade Minter (minter@lunenburg.org)
      * Tagged Version 1.6.
      * Updated the documentation for 1.6.
@@ -315,4 +340,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.61 2002/08/15 02:02:12 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.62 2002/10/21 16:40:06 minter Exp $
