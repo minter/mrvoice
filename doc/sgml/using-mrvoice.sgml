@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: using-mrvoice.sgml,v 1.20 2001/12/22 14:39:07 minter Exp $
+  CVS ID: $Id: using-mrvoice.sgml,v 1.21 2002/02/01 18:58:33 minter Exp $
 -->
 
 <chapter><title>Using Mr. Voice</title>
@@ -9,7 +9,7 @@
       <title>The Main window</title>
       <mediaobject>
         <imageobject>
-          <imagedata fileref="../images/mainwindow.jpg" format="jpg">
+          <imagedata fileref="../images/mainwindow.png" format="png">
         </imageobject>
         <imageobject>
           <imagedata fileref="../images/mainwindow.eps" format="eps">
@@ -128,11 +128,9 @@
   <sect1><title>Searching and Playing Songs</title>
     <para>Now that you've learned how to put songs into the database, it's time to do something with them.  The following section will show you the basics of searching and playing the songs in your database</para>
     <sect2><title>Searching The Database</title>
-      <para>The search fields of the main Mr. Voice window contain the items that you can search for.  You can use any combination of the fields to search, with the exception of the <guilabel>OR any field contains</guilabel> field, which overrides everything except the category.  Let's look at the fields in detail:</para>
+      <para>The search fields of the main Mr. Voice window contain the items that you can search for.  You can use any combination of the fields to search, with the exception of the <guilabel>OR any field contains</guilabel> field, which overrides everything except the category.  For the fields where you can type in text, there is an arrow icon to the right of the text entry box.  If you click that arrow, a menu will pop up listing all the things you have searched for in that category.  You can use this menu to quickly re-select something that you have already searched for. Let's look at the fields in detail:</para>
       <itemizedlist>
-        <listitem><para><guilabel>Choose Category</guilabel>: This allows you to set the category to search within.  You can either choose a specific category, or the <guimenuitem>Any Category</guimenuitem> option, which will search all defined categories.  The short name of the currently selected category will be displayed beside the menu.
-        <tip><para>If you select the dotted line right above the Any Category option, you can detach the Choose Category menu and place it on your desktop so that it is always available.</para></tip>
-        </para></listitem>
+        <listitem><para><guilabel>Choose Category</guilabel>: This allows you to set the category to search within.  You can either choose a specific category, or the <guimenuitem>Any Category</guimenuitem> option, which will search all defined categories.  The short name of the currently selected category will be displayed beside the menu. </para></listitem>
         <listitem><para><guilabel>Extra info</guilabel>: Text placed in this box will be compared with the "Extra Info" field of each song.  This, like each of the text entry fields, is a case-insensitive substring match, meaning that if you search for "eat", it will match the words "Eat", "Beatles", "EATING", etc.</para></listitem>
         <listitem><para><guilabel>Artist</guilabel>: Text in this box will be compared with the "Artist" field of the songs.</para></listitem>
         <listitem><para><guilabel>Title</guilabel>: Text in this box will be compared with the "Title" field of the songs.</para></listitem>
