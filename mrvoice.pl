@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.comedyworx.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/11/12 22:01:11 $
-#	CVS REVISION NUMBER:    $Revision: 1.83 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/11/14 14:42:40 $
+#	CVS REVISION NUMBER:    $Revision: 1.84 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1448,7 +1448,8 @@ $statusframe->Button(-text=>"Assign Hotkey",
                      -command=>[\&set_hotkey])->pack(-side=>'right');
 
 $statusframe->Label(-textvariable=>\$status,
-                    -relief=>'sunken')->pack(-side=>'bottom',
+                    -relief=>'sunken')->pack(-anchor=>'center',
+                                             -expand=>1,
                                              -padx=>5,
                                              -fill=>'x');
 #
