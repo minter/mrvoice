@@ -152,14 +152,14 @@ sub check_17
         $infoframe->Label( -text =>
               "FATAL ERROR - Your database does not have the song time column.  You need to upgrade your installation of Mr. Voice to at least version 1.10 before you can perform this upgrade"
         )->pack( -side => 'top' );
-        return(0);
+        return (0);
     }
     else
     {
         $infoframe->Label( -text =>
               "OK - Your database has the song time column, so it is at least at the 1.7 level"
         )->pack( -side => 'top' );
-        return(1);
+        return (1);
     }
 
 }
@@ -177,14 +177,14 @@ sub check_110
         $infoframe->Label( -text =>
               "FATAL ERROR - Your database does not have the publisher column.  You need to upgrade your installation of Mr. Voice to at least version 1.10 before you can perform this upgrade"
         )->pack( -side => 'top' );
-        return(0);
+        return (0);
     }
     else
     {
         $infoframe->Label( -text =>
               "OK - Your database has the publisher column, so it is at least at the 1.10 level"
         )->pack( -side => 'top' );
-        return(1);
+        return (1);
     }
 }
 
@@ -196,6 +196,20 @@ sub upgrade_20
     my $sqlite_dbh =
       DBI->connect( "dbi:SQLite:dbname=/home/minter/mrvoice.db", "", "" )
       or die;
+
+    my $mysql_cats = "SELECT * FROM categories";
+    my $cats_sth   = $mysql_dbh->prepare($mysql_cats);
+    $cats_sth->execute;
+
+    while ( my $in = $cats_sth->fetchrow_hashref )
+    {
+        my $code        = $sqlite_dbh->quote( $in->{code} );
+        my $description = $sqlite_dbh->quote( $in->{description} );
+
+        my $outquery   = "INSERT INTO categories VALUES ($code,$description)";
+        my $sqlite_sth = $sqlite_dbh->prepare($outquery);
+        $sqlite_sth->execute or die "Died on query -->$outquery<-- $!";
+    }
 
     my $mysql_query = "SELECT * FROM mrvoice";
     my $mysql_sth   = $mysql_dbh->prepare($mysql_query);
