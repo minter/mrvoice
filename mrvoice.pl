@@ -42,7 +42,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.271 2003/11/07 03:25:37 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.272 2003/11/17 18:13:43 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1968,7 +1968,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.271 $';
+  $rev = '$Revision: 1.272 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2359,19 +2359,18 @@ sub update_time
 
   my $count = 0;
   my $query = "SELECT id,filename,time FROM mrvoice";
-  my $sth=$dbh->prepare($query);
-  $sth->execute;
-  my $numrows = $sth->rows;
-  while (@table_row = $sth->fetchrow_array)
+  my $get_rows_sth=$dbh->prepare($query);
+  $get_rows_sth->execute;
+  my $numrows = $get_rows_sth->rows;
+  my $update_query = "UPDATE mrvoice SET time=? WHERE id=?";
+  my $update_sth=$dbh->prepare($update_query);
+  while (@table_row = $get_rows_sth->fetchrow_array)
   {
     ($id,$filename,$time) = @table_row;
     my $newtime = get_songlength(catfile($config{'filepath'},$filename));
     if ($newtime ne $time)
     {
-      my $query = "UPDATE mrvoice SET time='$newtime' WHERE id='$id'";
-      my $sth2=$dbh->prepare($query);
-      $sth2->execute;
-      $sth2->finish;
+      $update_sth->execute($newtime,$id);
       $updated++;
     }
     $count++;
@@ -2379,7 +2378,7 @@ sub update_time
     $pb->set($percent_done);
     $progressbox->update();
   }
-  $sth->finish;
+  $get_rows_sth->finish;
   $donebutton->configure(-state=>'active');
   $donebutton->focus;
   $progressbox->update();
