@@ -1,3 +1,6 @@
+Mon  Mar 05 2001	H. Wade Minter (minter@lunenburg.org)
+     * Got song additions working.
+
 Sun  Mar 04 2001	H. Wade Minter (minter@lunenburg.org)
      * Finished the Category add/delete.
      * Got song deletes working.
@@ -47,4 +50,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.8 2001/03/05 15:54:56 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.9 2001/03/05 21:03:57 minter Exp $
