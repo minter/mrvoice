@@ -1,3 +1,11 @@
+Thu  Oct 25 2001	H. Wade Minter (minter@lunenburg.org)
+     * Added label to show you which category is currently selected.
+     * Added preferences option to choose the number of dynamic
+       documents to keep in the File menu.
+     * Changed drag-and-drop to show just the song title, not the entire
+       line.
+     * Right-clicking a song now gives you the option to play it.
+
 Wed  Oct 24 2001	H. Wade Minter (minter@lunenburg.org)
      * Changed hotkey display to side-by-side instead of top-bottom.
      * Added color to the play/stop buttons.
@@ -100,4 +108,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.20 2001/10/24 20:02:10 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.21 2001/10/25 19:37:58 minter Exp $
