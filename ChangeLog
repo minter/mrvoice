@@ -1,3 +1,8 @@
+Tue  Feb  5 2002	H. Wade Minter (minter@lunenburg.org)
+     * Minor change to the "Open File" box, so that it searches
+       for both upper and lowercase in file extensions (*.mp3 and
+       *.MP3 both)
+
 Mon  Feb  4 2002	H. Wade Minter (minter@lunenburg.org)
      * Celebrated the Patriots' Super Bowl win.
      * Changed the main menubar to use the new-style system
@@ -187,4 +192,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.33 2002/02/04 21:19:51 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.34 2002/02/05 20:05:10 minter Exp $
