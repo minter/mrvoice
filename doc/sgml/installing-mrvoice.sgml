@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.6 2001/09/26 17:17:57 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.7 2001/09/28 00:23:55 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
@@ -14,7 +14,7 @@
         </para>
       </listitem>
       <listitem>
-        <para><ulink url="http://www.perl.com/">Perl</ulink> version 5 (Unix version should be provided with most modern Unix systems, or get the Windows version from <ulink url="http://aspn.activestate.com/ASPN/Downloads/ActivePerl/">ActiveState</ulink>), plus the following perl modules (available from <ulink url="http://www.cpan.org/">CPAN</ulink> or via ActivePerl's PPM:
+        <para><ulink url="http://www.perl.com/">Perl</ulink> version 5 (Unix version should be provided with most modern Unix systems, or get the Windows version from <ulink url="http://aspn.activestate.com/ASPN/Downloads/ActivePerl/">ActiveState</ulink>), plus the following perl modules (available from <ulink url="http://www.cpan.org/">CPAN</ulink> or for Windows via ActivePerl's PPM):
           <itemizedlist>
             <listitem>
               <para><ulink url="http://www.cpan.org/modules/by-module/DBI/">DBI</ulink></para>
@@ -54,11 +54,12 @@
         <listitem>
           <para>Unpack the <filename>mrvoice-x.x.tar.gz</filename> archive.  It will create a <filename>mrvoice-x.x</filename> directory.  The <filename>mrvoice.pl</filename> file is the only one needed to run the program (meaning that you can move <filename>mrvoice.pl</filename> to another location after you're done configuring it), but there are other files in the archive, such as the <filename>dbinit.sql</filename> database initilization script, documentation, licenses, etc.</para>
         <listitem>
-          <para>Compile and/or install any required software from above (perl modules, etc.).  Set up your database properly and start it.</para>
+          <para>Compile and/or install any required software from above (perl modules, etc.).  This configuration is currently beyond the scope of this documentation - if you run into issues, feel free to email me or check the software's website. </para>
+        <para>Set up your database properly (set up a superuser account, etc.) and start it.  Some further tips are available in the Windows installation section.</para>
         </listitem>
         <listitem>
-          <para>Set up a database for the program to use.  It needs two tables in a database, so you can either use an existing database or create one expressly for Mr. Voice.</para>
-          <para>In MySQL, you would do something like the following:
+          <para>Set up a database for the program to use.  It needs two tables in a database, so you can either use an existing database or create one expressly for Mr. Voice.  The database name is completely up to you - just remember what it is.</para>
+          <para>To set up a database in MySQL, you would do something like the following:
             <screen>
 [you@yourhost you]$ mysql -u root -p mysql
 Enter password: [YOUR SUPERUSER PASSWORD]
@@ -83,6 +84,7 @@ mysql>
           <para>For other databases (Postgres, etc.), adjust to taste.  <filename>dbinit.sql</filename> contains SQL commands that create two tables in <replaceable>DATABASE_NAME</replaceable>: mrvoice and categories.</para>
         </listitem>
       </itemizedlist>
+      <para>At this point, all of the software should be set up and ready for configuration!</para>
     </sect2>
 
     <sect2><title>Windows Installation Instructions</title>
@@ -142,7 +144,7 @@ mysql>
              <para>Open a DOS prompt window, and cd to <filename>C:\mrvoice-x.x\</filename>.  Run the command: <userinput>C:\mysql\bin\mysql -u root -p <replaceable>DATABASE_NAME</replaceable> < dbinit.sql</userinput> where <replaceable>DATABASE_NAME</replaceable> is the name you set up above.  It will prompt you for a password.  Enter the password you set up above.  If it runs the command without errors, then your database is initialized.</para>
            </listitem>
            <listitem>
-             <para>You will need a directory to store your MP3 files, and a directory to store your hotkey save files.  I suggest <filename>C:\MP3\</filename> for the MP3 directory and <filename>C:\mrvoice-hotkeys\</filename> for the save files, but you can pick anything.  
+             <para>You will need a directory to store your MP3 files, and a directory to store your hotkey save files.  I suggest <filename>C:\MP3\</filename> for the MP3 directory and <filename>C:\mrvoice-hotkeys\</filename> for the save files, but you can pick anything.  Go ahead and create the directories now.
                <note>
                  <para>Mr. Voice doesn't handle path names with spaces very well, so you should make sure that the path to these directories does not contain  spaces.  For example:</para>
              <para>C:\mrvoice\mp3s\  <emphasis>[GOOD]</emphasis></para>
