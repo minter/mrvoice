@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.164 2002/11/02 17:54:30 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.165 2002/11/06 19:33:03 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -388,8 +388,9 @@ sub open_file
         $$var1=$var2;
       }
       close (HOTKEYFILE);
-      $status = "Loaded hotkey file $selectedfile successfully";
+      $status = "Loaded hotkey file $selectedfile";
       dynamic_documents($selectedfile);
+      list_hotkeys();
     }
   }
   else
@@ -580,7 +581,7 @@ sub add_category
       else
       {
 	$status = "Added category $addcat_desc";
-        infobox($mw,"Success","Category successfully added.");
+        infobox($mw,"Success","Category added.");
       }
     }
     else 
@@ -645,7 +646,7 @@ on query $query");
       else
       {
         $status = "Edited category: $new_desc";
-        infobox($mw,"Success","Category successfully edited.");
+        infobox($mw,"Success","Category edited.");
       }
       $sth->finish;
     }
@@ -863,7 +864,7 @@ sub add_new_song
   if ($dbh->do($query))
   {
     infobox ($mw, "File Added Successfully","Successfully added new song into database.\n\nYou may now delete/move/etc. the file:\n$addsong_filename\nas it is no longer needed by Mr. Voice");
-    $status = "File added successfully";
+    $status = "File added";
   }
   else
   {
@@ -1024,7 +1025,7 @@ sub edit_song
     if ($dbh->do($query))
     {
       infobox ($mw, "Song Edited Successfully","The song was edited successfully.");
-      $status = "Edited song successfully";
+      $status = "Edited song";
     }
     else
     {
@@ -1088,7 +1089,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.164 $';
+  $rev = '$Revision: 1.165 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
