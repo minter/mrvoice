@@ -1,3 +1,6 @@
+Thu  May 16 2002	H. Wade Minter (minter@lunenburg.org)
+     * Tagged 1.5.2, before starting some big work.
+
 Mon  May 13 2002	H. Wade Minter (minter@lunenburg.org)
      * Added a warning popup dialog when people do "blank" searches that 
        would result in the entire database getting displayed.  Thanks to
@@ -242,4 +245,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.45 2002/05/13 18:41:32 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.46 2002/05/16 14:03:33 minter Exp $
