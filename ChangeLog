@@ -1,5 +1,11 @@
+Mon  May 13 2002	H. Wade Minter (minter@lunenburg.org)
+     * Added a warning popup dialog when people do "blank" searches that 
+       would result in the entire database getting displayed.  Thanks to
+       Randy in KC for the idea.
+
 Thu  May  9 2002	H. Wade Minter (minter@lunenburg.org) 
-     * Added Scrollwheel mouse support in the scrolled listboxes.
+     * Added Scrollwheel mouse support in the scrolled listboxes.  Thanks
+       to Bling-Bling in Raleigh for the idea.
 
 Wed  May  8 2002	H. Wade Minter (minter@lunenburg.org)
      * Released version 1.5
@@ -236,4 +242,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.44 2002/05/09 15:11:42 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.45 2002/05/13 18:41:32 minter Exp $
