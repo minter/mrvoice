@@ -1,10 +1,24 @@
 <!--
-  CVS ID: $Id: using-mrvoice.sgml,v 1.14 2001/12/03 21:17:47 minter Exp $
+  CVS ID: $Id: using-mrvoice.sgml,v 1.15 2001/12/03 21:39:33 minter Exp $
 -->
 
 <chapter><title>Using Mr. Voice</title>
 
-  <para>Now that you have Mr. Voice and other required software set up and configured, it's time to actually use it.  First you have to populate the database with songs.  Then you can do useful things with them.  Look at the following diagram of the main Mr. Voice window for definitions of terms that will be used: <screenshot> <graphic fileref="../images/mainwindow.png"> </screenshot>
+  <para>Now that you have Mr. Voice and other required software set up and configured, it's time to actually use it.  First you have to populate the database with songs.  Then you can do useful things with them.  Look at the following diagram of the main Mr. Voice window for definitions of terms that will be used: 
+    <figure>
+      <title>The Main window</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="../images/mainwindow.jpg" format="jpg">
+        </imageobject>
+        <imageobject>
+          <imagedata fileref="../images/mainwindow.eps" format="eps">
+        </imageobject>
+        <textobject>
+          <phrase>Screenshot of the Main window</phrase>
+        </textobject>
+      </mediaobject>
+    </figure> 
   </para>
 
   <sect1><title>Adding, Deleting, and Editing Songs and Categories</title>
