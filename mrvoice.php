@@ -8,26 +8,24 @@
    # the Mr. Voice mp3s.  It must be writable by the user that your
    # web server is running as.  This will be prepended to the value
    # of the filename from the database result, so plan accordingly.
-   $path = "/home/minter/html/csz";
+   $path = "/PATH/TO/MP3s";
 
    # These four options set the name, hostname, username, and password for
    # your database.
-   # $database_username must have INSERT access on the mrvoice
+   # $database_username must have SELECT access on the mrvoice
    # database/tables.
-   $database = "comedysportz";
+   $database = "DBNAME";
    $database_host = "localhost";
-   $database_username = "howie";
-   $database_password = "HumorDome";
+   $database_username = "USERNAME";
+   $database_password = "PASSWORD";
  
-   # CVS ID: $Id: mrvoice.php,v 1.2 2001/02/16 21:45:28 minter Exp $
+   # CVS ID: $Id: mrvoice.php,v 1.3 2001/02/21 03:00:44 minter Exp $
 ?>
 
 <TITLE>Mr. Voice MP3 Database</TITLE>
 <BODY BGCOLOR=#FFFFFF>
 <CENTER><H1>Online Mr. Voice MP3 Database</H1></CENTER>
-<P>This is an online version of my <a href=http://www.greatamericancomedy.com/csz/>ComedySportz-Raleigh</A> Mr. Voice MP3 Database.  You can search for songs in various categories and use the MP3s for your own neferious purposes.  You can see a screenshot of the actual application I've written as a frontend for this database <a href=/csz/screenshot.jpg>here</A>.
-<P>The "Extra Info." modifier is a companion to whichever category you choose to search.  For the "Game" category, it's the name of the game.  For the "Theme/Style" category, it's the type of style.  Etc.
-<H2>Note</H2> - Most of the songs have been edited down to snippets, and automatically fade out at the end.  So if you're looking for the full versions of the songs, you're going to be disappointed.
+<P>You can search the Mr. Voice database from this form.  
 <?
   $thismonth = date("n");
   $thisday = date("d");
@@ -205,4 +203,4 @@
 ?>
 
 <HR>
-<I>Designed and maintained by H. Wade Minter &lt<a href="mailto:minter@lunenburg.org?subject=Mr. Voice Database">minter@lunenburg.org</A>&gt.  Did you like this database?  Find it useful?  Drop me a line!</I>
+<I>Designed by <a href=http://www.lunenburg.org/>H. Wade Minter</A> &lt<a href="mailto:minter@lunenburg.org">minter@lunenburg.org</A>&gt.
