@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.376 2004/04/23 20:03:57 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.377 2004/04/26 01:55:57 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -559,18 +559,10 @@ sub bind_hotkeys
     # in as the first argument.
 
     my $window = $_[0];
-    $window->bind( "all", "<Key-F1>",  [ \&play_mp3, "F1" ] );
-    $window->bind( "all", "<Key-F2>",  [ \&play_mp3, "F2" ] );
-    $window->bind( "all", "<Key-F3>",  [ \&play_mp3, "F3" ] );
-    $window->bind( "all", "<Key-F4>",  [ \&play_mp3, "F4" ] );
-    $window->bind( "all", "<Key-F5>",  [ \&play_mp3, "F5" ] );
-    $window->bind( "all", "<Key-F6>",  [ \&play_mp3, "F6" ] );
-    $window->bind( "all", "<Key-F7>",  [ \&play_mp3, "F7" ] );
-    $window->bind( "all", "<Key-F8>",  [ \&play_mp3, "F8" ] );
-    $window->bind( "all", "<Key-F9>",  [ \&play_mp3, "F9" ] );
-    $window->bind( "all", "<Key-F10>", [ \&play_mp3, "F10" ] );
-    $window->bind( "all", "<Key-F11>", [ \&play_mp3, "F11" ] );
-    $window->bind( "all", "<Key-F12>", [ \&play_mp3, "F12" ] );
+    foreach my $num ( 1 .. 12 )
+    {
+        $window->bind( "all", "<Key-F$num>", [ \&play_mp3, "f$num" ] );
+    }
     $window->bind( "<Key-Escape>", [ \&stop_mp3 ] );
     $window->bind( "<Key-Return>",    \&do_search );
     $window->bind( "<Control-Key-x>", \&do_exit );
@@ -849,18 +841,12 @@ sub save_file
             $selectedfile = "$selectedfile.mrv"
               unless ( $selectedfile =~ /.*\.mrv$/ );
             open( HOTKEYFILE, ">$selectedfile" );
-            print HOTKEYFILE "f1::$fkeys{f1}->{id}\n";
-            print HOTKEYFILE "f2::$fkeys{f2}->{id}\n";
-            print HOTKEYFILE "f3::$fkeys{f3}->{id}\n";
-            print HOTKEYFILE "f4::$fkeys{f4}->{id}\n";
-            print HOTKEYFILE "f5::$fkeys{f5}->{id}\n";
-            print HOTKEYFILE "f6::$fkeys{f6}->{id}\n";
-            print HOTKEYFILE "f7::$fkeys{f7}->{id}\n";
-            print HOTKEYFILE "f8::$fkeys{f8}->{id}\n";
-            print HOTKEYFILE "f9::$fkeys{f9}->{id}\n";
-            print HOTKEYFILE "f10::$fkeys{f10}->{id}\n";
-            print HOTKEYFILE "f11::$fkeys{f11}->{id}\n";
-            print HOTKEYFILE "f12::$fkeys{f12}->{id}\n";
+            foreach my $num ( 1 .. 12 )
+            {
+                my $keynum = "f$num";
+                print HOTKEYFILE "$keynum";
+                print HOTKEYFILE "::$fkeys{$keynum}->{id}\n";
+            }
             close(HOTKEYFILE);
             $status = "Finished saving hotkeys to $selectedfile";
             dynamic_documents($selectedfile);
@@ -2290,7 +2276,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.376 $';
+    my $rev    = '$Revision: 1.377 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::mysql->VERSION;
@@ -2723,20 +2709,12 @@ sub play_mp3
     my ( $statustitle, $statusartist, $filename );
 
     # See if the request is coming from one our hotkeys first...
-    if ( ( $_[1] ) && ( ( $_[1] =~ /^F.*/ ) || ( $_[1] =~ /^ALT.*/ ) ) )
+    if ( $_[1] =~ /^f\d+/ )
     {
-        if    ( $_[1] eq "F1" )  { $filename = $fkeys{f1}->{filename}; }
-        elsif ( $_[1] eq "F2" )  { $filename = $fkeys{f2}->{filename}; }
-        elsif ( $_[1] eq "F3" )  { $filename = $fkeys{f3}->{filename}; }
-        elsif ( $_[1] eq "F4" )  { $filename = $fkeys{f4}->{filename}; }
-        elsif ( $_[1] eq "F5" )  { $filename = $fkeys{f5}->{filename}; }
-        elsif ( $_[1] eq "F6" )  { $filename = $fkeys{f6}->{filename}; }
-        elsif ( $_[1] eq "F7" )  { $filename = $fkeys{f7}->{filename}; }
-        elsif ( $_[1] eq "F8" )  { $filename = $fkeys{f8}->{filename}; }
-        elsif ( $_[1] eq "F9" )  { $filename = $fkeys{f9}->{filename}; }
-        elsif ( $_[1] eq "F10" ) { $filename = $fkeys{f10}->{filename}; }
-        elsif ( $_[1] eq "F11" ) { $filename = $fkeys{f11}->{filename}; }
-        elsif ( $_[1] eq "F12" ) { $filename = $fkeys{f12}->{filename}; }
+        $filename = $fkeys{ $_[1] }->{filename};
+    }
+    elsif ( $_[1] =~ /^ALT/ )
+    {
 
         #STARTCSZ
         #  elsif ($_[1] eq "ALT-T") { $filename = $altt; }
