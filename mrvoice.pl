@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.comedyworx.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/31 17:31:48 $
-#	CVS REVISION NUMBER:    $Revision: 1.75 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/11/01 02:53:42 $
+#	CVS REVISION NUMBER:    $Revision: 1.76 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1326,9 +1326,11 @@ $searchframe4->Entry(-textvariable=>\$anyfield)->pack(-side=>'left');
 
 #####
 # Search Button
-$mw->Button(-text=>"Do Search",
-            -cursor=>'question_arrow',
-            -command=>\&do_search)->pack(-fill=>'x',-expand=>1);
+$searchbuttonframe=$mw->Frame()->pack(-side=>'top',
+                                      -fill=>'x');
+$searchbuttonframe->Button(-text=>"Do Search",
+                           -cursor=>'question_arrow',
+                           -command=>\&do_search)->pack(-fill=>'x',-expand=>1);
 #
 #####
 
