@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: using-mrvoice.sgml,v 1.30 2003/04/08 14:11:18 minter Exp $
+  CVS ID: $Id: using-mrvoice.sgml,v 1.31 2003/08/31 19:30:50 minter Exp $
 -->
 
 <chapter><title>Using Mr. Voice</title>
@@ -90,8 +90,8 @@
       <para>You can now press the <guibutton>Ok</guibutton> button to add the song.  If all goes well, you should see a message that the file was added to the database.  If not, Mr. Voice should tell you what went wrong, and let you go back and fix the entry.</para>
       <note><para>Mr. Voice actually makes a copy of the file that you select, renames it to a standard form, and places the new copy in the location given by the <varname>$filepath</varname> variable that you defined in the setup.  Your original audio file is <emphasis>not</emphasis> used after the copy is made, so you can feel free to delete it.</para></note>
       <para>It can be tedious to add songs one at a time if you have many files to add.  New in version 1.8 is the <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Bulk-Add Songs Into Category</guimenuitem> </menuchoice> menu option.  Upon choosing this, you will be prompted for a category and a directory.  Select the category, and a directory that contains the set of MP3 or OGG files that you would like to add to that category.  Mr. Voice will then use the title and artist tags stored in the files to automatically add those files into your selected category.  If you need to add Extra Info or modify any other fields, you will need to do that after the fact, but this should be a good way to add lots of data at once.</para>
-      <para>To delete a song, you must have one displayed and selected in the main search results box.  Searching is covered later, but if you hit the <guibutton>Do Search</guibutton> button, it should show you all of the songs in your database.</para>
-      <para>Once you have some songs displayed, left-click once on the name of the song that you want to delete, then choose <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Delete Currently Selected Song</guimenuitem> </menuchoice>.  You can also right-click on the name of the song and choose the <guimenuitem>Delete Song</guimenuitem> option.  A box will pop up asking you to confirm the deletion, and also presenting a checkbox labeled <guilabel>Delete File On Disk</guilabel>.   
+      <para>To delete a song, you must have at least one displayed and selected in the main search results box.  Searching is covered later, but if you hit the <guibutton>Do Search</guibutton> button, it should show you all of the songs in your database.</para>
+      <para>Once you have some songs displayed, left-click once on the name of the song that you want to delete, or select several songs by pressing <keycap>Control</keycap> or <keycap>Shift</keycap> while selecting, then choose <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Delete Currently Selected Song</guimenuitem> </menuchoice>.  You can also right-click on the name of the song or songs and choose the <guimenuitem>Delete Song</guimenuitem> option.  A box will pop up asking you to confirm the deletion, and also presenting a checkbox labeled <guilabel>Delete File On Disk</guilabel>.   
         <figure>
 	  <title>The Delete Song window</title>
 	  <mediaobject>
@@ -103,10 +103,11 @@
 	    </textobject>
 	  </mediaobject>
 	</figure>
-      If you do not select this, the song will be removed from the database, but the actual audio file on disk, located at <varname>$filepath</varname>, will remain.  If you do select this option, the song will be removed from the database AND the audio file on disk will be deleted.</para>
+      If you do not select this, the song or songs will be removed from the database, but the actual audio file on disk, located at <varname>$filepath</varname>, will remain.  If you do select this option, the song or songs will be removed from the database AND the audio file on disk will be deleted.</para>
       <note><para>If you do not have a song selected in the main display box and choose <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Delete Currently Selected Song</guimenuitem> </menuchoice> or <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Edit Currently Selected Song</guimenuitem> </menuchoice>, then nothing will happen.  This is normal.  If you are trying to edit or delete a song and don't get the repective boxes showing up on-screen, make sure that you have a song highlighted.</para></note>
       <para>Finally, if you want to edit a song in the database, left-click a song in the main display window, and choose <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Edit Currently Selected Song</guimenuitem> </menuchoice>.  You can also right-click on a song and choose the <guimenuitem>Edit Song</guimenuitem> option.  A box will pop up that is similar to the one for <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Add New Song</guimenuitem> </menuchoice>, except without the file selector option.  You can make any needed changes to the song, then press <guibutton>Ok</guibutton> to commit them.</para>
       <note><title>Shortcut!</title><para>You can also right-click a song in the main display box to bring up a shortcut menu.  From this menu, you can choose to edit or delete the selected song.</para></note>
+      <para>If you have multiple songs selected and choose to edit, you will only be able to edit the Extra Info, Category, or Artist fields, not the Title.</para>
     </sect2>
   </sect1>
 
@@ -133,7 +134,7 @@
       <para>Windows users who have installed the httpQ plugin (and entered its password under the <menuchoice> <guimenu>File</guimenu> <guimenu>Preferences</guimenu> <guimenuitem>Other</guimenuitem> </menuchoice> menu) have an additional option.  Pressing the <keycap>Shift</keycap> key while either clicking on the <guibutton>Stop Now</guibutton> button or pressing the <keycap>Escape</keycap> key will cause the song to fade out before stopping, over a period of a couple of seconds.</para>
     </sect2>
     <sect2><title>Exiting Mr. Voice</title>
-      <para>To exit Mr. Voice, choose <menuchoice> <guimenu>File</guimenu> <guimenuitem>Exit</guimenuitem> </menuchoice>, or press <keycombo action='simul'> <keycap>Control</keycap> <keycap>X</keycap> </keycombo>.  Mr. Voice will exit and your audio player will close.</para>
+      <para>To exit Mr. Voice, choose <menuchoice> <guimenu>File</guimenu> <guimenuitem>Exit</guimenuitem> </menuchoice>, or press <keycombo action='simul'> <keycap>Control</keycap> <keycap>X</keycap> </keycombo>.  Mr. Voice will prompt you to confirm that you want to exit, and if you do, the program will exit and your audio player will close.</para>
     </sect2>
   </sect1>
 
@@ -155,6 +156,7 @@
     </figure> 
       <para>To remove hotkeys, you have two choices: Remove keys individually, or remove them all in one fell swoop.  To remove all hotkeys, choose <menuchoice> <guimenu>Hotkeys</guimenu> <guimenuitem>Clear All Hotkeys</guimenuitem> </menuchoice> from the main menubar.  This will do exactly what it implies - reset all hotkeys back to empty.  You can also, from the <menuchoice> <guimenu>Hotkeys</guimenu> <guimenuitem>Show Hotkeys</guimenuitem> </menuchoice> menu, press the buttons beside any key listing, and choose the <guibutton>Clear Selected</guibutton> button to clear out just the keys that you select, while leaving the others alone.</para>
       <para>If you clear all hotkeys, the <menuchoice> <guimenu>Hotkeys</guimenu> <guimenuitem>Restore Hotkeys</guimenuitem> </menuchoice> option becomes available.  It allows you to return your hotkeys to the state they were in immediately prior to the clearing.  This exists in case you accidentally clear hotkeys that you don't mean to.  Note that the Restore Hotkeys feature currently only works for the Clear All Hotkeys and Open Hotkey File (discussed below) options.</para>
+      <para>You can also lock the hotkeys by choosing the <menuchoice> <guimenu>Hotkeys</guimenu> <guimenuitem>Lock Hotkeys</guimenuitem> </menuchoice> option.  When hotkeys are locked, a checkmark appears beside the menu item, and you will not be able to add or clear any hotkeys until you deselect the lock option.</para>
     </sect2>
     <sect2><title>Using Hotkeys</title>
       <para>To use hotkeys once you have defined them, simply make sure that a Mr. Voice window is selected, and press the hotkey for the song that you want.  The song should immediately begin playing.
@@ -168,7 +170,7 @@
       <para>The most recent hotkey files that you have accessed via a save or open will be listed on the <menuchoice> <guimenu>File</guimenu> <guimenuitem>Recent Files</guimenuitem> </menuchoice> menu.  These filenames can be selected directly for one-click access that recently-used hotkey files.  To adjust the number of files that are displayed, use the <menuchoice> <guimenu>File</guimenu> <guimenuitem>Preferences</guimenuitem> </menuchoice> menu.  Four is the default.</para>
     </sect2>
     <sect2><title>The Holding Tank</title>
-      <para>Somewhere in a netherworld between the search box and hotkeys exists the Holding Tank.  The Holding Tank can be accessed via the <menuchoice> <guimenu>Hotkeys</guimenu> <guimenuitem>Show Holding Tank</guimenuitem> </menuchoice> menu choice.  You can drag songs to it, like with the Hotkeys window.  Unlike the Hotkeys window, though, you can have an unlimited number of songs in there at any time, but you can't get one-button access to playing those songs, nor can you save the contents of the Holding Tank to a file.
+      <para>Somewhere in a netherworld between the search box and hotkeys exists the Holding Tank.  The Holding Tank can be accessed via the <menuchoice> <guimenu>Hotkeys</guimenu> <guimenuitem>Show Holding Tank</guimenuitem> </menuchoice> menu choice or by pressing <keycombo action='simul'> <keycap>Control</keycap> <keycap>T</keycap></keycombo>.  You can drag songs to it, like with the Hotkeys window.  Unlike the Hotkeys window, though, you can have an unlimited number of songs in there at any time, but you can't get one-button access to playing those songs, nor can you save the contents of the Holding Tank to a file.
       <figure>
         <title>The Holding Tank window</title>
         <mediaobject>
@@ -184,7 +186,7 @@
       <para>You populate the Holding Tank by dragging and dropping songs from the search results box onto it.  The items in the Holding Tank will appear in the order you add them - there is currently no way to reorder them.</para>
       <para>To play a song from the Holding Tank, you can either double-click the song in the Holding Tank window, or single-click the song and press the <guibutton>Play</guibutton> button.</para>
       <para>To remove a song from the holding tank, click on the name of the song, then press the <guibutton>Clear Selected</guibutton> button.  You can press the <keycap>Control</keycap> key while clicking to select more than one song, then use the <guibutton>Clear Selected</guibutton> button to clear all selected songs.</para>
-      <para>If you close the Holding Tank window, all songs in that window will be erased.  The Holding Tank is still a work in progress, and may or may not remain in Mr. Voice, depending on whether or not people find it useful.</para>
+      <para>To reorder the songs in the Holding Tank, select a song and press the up or down arrow icons in the tank to move the song up or down in the list.</para>
     </sect2>
   </sect1>
   
