@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/26 20:47:20 $
-#	CVS REVISION NUMBER:    $Revision: 1.69 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/27 00:16:37 $
+#	CVS REVISION NUMBER:    $Revision: 1.70 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1212,8 +1212,9 @@ $catmenu = $menuframe->Menubutton(-text=>"Categories",
                                   -tearoff=>0)->pack(-side=>'left');
 $catmenu->AddItems(["command"=>"Add Category",
                    -command=>\&add_category]);
-$catmenu->AddItems(["command"=>"Edit Category",
-                   -command=>\&edit_category]);
+# Holding off on this feature for a bit.
+#$catmenu->AddItems(["command"=>"Edit Category",
+#                   -command=>\&edit_category]);
 $catmenu->AddItems(["command"=>"Delete Category",
                    -command=>\&delete_category]);
 
