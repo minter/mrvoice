@@ -1,0 +1,15 @@
+This directory contains small utilities that you might use to get
+the most out of Mr. Voice.  A description of each utility follows.
+
+###### orphans.pl ######
+Run this script and it will print out a list of "orphaned" MP3s in your
+MP3 storage directory.  And orphaned MP3 is defined as an MP3 file that
+is not referenced by any entry in the database.  
+
+If you run "orphans.pl" by itself, it will just print out a report.  If
+you run "orphans.pl -d", it will delete the orphaned files.  Adding a
+"-v" flag to either of those options will cause the script to become
+more verbose in its output, to possibly help you track down any problems.
+
+###### END ######
+# CVS ID: $Id: README,v 1.1 2001/12/19 21:18:43 minter Exp $
