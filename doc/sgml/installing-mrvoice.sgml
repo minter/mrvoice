@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.18 2002/08/14 18:00:10 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.19 2002/08/15 01:56:29 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
@@ -20,7 +20,7 @@
     </sect2>
     
     <sect2><title>Unix/Linux/BSD</title>
-    <para>
+    <para>The following components are required to run Mr. Voice under Unix systems.
       <itemizedlist>
         <listitem>
           <para><ulink url="http://www.perl.com/">Perl</ulink> version 5 (Should be provided with most modern Unix systems), plus the following perl modules (most available from <ulink url="http://www.cpan.org/">CPAN</ulink>):
@@ -107,7 +107,7 @@ mysql>
       <para>If you're using the httpQ plugin for WinAmp, download its zip file and install it.  Then, do the following steps:
         <itemizedlist>
           <listitem><para>Start WinAmp by itself, right-click on the "OAIDV" bar on the left of the window, choose Options->Preferences.</para></listitem>
-          <listitem><para>Go down to plugins->General Purpose.  You should see the httpQ plugin listed.  Highlight that, and hit "configure".</para></listitem>
+          <listitem><para>Go down to Plugins->General Purpose.  You should see the httpQ plugin listed.  Highlight that, and hit "configure".</para></listitem>
           <listitem><para>Under the General tab, put in a password (your choosing), leave the port at 4800, and check the box to start the service automatically.  Hit the Apply button, then the x at the top-right.  Close the preferences, and exit from WinAmp.  <emphasis>Remember the password you just set up - you will need it later.</emphasis></para></listitem>
         </itemizedlist>
       </para>
@@ -135,7 +135,7 @@ mysql>
         </itemizedlist>
       </sect3>
       <sect3><title>Installing the Mr. Voice software on Windows</title>
-        <para>New in Version 1.5 is an all-in-one version of Mr. Voice that does <emphasis>not</emphasis> require you to install ActivePerl or any of the perl modules that are discussed in this section.  This is now the supported way to run Mr. Voice on Windows - it's significantly less complicated than using ActivePerl, PPM modules, and so forth.</para>
+        <para>New in Version 1.5 is an all-in-one version of Mr. Voice that does <emphasis>not</emphasis> require you to install ActivePerl or any of the perl modules that are discussed in the Unix section.  This is now the only supported way to run Mr. Voice on Windows - it's significantly less complicated than using ActivePerl, PPM modules, and so forth.</para>
         <para>Unzip the <filename>mrvoice-current.zip</filename> file to your desired location.  It will create a directory named <filename>mrvoice-x.x</filename> under the location that you choose.  These instructions will assume that you unzip it to <filename>C:\</filename>, creating the <filename>C:\mrvoice-x.x\</filename> directory, where x.x is the version number.</para>
         <para>Open a DOS prompt window, and cd to <filename>C:\mrvoice-x.x\</filename>.  Run the command: <userinput>C:\mysql\bin\mysql -u root -p <replaceable>DATABASE_NAME</replaceable> < dbinit.sql</userinput> where <replaceable>DATABASE_NAME</replaceable> is the name you set up above.  It will prompt you for a password.  Enter the password you set up above.  If it runs the command without errors, then your database is initialized.</para>
         <para>You will need a directory to store your MP3 files, and a directory to store your hotkey save files.  I suggest <filename>C:\MP3\</filename> for the MP3 directory and <filename>C:\mrvoice-hotkeys\</filename> for the save files, but you can pick anything.  Go ahead and create the directories now.</para>
