@@ -1,7 +1,6 @@
 Things I'm currently working on:
 
 * Debug mode - log stuff to a file with the proper switch.
-* Investigate switching to an HList, to get the -data option.
 * Tabbed interface to the Hotkeys.
 * General code cleanup and pretty-fication.
 

@@ -3,6 +3,7 @@ Sun  Sep 12  2004	H. Wade Minter (minter@lunenburg.org)
      * Refactor a couple of looped database queries to use placeholders.
      * Use the same color for the Preview Song button (add new song window)
        as we do for the Play button.
+     * Switch to a Tk::HList for the mainbox and the holding tank.
 
 Sat  Sep 11  2004	H. Wade Minter (minter@lunenburg.org)
      * Fixed a similar bug in the edit_categories function.

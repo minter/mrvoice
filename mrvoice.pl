@@ -14,6 +14,7 @@ use Tk::DropSite;
 use Tk::NoteBook;
 use Tk::ProgressBar::Mac;
 use Tk::DirTree;
+use Tk::ItemStyle;
 use File::Basename;
 use File::Copy;
 use File::Spec::Functions;
@@ -194,7 +195,7 @@ else
 
 #####
 
-my $version = "2.0pre2";    # Program version
+my $version = "2.0pre4";    # Program version
 our $status = "Welcome to Mr. Voice version $version";
 
 sub get_rows
@@ -518,6 +519,11 @@ sub Tk::Listbox::Motion
     return;
 }
 
+sub Tk::HList::Button1Motion
+{
+    return;
+}
+
 sub BindMouseWheel
 {
 
@@ -641,10 +647,11 @@ sub open_tank
             while ( my $id = <TANKFILE> )
             {
                 chomp($id);
+                next unless ( validate_id($id) );
                 my $query =
                   "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.time from mrvoice,categories where mrvoice.category=categories.code AND mrvoice.id=$id";
                 my $tank_ref = $dbh->selectrow_hashref($query);
-                my $string   = "$id:($tank_ref->{description}";
+                my $string   = "($tank_ref->{description}";
                 $string = $string . " - $tank_ref->{info}"
                   if ( $tank_ref->{info} );
                 $string = $string . ") - \"$tank_ref->{title}\"";
@@ -652,7 +659,7 @@ sub open_tank
                   if ( $tank_ref->{artist} );
                 $string = $string . " $tank_ref->{time}";
 
-                $tankbox->insert( 'end', $string );
+                $tankbox->add( $id, -data => $id, -text => $string );
             }
         }
         close(TANKFILE);
@@ -671,7 +678,7 @@ sub save_tank
         $status = "Can't save the holding tank before you use it...";
         return;
     }
-    my @indices = $tankbox->get( 0, 'end' );
+    my @indices = return_all_indices($tankbox);
 
     if ( $#indices < 0 )
     {
@@ -2042,7 +2049,7 @@ sub edit_preferences
 
 sub edit_song
 {
-    my (@selected) = $mainbox->curselection();
+    my (@selected) = $mainbox->info('selection');
     my ( $edit_title, $edit_artist, $edit_category, $edit_publisher,
         $edit_info );
     my $count = $#selected + 1;
@@ -2050,7 +2057,7 @@ sub edit_song
     {
 
         # We're looking to edit one song, so we can choose everything
-        my $id = get_song_id( $mainbox, $selected[0] );
+        my $id = $mainbox->info( 'data', $selected[0] );
         my $query =
           "SELECT title,artist,category,info,publisher from mrvoice where id=$id";
         my (
@@ -2155,7 +2162,7 @@ sub edit_song
         );
         foreach my $id (@selected)
         {
-            my $songid = get_song_id( $mainbox, $id );
+            my $songid = $mainbox->info( 'data', $id );
             push( @songids, $songid );
         }
         my $box = $mw->DialogBox(
@@ -2267,13 +2274,13 @@ sub edit_song
 
 sub delete_song
 {
-    my (@selection) = $mainbox->curselection();
+    my (@selection) = $mainbox->info('selection');
     my $count = $#selection + 1;
     my @ids;
     my $delete_file_cb;
     foreach my $index (@selection)
     {
-        push( @ids, get_song_id( $mainbox, $index ) );
+        push( @ids, $mainbox->info( 'data', $index ) );
     }
     if ( $count >= 1 )
     {
@@ -2424,7 +2431,7 @@ sub wipe_tank
 {
 
     # Clears the holding tank
-    $tankbox->delete( 0, 'end' );
+    $tankbox->delete('all');
 }
 
 sub clear_hotkeys
@@ -2475,11 +2482,25 @@ sub clear_selected
     $status = "Selected hotkeys cleared";
 }
 
+sub return_all_indices
+{
+    my $hlist = shift;
+    my @indexes;
+    my $curr_entry = ( $hlist->info("children") )[0];
+    while ( defined $curr_entry )
+    {
+        my $data = $hlist->info( 'data', $curr_entry );
+        push( @indexes, $data );
+        $curr_entry = $hlist->info( "next", $curr_entry );
+    }
+}
+
 sub launch_tank_playlist
 {
 
     # Launch an m3u playlist from the contents of the holding tank
-    my @indices = $tankbox->get( 0, 'end' );
+
+    my @indices = return_all_indices($tankbox);
     return if ( $#indices < 0 );
     my ( $fh, $filename ) = tempfile( SUFFIX => '.m3u', UNLINK => 1 );
     print $fh "#EXTM3U\n";
@@ -2539,10 +2560,9 @@ EOF
             -command => [ \&move_tank, "1" ]
         )->pack( -side => 'right' );
         $tankbox = $holdingtank->Scrolled(
-            'Listbox',
+            'HList',
             -scrollbars => 'osoe',
             -width      => 50,
-            -setgrid    => 1,
             -selectmode => 'extended'
           )->pack(
             -fill   => 'both',
@@ -2622,10 +2642,10 @@ sub move_tank
 
 sub clear_tank
 {
-    my @selected = reverse( $tankbox->curselection() );
+    my @selected = reverse( $tankbox->info('selection') );
     foreach my $item (@selected)
     {
-        $tankbox->delete($item);
+        $tankbox->delete( 'entry', $item );
     }
 }
 
@@ -2690,18 +2710,6 @@ sub list_hotkeys
         $hotkeysbox->deiconify();
         $hotkeysbox->raise();
     }
-}
-
-sub get_song_id
-{
-
-    # This gets the current selection for the index passed in, and returns
-    # the database ID for that song.
-
-    my ( $box, $index ) = @_;
-    my $selection = $box->get($index);
-    my ($id) = split /:/, $selection;
-    return ($id);
 }
 
 sub update_time
@@ -2804,10 +2812,8 @@ sub stop_mp3
     system("$config{'mp3player'} --stop");
     $status = "Playing Stopped";
 
-    $widget->focus();
-
     # Manually give the mainbox focus
-    #    $mainbox->focus();
+    $mainbox->focus();
 }
 
 sub play_mp3
@@ -2863,8 +2869,8 @@ sub play_mp3
         }
 
         # We only care about playing one song
-        my (@selection) = $box->curselection();
-        my $id = get_song_id( $box, $selection[0] );
+        my (@selection) = $box->info('selection');
+        my $id = $box->info( 'data', $selection[0] );
         if ($id)
         {
             my $id_ref = get_info_from_id($id);
@@ -3026,7 +3032,7 @@ sub do_search
     $cattext  =~ s/^\s*(.*?)\s*$/$1/ if ($cattext);
     $status = "Starting search...";
     $mw->Busy( -recurse => 1 );
-    $mainbox->delete( 0, 'end' );
+    $mainbox->delete('all');
     my $query =
       "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.filename,mrvoice.time,mrvoice.publisher FROM mrvoice,categories WHERE mrvoice.category=categories.code ";
     $query = $query . "AND publisher != 'ASCAP' "
@@ -3072,7 +3078,7 @@ sub do_search
     while ( my $row_hashref = $sth->fetchrow_hashref )
     {
 
-        my $string = "$row_hashref->{id}:($row_hashref->{description}";
+        my $string = "($row_hashref->{description}";
         $string = $string . " - $row_hashref->{info}"
           if ( $row_hashref->{info} );
         $string = $string . ") - \"$row_hashref->{title}\"";
@@ -3081,22 +3087,28 @@ sub do_search
         $string = $string . " $row_hashref->{time}";
         $string = $string . " ($row_hashref->{publisher})"
           if ( $config{'show_publisher'} == 1 );
-        $mainbox->insert( 'end', $string );
+        $mainbox->add(
+            $row_hashref->{id},
+            -data => $row_hashref->{id},
+            -text => $string
+        );
         $numrows++;
 
         if ( !-e catfile( $config{'filepath'}, $row_hashref->{filename} ) )
         {
-            $mainbox->itemconfigure(
-                'end',
+            my $style = $mainbox->ItemStyle(
+                'text',
                 -foreground       => 'red',
                 -selectforeground => 'red'
             );
+            $mainbox->entryconfigure( $row_hashref->{id}, -style => $style, -state=>'disabled' );
             $invalid++;
         }
     }
     if ( $numrows > 0 )
     {
-        $mainbox->selectionSet(0);
+        my $curr_entry = ( $mainbox->info("children") )[0];
+        $mainbox->selectionSet($curr_entry);
     }
     $sth->finish;
     my $endtime = gettimeofday();
@@ -3395,8 +3407,8 @@ sub Hotkey_Drop
     }
     my ($fkey_var)  = @_;
     my $widget      = $current_token->parent;
-    my (@selection) = $widget->curselection();
-    my $id       = get_song_id( $widget, $selection[0] );
+    my (@selection) = $widget->info('selection');
+    my $id       = $widget->info( 'data', $selection[0] );
     my $filename = get_info_from_id($id)->{filename};
     my $title    = get_info_from_id($id)->{fulltitle};
     $fkeys{$fkey_var}->{id}       = $id;
@@ -3408,15 +3420,16 @@ sub Tank_Drop
 {
     my ($dnd_source) = @_;
     my $parent       = $dnd_source->parent;
-    my (@indices)    = $parent->curselection();
+    my (@indices)    = $parent->info('selection');
     foreach my $index (@indices)
     {
-        my $entry = $parent->get($index);
-        $tankbox->insert( 'end', $entry );
+        my $text = $parent->itemCget( $index, 0, '-text' );
+        my $id = $parent->info( 'data', $index );
+        $tankbox->add( $id, -data => $id, -text => $text );
     }
     if ( $#indices > 1 )
     {
-        $parent->selectionClear( 0, 'end' );
+        $parent->selectionClear();
     }
 }
 
@@ -4246,10 +4259,9 @@ $searchbuttonframe->Button(
 # Main display area - search results
 our $searchboxframe = $mw->Frame();
 $mainbox = $searchboxframe->Scrolled(
-    'Listbox',
+    'HList',
     -scrollbars => 'osoe',
     -width      => 100,
-    -setgrid    => 1,
     -selectmode => "extended"
   )->pack(
     -fill   => 'both',
