@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.21 2003/04/08 14:11:18 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.22 2003/08/31 19:23:02 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
@@ -13,7 +13,7 @@
       <itemizedlist>
         <listitem><para>The <ulink url= "http://www.mysql.com/">MySQL</ulink> database engine version 3.X (MySQL 4.x has not been tested).</para></listitem>
         <listitem> <para>An MP3 player.  <ulink url="http://www.winamp.com/">WinAmp</ulink> is recommended.  <emphasis>There are known issues with WinAmp Version 3.  Until they are resolved, WinAmp Version 2 is the supported release to use</emphasis></para></listitem>
-        <listitem><para>The <ulink url="http://www.lunenburg.org/mrvoice/files/">httpQ plugin</ulink> for WinAmp.  <emphasis>Optional, but recommended</emphasis></para></listitem>
+        <listitem><para>The <ulink url="http://www.kostaa.com/winamp/index.html">httpQ plugin</ulink> for WinAmp.  <emphasis>Optional, but recommended</emphasis></para></listitem>
         <listitem><para>The <ulink url="http://www.lunenburg.org/mrvoice/files/">Ogg Vorbis plugin</ulink> for WinAmp.  <emphasis>Optional, but recommended</emphasis></para></listitem>
       </itemizedlist>
       <important><para>Windows users need to have at least minimal TCP/IP networking set up for MySQL to work.</para></important>
@@ -42,10 +42,13 @@
                 <para><ulink url="http://www.cpan.org/modules/by-module/Audio/">Audio::Wav</ulink></para>
               </listitem>
               <listitem>
-                <para><ulink url="http://synthcode.com/code/vorbis/">Ogg::Vorbis</ulink></para>
+                <para><ulink url="http://www.cpan.org/modules/by-module/Ogg/">Ogg::Vorbis::Header::PurePerl</ulink></para>
               </listitem>
               <listitem>
                 <para><ulink url="http://www.cpan.org/modules/by-module/Date/">Date::Manip</ulink></para>
+              </listitem>
+              <listitem>
+                <para><ulink url="http://www.cpan.org/modules/by-module/Tk/">Tk::ProgressBar::Mac</ulink></para>
               </listitem>
             </itemizedlist>
           </para>
@@ -90,7 +93,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the buffer
 mysql> create database mrvoice;
 Query OK, 1 row affected (0.02 sec)
 
-mysql> 
+mysql> grant all on mrvoice.* to mrvoice@localhost identified by 'password';
             </screen>
           </para>
         </listitem>
@@ -113,32 +116,14 @@ mysql>
         </itemizedlist>
       </para>
       <sect3><title>Installing and Setting Up MySQL</title>
-        <itemizedlist>
-          <listitem>
-            <para>Unzip the MySQL .zip file that you downloaded to a temporary place (such as C:\mysql-temp).  Go to that directory and run the <filename>setup.exe</filename> file.  It will install into <filename>C:\mysql</filename> by default - accept that unless you have a reason to put it somewhere else.  Choose the "Typical" installation.</para>
-          </listitem>
-          <listitem>
-            <para>Run the file <filename>C:\mysql\bin\winmysqladmin.exe</filename>.  This will cause MySQL to start when Windows boots.</para>
-          </listitem>   
-          <listitem>
-            <para>set up your superuser password and create the database that you're going to use for Mr. Voice.  To do this, go to <filename>C:\mysql\bin\</filename> and run <filename>mysql.exe</filename>.  It will open a DOS window with a <prompt>MySQL></prompt> prompt.  At this prompt, enter <userinput>use mysql;</userinput>.</para>
-          </listitem>
-          <listitem>
-            <para>If that succeeds, run the command <userinput>update user set Password=password('<replaceable>YOUR_PASSWORD</replaceable>') where User='root';</userinput>.  This will set your superuser up to be username "root" with password <replaceable>YOUR_PASSWORD</replaceable>.  Run the command <userinput>flush privileges;</userinput> to have the changes take effect. <emphasis>Remember this password</emphasis> - if you lose it, you won't be able to administer your database in the future!</para>
-          </listitem>
-          <listitem>
-            <para>Run <userinput>create database <replaceable>DATABASE_NAME</replaceable>;</userinput>, where <replaceable>DATABASE_NAME</replaceable> is the name of the database that you want to house the Mr. Voice tables.  The one I use is called "comedysportz", you can pick anything.  Bear in mind that the database name can't contain spaces or other weird characters - make it alphanumeric.</para>
-	    <para>Finally, set up a normal user to access this database.  Run <userinput>grant all on <replaceable>DATABASE_NAME</replaceable>.* to <replaceable>USERNAME</replaceable>@localhost identified by '<replaceable>PASSWORD</replaceable>';</userinput>  Replacing <replaceable>USERNAME</replaceable> and <replaceable>PASSWORD</replaceable> with ones of your choosing.  Remember this username and password, they're the ones you will use when you configure Mr. Voice later.  For the purposes of this documentation, we will assume that you chose the username of "mrvoice" and password of "password" - your choices may vary.</para>
-          </listitem>
-          <listitem>
-            <para>After you've done all of these steps, enter <userinput>\q</userinput> at the <prompt>MySQL></prompt> prompt.  For more information on MySQL, read the documentation included in the .ZIP file, or visit the MySQL website.</para>
-          </listitem>
-        </itemizedlist>
+        <para>Unzip the MySQL .zip file that you downloaded to a temporary place (such as C:\mysql-temp).  Go to that directory and run the <filename>setup.exe</filename> file.  It will install into <filename>C:\mysql</filename> by default - accept that unless you have a reason to put it somewhere else.  Choose the "Typical" installation.</para>
+        <para>Navigate to <filename>C:\mysql\bin</filename> and run the file <filename>winmysqladmin.exe</filename> - this will cause MySQL to start when the computer boots.  If you don't do this, you will get database errors trying to run Mr. Voice or the install script.</para>
       </sect3>
       <sect3><title>Installing the Mr. Voice software on Windows</title>
         <para>Unzip the <filename>mrvoice-current.zip</filename> file to your desired location.  It will create a directory named <filename>mrvoice-x.x</filename> under the location that you choose.  These instructions will assume that you unzip it to <filename>C:\</filename>, creating the <filename>C:\mrvoice-x.x\</filename> directory, where x.x is the version number.</para>
-        <para>The first time you get Mr. Voice, you will need to set up the database.   With later releases, you can just unzip the new version, and skip these remaining steps.  Open a DOS prompt window, and cd to <filename>C:\mrvoice-x.x\</filename>.  Run the command: <userinput>C:\mysql\bin\mysql -u root -p <replaceable>DATABASE_NAME</replaceable> < dbinit.sql</userinput> where <replaceable>DATABASE_NAME</replaceable> is the name you set up above.  It will prompt you for a password.  Enter the root/superuser password you set up above.  If it runs the command without errors, then your database is initialized.</para>
-        <para>You will need a directory to store your MP3 files, and a directory to store your hotkey save files.  I suggest <filename>C:\MP3\</filename> for the MP3 directory and <filename>C:\mrvoice-hotkeys\</filename> for the save files, but you can pick anything.  Go ahead and create the directories now.</para>
+        <para>The first time you get Mr. Voice, you will need to set up the database.   With later releases, you can just unzip the new version, and skip these remaining steps.</para> 
+        <para>You will need a directory to store your MP3 files, and a directory to store your hotkey save files.  I suggest <filename>C:\MP3\</filename> for the MP3 directory and <filename>C:\hotkeys\</filename> for the save files, but you can pick anything.  Go ahead and create the directories now.</para>
+       <para>In the Mr. Voice directory, there will be a file named <filename>quicksetup.exe</filename>.  Double-click that file.  It will bring up a DOS window, and attempt to configure your Mr. Voice database for you.  If you see any errors during the configuration, please report them to me so I can help you debug the problems.  If there are no errors, your database should be set up properly.</para>
        <para>Finally, to actually run the software, double-click on the file <filename>mrvoice.exe</filename>.  The program should start up!  </para>
       </sect3>
     </sect2>
