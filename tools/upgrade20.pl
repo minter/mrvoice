@@ -96,6 +96,17 @@ sub read_rcfile
     if ( $^O eq "MSWin32" )
     {
         $rcfile = "C:\\mrvoice.cfg";
+
+        # You have to manually set the time zone for Windows.
+        my ( $l_min, $l_hour, $l_year, $l_yday ) =
+          ( localtime $^T )[ 1, 2, 5, 7 ];
+        my ( $g_min, $g_hour, $g_year, $g_yday ) = ( gmtime $^T )[ 1, 2, 5, 7 ];
+        my $tzval =
+          ( $l_min - $g_min ) / 60 + $l_hour - $g_hour + 24 *
+          ( $l_year <=> $g_year || $l_yday <=> $g_yday );
+        $tzval = sprintf( "%2.2d00", $tzval );
+        Date_Init("TZ=$tzval");
+
     }
     else
     {
