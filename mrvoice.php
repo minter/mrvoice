@@ -19,7 +19,7 @@
    $database_username = "USERNAME";
    $database_password = "PASSWORD";
  
-   # CVS ID: $Id: mrvoice.php,v 1.4 2001/02/21 03:06:17 minter Exp $
+   # CVS ID: $Id: mrvoice.php,v 1.5 2001/02/25 18:14:08 minter Exp $
 ?>
 
 <TITLE>Mr. Voice MP3 Database</TITLE>
@@ -116,7 +116,7 @@
   if ($action == "Search")
   {
  
-    $query = "SELECT mrvoice.title, mrvoice.artist, categories.description, mrvoice.info, mrvoice.filename,mrvoice.modtime FROM mrvoice,categories WHERE mrvoice.category=categories.code";
+    $query = "SELECT mrvoice.title, mrvoice.artist, categories.description, mrvoice.info, mrvoice.filename,mrvoice.modtime,mrvoice.id FROM mrvoice,categories WHERE mrvoice.category=categories.code";
     if ($timespan == "today")
     {
       $time = date("ymd");
@@ -160,7 +160,7 @@
     print "<P><I>The search returned " . mysql_num_rows($dbresult) . " match";
     mysql_num_rows($dbresult) != 1 ? print "es</I>\n" : print "</I>\n";
     print "<TABLE BORDER=1 CELLPADDING=3>\n";
-    print "<TR><TH>Category</TH> <TH>Extra Info</TH> <TH>Artist</TH> <TH>Title<BR>(Click to download MP3)</TH> <TH>File Size</TH> <TH>MP3<BR>Length</TH> <TH>Modified</TH></TR>\n";
+    print "<TR><TH>Category</TH> <TH>Extra Info</TH> <TH>Artist</TH> <TH>Title<BR>(Click to download MP3)</TH> <TH>File Size</TH> <TH>MP3<BR>Length</TH> <TH>Modified</TH> <TH>Edit?</TH></TR>\n";
     while ($row = mysql_fetch_array($dbresult))
     {
       print "<TR><TD>$row[2]</TD> <TD>";
@@ -193,7 +193,9 @@
       $year = substr($rawdate,0,2);
       $month = substr($rawdate,2,2);
       $day = substr($rawdate,4,2);
-      print "$month/$day/$year</TD></TR>\n";
+      print "$month/$day/$year</TD>";
+      print "<TD><A HREF=mrvoice-add.php?action=Edit&id=$row[6]>Edit</A></TD>";
+      print "</TR>\n";
     }
     print "</TABLE>\n";
      

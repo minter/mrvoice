@@ -19,7 +19,7 @@
    $database_username = "USERNAME";
    $database_password = "PASSWORD";
 
-   # CVS ID: $Id: mrvoice-add.php,v 1.3 2001/02/21 03:06:16 minter Exp $
+   # CVS ID: $Id: mrvoice-add.php,v 1.4 2001/02/25 18:14:08 minter Exp $
 ?>
 
 <TITLE>Mr. Voice MP3 Database Insertion</TITLE>
@@ -28,9 +28,6 @@
 <P>Use this form to add songs to the Mr. Voice database.
 <HR>
   
-<FORM ENCTYPE="multipart/form-data" ACTION="<? print $PHP_SELF ?>" METHOD=POST>
-<TABLE BORDER=0>
-<TR><TD>Category</TD> <TD><SELECT NAME=category>
 
 <?
   if (!($dblink = mysql_connect($database_host,$database_username,$database_password)))
@@ -43,27 +40,18 @@
     print "mysql_select_db failed\n";
   }
 
-  $query = "SELECT * FROM categories ORDER BY description";
-
-  $dbresult = mysql_query($query,$dblink);
- 
-  while ($row = mysql_fetch_array($dbresult))
+  if ($action == "Edit")
   {
-    print "<OPTION VALUE={$row[0]}>{$row[1]}\n";
+    $query = "SELECT * from mrvoice where id=$id";
+    $dbresult = mysql_query($query,$dblink);
+    $row = mysql_fetch_array($dbresult);
+    $edit_category = $row["category"];
+    $edit_artist = $row["artist"];
+    $edit_title = $row["title"];
+    $edit_info = $row["info"];
+    $edit_filename = $row["filename"];
   }
-?>
-
-</SELECT></TD></TR>
-<TR><TD>Category Extra Info.</TD> <TD><INPUT TYPE=text SIZE=25 NAME=extrainfo></TD></TR>
-<TR><TD>Artist</TD> <TD><INPUT TYPE=text SIZE=25 NAME=artist></TD></TR>
-<TR><TD>Title</TD> <TD><INPUT TYPE=text SIZE=25 NAME=title></TD></TR>
-<TR><TD>File To Upload</TD> <TD><INPUT NAME=UploadFile TYPE=file></TD></TR>
-</TABLE>
-<INPUT TYPE=submit NAME=action VALUE=Add>  
-</FORM>
-  
-<?
-  if ($action == "Add")
+  elseif ($action == "Add")
   {
     if ($UploadFile == "none")
     {
@@ -126,6 +114,33 @@
   }
 
 ?>
+
+<FORM ENCTYPE="multipart/form-data" ACTION="<? print $PHP_SELF ?>" METHOD=POST>
+<TABLE BORDER=0>
+<TR><TD>Category</TD> <TD><SELECT NAME=category>
+<?
+  $query = "SELECT * FROM categories ORDER BY description";
+
+  $dbresult = mysql_query($query,$dblink);
+ 
+  while ($row = mysql_fetch_array($dbresult))
+  {
+    print "<OPTION VALUE={$row[0]} "
+    print "SELECTED" if ($row[0] = $edit_category);
+    print ">{$row[1]}\n";
+  }
+?>
+
+</SELECT></TD></TR>
+<TR><TD>Category Extra Info.</TD> <TD><INPUT TYPE=text SIZE=25 NAME=extrainfo VALUE='<? print $edit_info ?>'></TD></TR>
+<TR><TD>Artist</TD> <TD><INPUT TYPE=text SIZE=25 NAME=artist VALUE='<? print $edit_artist ?>'></TD></TR>
+<TR><TD>Title</TD> <TD><INPUT TYPE=text SIZE=25 NAME=title VALUE='<? print $edit-title ?>'></TD></TR>
+<TR><TD>File To Upload</TD> <TD><INPUT NAME=UploadFile TYPE=file VALUE='<? print $edit_filename ?>'></TD></TR>
+<? print "<INPUT TYPE=HIDDEN NAME=id VALUE=$id>\n" if ($action == "Edit") ?>
+</TABLE>
+<INPUT TYPE=submit NAME=action VALUE=Add>  
+</FORM>
+  
 
 <HR>
 <I>Designed by <a href=http://www.lunenburg.org/>H. Wade Minter</A> &lt<a href="mailto:minter@lunenburg.org">minter@lunenburg.org</A>&gt.
