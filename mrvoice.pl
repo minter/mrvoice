@@ -2327,7 +2327,10 @@ sub delete_song
                 if ( $delete_file_cb == 1 )
                 {
                     my $file = catfile( $config{'filepath'}, $filename );
-                    unlink("$file");
+                    if ( -e $file )
+                    {
+                        unlink("$file");
+                    }
                 }
                 $status = "Deleted $count songs";
             }
