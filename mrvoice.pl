@@ -15,8 +15,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/09/13 19:25:49 $
-#	CVS REVISION NUMBER:    $Revision: 1.41 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/09/19 01:28:14 $
+#	CVS REVISION NUMBER:    $Revision: 1.42 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -53,7 +53,7 @@ $savefile_max = 4;			# The maximum number of files to
 
 #####
 
-my $version = "1.1";			# Program version
+my $version = "1.1.1";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
 
 $filepath = "$filepath/" unless ($filepath =~ "/.*\/$/");
@@ -539,6 +539,7 @@ sub show_about
 
 sub clear_hotkeys
 {
+  backup_hotkeys();
   $f1="";
   $f2="";
   $f3="";
