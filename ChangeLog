@@ -1,3 +1,6 @@
+Tue  Apr  5 2005	H. Wade Minter (minter@lunenburg.org)
+     * Hardcode Tk::DragDrop::Win32Site in the module list.
+
 Fri  Mar 25 2005	H. Wade Minter (minter@lunenburg.org)
      * Fixed a bug in reporting during the local online comparison.
 
