@@ -1,4 +1,5 @@
 Mon  Sep  1 2003	H. Wade Minter (minter@lunenburg.org)
+     * Added the Windows Icon and logo files to CVS.
      * Tagged Release Version 1.9
 
 Mon  Aug  4 2003	H. Wade Minter (minter@lunenburg.org)
@@ -483,4 +484,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.98 2003/09/01 20:29:44 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.99 2003/09/01 20:42:40 minter Exp $
