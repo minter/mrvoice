@@ -1,3 +1,7 @@
+Thu  Jul 24 2003	H. Wade Minter (minter@lunenburg.org)
+     * Added a hotkey lock (Bugzilla ID #17)
+     * Nicer icons for the Holding Tank up/down.
+
 Wed  Jul 23 2003	H. Wade Minter (minter@lunenburg.org)
      * Basic Up/Down functionality in the Holding Tank.
 
@@ -459,4 +463,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.91 2003/07/23 20:47:07 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.92 2003/07/24 19:28:29 minter Exp $
