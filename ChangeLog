@@ -1,3 +1,11 @@
+Sat  Oct  2  2004	H. Wade Minter (minter@lunenburg.org)
+     * Nicer output from cpancheck.pl
+     * Merge changes from trunk - 847:850
+
+Sat  Sep 25  2004	H. Wade Minter (minter@lunenburg.org)
+     * Fixed a bug that prevented the holding tank from launching playlists.
+     * Released Version 2.0.1 with this bugfix.
+
 Fri  Sep 24  2004	H. Wade Minter (minter@lunenburg.org)
      * Finished updating documentation.
      * Released Version 2.0!
