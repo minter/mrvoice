@@ -73,6 +73,7 @@ our %fkeys_cb;         # The checkboxes in the Hotkeys box
 our @current;          # Array holding the dynamic documents
 our $mp3_pid;          # The Process ID of the MP3 player
 our $hotkeysbox;       # The hotkey display Toplevel
+our $onlinewin;        # The online search display Toplevel
 our $tank_token;       # The Holding Tank D&D Token
 our $dnd_token;        # The main Search Box D&D Token
 our $current_token;    # Global holding the current D&D Token
@@ -3907,6 +3908,103 @@ sub do_exit
     }
 }
 
+sub search_online
+{
+    print "My arguments are @_\n";
+    my $win = shift;
+    my $term = shift or return;
+    my $xmlrpc;
+    unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
+    {
+        $status = "Could not initialize XMLRPC";
+        return;
+    }
+
+    my $search_call = $xmlrpc->call(
+        'search_songs',
+        {
+            online_key  => $config{online_key},
+            search_term => $term,
+        }
+    );
+
+    if ( !$search_call->result )
+    {
+        chomp( my $error = $search_call->faultstring );
+        infobox( $mw, "XMLRPC search error", $error );
+        $status = "XMLRPC search error";
+        return;
+    }
+
+}
+
+sub online_search_window
+{
+
+    my $onlinebox;
+    my $online_search_term;
+    if ( !Exists($onlinewin) )
+    {
+        print "The online search window does not exist, so we create it\n"
+          if $debug;
+        print "Creating toplevel\n" if $debug;
+        $onlinewin = $mw->Toplevel();
+        $onlinewin->withdraw();
+        $onlinewin->Icon( -image => $icon );
+        bind_hotkeys($onlinewin);
+
+        my $searchframe =
+          $onlinewin->Frame()
+          ->pack( -expand => 1, -fill => 'x', -side => 'top' );
+        $searchframe->Label( -text => 'Search any field for ' )
+          ->pack( -side => 'left' );
+        $searchframe->Entry(
+            -background   => 'white',
+            -textvariable => \$online_search_term
+        )->pack( -side => 'left' );
+
+        $onlinebox = $onlinewin->Scrolled(
+            'HList',
+            -scrollbars       => 'osoe',
+            -background       => 'white',
+            -selectbackground => 'navy',
+            -selectforeground => 'white',
+            -width            => 100,
+            -selectmode       => "extended"
+          )->pack(
+            -fill   => 'both',
+            -expand => 1,
+            -side   => 'bottom'
+          );
+
+        $onlinewin->Button(
+            -text    => 'Search Online',
+            -cursor  => 'question_arrow',
+            -command => sub {
+                search_online( $onlinebox, $online_search_term );
+                $online_search_term = undef;
+            }
+        )->pack( -side => 'top' );
+
+        my $buttonframe =
+          $onlinewin->Frame()
+          ->pack( -fill => 'x', -expand => 1, -side => 'bottom' );
+
+        $onlinewin->update();
+        $onlinewin->deiconify();
+        $onlinewin->raise();
+
+    }
+    else
+    {
+        print "Hotkeys window exists, so deiconify and raise..." if $debug;
+        $onlinewin->deiconify();
+        $onlinewin->raise();
+        print "Done\n" if $debug;
+    }
+
+}
+
 sub upload_xmlrpc
 {
     my @selection = $mainbox->info('selection');
@@ -3961,7 +4059,7 @@ sub upload_xmlrpc
     if ( !$check_call->result )
     {
         chomp( my $error = $check_call->faultstring );
-        infobox($mw,"XMLRPC upload check error", $error);
+        infobox( $mw, "XMLRPC upload check error", $error );
         $status = "XMLRPC upload check error";
         return;
     }
@@ -3991,7 +4089,7 @@ sub upload_xmlrpc
     else
     {
         chomp( my $error = $call->faultstring );
-        infobox($mw,"XMLRPC upload error", $error);
+        infobox( $mw, "XMLRPC upload error", $error );
         $status = "XMLRPC upload error";
         return;
     }
@@ -4611,6 +4709,14 @@ $advancedmenu = $menubar->cascade(
     -tearoff   => 0,
     -menuitems => advancedmenu_items
 );
+
+$menubar->entrycget( 'Advanced Search', -menu )->add(
+    'command',
+    -label   => 'Search Mr. Voice Online',
+    -command => \&online_search_window
+  )
+  if $config{enable_online};
+
 $helpmenu = $menubar->cascade(
     -label     => 'Help',
     -tearoff   => 0,
