@@ -210,7 +210,7 @@ else
     {
         if ( $^O eq "darwin" )
         {
-            require Mac::Applescript;
+            require Mac::AppleScript;
             Mac::AppleScript->import('RunAppleScript');
         }
     }
@@ -2844,7 +2844,7 @@ sub show_about
         qw/LWP::UserAgent HTTP::Request Win32::Process Win32::FileOp Audio::WMA/
       )
       if ( $^O eq "MSWin32" );
-    push( @modules, "Mac::Applescript" ) if ( $^O eq "darwin" );
+    push( @modules, "Mac::AppleScript" ) if ( $^O eq "darwin" );
 
     print "Showing about box\n" if $debug;
     my $rev = '$LastChangedRevision$';
