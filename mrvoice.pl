@@ -234,7 +234,7 @@ else
 
 #####
 
-my $version = "2.0.3";    # Program version
+my $version = "2.0.4";    # Program version
 our $status = "Welcome to Mr. Voice version $version";
 
 sub get_rows
@@ -3649,12 +3649,13 @@ sub do_search
         my $date;
         if ( $span eq "0" )
         {
-            $date = DateTime->now;
+            $date = ParseDate("today midnight");
         }
         else
         {
-            $date = DateCalc( "today", "- $span" );
+            $date = DateCalc( "today midnight", "- $span" );
         }
+        print "Date is $date\n" if $debug;
         $datestring = UnixDate( $date, "%s" );
         print "Datestring is $datestring\n" if $debug;
 
