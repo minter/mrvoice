@@ -1,3 +1,8 @@
+Fri  Sep 3  2004	H. Wade Minter (minter@lunenburg.org)
+     * Give up on having the 2.0 updater in Perl/Tk and get it working
+       via the console.
+     * Begin documentation update for 2.0.
+
 Wed  May 26 2004	H. Wade Minter (minter@lunenburg.org)
      * Switch from DBD::MySQL to DBD::SQLite
      * Move database schema into the __DATA__ block of mrvoice.pl
