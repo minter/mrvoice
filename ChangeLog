@@ -1,3 +1,7 @@
+Sun  Apr 25 2004	H. Wade Minter (minter@lunenburg.org)
+     * Tightened up some Fkey code - I had way too many repeated lines
+       in there.
+
 Fri  Apr 23 2004	H. Wade Minter (minter@lunenburg.org)
      * Mr. Voice now compiles under "use strict" - I rock.
 
@@ -639,4 +643,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.135 2004/04/23 23:57:16 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.136 2004/04/26 01:57:30 minter Exp $
