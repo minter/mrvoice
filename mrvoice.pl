@@ -1966,7 +1966,7 @@ sub accept_songdrop
 
     if ( defined $string_dropped )
     {
-        print "Dropped file $string_dropped\n";
+        $string_dropped =~ s/^file:// if ( $^O ne "MSWin32" );
         if ( ( -f $string_dropped ) && ( -r $string_dropped ) )
         {
             $string_dropped = Win32::GetShortPathName($string_dropped)
