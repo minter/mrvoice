@@ -1,8 +1,8 @@
 Things I'm currently working on:
 
-* Allow saving/loading of hotkeys.
 * Fix it so hotkeys work when non-main menus are active.
 * General cleanup and pretty-fication.
+* Move the add/remove categories/songs from PHP to within the program.
 
 --
-CVS ID: $Id: TODO,v 1.4 2001/02/26 00:40:35 minter Exp $
+CVS ID: $Id: TODO,v 1.5 2001/03/04 00:29:36 minter Exp $
