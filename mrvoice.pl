@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.156 2002/10/17 14:47:29 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.157 2002/10/17 16:34:21 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -708,6 +708,7 @@ sub add_new_song
   while ($continue != 1)
   {
     $box = $mw->DialogBox(-title=>"Add New Song", -buttons=>["OK","Cancel"]);
+    $box->bind("<Key-Escape>", [\&stop_mp3]);
     $box->Icon(-image=>$icon);
     $box->add("Label",-text=>"Enter the following information for the new song,\nand choose the file to add.")->pack();
     $box->add("Label",-text=>"Items in red are required.\n")->pack();
@@ -752,8 +753,12 @@ sub add_new_song
       $addsong_filename = $mw->getOpenFile(-title=>'Select File',
                                            -filetypes=>$mp3types);
                                   })->pack(-side=>'right');
-    $frame5->Entry(-width=>30,
+    $songentry = $frame5->Entry(-width=>30,
                    -textvariable=>\$addsong_filename)->pack(-side=>'right');
+    $frame7 = $box->add("Frame")->pack(-fill=>'x');
+    $frame7->Button(-text=>"Preview song",
+#                    -command=>[\&play_mp3, "addsong", $songentry->cget(-textvariable)])->pack(-side=>'right');
+                    -command=> sub {  my $tmpsong = $songentry->cget(-textvariable); play_mp3("addsong",$$tmpsong);})->pack(-side=>'right');
 
     $result = $box->Show();
   
@@ -1052,7 +1057,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.156 $';
+  $rev = '$Revision: 1.157 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -1431,6 +1436,13 @@ sub play_mp3
   #  elsif ($_[1] eq "ALT-G") { $filename = $altg; }
   #  elsif ($_[1] eq "ALT-V") { $filename = $altv; }
   #ENDCSZ
+  }
+  elsif ($_[0] eq "addsong")
+  {
+    # if we're playin from the "add new song dialog, the full path
+    # will already be set.
+    $filepath="";
+    $filename = $_[1];
   }
   else
   {
