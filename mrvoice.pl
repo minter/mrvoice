@@ -35,7 +35,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.323 2004/03/04 12:28:05 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.324 2004/03/04 14:37:30 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2155,7 +2155,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.323 $';
+    my $rev = '$Revision: 1.324 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -2411,6 +2411,7 @@ EOF
         $tankbox->bind( "<Double-Button-1>", \&play_mp3 );
 
         #  $tankbox->bind("<Control-Key-p>", [\&play_mp3, "Holding"]);
+	$tankbox->bind( "<Button-1>", sub { $tankbox->focus(); } );
         &BindMouseWheel($tankbox);
         my $playbutton = $buttonframe->Button(
             -text    => "Play Now",
@@ -3052,6 +3053,7 @@ sub do_search
         $status .= "($diff seconds elapsed)";
     }
     $mainbox->update();
+    $mainbox->focus();
 }
 
 sub return_longcat
@@ -4073,6 +4075,7 @@ $mainbox        = $searchboxframe->Scrolled(
     -side   => 'top'
   );
 $mainbox->bind( "<Double-Button-1>", \&play_mp3 );
+$mainbox->bind( "<Button-1>", sub { $mainbox->focus(); } );
 
 $mainbox->bind( "<Button-3>", [ \&rightclick_menu ] );
 
