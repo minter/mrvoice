@@ -9,6 +9,7 @@ II.   Required Components
 III.  Installing
 IV.   Configuration
   A. Configuring mrvoice.pl
+    1. The .mrvoicerc file
   B. Configuring the PHP frontend
 V.    Populating the database
   A. The Easy Way
@@ -102,6 +103,15 @@ IV.  CONFIGURING:
         $savepath - This will be the default directory that hotkey save files
                     will go into.  The user you're running the program as must
                     have write permission into that directory.
+
+       1. THE .MRVOICERC FILE
+         If the file ".mrvoicerc" exists in your home directory, any variables
+         that you define in that file will override the ones in the mrvoice.pl
+         script itself.  The variables take the form:
+           variable_name::value
+         so, for example, to define a $savepath of /tmp/ in the .mrvoicerc
+         file, you would include the line:
+           savepath::/tmp/
 
      B. CONFIGURING THE PHP FRONTEND:
         To configure the PHP frontend, edit the file mrvoice.php.  At the 
@@ -238,6 +248,11 @@ VII.  CONTRIBUTING:
       If you make a cool modification to this program, feel free to send a 
       diff to me, and I'll incorporate it into the main body of the program.
 
+      Considering I'm probably the only person using this program, if you
+      even USE this software, feel free to send me an email and let me 
+      know that you've found it useful.  Otherwise, I'm just talking to
+      myself.  :-)
+
 VIII. REPORTING BUGS:
       Feel free to report any bugs, feature requests, etc. to me at 
       minter@lunenburg.org.  As this is a specific-purpose project, there's no
@@ -246,4 +261,4 @@ VIII. REPORTING BUGS:
 
 --------------------------------------------------------------------------
 
-CVS ID: $Id: README,v 1.12 2001/03/07 23:15:24 minter Exp $
+CVS ID: $Id: README,v 1.13 2001/05/08 22:37:56 minter Exp $
