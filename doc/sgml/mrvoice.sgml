@@ -5,12 +5,12 @@
   <!ENTITY epilogue SYSTEM "troubleshooting.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.33 2002/08/15 01:56:29 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.34 2002/12/11 22:13:42 minter Exp $ 
 -->
 <book status="draft">
 
 <bookinfo>
-  <title>Mr. Voice 1.6 Installation and Reference Manual</title>
+  <title>Mr. Voice 1.7 Installation and Reference Manual</title>
   <author>
     <firstname>H. Wade</firstname><surname>Minter</surname>
     <affiliation>
@@ -22,7 +22,7 @@
 
 <dedication><title>Acknowledgements</title>
   <para>Thanks to my wife, Holly, for encouragement and editorial help.</para>
-  <para>Thanks to all of the voices at <ulink url="http://www.comedyworx.com/">ComedyWorx-Raleigh</ulink>, including (but not limited to) Jack Spencer, Larry Howard, Sam Adams, Bobby Rathbone, Ross White, Leo DiNapoli, Jason Matthews, and Bryan Cronk, for testing and feedback.</para>
+  <para>Thanks to all of the voices at <ulink url="http://www.comedyworx.com/">ComedyWorx-Raleigh</ulink>, including (but not limited to) Jack Spencer, Larry Howard, Sam Adams, Bobby Rathbone, Ross White, Leo DiNapoli, Jason Matthews, and Bryan Cronk, as well as users in other cities, such as Kasey Christie, Randy Tennison, Bill Cernansky, Eric Wood, and Randy Tayler for testing and feedback.</para>
   <para>Thanks to the ownership and players of <ulink url="http://www.comedyworx.com/">ComedyWorx</ulink> for giving me such a fun place to be a goofball for the past couple of years.</para>
   <para>Thanks to the authors and publishers, and contributors of the following books and newsgroups, without which none of this would have gotten done:
     <itemizedlist>
@@ -36,9 +36,11 @@
   </para>
   <para>The following people and groups who have been willing to actually run this software!
     <itemizedlist>
-      <listitem><para>Kasey Christie at <ulink url="http://www.spocomedy.com/">SpoComedy</ulink> (Spokane, WA)</para></listitem>
-      <listitem><para>Patrick Short at <ulink url="http://www.comedysportz.com/portland/">ComedySportz</ulink> (Portland, OR)</para></listitem>
-      <listitem><para>Randy Tennison at <ulink url="http://www.comedycity.cc/">ComedyCity</ulink> (Kansas City, MO)</para></listitem>
+      <listitem><para><ulink url="http://www.spocomedy.com/">SpoComedy</ulink> (Spokane, WA)</para></listitem>
+      <listitem><para><ulink url="http://www.comedysportz.com/portland/">ComedySportz</ulink> (Portland, OR)</para></listitem>
+      <listitem><para><ulink url="http://www.comedycity.cc/">ComedyCity</ulink> (Kansas City, MO)</para></listitem>
+      <listitem><para><ulink url="http://www.comedysportzla.pair.com/">ComedySportz</ulink> (Los Angeles, CA)</para></listitem>
+      <listitem><para><ulink url="http://www.comedysportzutah.com/">ComedySportz</ulink> (Provo, UT)</para></listitem>
     </itemizedlist>
   </para>
   <para>And thanks to the Open Source and Free Software movements, letting people write software that doesn't suck!</para>
@@ -57,6 +59,22 @@
 <preface>
   <title>What's New</title>
   <para>A quick reference to what's changed between versions.</para>
+  <sect1><title>What's new in Version 1.7</title>
+    <para>
+      <itemizedlist>
+        <listitem><para>The length of a song is now stored in the database, to greatly speed up search times.  If you edit or replace the raw MP3/OGG/WAV file without deleting and re-adding the song, you will need to run the Update Song Times function from the Songs menu.</para></listitem>
+        <listitem><para>With that change, the database structure has also changed.  The first time you run version 1.7, Mr. Voice will detect the change and update your database automatically.  This should only happen once.</para></listitem>
+        <listitem><para>Added support for Winamp/XMMS playlist files (files with .pls or .m3u suffixes)</para></listitem>
+        <listitem><para>Added a "preview song" feature to the Add New Song window</para></listitem>
+        <listitem><para>If the file you select in the Add New Song window has valid ID3/OGG information on title and artist, those fields will be filled in automatically (So select your file before entering the title and artist)</para></listitem>
+        <listitem><para>Added Alt-key accelerators for the main menu items (ie. <keycombo action='simul'> <keycap>Alt</keycap> <keycap>F</keycap> </keycombo> will get you the File menu)</para></listitem>
+        <listitem><para>The first result returned by a search is now active, so you can press <keycombo action='simul'> <keycap>Control</keycap> <keycap>P</keycap> </keycombo> to start playing quickly.</para></listitem>
+        <listitem><para>When you open a saved hotkey file, the Hotkeys window will display automatically.</para></listitem>
+        <listitem><para>Added Dump/Restore Database options to the File menu.  You can use these to take backups of your database, or to import a prior backup.</para></listitem>
+        <listitem><para>Drag-And-Drop now displays an icon instead of the song name, to band-aid over a problem with the incorrect song name being displayed.</para></listitem>
+      </itemizedlist>
+    </para>
+  </sect1>
   <sect1><title>What's new in Version 1.6</title>
     <para>
       <itemizedlist>
@@ -92,21 +110,6 @@
       </itemizedlist>
     </para>
   </sect1>
-  <sect1><title>What's New In Version 1.4</title>
-    <para>
-      <itemizedlist>
-        <listitem><para>There are now keyboard shortcuts to open (<keycombo action='simul'><keycap>Control</keycap> <keycap>O</keycap></keycombo>) or save (<keycombo action='simul'><keycap>Control</keycap> <keycap>S</keycap></keycombo>) hotkey files, exit Mr. Voice (<keycombo action='simul'><keycap>Control</keycap> <keycap>X</keycap></keycombo>), and open the Hotkeys listing (<keycombo action='simul'><keycap>Control</keycap> <keycap>H</keycap></keycombo>).</para></listitem>
-        <listitem><para>The <guimenu>Recent Files</guimenu> menu is now a sub-menu off of the <guimenu>File</guimenu> menu, instead of just hanging off the end of <guimenu>File</guimenu>.</para></listitem>
-        <listitem><para>Exiting Mr. Voice now also closes the MP3 player.</para></listitem>
-	<listitem><para>There is a "holding tank" to store songs for later use.</para></listitem>
-	<listitem><para>Mr. Voice is friendler to audio file formats other than MP3.  You can use WAV files, OGG files, etc.</para></listitem>
-	<listitem><para>The HTML documentaion now builds both multi-page (with a main page of <filename>index.html</filename>) and single-page formats (with a main page of <filename>mrvoice.html</filename>)</para></listitem>
-	<listitem><para>The search fields in the main window now have arrow selectors to the right of each box.  You can use these selectors to pop up a list of things you have entered into that search box.</para></listitem>
-	<listitem><para>Minor changes to the menu bar at the top of the page - should provide a more native look-and-feel now.</para></listitem>
-	<listitem><para>Took a first stab at creating an icon for the project.  It's not pretty, but it's something.</para></listitem>
-      </itemizedlist>
-    </para>
-  </sect1>
 </preface>
 
 &chapter1
@@ -118,12 +121,7 @@
 &epilogue
 
 <appendix><title>Known Bugs and Issues</title>
-  <para>The following items are known as bugs that need to be fixed and/or enhancements that should be made:
-    <itemizedlist>
-      <listitem><para>The Holding Tank is still very gimpy - more work is needed to figure out how to best use it.</para></listitem>
-      <listitem><para>Display database-based information in the Hotkeys listing, instead of just the MP3 filename.</para></listitem>
-      <listitem><para>Drag-And-Drop between the Hotkeys listing and the Holding Tank.
-</para></listitem>
+  <para>Check the <ulink url="http://www.lunenburg.org/bugzilla/">Mr. Voice Bugzilla</ulink> database for outstanding issues.</para></listitem>
     </itemizedlist>
   </para>
 </appendix>
