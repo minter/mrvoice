@@ -45,7 +45,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.291 2003/12/31 19:57:14 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.292 2003/12/31 20:00:27 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1812,8 +1812,7 @@ sub edit_preferences
 	                  -textvariable=>\$config{'savedir'})->pack(-side=>'right');
 
   my $display_page = $search_page->Frame(-relief=>'groove',-bd=>1)->pack(-fill=>'x');
-  $display_page->Label(-text=>'Display publisher in search results?')->pack(-side=>'left');
-  $display_page->Checkbutton(-variable=>\$config{'show_publisher'})->pack(-side=>'left');
+  $display_page->Checkbutton(-text=>'Display publisher in search results?',-variable=>\$config{'show_publisher'})->pack(-side=>'left');
   $search_page->Label(-text=>'Allow searches of music published by:')->pack(-side=>'top');
   my $checkbox_frame = $search_page->Frame()->pack(-fill=>'x');
   $checkbox_frame->Checkbutton(-text=>'ASCAP',-variable=>\$config{'search_ascap'})->pack(-side=>'left',-expand=>1);
@@ -2155,7 +2154,7 @@ sub show_docs
   
 sub show_about
 {
-  $rev = '$Revision: 1.291 $';
+  $rev = '$Revision: 1.292 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
