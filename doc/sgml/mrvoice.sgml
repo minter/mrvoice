@@ -4,7 +4,7 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.12 2001/09/28 00:23:55 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.13 2001/10/29 16:29:22 minter Exp $ 
 -->
 <book status="draft">
 
@@ -16,7 +16,7 @@
       <address><email>minter@lunenburg.org</email></address>
     </affiliation>
   </author>
-  <edition>User's Guide for Mr. Voice Version 1.2</edition>
+  <edition>User's Guide for Mr. Voice Version 1.3</edition>
   <copyright><year>2001</year><holder>H. Wade Minter</holder></copyright>
 </bookinfo>
 
@@ -44,6 +44,26 @@
   <para>And so it goes.  Because this was written for such a specific purpose, I have my doubts whether anyone else will find it useful.  But it's out there, and if you're taking the time to read this, I hope you'll get something out of it!</para>
 </preface>
 
+<preface>
+  <title>What's New</title>
+  <para>A quick reference to what's changed between versions.</para>
+  <sect1>
+    <title>What's New In Version 1.3</title>
+    <para>
+      <itemizedlist>
+        <listitem><para>There is now a Preferences option under the <guimenu>File</guimenu> menu, where you can set up most configurable options for Mr. Voice.  This is now the preferred way to set up Mr. Voice.  You should <emphasis>NOT</emphasis> need to edit variables directly in <filename>mrvoice.pl</filename> any more.</para></listitem>
+	<listitem><para>Right-clicking on a song within the search results box will give you a quick-options menu, where you can choose to play, edit, or delete the selected song.</para></listitem>
+	<listitem><para>The Show Hotkeys box now displays the hotkey name and attached song in a side-by-side listing, intead of having the hotkey name above the song.  Suggested by K. Christie.</para></listitem>
+	<listitem><para>The <guibutton>Play</guibutton> button is now green, and the <guibutton>Stop</guibutton> button is now red.  Suggested by K. Christie.</para></listitem>
+	<listitem><para>You can now drag-and-drop songs from the search results box to the Show Hotkeys box, and have them assigned to a hotkey that way.  Suggested by L. Howard.</para></listitem>
+	<listitem><para>Windows pathnames can now be specified in "long form" (ie. C:\Program Files\My Files\Filename) - Mr. Voice figures out the short pathname automatically.</para></listitem>
+	<listitem><para>The category listing menu in the search box now has a lable to show you which category you've selected.  Suggested by K. Christie.</para></listitem>
+	<listitem><para>You can now set the number of items to keep on the "Dynamic Documents" list under the <guimenu>File</guimenu> menu with the Preferences option.</para></listitem>
+      </itemizedlist>
+    </para>
+  </sect1>
+</preface>
+
 &chapter1
 
 &chapter2
@@ -53,8 +73,6 @@
 <appendix><title>Known Bugs and Issues</title>
   <para>The following items are known as bugs that need to be fixed and/or enhancements that should be made:
     <itemizedlist>
-<listitem><para>On Windows, if things aren't working right, double-check to make sure that you are using the "\" character to separate the path, and also that you are using the "short-form" for the path to your MP3 player.  The short form means that there can be no spaces in the path name, so <filename>C:\progra~1\winamp\winamp.exe</filename> is good, but <filename>C:\program files\winamp\winamp.exe</filename> is bad.  If you need help, run <command>dir /x</command> to see the short names.</para></listitem>
-      <listitem><para>Hotkeys will not work unless the main Mr. Voice window is selected and active.  The desired behavior is that hotkeys will work if <emphasis>any</emphasis> Mr. Voice window is selected</para></listitem>
       <listitem><para>The "last files accessed" menu should be smarter about recognizing if files that are already on the list are being accessed.  Right now, it'll just add another listing for the same file on the bottom of the list.</para></listitem>
       <listitem><para>The file-selector box for Unix ignores the <varname>$savedir</varname> variable, putting you in / instead.  This is a bug with Perl/Tk and will be fixed in Tk800.024.</para></listitem>
     </itemizedlist>
