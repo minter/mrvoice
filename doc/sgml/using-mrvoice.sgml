@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: using-mrvoice.sgml,v 1.13 2001/12/03 17:23:17 minter Exp $
+  CVS ID: $Id: using-mrvoice.sgml,v 1.14 2001/12/03 21:17:47 minter Exp $
 -->
 
 <chapter><title>Using Mr. Voice</title>
@@ -30,7 +30,21 @@
       <note>
         <para>After you add the category, you will get a note that you need to restart Mr. Voice before the new categories will be available.  This should hopefully be fixed in later releases.</para>
       </note>
-      <para>To delete a category, choose <menuchoice> <guimenu>Categories</guimenu> <guimenuitem>Delete Category</guimenuitem> </menuchoice>.  A box will pop up listing all of your defined categories.  You can choose the button next to the category that you would like to delete, then press <guibutton>Ok</guibutton> to delete the category. <screenshot> <graphic fileref="../images/delcat.jpg" scale="75"> </screenshot> </para>
+      <para>To delete a category, choose <menuchoice> <guimenu>Categories</guimenu> <guimenuitem>Delete Category</guimenuitem> </menuchoice>.  A box will pop up listing all of your defined categories.  You can choose the button next to the category that you would like to delete, then press <guibutton>Ok</guibutton> to delete the category. 
+        <figure>
+	  <title>The Delete Category window</title>
+	  <mediaobject>
+	    <imageobject>
+	      <imagedata fileref="../images/delcat.jpg" format="jpg">
+	    </imageobject>
+	    <imageobject>
+	      <imagedata fileref="../images/delcat.eps" format="eps">
+	    </imageobject>
+	    <textobject>
+	      <phrase>Screenshot of the Delete Category window</phrase>
+	    </textobject>
+	  </mediaobject>
+	</figure></para>
       <important>
         <para>You cannot delete a category if it still has songs in it.  Delete/edit all songs out of the category before trying to delete it.</para>
       </important>
@@ -38,18 +52,62 @@
 
     <sect2><title>Songs</title>
       <para>Songs are the MP3 audio data that you're trying to play.  If you're not trying to store, categorize, and play audio data, then you're probably using the wrong program!  This manual will refer to the audio data that you are storing as "songs", even though they can be any kind of audio.  To manipulate songs in the database, there are three main actions: adding songs, deleting songs, and editing songs.</para>
-      <para>To insert a new song into the database, choose <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Add New Song</guimenuitem> </menuchoice>.  A box will pop up for the needed information: <screenshot> <graphic fileref="../images/addsong.jpg" scale="75"> </screenshot></para>
+      <para>To insert a new song into the database, choose <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Add New Song</guimenuitem> </menuchoice>.  A box will pop up for the needed information: 
+        <figure>
+	  <title>The Add Song window</title>
+	  <mediaobject>
+	    <imageobject>
+	      <imagedata fileref="../images/addsong.jpg" format="jpg">
+	    </imageobject>
+	    <imageobject>
+	      <imagedata fileref="../images/addsong.eps" format="eps">
+	    </imageobject>
+	    <textobject>
+	      <phrase>Screenshot of the Add Song window</phrase>
+	    </textobject>
+	  </mediaobject>
+	</figure></para>
       <itemizedlist>
         <listitem><para><guilabel>Song Title</guilabel>: This is where you put the title of the song that you are adding.</para></listitem>
         <listitem><para><guilabel>Artist</guilabel>: The artist responsible for the song.  This is an <emphasis>optional</emphasis> item.</para></listitem>
         <listitem><para><guilabel>Category</guilabel>:  Pressing the <guilabel>Choose Category</guilabel> button beside this entry will give you a list of the categories that you currently have defined.  You must choose one of these categories to place the song into.</para></listitem>
         <listitem><para><guilabel>Category Extra Info</guilabel>: Kind of a "hodgepodge" entry, this information can be whatever you want.  At ComedyWorx, we use it as a modifier for the category.  So if the category is "Game", the Extra Info is the name of the game.  If the category is for Player Intros, the Extra Info will tell us whether it's specifically for a referee, dimwit, or whatnot.  So, basically it's just free-form for whatever you need, and is an <emphasis>optional</emphasis> field.</para></listitem>
-        <listitem><para><guilabel>File To Add</guilabel>:  This is where you give Mr. Voice the path to the actual MP3 file that you want to add.  Clicking the <guibutton>Select File</guibutton> button will bring up a familiar "file chooser" box.  <screenshot> <graphic fileref="../images/addsong-files.jpg" scale="75"> </screenshot> Use this to go to the location of your file, left-click on the name of the file, then click <guibutton>Open</guibutton>.  The name of the file should now be listed in the <guilabel>File To Add</guilabel> box.</para></listitem>
+        <listitem><para><guilabel>File To Add</guilabel>:  This is where you give Mr. Voice the path to the actual MP3 file that you want to add.  Clicking the <guibutton>Select File</guibutton> button will bring up a familiar "file chooser" box.  
+        <figure>
+	  <title>The Add Song File Selection window</title>
+	  <mediaobject>
+	    <imageobject>
+	      <imagedata fileref="../images/addsong-files.jpg" format="jpg">
+	    </imageobject>
+	    <imageobject>
+	      <imagedata fileref="../images/addsong-files.eps" format="eps">
+	    </imageobject>
+	    <textobject>
+	      <phrase>Screenshot of the Add Song File Selection window</phrase>
+	    </textobject>
+	  </mediaobject>
+	</figure>
+	Use this to go to the location of your file, left-click on the name of the file, then click <guibutton>Open</guibutton>.  The name of the file should now be listed in the <guilabel>File To Add</guilabel> box.</para></listitem>
       </itemizedlist> 
       <para>You can now press the <guibutton>Ok</guibutton> button to add the song.  If all goes well, you should see a message that the file was added to the database.  If not, Mr. Voice should tell you what went wrong.</para>
       <note><para>Mr. Voice actually makes a copy of the file that you select, renames it to a standard form, and places the new copy in the location given by the <varname>$filepath</varname> variable that you defined in the setup.  Your original MP3 file is not used after the copy is made.</para></note>
       <para>To delete a song, you must have one displayed and selected in the main search results box.  Searching is covered later, but if you hit the <guibutton>Do Search</guibutton> button, it should show you all of the songs in your database.</para>
-      <para>Once you have some songs displayed, left-click once on the name of the song that you want to delete, then choose <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Delete Currently Selected Song</guimenuitem> </menuchoice>.  You can also right-click on the name of the song and choose the <guimenuitem>Delete Song</guimenuitem> option.  A box will pop up asking you to confirm the deletion, and also presenting a checkbox labeled <guilabel>Delete File On Disk</guilabel>.   <screenshot> <graphic fileref="../images/delsong.jpg" scale="75"> </screenshot> If you do not select this, the song will be removed from the database, but the actual MP3 file on disk, located at <varname>$filepath</varname>, will remain.  If you do select this option, the song will be removed from the database AND the MP3 file on disk will be deleted.</para>
+      <para>Once you have some songs displayed, left-click once on the name of the song that you want to delete, then choose <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Delete Currently Selected Song</guimenuitem> </menuchoice>.  You can also right-click on the name of the song and choose the <guimenuitem>Delete Song</guimenuitem> option.  A box will pop up asking you to confirm the deletion, and also presenting a checkbox labeled <guilabel>Delete File On Disk</guilabel>.   
+        <figure>
+	  <title>The Delete Song window</title>
+	  <mediaobject>
+	    <imageobject>
+	      <imagedata fileref="../images/delsong.jpg" format="jpg">
+	    </imageobject>
+	    <imageobject>
+	      <imagedata fileref="../images/delsong.eps" format="eps">
+	    </imageobject>
+	    <textobject>
+	      <phrase>Screenshot of the Delete Song window</phrase>
+	    </textobject>
+	  </mediaobject>
+	</figure>
+      If you do not select this, the song will be removed from the database, but the actual MP3 file on disk, located at <varname>$filepath</varname>, will remain.  If you do select this option, the song will be removed from the database AND the MP3 file on disk will be deleted.</para>
       <note><para>If you do not have a song selected in the main display box and choose <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Delete Currently Selected Song</guimenuitem> </menuchoice> or <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Edit Currently Selected Song</guimenuitem> </menuchoice>, then nothing will happen.  This is normal.  If you are trying to edit or delete a song and don't get the repective boxes showing up on-screen, make sure that you have a song highlighted.</para></note>
       <para>Finally, if you want to edit a song in the database, left-click a song in the main display window, and choose <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Edit Currently Selected Song</guimenuitem> </menuchoice>.  You can also right-click on a song and choose the <guimenuitem>Edit Song</guimenuitem> option.  A box will pop up that is similar to the one for <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Add New Song</guimenuitem> </menuchoice>, except without the file selector option.  You can make any needed changes to the song, then press <guibutton>Ok</guibutton> to commit them.</para>
       <note><title>Shortcut!</title><para>You can also right-click a song in the main display box to bring up a shortcut menu.  From this menu, you can choose to edit or delete the selected song.</para></note>
