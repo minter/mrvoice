@@ -8,6 +8,7 @@ Sat  Sep 11  2004	H. Wade Minter (minter@lunenburg.org)
        1.10 (publisher) table schemas.  If they haven't done it by now,
        this is handled by the upgrade_20.pl utility.
      * Work around breakage in bulk_add if the directory has spaces in it.
+     * Format the information in the Advanced Date Search a little nicer.
 
 Fri  Sep 10  2004	H. Wade Minter (minter@lunenburg.org)
      * Fixed a bug in the delete_categories function that was causing
