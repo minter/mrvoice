@@ -623,7 +623,7 @@ sub open_tank
     my $selectedfile = $mw->getOpenFile(
         -filetypes  => $holdingtanktypes,
         -initialdir => $initialdir,
-        -title      => 'Open a File'
+        -title      => 'Open a Holding Tank file'
     );
     if ($selectedfile)
     {
@@ -686,7 +686,7 @@ sub save_tank
         $initialdir =~ s#/#\\#;
     }
     my $selectedfile = $mw->getSaveFile(
-        -title            => 'Save a File',
+        -title            => 'Save a Holding Tank file',
         -defaultextension => ".hld",
         -filetypes        => $holdingtanktypes,
         -initialdir       => $initialdir
@@ -763,7 +763,7 @@ sub open_file
         $selectedfile = $mw->getOpenFile(
             -filetypes  => $hotkeytypes,
             -initialdir => $initialdir,
-            -title      => 'Open a File'
+            -title      => 'Open a Hotkey file'
         );
     }
 
@@ -826,7 +826,7 @@ sub save_file
         $initialdir =~ s#/#\\#;
     }
     my $selectedfile = $mw->getSaveFile(
-        -title            => 'Save a File',
+        -title            => 'Save a Hotkey file',
         -defaultextension => ".mrv",
         -filetypes        => $hotkeytypes,
         -initialdir       => $initialdir,
@@ -1242,9 +1242,10 @@ sub bulk_add
     $box1frame3->Button(
         -text    => "Select Source Directory",
         -command => sub {
-            $directory =
-              $box1->chooseDirectory(
-                -initialdir => ( $^O eq "MSWin32" ) ? "C:\\" : get_homedir() );
+            $directory = $box1->chooseDirectory(
+                -title      => 'Choose the directory to bulk-add from',
+                -initialdir => ( $^O eq "MSWin32" ) ? "C:\\" : get_homedir()
+            );
         }
     )->pack( -side => 'left' );
 
@@ -1713,7 +1714,7 @@ sub add_new_song
             -text    => "Select File",
             -command => sub {
                 $addsong_filename = $mw->getOpenFile(
-                    -title      => 'Select File',
+                    -title      => 'Select Audio file to add',
                     -initialdir => ( $^O eq "MSWin32" ) ? "C:/" : get_homedir(),
                     -filetypes  => $mp3types
                 );
@@ -1878,6 +1879,7 @@ sub edit_preferences
         -command => sub {
             if (
                 my $filepath = $box->chooseDirectory(
+                    -title      => 'Choose audio file save directory',
                     -initialdir => ( $^O eq "MSWin32" ) ? "C:/" : get_homedir()
                 )
               )
@@ -1902,6 +1904,7 @@ sub edit_preferences
         -command => sub {
             if (
                 my $savedir = $box->chooseDirectory(
+                    -title      => 'Choose Hotkey save directory',
                     -initialdir => ( $^O eq "MSWin32" ) ? "C:\\" : get_homedir()
                 )
               )
@@ -1946,7 +1949,7 @@ sub edit_preferences
         -text    => "Choose",
         -command => sub {
             $config{'mp3player'} = $mw->getOpenFile(
-                -title      => 'Select File',
+                -title      => 'Select MP3 player executable',
                 -initialdir => ( $^O eq "MSWin32" ) ? "C:/" : get_homedir()
             );
         }
