@@ -40,7 +40,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.217 2003/04/10 02:51:01 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.218 2003/04/10 15:57:47 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -701,7 +701,7 @@ sub open_file
         my ($key,$id) = split(/::/);
         if ( (not ($id =~ /^\d+$/)) && (not ($id =~ /^\w*$/)) )
         {
-          infobox ($mw, "Invalid Hotkey File","This hotkey file, $selectedfile, is from an old version of Mr. Voice.\nAfter upgrading to Version 1.8, you need to run the converthotkeys.pl utility in the\ntools subdirectory to convert to the new format.  This only has to be done once."); 
+          infobox ($mw, "Invalid Hotkey File","This hotkey file, $selectedfile, is from an old version of Mr. Voice.\nAfter upgrading to Version 1.8, you need to run the converthotkeys utility in the\ntools subdirectory to convert to the new format.  This only has to be done once."); 
           return(1);
         }
         elsif ( ($id) && (validate_id($id)) )
@@ -1661,7 +1661,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.217 $';
+  $rev = '$Revision: 1.218 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
