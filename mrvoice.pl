@@ -42,7 +42,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.275 2003/11/26 16:39:56 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.276 2003/11/26 19:56:35 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1349,9 +1349,10 @@ sub edit_category
   my $query="SELECT * from categories ORDER BY description";
   my $sth=$dbh->prepare($query);
   $sth->execute or die "can't execute the query: $DBI::errstr\n";
-  my $editbox = $box->add("Scrolled","Listbox",-scrollbars=>'se',
+  my $editbox = $box->add("Scrolled","Listbox",-scrollbars=>'osoe',
                                  -setgrid=>1,
                                  -height=>10,
+                                 -width=>30,
                                  -selectmode=>"single")->pack();
   while (@table_row = $sth->fetchrow_array)
   {
@@ -1410,9 +1411,10 @@ sub delete_category
   my $query="SELECT * from categories ORDER BY description";
   my $sth=$dbh->prepare($query);
   $sth->execute or die "can't execute the query: $DBI::errstr\n";
-  my $deletebox = $box->add("Scrolled","Listbox",-scrollbars=>'se',
+  my $deletebox = $box->add("Scrolled","Listbox",-scrollbars=>'osoe',
                             -setgrid=>1,
                             -height=>10,
+                            -width=>30,
                             -selectmode=>"single")->pack();
   while (@table_row = $sth->fetchrow_array)
   {
@@ -1975,7 +1977,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.275 $';
+  $rev = '$Revision: 1.276 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
