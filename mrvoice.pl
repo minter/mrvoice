@@ -9,6 +9,7 @@ use File::Basename;
 use File::Copy;
 use DBI;
 use MPEG::MP3Info;
+use Audio::Wav;
 use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_items helpmenu_items/;
 
 #########
@@ -17,7 +18,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.111 2002/03/22 21:12:06 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.112 2002/04/24 19:40:49 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -818,7 +819,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.111 $';
+  $rev = '$Revision: 1.112 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   infobox($mw, "About Mr. Voice","Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License");
 }
@@ -1195,6 +1196,43 @@ sub play_mp3
   }
 }
 
+sub get_songlength
+{
+  #Generic function to return the length of a song in mm:ss format.
+  #Currently supports MP3 and WAV, with the appropriate modules.
+
+  $file = $_[0];
+  my $time = "";
+  if ($file =~ /.*\.mp3$/)
+  {
+    # It's an MP3 file
+    my $info = get_mp3info("$filepath$table_row[5]");
+    $minute = $info->{MM};
+    $minute = "0$minute" if ($minute < 10);
+    $second = $info->{SS};
+    $second = "0$second" if ($second < 10);
+    $time = " [$minute:$second]";
+  }
+  elsif ($file =~ /\.wav$/)
+  {
+    # It's a WAV file
+    my $wav = new Audio::Wav;
+    my $read = $wav -> read( "$file" );
+    my $audio_seconds = int ( $read -> length_seconds() );
+    $minute = int ($audio_seconds / 60);
+    $minute = "0$minute" if ($minute < 10);
+    $second = $audio_seconds % 60;
+    $second = "0$second" if ($second < 10);
+    $time = " [$minute:$second]";
+  }
+  else
+  {
+    # Unsupported file type
+    $time = "??:??";
+  }
+  return ($time);
+}
+
 sub do_search
 {
   $anyfield_box->insert(0,$anyfield) if ($anyfield);
@@ -1227,12 +1265,8 @@ sub do_search
       $string = $string . " - $table_row[2]" if ($table_row[2]);
       $string = $string . ") - \"$table_row[4]\"";
       $string = $string. " by $table_row[3]" if ($table_row[3]);
-      my $info = get_mp3info("$filepath$table_row[5]");
-      $minute = $info->{MM};
-      $minute = "0$minute" if ($minute < 10);
-      $second = $info->{SS};
-      $second = "0$second" if ($second < 10);
-      $string = $string . " [$minute:$second]";
+      my $songstring = get_songlength("$filepath$table_row[5]");
+      $string = $string . $songstring;
       $mainbox->insert('end',$string); 
     }
   }
