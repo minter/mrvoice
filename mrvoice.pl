@@ -30,7 +30,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.129 2002/06/14 20:39:46 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.130 2002/06/24 21:21:22 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -438,17 +438,45 @@ sub dynamic_documents
   # over the user-specified limit, removes the oldest file from the list.
   
   $file = $_[0];
-  $savefile_count++;
 
-  push (@current, $file);
+  my $fileentry;
+  my $counter = 0;
+  my $success = 0;
+  foreach $fileentry (@current)
+  {
+    if ($fileentry eq $file)
+    {
+      # The item is currently in the list.  Move it to the front of
+      # the line.
+      splice (@current, $counter, 1);
+      @current = ($file,@current);
+      $counter++;
+      $success=1;
+    }
+    else
+    {
+      $counter++;
+    }
+  }
 
-  $dynamicmenu->command(-label=>"$file",
-                        -command => [\&open_file, $mw, $file]);
+  if ($success != 1)
+  {
+    # The file isn't in our current list, so we need to add it.
+    @current = ($file, @current);
+    $savefile_count++;
+  }
 
   if ($#current >= $savefile_max)
   {
-    $dynamicmenu->delete(0);
-    shift (@current);
+    pop (@current);
+  }
+
+  # Get rid of the old menu and rebuild from our array
+  $dynamicmenu->delete(0,end);
+  foreach $fileentry (@current)
+  {
+    $dynamicmenu->command(-label=>"$fileentry",
+                          -command => [\&open_file, $mw, $fileentry]);
   }
 }
 
@@ -938,7 +966,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.129 $';
+  $rev = '$Revision: 1.130 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
