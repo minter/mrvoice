@@ -1,6 +1,7 @@
 #!/usr/bin/perl 
 use warnings;
 no warnings 'redefine';
+
 #use diagnostics;
 #use strict; # Yeah right
 use Tk;
@@ -25,7 +26,7 @@ use File::Glob qw(:globally :nocase);
 use File::Temp qw/ tempfile tempdir /;
 use Cwd 'abs_path';
 
-# These modules need to be hardcoded into the script for perl2exe to 
+# These modules need to be hardcoded into the script for perl2exe to
 # find them.
 use Tk::Photo;
 use Tk::Bitmap;
@@ -36,8 +37,8 @@ use Tk::Checkbutton;
 use DBD::mysql;
 use Carp::Heavy;
 
-use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_items advancedmenu_items helpmenu_items/;
-
+use subs
+  qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_items advancedmenu_items helpmenu_items/;
 
 #########
 # AUTHOR: H. Wade Minter <minter@lunenburg.org>
@@ -45,105 +46,104 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.296 2004/01/13 16:26:50 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.297 2004/01/13 18:32:38 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
 
-our %config;	# Holds the config variables
+our %config;    # Holds the config variables
 
 #####
 # YOU SHOULD NOT NEED TO MODIFY ANYTHING BELOW HERE FOR NORMAL USE
 #####
 
 our $current_token;
-our $lock_hotkeys = 0;
-our $savefile_count = 0;		# Counter variables
-our $savefile_max = 4;			# The maximum number of files to
-					# keep in the "recently used" list.
-    $category = 'Any';			# The default category to search
-    $longcat  = 'Any';			# The default category to search
+our $lock_hotkeys   = 0;
+our $savefile_count = 0;    # Counter variables
+our $savefile_max   = 4;    # The maximum number of files to
+                            # keep in the "recently used" list.
+$category = 'Any';          # The default category to search
+$longcat  = 'Any';          # The default category to search
 
 # Allow searches of all music publishers by default.
-$config{'search_ascap'} = 1;
-$config{'search_bmi'} = 1;
-$config{'search_other'} = 1;
+$config{'search_ascap'}   = 1;
+$config{'search_bmi'}     = 1;
+$config{'search_other'}   = 1;
 $config{'show_publisher'} = 0;
 
-our @publishers = ('OTHER','ASCAP','BMI');
+our @publishers = ( 'OTHER', 'ASCAP', 'BMI' );
 
-our $hotkeytypes = [
-    ['Mr. Voice Hotkey Files', '.mrv'],
-    ['All Files', '*'],
-  ];
+our $hotkeytypes =
+  [ [ 'Mr. Voice Hotkey Files', '.mrv' ], [ 'All Files', '*' ], ];
 
-our $holdingtanktypes = [
-    ['Mr. Voice Holding Tank Files', '.hld'],
-    ['All Files', '*'],
-  ];
-    
+our $holdingtanktypes =
+  [ [ 'Mr. Voice Holding Tank Files', '.hld' ], [ 'All Files', '*' ], ];
 
-our $databasefiles = [
-    ['Database Dump Files', '.sql'],
-    ['All Files', '*'],
-  ];
+our $databasefiles =
+  [ [ 'Database Dump Files', '.sql' ], [ 'All Files', '*' ], ];
 
-our $bulkaddtypes = [
-    ['MP3 and OGG files', ['*.mp3', '*.MP3', '*.ogg', '*.OGG']]
-  ];
+our $bulkaddtypes =
+  [ [ 'MP3 and OGG files', [ '*.mp3', '*.MP3', '*.ogg', '*.OGG' ] ] ];
 
 our $mp3types = [
-    ['All Valid Audio Files', ['*.mp3', '*.MP3', '*.ogg', '*.OGG', '*.wav', '*.WAV', '*.m3u', '*.M3U', '*.pls', '*.PLS']],
-    ['MP3 Files', ['*.mp3', '*.MP3']],
-    ['WAV Files', ['*.wav', '*.WAV']],
-    ['Vorbis Files', ['*.ogg', '*.OGG']],
-    ['Playlists', ['*.m3u', '*.M3U', '*.pls', '*.PLS']],
-    ['All Files', '*'],
-  ];
-
+    [
+        'All Valid Audio Files',
+        [
+            '*.mp3', '*.MP3', '*.ogg', '*.OGG', '*.wav', '*.WAV',
+            '*.m3u', '*.M3U', '*.pls', '*.PLS'
+        ]
+    ],
+    [ 'MP3 Files',    [ '*.mp3', '*.MP3' ] ],
+    [ 'WAV Files',    [ '*.wav', '*.WAV' ] ],
+    [ 'Vorbis Files', [ '*.ogg', '*.OGG' ] ],
+    [ 'Playlists',    [ '*.m3u', '*.M3U', '*.pls', '*.PLS' ] ],
+    [ 'All Files', '*' ],
+];
 
 # Check to see if we're on Windows or Linux, and set the RC file accordingly.
-if ("$^O" eq "MSWin32")
+if ( "$^O" eq "MSWin32" )
 {
-  our $rcfile = "C:\\mrvoice.cfg";
-  BEGIN 
-  {
-    if ($^O eq "MSWin32")
+    our $rcfile = "C:\\mrvoice.cfg";
+
+    BEGIN
     {
-      require LWP::UserAgent;
-      LWP::UserAgent->import();
-      require HTTP::Request;
-      HTTP::Request->import();
-      require Win32::Process;
-      Win32::Process->import();
-      require Tk::Radiobutton;
-      Tk::Radiobutton->import();
-      require Win32::FileOp;
-      Win32::FileOp->import();
+        if ( $^O eq "MSWin32" )
+        {
+            require LWP::UserAgent;
+            LWP::UserAgent->import();
+            require HTTP::Request;
+            HTTP::Request->import();
+            require Win32::Process;
+            Win32::Process->import();
+            require Tk::Radiobutton;
+            Tk::Radiobutton->import();
+            require Win32::FileOp;
+            Win32::FileOp->import();
+        }
     }
-  }
-  $agent = LWP::UserAgent->new;
-  $agent->agent("Mr. Voice Audio Software/$0 ");
+    $agent = LWP::UserAgent->new;
+    $agent->agent("Mr. Voice Audio Software/$0 ");
 
-
-  # You have to manually set the time zone for Windows.
-  my ($l_min, $l_hour, $l_year, $l_yday) = (localtime $^T)[1, 2, 5, 7];
-  my ($g_min, $g_hour, $g_year, $g_yday) = (   gmtime $^T)[1, 2, 5, 7];
-  my $tzval = ($l_min - $g_min)/60 + $l_hour - $g_hour + 24 * ($l_year <=> $g_year || $l_yday <=> $g_yday);
-  $tzval=sprintf( "%2.2d00", $tzval);
-  Date_Init("TZ=$tzval");
+    # You have to manually set the time zone for Windows.
+    my ( $l_min, $l_hour, $l_year, $l_yday ) = ( localtime $^T )[ 1, 2, 5, 7 ];
+    my ( $g_min, $g_hour, $g_year, $g_yday ) = ( gmtime $^T )[ 1, 2, 5, 7 ];
+    my $tzval =
+      ( $l_min - $g_min ) / 60 + $l_hour - $g_hour + 24 *
+      ( $l_year <=> $g_year || $l_yday <=> $g_yday );
+    $tzval = sprintf( "%2.2d00", $tzval );
+    Date_Init("TZ=$tzval");
 }
 else
 {
-  our $homedir = "~";
-  $homedir =~ s{ ^ ~ ( [^/]* ) }
+    our $homedir = "~";
+    $homedir =~ s{ ^ ~ ( [^/]* ) }
               { $1 
                    ? (getpwnam($1))[7] 
                    : ( $ENV{HOME} || $ENV{LOGDIR} 
                         || (getpwuid($>))[7]
                      )
               }ex;
-  our $rcfile = "$homedir/.mrvoicerc";
+    our $rcfile = "$homedir/.mrvoicerc";
 }
 
 #STARTCSZ
@@ -158,8 +158,8 @@ else
 
 #####
 
-my $version = "1.9.3";			# Program version
-our $status = "Welcome to Mr. Voice version $version";		
+my $version = "1.9.3";    # Program version
+our $status = "Welcome to Mr. Voice version $version";
 
 # Define 32x32 XPM icon data
 our $icon_data = <<'end-of-icon-data';
@@ -706,1438 +706,1843 @@ end_of_data
 #  }
 #}
 
-# This function is redefined due to evilness that keeps the focus on 
+# This function is redefined due to evilness that keeps the focus on
 # the dragged token.  Thanks to Slaven Rezic <slaven.rezic@berlin.de>
 # The extra brackets are suggested by the debugging code
 sub Tk::DragDrop::Mapped
 {
-  my ($token) = @_;
-  my $e = $token->parent->XEvent;
-  $token = $token->toplevel;
-  $token->grabGlobal;
-  #$token->focus;
-  if (defined $e)
-  {
-    my $X = $e->X;
-    my $Y = $e->Y;
-    $token->MoveToplevelWindow($X+3,$Y+3);
-    $token->NewDrag;
-    $token->FindSite($X,$Y,$e);
-  }
+    my ($token) = @_;
+    my $e = $token->parent->XEvent;
+    $token = $token->toplevel;
+    $token->grabGlobal;
+
+    #$token->focus;
+    if ( defined $e )
+    {
+        my $X = $e->X;
+        my $Y = $e->Y;
+        $token->MoveToplevelWindow( $X + 3, $Y + 3 );
+        $token->NewDrag;
+        $token->FindSite( $X, $Y, $e );
+    }
 }
 
 # Try to override the motion part of Tk::Listbox extended mode.
 sub Tk::Listbox::Motion
 {
-  return;
+    return;
 }
 
-sub BindMouseWheel {
- 
-  my($w) = @_;
-  
-  if ($^O eq 'MSWin32') 
-  {
-    $w->bind('<MouseWheel>' =>
-    [ sub { $_[0]->yview('scroll', -($_[1] / 120) * 3, 'units') },
-    Ev('D') ]);
-  } 
-  else 
-  {
-    # Support for mousewheels on Linux commonly comes through
-    # mapping the wheel to buttons 4 and 5.  If you have a
-    # mousewheel ensure that the mouse protocol is set to
-    # "IMPS/2" in your /etc/X11/XF86Config (or XF86Config-4)
-    # file:
-    #
-    # Section "InputDevice"
-    #     Identifier  "Mouse0"
-    #     Driver      "mouse"
-    #     Option      "Device" "/dev/mouse"
-    #     Option      "Protocol" "IMPS/2"
-    #     Option      "Emulate3Buttons" "off"
-    #     Option      "ZAxisMapping" "4 5"
-    # EndSection
-    
-    $w->bind('<4>' => sub {
-      $_[0]->yview('scroll', -3, 'units') unless $Tk::strictMotif;
-    });
-     
-    $w->bind('<5>' => sub {
-      $_[0]->yview('scroll', +3, 'units') unless $Tk::strictMotif;
-    });
-  }
-      
-} # end BindMouseWheel
+sub BindMouseWheel
+{
 
+    my ($w) = @_;
+
+    if ( $^O eq 'MSWin32' )
+    {
+        $w->bind(
+            '<MouseWheel>' => [
+                sub { $_[0]->yview( 'scroll', -( $_[1] / 120 ) * 3, 'units' ) },
+                Ev('D')
+            ]
+        );
+    }
+    else
+    {
+
+        # Support for mousewheels on Linux commonly comes through
+        # mapping the wheel to buttons 4 and 5.  If you have a
+        # mousewheel ensure that the mouse protocol is set to
+        # "IMPS/2" in your /etc/X11/XF86Config (or XF86Config-4)
+        # file:
+        #
+        # Section "InputDevice"
+        #     Identifier  "Mouse0"
+        #     Driver      "mouse"
+        #     Option      "Device" "/dev/mouse"
+        #     Option      "Protocol" "IMPS/2"
+        #     Option      "Emulate3Buttons" "off"
+        #     Option      "ZAxisMapping" "4 5"
+        # EndSection
+
+        $w->bind(
+            '<4>' => sub {
+                $_[0]->yview( 'scroll', -3, 'units' ) unless $Tk::strictMotif;
+            }
+        );
+
+        $w->bind(
+            '<5>' => sub {
+                $_[0]->yview( 'scroll', +3, 'units' ) unless $Tk::strictMotif;
+            }
+        );
+    }
+
+}    # end BindMouseWheel
 
 sub bind_hotkeys
 {
-  # This will set up hotkeybindings for the window that is passed
-  # in as the first argument.
 
-  my $window = $_[0];
-  $window->bind("all","<Key-F1>", [\&play_mp3,"F1"]);
-  $window->bind("all","<Key-F2>", [\&play_mp3,"F2"]);
-  $window->bind("all","<Key-F3>", [\&play_mp3,"F3"]);
-  $window->bind("all","<Key-F4>", [\&play_mp3,"F4"]);
-  $window->bind("all","<Key-F5>", [\&play_mp3,"F5"]);
-  $window->bind("all","<Key-F6>", [\&play_mp3,"F6"]);
-  $window->bind("all","<Key-F7>", [\&play_mp3,"F7"]);
-  $window->bind("all","<Key-F8>", [\&play_mp3,"F8"]);
-  $window->bind("all","<Key-F9>", [\&play_mp3,"F9"]);
-  $window->bind("all","<Key-F10>", [\&play_mp3,"F10"]);
-  $window->bind("all","<Key-F11>", [\&play_mp3,"F11"]);
-  $window->bind("all","<Key-F12>", [\&play_mp3,"F12"]);
-  $window->bind("<Key-Escape>", [\&stop_mp3]);
-  $window->bind("<Key-Return>", \&do_search);
-  $window->bind("<Control-Key-x>", \&do_exit);
-  $window->bind("<Control-Key-o>", \&open_file);
-  $window->bind("<Control-Key-s>", \&save_file);
-  $window->bind("<Control-Key-h>", \&list_hotkeys);
-  $window->bind("<Control-Key-t>", \&holding_tank);
-  #STARTCSZ
-  #$window->bind("<Alt-Key-t>", [\&play_mp3,"ALT-T"]);
-  #$window->bind("<Alt-Key-y>", [\&play_mp3,"ALT-Y"]);
-  #$window->bind("<Alt-Key-b>", [\&play_mp3,"ALT-B"]);
-  #$window->bind("<Alt-Key-g>", [\&play_mp3,"ALT-G"]);
-  #$window->bind("<Alt-Key-v>", [\&play_mp3,"ALT-V"]);
-  #ENDCSZ
-  if ($^O eq "MSWin32")
-  {
-    $window->bind("<Shift-Key-Escape>", sub {
-      $req = HTTP::Request->new(GET => "http://localhost:4800/fadeoutandstop?p=$config{'httpq_pw'}");
-      $res = $agent->request($req);
-    });
-  }
+    # This will set up hotkeybindings for the window that is passed
+    # in as the first argument.
+
+    my $window = $_[0];
+    $window->bind( "all", "<Key-F1>",  [ \&play_mp3, "F1" ] );
+    $window->bind( "all", "<Key-F2>",  [ \&play_mp3, "F2" ] );
+    $window->bind( "all", "<Key-F3>",  [ \&play_mp3, "F3" ] );
+    $window->bind( "all", "<Key-F4>",  [ \&play_mp3, "F4" ] );
+    $window->bind( "all", "<Key-F5>",  [ \&play_mp3, "F5" ] );
+    $window->bind( "all", "<Key-F6>",  [ \&play_mp3, "F6" ] );
+    $window->bind( "all", "<Key-F7>",  [ \&play_mp3, "F7" ] );
+    $window->bind( "all", "<Key-F8>",  [ \&play_mp3, "F8" ] );
+    $window->bind( "all", "<Key-F9>",  [ \&play_mp3, "F9" ] );
+    $window->bind( "all", "<Key-F10>", [ \&play_mp3, "F10" ] );
+    $window->bind( "all", "<Key-F11>", [ \&play_mp3, "F11" ] );
+    $window->bind( "all", "<Key-F12>", [ \&play_mp3, "F12" ] );
+    $window->bind( "<Key-Escape>", [ \&stop_mp3 ] );
+    $window->bind( "<Key-Return>",    \&do_search );
+    $window->bind( "<Control-Key-x>", \&do_exit );
+    $window->bind( "<Control-Key-o>", \&open_file );
+    $window->bind( "<Control-Key-s>", \&save_file );
+    $window->bind( "<Control-Key-h>", \&list_hotkeys );
+    $window->bind( "<Control-Key-t>", \&holding_tank );
+
+    #STARTCSZ
+    #$window->bind("<Alt-Key-t>", [\&play_mp3,"ALT-T"]);
+    #$window->bind("<Alt-Key-y>", [\&play_mp3,"ALT-Y"]);
+    #$window->bind("<Alt-Key-b>", [\&play_mp3,"ALT-B"]);
+    #$window->bind("<Alt-Key-g>", [\&play_mp3,"ALT-G"]);
+    #$window->bind("<Alt-Key-v>", [\&play_mp3,"ALT-V"]);
+    #ENDCSZ
+    if ( $^O eq "MSWin32" )
+    {
+        $window->bind(
+            "<Shift-Key-Escape>",
+            sub {
+                $req =
+                  HTTP::Request->new( GET =>
+                      "http://localhost:4800/fadeoutandstop?p=$config{'httpq_pw'}"
+                  );
+                $res = $agent->request($req);
+            }
+        );
+    }
 }
 
 sub open_tank
 {
-  # Opens a saved holding tank file, overwriting the current contents
-  my $selectedfile = $mw->getOpenFile(-filetypes=>$holdingtanktypes,
-                                      -initialdir=>$config{'savedir'},
-                                      -title=>'Open a File');
-  if ($selectedfile)
-  {
-    if (! -r $selectedfile)
+
+    # Opens a saved holding tank file, overwriting the current contents
+    my $selectedfile = $mw->getOpenFile(
+        -filetypes  => $holdingtanktypes,
+        -initialdir => $config{'savedir'},
+        -title      => 'Open a File'
+    );
+    if ($selectedfile)
     {
-      $status = "Could not open saved file for reading";
-      infobox($mw, "File Error", "Could not open file $selectedfile for reading");
+        if ( !-r $selectedfile )
+        {
+            $status = "Could not open saved file for reading";
+            infobox( $mw, "File Error",
+                "Could not open file $selectedfile for reading" );
+        }
+        else
+        {
+            holding_tank() if ( !Exists($holdingtank) );
+            wipe_tank();
+            open( TANKFILE, $selectedfile );
+            while ( $id = <TANKFILE> )
+            {
+                chomp($id);
+                my $query =
+                  "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.time from mrvoice,categories where mrvoice.category=categories.code AND mrvoice.id=$id";
+                my $sth = $dbh->prepare($query);
+                $sth->execute or die "can't execute the query: $DBI::errstr\n";
+                @table_row = $sth->fetchrow_array;
+                $sth->finish;
+                $string = "$id:($table_row[1]";
+                $string = $string . " - $table_row[2]" if ( $table_row[2] );
+                $string = $string . ") - \"$table_row[4]\"";
+                $string = $string . " by $table_row[3]" if ( $table_row[3] );
+                $string = $string . " $table_row[5]";
+
+                $tankbox->insert( 'end', $string );
+            }
+        }
+        close(TANKFILE);
+        $status = "Loaded saved holding tank file $selectedfile";
     }
     else
     {
-      holding_tank() if (!Exists($holdingtank));
-      wipe_tank();
-      open (TANKFILE,$selectedfile);
-      while ($id = <TANKFILE>)
-      {
-        chomp($id);
-        my $query = "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.time from mrvoice,categories where mrvoice.category=categories.code AND mrvoice.id=$id";
-        my $sth=$dbh->prepare($query);
-        $sth->execute or die "can't execute the query: $DBI::errstr\n";
-        @table_row = $sth->fetchrow_array;
-        $sth->finish;
-        $string="$id:($table_row[1]";
-        $string = $string . " - $table_row[2]" if ($table_row[2]);
-        $string = $string . ") - \"$table_row[4]\"";
-        $string = $string. " by $table_row[3]" if ($table_row[3]);
-        $string = $string . " $table_row[5]";
-
-        $tankbox->insert('end',$string);
-      }       
-    } 
-    close (TANKFILE);
-    $status = "Loaded saved holding tank file $selectedfile";
-  }
-  else
-  {
-    $status = "Cancelled loading of holding tank file";
-  }
+        $status = "Cancelled loading of holding tank file";
+    }
 }
 
 sub save_tank
 {
-  if (!Exists($tankbox))
-  {
-    $status = "Can't save the holding tank before you use it...";
-    return;
-  }
-  my @indices = $tankbox->get(0,'end');
-
-  if ($#indices < 0)
-  {
-    $status = "Not saving an empty holding tank";
-    return;
-  }
-
-  my $selectedfile = $mw->getSaveFile(-title=>'Save a File',
-                                      -defaultextension=>".hld",
-                                      -filetypes=>$holdingtanktypes,
-                                      -initialdir=>"$config{'savedir'}");
-
-  if ($selectedfile)
-  {
-    if ( (! -w $selectedfile) && (-e $selectedfile) )
+    if ( !Exists($tankbox) )
     {
-      $status = "Holding tank save failed due to file error";
-      infobox($mw, "File Error!", "Could not open file $selectedfile for writing");
+        $status = "Can't save the holding tank before you use it...";
+        return;
     }
-    elsif ( ! -w dirname($selectedfile) )
+    my @indices = $tankbox->get( 0, 'end' );
+
+    if ( $#indices < 0 )
     {
-      $status = "Holding tank save failed due to directory error";
-      my $directory = dirname($selectedfile);
-      infobox($mw, "Directory Error!", "Could not write new file to directory $directory");
+        $status = "Not saving an empty holding tank";
+        return;
+    }
+
+    my $selectedfile = $mw->getSaveFile(
+        -title            => 'Save a File',
+        -defaultextension => ".hld",
+        -filetypes        => $holdingtanktypes,
+        -initialdir       => "$config{'savedir'}"
+    );
+
+    if ($selectedfile)
+    {
+        if ( ( !-w $selectedfile ) && ( -e $selectedfile ) )
+        {
+            $status = "Holding tank save failed due to file error";
+            infobox( $mw, "File Error!",
+                "Could not open file $selectedfile for writing" );
+        }
+        elsif ( !-w dirname($selectedfile) )
+        {
+            $status = "Holding tank save failed due to directory error";
+            my $directory = dirname($selectedfile);
+            infobox(
+                $mw,
+                "Directory Error!",
+                "Could not write new file to directory $directory"
+            );
+        }
+        else
+        {
+            $selectedfile = "$selectedfile.hld"
+              unless ( $selectedfile =~ /.*\.hld$/ );
+            open( TANKFILE, ">$selectedfile" );
+            foreach my $string (@indices)
+            {
+                my ( $id, $desc ) = split( /:/, $string );
+                print TANKFILE "$id\n";
+            }
+            close TANKFILE;
+            $status = "Saved holding tank to $selectedfile";
+        }
     }
     else
     {
-      $selectedfile = "$selectedfile.hld" unless ($selectedfile =~ /.*\.hld$/);
-      open (TANKFILE,">$selectedfile");
-      foreach my $string (@indices)
-      {
-        my ($id,$desc) = split(/:/, $string);
-        print TANKFILE "$id\n";
-      }
-      close TANKFILE;
-      $status = "Saved holding tank to $selectedfile";
+        $status = "Cancelled save of holding tank";
     }
-  }
-  else
-  {
-    $status = "Cancelled save of holding tank";
-  }
 }
 
 sub open_file
 {
-  # Used to open a saved hotkey file.
-  # Takes an optional argument.  If the argument is given, we attempt
-  # to open the file for reading.  If not, we pop up a file dialog
-  # box and get the name of a file first.
-  # Once we have the file, we read each line, of the form
-  # hotkey_name::mp3_name, and assign the value to the hotkey.
-  # Finally, we add this file to our dynamic documents menu.
- 
-  if ($lock_hotkeys == 1)
-  {
-    $status = "Can't open saved hotkeys - current hotkeys locked";
-    return;
-  }
 
-  my $parentwidget = $_[0];
-  my $selectedfile = $_[1];
-  if (!$selectedfile)
-  {
-     $selectedfile = $mw->getOpenFile(-filetypes=>$hotkeytypes,
-                                      -initialdir=>$config{'savedir'},
-                                      -title=>'Open a File');
-  }
-                      
-  if ($selectedfile)
-  {
-    if (! -r $selectedfile)
+    # Used to open a saved hotkey file.
+    # Takes an optional argument.  If the argument is given, we attempt
+    # to open the file for reading.  If not, we pop up a file dialog
+    # box and get the name of a file first.
+    # Once we have the file, we read each line, of the form
+    # hotkey_name::mp3_name, and assign the value to the hotkey.
+    # Finally, we add this file to our dynamic documents menu.
+
+    if ( $lock_hotkeys == 1 )
     {
-      infobox($mw, "File Error", "Could not open file $selectedfile for reading");
+        $status = "Can't open saved hotkeys - current hotkeys locked";
+        return;
+    }
+
+    my $parentwidget = $_[0];
+    my $selectedfile = $_[1];
+    if ( !$selectedfile )
+    {
+        $selectedfile = $mw->getOpenFile(
+            -filetypes  => $hotkeytypes,
+            -initialdir => $config{'savedir'},
+            -title      => 'Open a File'
+        );
+    }
+
+    if ($selectedfile)
+    {
+        if ( !-r $selectedfile )
+        {
+            infobox( $mw, "File Error",
+                "Could not open file $selectedfile for reading" );
+        }
+        else
+        {
+            clear_hotkeys();
+            open( HOTKEYFILE, $selectedfile );
+            while (<HOTKEYFILE>)
+            {
+                chomp;
+                my ( $key, $id ) = split(/::/);
+                if ( ( not( $id =~ /^\d+$/ ) ) && ( not( $id =~ /^\w*$/ ) ) )
+                {
+                    infobox(
+                        $mw,
+                        "Invalid Hotkey File",
+                        "This hotkey file, $selectedfile, is from an old version of Mr. Voice. After upgrading to Version 1.8, you need to run the converthotkeys utility in the tools subdirectory to convert to the new format.  This only has to be done once."
+                    );
+                    return (1);
+                }
+                elsif ( ($id) && ( validate_id($id) ) )
+                {
+                    $fkeys{$key}->{id}       = $id;
+                    $fkeys{$key}->{title}    = get_title($id);
+                    $fkeys{$key}->{filename} = get_filename($id);
+                }
+            }
+            close(HOTKEYFILE);
+            $status = "Loaded hotkey file $selectedfile";
+            dynamic_documents($selectedfile);
+            list_hotkeys();
+        }
     }
     else
     {
-      clear_hotkeys();
-      open (HOTKEYFILE,$selectedfile);
-      while (<HOTKEYFILE>)
-      {
-        chomp;
-        my ($key,$id) = split(/::/);
-        if ( (not ($id =~ /^\d+$/)) && (not ($id =~ /^\w*$/)) )
-        {
-          infobox ($mw, "Invalid Hotkey File","This hotkey file, $selectedfile, is from an old version of Mr. Voice. After upgrading to Version 1.8, you need to run the converthotkeys utility in the tools subdirectory to convert to the new format.  This only has to be done once."); 
-          return(1);
-        }
-        elsif ( ($id) && (validate_id($id)) )
-        {
-          $fkeys{$key}->{id} = $id;
-          $fkeys{$key}->{title} = get_title($id);
-          $fkeys{$key}->{filename} = get_filename($id);
-        }
-      }
-      close (HOTKEYFILE);
-      $status = "Loaded hotkey file $selectedfile";
-      dynamic_documents($selectedfile);
-      list_hotkeys();
+        $status = "File load cancelled.";
     }
-  }
-  else
-  {
-    $status = "File load cancelled."; 
-  }
 }
 
 sub save_file
 {
-  # Used to save a set of hotkeys to a file on disk.
-  # We pop up a save file dialog box to get the filename and path. We
-  # then write out the data in the form of hotkey_number::id.
-  # Finally, we add this file to our dynamic documents menu.
 
-  $selectedfile = $mw->getSaveFile(-title=>'Save a File',
-                                   -defaultextension=>".mrv",
-                                   -filetypes=>$hotkeytypes,
-                                   -initialdir=>"$config{'savedir'}");
+    # Used to save a set of hotkeys to a file on disk.
+    # We pop up a save file dialog box to get the filename and path. We
+    # then write out the data in the form of hotkey_number::id.
+    # Finally, we add this file to our dynamic documents menu.
 
-  if ($selectedfile)
-  {
-    if ( (! -w $selectedfile) && (-e $selectedfile) )
+    $selectedfile = $mw->getSaveFile(
+        -title            => 'Save a File',
+        -defaultextension => ".mrv",
+        -filetypes        => $hotkeytypes,
+        -initialdir       => "$config{'savedir'}"
+    );
+
+    if ($selectedfile)
     {
-      infobox($mw, "File Error!", "Could not open file $selectedfile for writing");
-    }
-    elsif ( ! -w dirname($selectedfile) )
-    {
-      my $directory = dirname($selectedfile);
-      infobox($mw, "Directory Error!", "Could not write new file to directory $directory");
+        if ( ( !-w $selectedfile ) && ( -e $selectedfile ) )
+        {
+            infobox( $mw, "File Error!",
+                "Could not open file $selectedfile for writing" );
+        }
+        elsif ( !-w dirname($selectedfile) )
+        {
+            my $directory = dirname($selectedfile);
+            infobox(
+                $mw,
+                "Directory Error!",
+                "Could not write new file to directory $directory"
+            );
+        }
+        else
+        {
+            $selectedfile = "$selectedfile.mrv"
+              unless ( $selectedfile =~ /.*\.mrv$/ );
+            open( HOTKEYFILE, ">$selectedfile" );
+            print HOTKEYFILE "f1::$fkeys{f1}->{id}\n";
+            print HOTKEYFILE "f2::$fkeys{f2}->{id}\n";
+            print HOTKEYFILE "f3::$fkeys{f3}->{id}\n";
+            print HOTKEYFILE "f4::$fkeys{f4}->{id}\n";
+            print HOTKEYFILE "f5::$fkeys{f5}->{id}\n";
+            print HOTKEYFILE "f6::$fkeys{f6}->{id}\n";
+            print HOTKEYFILE "f7::$fkeys{f7}->{id}\n";
+            print HOTKEYFILE "f8::$fkeys{f8}->{id}\n";
+            print HOTKEYFILE "f9::$fkeys{f9}->{id}\n";
+            print HOTKEYFILE "f10::$fkeys{f10}->{id}\n";
+            print HOTKEYFILE "f11::$fkeys{f11}->{id}\n";
+            print HOTKEYFILE "f12::$fkeys{f12}->{id}\n";
+            close(HOTKEYFILE);
+            $status = "Finished saving hotkeys to $selectedfile";
+            dynamic_documents($selectedfile);
+        }
     }
     else
     {
-      $selectedfile = "$selectedfile.mrv" unless ($selectedfile =~ /.*\.mrv$/);
-      open (HOTKEYFILE,">$selectedfile");
-      print HOTKEYFILE "f1::$fkeys{f1}->{id}\n";
-      print HOTKEYFILE "f2::$fkeys{f2}->{id}\n";
-      print HOTKEYFILE "f3::$fkeys{f3}->{id}\n";
-      print HOTKEYFILE "f4::$fkeys{f4}->{id}\n";
-      print HOTKEYFILE "f5::$fkeys{f5}->{id}\n";
-      print HOTKEYFILE "f6::$fkeys{f6}->{id}\n";
-      print HOTKEYFILE "f7::$fkeys{f7}->{id}\n";
-      print HOTKEYFILE "f8::$fkeys{f8}->{id}\n";
-      print HOTKEYFILE "f9::$fkeys{f9}->{id}\n";
-      print HOTKEYFILE "f10::$fkeys{f10}->{id}\n";
-      print HOTKEYFILE "f11::$fkeys{f11}->{id}\n";
-      print HOTKEYFILE "f12::$fkeys{f12}->{id}\n";
-      close (HOTKEYFILE);
-      $status = "Finished saving hotkeys to $selectedfile";
-      dynamic_documents($selectedfile);
+        $status = "File save cancelled.";
     }
-  }
-  else
-  {
-    $status = "File save cancelled.";
-  }
 }
 
 sub dump_database
 {
-  my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime();
-  $year += 1900;
-  $mon += 1;
-  $defaultfilename = "database-$year-$mon-$mday.sql";
-  my $dumpfile = $mw->getSaveFile(-title=>'Choose Database Export File',
-                                 -defaultextension=>".sql",
-                                 -initialfile=>$defaultfilename,
-                                 -filetypes=>$databasefiles);
+    my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) =
+      localtime();
+    $year += 1900;
+    $mon  += 1;
+    $defaultfilename = "database-$year-$mon-$mday.sql";
+    my $dumpfile = $mw->getSaveFile(
+        -title            => 'Choose Database Export File',
+        -defaultextension => ".sql",
+        -initialfile      => $defaultfilename,
+        -filetypes        => $databasefiles
+    );
 
-  if ($dumpfile)
-  {
-    if ( (! -w $dumpfile) && (-e $dumpfile) )
+    if ($dumpfile)
     {
-      infobox($mw, "File Error!", "Could not open file $dumpfile for writing");
-    }
-    elsif ( ! -w dirname($dumpfile) )
-    {
-      my $directory = dirname($dumpfile);
-      infobox($mw, "Directory Error!", "Could not write new file to directory $directory");
+        if ( ( !-w $dumpfile ) && ( -e $dumpfile ) )
+        {
+            infobox( $mw, "File Error!",
+                "Could not open file $dumpfile for writing" );
+        }
+        elsif ( !-w dirname($dumpfile) )
+        {
+            my $directory = dirname($dumpfile);
+            infobox(
+                $mw,
+                "Directory Error!",
+                "Could not write new file to directory $directory"
+            );
+        }
+        else
+        {
+
+            # Run the MySQL Dump
+            if ( $^O eq "MSWin32" )
+            {
+                $dirname       = Win32::GetShortPathName( dirname($dumpfile) );
+                $filename      = basename($dumpfile);
+                $shortdumpfile = catfile( $dirname, $filename );
+                my $rc =
+                  system(
+                    "C:\\mysql\\bin\\mysqldump.exe --add-drop-table --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} > $shortdumpfile"
+                  );
+                infobox(
+                    $mw,
+                    "Database Dumped",
+                    "The contents of your database have been dumped to the file: $dumpfile\n\nNote: In order to have a full backup, you must also back up the files from the directory: $config{'filepath'} as well as $rcfile and, optionally, the hotkeys from $config{'savedir'}"
+                );
+                $status = "Database dumped to $dumpfile";
+            }
+            else
+            {
+                my $rc =
+                  system(
+                    "mysqldump --add-drop-table --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} > $dumpfile"
+                  );
+                infobox(
+                    $mw,
+                    "Database Dumped",
+                    "The contents of your database have been dumped to the file: $dumpfile\n\nNote: In order to have a full backup, you must also back up the files from the directory: $config{'filepath'} as well as $rcfile"
+                );
+                $status = "Database dumped to $dumpfile";
+            }
+        }
     }
     else
     {
-      # Run the MySQL Dump
-      if ($^O eq "MSWin32")
-      {
-        $dirname = Win32::GetShortPathName(dirname($dumpfile));
-        $filename = basename($dumpfile);
-        $shortdumpfile = catfile ($dirname, $filename);
-        my $rc = system ("C:\\mysql\\bin\\mysqldump.exe --add-drop-table --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} > $shortdumpfile");
-        infobox($mw, "Database Dumped", "The contents of your database have been dumped to the file: $dumpfile\n\nNote: In order to have a full backup, you must also back up the files from the directory: $config{'filepath'} as well as $rcfile and, optionally, the hotkeys from $config{'savedir'}");
-        $status = "Database dumped to $dumpfile";
-      }
-      else
-      {
-        my $rc = system ("mysqldump --add-drop-table --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} > $dumpfile");
-        infobox($mw, "Database Dumped", "The contents of your database have been dumped to the file: $dumpfile\n\nNote: In order to have a full backup, you must also back up the files from the directory: $config{'filepath'} as well as $rcfile");
-        $status = "Database dumped to $dumpfile";
-      }
+        $status = "Database dump cancelled";
     }
-  }
-  else
-  {
-    $status = "Database dump cancelled";
-  }
 }
 
 sub import_database
 {
-  my $dumpfile = $mw->getOpenFile(-title=>'Choose Database Export File',
-                                 -defaultextension=>".sql",
-                                 -filetypes=>$databasefiles);
+    my $dumpfile = $mw->getOpenFile(
+        -title            => 'Choose Database Export File',
+        -defaultextension => ".sql",
+        -filetypes        => $databasefiles
+    );
 
-  if ($dumpfile)
-  {
-    if (! -r $dumpfile)
+    if ($dumpfile)
     {
-      infobox($mw, "File Error", "Could not open file $dumpfile for reading. Check permissions and try again.");
-    }
-    else
-    {
-      # We can read the file - pop up a warning before continuing.
-      my $box = $mw->Dialog(-title=>"Warning", 
-                            -bitmap=>'warning',
-                            -text=>"Warning!\nImporting this database dumpfile will completely overwrite your current Mr. Voice database.\n\nIf you are certain that you want to do this, press Ok.  Otherwise, press Cancel.",
-                            -buttons=>["Ok","Cancel"],
-                            -default_button=>"Cancel");  
-      $box->Icon(-image=>$icon);
-      my $button = $box->Show;
-      
-      if ($button eq "Ok")
-      {
-        if ($^O eq "MSWin32")
+        if ( !-r $dumpfile )
         {
-          $dirname = Win32::GetShortPathName(dirname($dumpfile));
-          $filename = basename($dumpfile);
-          $shortdumpfile = catfile ($dirname, $filename);
-          my $rc = system ("C:\\mysql\\bin\\mysql.exe --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} < $shortdumpfile");
-          infobox($mw, "Database Imported", "The database backup file $dumpfile has been imported.");
-          $status = "Database imported from $dumpfile";
+            infobox(
+                $mw,
+                "File Error",
+                "Could not open file $dumpfile for reading. Check permissions and try again."
+            );
         }
         else
         {
-          my $rc = system ("mysql --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} < $dumpfile");
-          infobox($mw, "Database Imported", "The database backup file $dumpfile has been imported.");
-          $status = "Database imported from $dumpfile";
+
+            # We can read the file - pop up a warning before continuing.
+            my $box = $mw->Dialog(
+                -title  => "Warning",
+                -bitmap => 'warning',
+                -text   =>
+                  "Warning!\nImporting this database dumpfile will completely overwrite your current Mr. Voice database.\n\nIf you are certain that you want to do this, press Ok.  Otherwise, press Cancel.",
+                -buttons        => [ "Ok", "Cancel" ],
+                -default_button => "Cancel"
+            );
+            $box->Icon( -image => $icon );
+            my $button = $box->Show;
+
+            if ( $button eq "Ok" )
+            {
+                if ( $^O eq "MSWin32" )
+                {
+                    $dirname  = Win32::GetShortPathName( dirname($dumpfile) );
+                    $filename = basename($dumpfile);
+                    $shortdumpfile = catfile( $dirname, $filename );
+                    my $rc =
+                      system(
+                        "C:\\mysql\\bin\\mysql.exe --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} < $shortdumpfile"
+                      );
+                    infobox(
+                        $mw,
+                        "Database Imported",
+                        "The database backup file $dumpfile has been imported."
+                    );
+                    $status = "Database imported from $dumpfile";
+                }
+                else
+                {
+                    my $rc =
+                      system(
+                        "mysql --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} < $dumpfile"
+                      );
+                    infobox(
+                        $mw,
+                        "Database Imported",
+                        "The database backup file $dumpfile has been imported."
+                    );
+                    $status = "Database imported from $dumpfile";
+                }
+            }
+            else
+            {
+                $status = "Database import cancelled";
+            }
         }
-      }
-      else
-      {
-        $status = "Database import cancelled";
-      }
+
     }
-  
-  }
-  else
-  {
-    $status = "Database import cancelled";
-  }
+    else
+    {
+        $status = "Database import cancelled";
+    }
 
 }
 
 sub get_title_artist
 {
-  # Returns the title and artist of an MP3 or OGG file
-  my $filename = $_[0];
-  my $title;
-  my $artist;
 
-  if ($filename =~ /.mp3$/i)
-  {
-    $filename = Win32::GetShortPathName($filename) if ($^O eq "MSWin32");
-    my $tag = get_mp3tag($filename);
-    $title = $tag->{TITLE};
-    $artist = $tag->{ARTIST};
-  }
-  elsif ($filename =~ /.ogg/i)
-  {
-    my $ogg = Ogg::Vorbis::Header::PurePerl->new($filename);
-    ($title) = $ogg->comment('title');
-    ($artist) = $ogg->comment('artist');
-  }
+    # Returns the title and artist of an MP3 or OGG file
+    my $filename = $_[0];
+    my $title;
+    my $artist;
 
-  $title =~ s/^\s*// if $title;
-  $artist =~ s/^\s*// if $artist;
+    if ( $filename =~ /.mp3$/i )
+    {
+        $filename = Win32::GetShortPathName($filename) if ( $^O eq "MSWin32" );
+        my $tag = get_mp3tag($filename);
+        $title  = $tag->{TITLE};
+        $artist = $tag->{ARTIST};
+    }
+    elsif ( $filename =~ /.ogg/i )
+    {
+        my $ogg = Ogg::Vorbis::Header::PurePerl->new($filename);
+        ($title)  = $ogg->comment('title');
+        ($artist) = $ogg->comment('artist');
+    }
 
-  return ($title,$artist);
+    $title  =~ s/^\s*// if $title;
+    $artist =~ s/^\s*// if $artist;
+
+    return ( $title, $artist );
 }
 
 sub dynamic_documents
 {
-  # This function takes a filename as an argument.  It then increments
-  # a counter to keep track of how many documents we've accessed in this
-  # session.  
-  # It adds the file to the "Recent Files" menu off of Files, and if we're
-  # over the user-specified limit, removes the oldest file from the list.
-  
-  $file = $_[0];
 
-  my $fileentry;
-  my $counter = 0;
-  my $success = 0;
-  foreach $fileentry (@current)
-  {
-    if ($fileentry eq $file)
+    # This function takes a filename as an argument.  It then increments
+    # a counter to keep track of how many documents we've accessed in this
+    # session.
+    # It adds the file to the "Recent Files" menu off of Files, and if we're
+    # over the user-specified limit, removes the oldest file from the list.
+
+    $file = $_[0];
+
+    my $fileentry;
+    my $counter = 0;
+    my $success = 0;
+    foreach $fileentry (@current)
     {
-      # The item is currently in the list.  Move it to the front of
-      # the line.
-      splice (@current, $counter, 1);
-      @current = ($file,@current);
-      $counter++;
-      $success=1;
+        if ( $fileentry eq $file )
+        {
+
+            # The item is currently in the list.  Move it to the front of
+            # the line.
+            splice( @current, $counter, 1 );
+            @current = ( $file, @current );
+            $counter++;
+            $success = 1;
+        }
+        else
+        {
+            $counter++;
+        }
     }
-    else
+
+    if ( $success != 1 )
     {
-      $counter++;
+
+        # The file isn't in our current list, so we need to add it.
+        @current = ( $file, @current );
+        $savefile_count++;
     }
-  }
 
-  if ($success != 1)
-  {
-    # The file isn't in our current list, so we need to add it.
-    @current = ($file, @current);
-    $savefile_count++;
-  }
+    if ( $#current >= $savefile_max )
+    {
+        pop(@current);
+    }
 
-  if ($#current >= $savefile_max)
-  {
-    pop (@current);
-  }
-
-  # Get rid of the old menu and rebuild from our array
-  $dynamicmenu->delete(0,'end');
-  foreach $fileentry (@current)
-  {
-    $dynamicmenu->command(-label=>"$fileentry",
-                          -command => [\&open_file, $mw, $fileentry]);
-  }
+    # Get rid of the old menu and rebuild from our array
+    $dynamicmenu->delete( 0, 'end' );
+    foreach $fileentry (@current)
+    {
+        $dynamicmenu->command(
+            -label   => "$fileentry",
+            -command => [ \&open_file, $mw, $fileentry ]
+        );
+    }
 }
 
 sub infobox
 {
-  # A generic wrapper function to pop up an information box.  It takes
-  # a reference to the parent widget, the title for the box, and a 
-  # formatted string of data to display.
-  
-  my ($parent_window, $title, $string,$type) = @_;
-  $type = "info" if ! $type;
-  my $box = $parent_window->Dialog(-title=>"$title", 
-                                   -bitmap=>$type,
-                                   -text=>$string,
-                                   -buttons=>["OK"]);
-  $box->Icon(-image=>$icon);
-  $box->Show;
+
+    # A generic wrapper function to pop up an information box.  It takes
+    # a reference to the parent widget, the title for the box, and a
+    # formatted string of data to display.
+
+    my ( $parent_window, $title, $string, $type ) = @_;
+    $type = "info" if !$type;
+    my $box = $parent_window->Dialog(
+        -title   => "$title",
+        -bitmap  => $type,
+        -text    => $string,
+        -buttons => ["OK"]
+    );
+    $box->Icon( -image => $icon );
+    $box->Show;
 }
 
 sub backup_hotkeys
 {
-  # This saves the contents of the hotkeys to temporary variables, so 
-  # you can restore them after a file open, etc.
 
-  foreach $key (%fkeys)
-  {
-    $oldfkeys{$key}->{title} = $fkeys{$key}->{title}; 
-    $oldfkeys{$key}->{id} = $fkeys{$key}->{id}; 
-    $oldfkeys{$key}->{filename} = $fkeys{$key}->{filename}; 
-  }
-  $hotkeysmenu->menu->entryconfigure("Restore Hotkeys", -state=>"normal");
+    # This saves the contents of the hotkeys to temporary variables, so
+    # you can restore them after a file open, etc.
+
+    foreach $key (%fkeys)
+    {
+        $oldfkeys{$key}->{title}    = $fkeys{$key}->{title};
+        $oldfkeys{$key}->{id}       = $fkeys{$key}->{id};
+        $oldfkeys{$key}->{filename} = $fkeys{$key}->{filename};
+    }
+    $hotkeysmenu->menu->entryconfigure( "Restore Hotkeys", -state => "normal" );
 }
 
 sub restore_hotkeys
 {
-  # Replaces the hotkeys with the old ones from backup_hotkeys()
-  foreach $key (%oldfkeys)
-  {
-    $fkeys{$key}->{title} = $oldfkeys{$key}->{title}; 
-    $fkeys{$key}->{id} = $oldfkeys{$key}->{id}; 
-    $fkeys{$key}->{filename} = $oldfkeys{$key}->{filename}; 
-  }
-  $status = "Previous hotkeys restored.";
-  $hotkeysmenu->menu->entryconfigure("Restore Hotkeys", -state=>"disabled");
+
+    # Replaces the hotkeys with the old ones from backup_hotkeys()
+    foreach $key (%oldfkeys)
+    {
+        $fkeys{$key}->{title}    = $oldfkeys{$key}->{title};
+        $fkeys{$key}->{id}       = $oldfkeys{$key}->{id};
+        $fkeys{$key}->{filename} = $oldfkeys{$key}->{filename};
+    }
+    $status = "Previous hotkeys restored.";
+    $hotkeysmenu->menu->entryconfigure( "Restore Hotkeys",
+        -state => "disabled" );
 }
 
 sub bulk_add
 {
-  my (@accepted, @rejected, $directory, $longcat, $db_cat);
-  my $box1 = $mw->DialogBox(-title=>"Add all songs in directory",
-                            -buttons=>["Continue","Cancel"]);
-  $box1->Icon(-image=>$icon);
-  my $box1frame1 = $box1->add("Frame")->pack(-fill=>'x');
-  $box1frame1->Label(-text=>"This will allow you to add all songs in a directory to a particular\ncategory, using the information stored in MP3 or OGG files to fill in the title and\nartist.  You will have to go back after the fact to add Extra Info or do any editing.\nIf a file does not have at least a title embedded in it, it will not be added.\n\nChoose your directory and category below.\n\n")->pack(-side=>'top');
-  my $box1frame2 = $box1->add("Frame")->pack(-fill=>'x');
-  $box1frame2->Label(-text=>"Add To Category: ")->pack(-side=>'left');
-  my $menu = $box1frame2->Menubutton(-text=>"Choose Category",
-                                     -relief=>'raised',
-                                     -tearoff=>0,
-                                     -indicatoron=>1)->pack(-side=>'left');
-  my $query="SELECT * from categories ORDER BY description";
-  my $sth=$dbh->prepare($query);
-  $sth->execute or die "can't execute the query: $DBI::errstr\n";
-  while (@table_row = $sth->fetchrow_array)
-  {
-    $code=$table_row[0];
-    $name=$table_row[1];
-    $menu->radiobutton(-label=>$name,
-                       -value=>$code,
-                       -variable=>\$db_cat,
-                       -command=>sub {
-                         $longcat = "(" . return_longcat($db_cat) . ")";});
-  }
-  $sth->finish;
-  $box1frame2->Label(-textvariable=>\$longcat)->pack(-side=>'left');
-  my $box1frame3 = $box1->add("Frame")->pack(-fill=>'x');
-  $box1frame3->Label(-text=>"Choose Directory: ")->pack(-side=>'left');
-  $box1frame3->Entry(-textvariable=>\$directory)->pack(-side=>'left');
-  $box1frame3->Button(-text=>"Select Source Directory",
-                    -command=>sub { 
-                     $directory = $box1->chooseDirectory;
-  })->pack(-side=>'left');
+    my ( @accepted, @rejected, $directory, $longcat, $db_cat );
+    my $box1 = $mw->DialogBox(
+        -title   => "Add all songs in directory",
+        -buttons => [ "Continue", "Cancel" ]
+    );
+    $box1->Icon( -image => $icon );
+    my $box1frame1 = $box1->add("Frame")->pack( -fill => 'x' );
+    $box1frame1->Label( -text =>
+          "This will allow you to add all songs in a directory to a particular\ncategory, using the information stored in MP3 or OGG files to fill in the title and\nartist.  You will have to go back after the fact to add Extra Info or do any editing.\nIf a file does not have at least a title embedded in it, it will not be added.\n\nChoose your directory and category below.\n\n"
+    )->pack( -side => 'top' );
+    my $box1frame2 = $box1->add("Frame")->pack( -fill => 'x' );
+    $box1frame2->Label( -text => "Add To Category: " )->pack( -side => 'left' );
+    my $menu = $box1frame2->Menubutton(
+        -text        => "Choose Category",
+        -relief      => 'raised',
+        -tearoff     => 0,
+        -indicatoron => 1
+    )->pack( -side => 'left' );
+    my $query = "SELECT * from categories ORDER BY description";
+    my $sth   = $dbh->prepare($query);
+    $sth->execute or die "can't execute the query: $DBI::errstr\n";
 
-  my $firstbutton = $box1->Show;
-
-  if ($firstbutton ne "Continue")
-  {
-    $status = "Bulk-Add Cancelled";
-    return;
-  } 
-
-  if (! -r $directory)
-  {
-    infobox($mw,"Directory unreadable","Could not read files from the directory $directory\nPlease check permissions and try again.");
-    $status = "Bulk-Add exited due to directory error";
-    return(1);
-  }
-
-  if (! $db_cat)
-  {
-    infobox($mw,"Select a category","You must select a category to load the files into.\nPlease try again.");
-    $status = "Bulk-Add exited due to category error";
-    return(1);
-  }
-
-  my @mp3glob = glob(catfile($directory, "*.mp3"));
-  my @oggglob = glob(catfile($directory, "*.ogg"));
-
-  my @list = (@mp3glob, @oggglob);
-
-  $mw->Busy(-recurse=>1);
-  foreach $file (@list)
-  {
-    $file = Win32::GetShortPathName($file) if ($^O eq "MSWin32");
-    my ($title, $artist) = get_title_artist($file);
-    if ($title)
+    while ( @table_row = $sth->fetchrow_array )
     {
-      # Valid title, all we need
-      my $time = get_songlength($file);
-      my $db_title = $dbh->quote($title);
-      my $db_artist;
-      if ( ($artist) && ($artist !~ /^\s*$/) )
-      {
-        $db_artist = $dbh->quote($artist);
-      }  
-      else
-      {
-        $db_artist = "NULL";
-      }
-      $db_filename = move_file($file,$title,$artist);
-      my $query = "INSERT INTO mrvoice (id,title,artist,category,filename,time,modtime) VALUES (NULL, $db_title, $db_artist, '$db_cat', '$db_filename', '$time', NULL)";
-      my $sth=$dbh->prepare($query);
-      $sth->execute or die "can't execute the query: $DBI::errstr\n";
-      $sth->finish;
-      if ($^O eq "MSWin32")
-      {
-        push (@accepted, basename(Win32::GetLongPathName($file)));
-      }
-      else
-      {
-        push (@accepted, basename($file));
-      }
+        $code = $table_row[0];
+        $name = $table_row[1];
+        $menu->radiobutton(
+            -label    => $name,
+            -value    => $code,
+            -variable => \$db_cat,
+            -command  => sub {
+                $longcat = "(" . return_longcat($db_cat) . ")";
+            }
+        );
     }
-    else
-    {
-      # No title, no go.
-      if ($^O eq "MSWin32")
-      {
-        push (@rejected, basename(Win32::GetLongPathName($file)));
-      }
-      else
-      {
-        push (@rejected, basename($file));
-      }
-    }
-  }
-  $mw->Unbusy(-recurse=>1);
+    $sth->finish;
+    $box1frame2->Label( -textvariable => \$longcat )->pack( -side => 'left' );
+    my $box1frame3 = $box1->add("Frame")->pack( -fill => 'x' );
+    $box1frame3->Label( -text => "Choose Directory: " )
+      ->pack( -side => 'left' );
+    $box1frame3->Entry( -textvariable => \$directory )->pack( -side => 'left' );
+    $box1frame3->Button(
+        -text    => "Select Source Directory",
+        -command => sub {
+            $directory = $box1->chooseDirectory;
+        }
+    )->pack( -side => 'left' );
 
-  # Final Summary
-  my $summarybox=$mw->Toplevel(-title=>"Bulk-Add Summary");
-  $summarybox->withdraw();
-  $summarybox->Icon(-image=>$icon);
-  my $lb = $summarybox->Scrolled("Listbox", -scrollbars=>"osoe",
-                                            -setgrid=>1,
-                                            -width=>50,
-                                            -height=>20,
-                                            -selectmode=>"single")->pack();
-  $lb->insert('end',"===> The following items were successfully added");
-  foreach $good (@accepted)
-  {
-    $lb->insert('end',$good);
-  }
-  $lb->insert('end', "","","===> The following files were NOT added:");
-  foreach $bad (@rejected)
-  {
-    $lb->insert('end',$bad);
-  }
-  $summarybox->Button(-text=>"Close", -command=> sub{
-                $summarybox->destroy if Tk::Exists($summarybox);
-  })->pack();
-  $summarybox->update();
-  $summarybox->deiconify();
-  $summarybox->raise();
+    my $firstbutton = $box1->Show;
+
+    if ( $firstbutton ne "Continue" )
+    {
+        $status = "Bulk-Add Cancelled";
+        return;
+    }
+
+    if ( !-r $directory )
+    {
+        infobox(
+            $mw,
+            "Directory unreadable",
+            "Could not read files from the directory $directory\nPlease check permissions and try again."
+        );
+        $status = "Bulk-Add exited due to directory error";
+        return (1);
+    }
+
+    if ( !$db_cat )
+    {
+        infobox(
+            $mw,
+            "Select a category",
+            "You must select a category to load the files into.\nPlease try again."
+        );
+        $status = "Bulk-Add exited due to category error";
+        return (1);
+    }
+
+    my @mp3glob = glob( catfile( $directory, "*.mp3" ) );
+    my @oggglob = glob( catfile( $directory, "*.ogg" ) );
+
+    my @list = ( @mp3glob, @oggglob );
+
+    $mw->Busy( -recurse => 1 );
+    foreach $file (@list)
+    {
+        $file = Win32::GetShortPathName($file) if ( $^O eq "MSWin32" );
+        my ( $title, $artist ) = get_title_artist($file);
+        if ($title)
+        {
+
+            # Valid title, all we need
+            my $time     = get_songlength($file);
+            my $db_title = $dbh->quote($title);
+            my $db_artist;
+            if ( ($artist) && ( $artist !~ /^\s*$/ ) )
+            {
+                $db_artist = $dbh->quote($artist);
+            }
+            else
+            {
+                $db_artist = "NULL";
+            }
+            $db_filename = move_file( $file, $title, $artist );
+            my $query =
+              "INSERT INTO mrvoice (id,title,artist,category,filename,time,modtime) VALUES (NULL, $db_title, $db_artist, '$db_cat', '$db_filename', '$time', NULL)";
+            my $sth = $dbh->prepare($query);
+            $sth->execute or die "can't execute the query: $DBI::errstr\n";
+            $sth->finish;
+            if ( $^O eq "MSWin32" )
+            {
+                push( @accepted, basename( Win32::GetLongPathName($file) ) );
+            }
+            else
+            {
+                push( @accepted, basename($file) );
+            }
+        }
+        else
+        {
+
+            # No title, no go.
+            if ( $^O eq "MSWin32" )
+            {
+                push( @rejected, basename( Win32::GetLongPathName($file) ) );
+            }
+            else
+            {
+                push( @rejected, basename($file) );
+            }
+        }
+    }
+    $mw->Unbusy( -recurse => 1 );
+
+    # Final Summary
+    my $summarybox = $mw->Toplevel( -title => "Bulk-Add Summary" );
+    $summarybox->withdraw();
+    $summarybox->Icon( -image => $icon );
+    my $lb = $summarybox->Scrolled(
+        "Listbox",
+        -scrollbars => "osoe",
+        -setgrid    => 1,
+        -width      => 50,
+        -height     => 20,
+        -selectmode => "single"
+    )->pack();
+    $lb->insert( 'end', "===> The following items were successfully added" );
+    foreach $good (@accepted)
+    {
+        $lb->insert( 'end', $good );
+    }
+    $lb->insert( 'end', "", "", "===> The following files were NOT added:" );
+    foreach $bad (@rejected)
+    {
+        $lb->insert( 'end', $bad );
+    }
+    $summarybox->Button(
+        -text    => "Close",
+        -command => sub {
+            $summarybox->destroy if Tk::Exists($summarybox);
+        }
+    )->pack();
+    $summarybox->update();
+    $summarybox->deiconify();
+    $summarybox->raise();
 }
 
 sub add_category
 {
-  my $box = $mw->DialogBox(-title=>"Add a category", -buttons=>["Ok","Cancel"]);
-  $box->Icon(-image=>$icon);
-  my $acframe1 = $box->add("Frame")->pack(-fill=>'x');
-  $acframe1->Label(-text=>"Category Code:  ")->pack(-side=>'left');
-  $acframe1->Entry(-width=>6,
-                  -textvariable=>\$addcat_code)->pack(-side=>'left');
-  my $acframe2 = $box->add("Frame")->pack(-fill=>'x');
-  $acframe2->Label(-text=>"Category Description:  ")->pack(-side=>'left');
-  $acframe2->Entry(-width=>25,
-                  -textvariable=>\$addcat_desc)->pack(-side=>'left');
-  my $button = $box->Show;
-  if ($button eq "Ok")
-  {
-    if (($addcat_code) && ($addcat_desc))
-    {
-      $addcat_desc = $dbh->quote($addcat_desc);
-      $addcat_code =~ tr/a-z/A-Z/;
+    my $box = $mw->DialogBox(
+        -title   => "Add a category",
+        -buttons => [ "Ok", "Cancel" ]
+    );
+    $box->Icon( -image => $icon );
+    my $acframe1 = $box->add("Frame")->pack( -fill => 'x' );
+    $acframe1->Label( -text => "Category Code:  " )->pack( -side => 'left' );
+    $acframe1->Entry(
+        -width        => 6,
+        -textvariable => \$addcat_code
+    )->pack( -side => 'left' );
+    my $acframe2 = $box->add("Frame")->pack( -fill => 'x' );
+    $acframe2->Label( -text => "Category Description:  " )
+      ->pack( -side => 'left' );
+    $acframe2->Entry(
+        -width        => 25,
+        -textvariable => \$addcat_desc
+    )->pack( -side => 'left' );
+    my $button = $box->Show;
 
-      # Check to see if there's a duplicate of either entry
-     
-      $checkquery = "SELECT * FROM categories WHERE (code='$addcat_code' OR description=$addcat_desc)";
-      my $sth = $dbh->prepare($checkquery);
-      $result=$sth->execute;
-      if ($sth->rows > 0)
-      {
-        infobox($mw, "Category Error","A category with that name or code already exists.  Please try again");
-      } 
-      else
-      {
-        my $query = "INSERT INTO categories VALUES ('$addcat_code',$addcat_desc)";
-        $sth=$dbh->prepare($query);
-        if (! $sth->execute)
+    if ( $button eq "Ok" )
+    {
+        if ( ($addcat_code) && ($addcat_desc) )
         {
-          my $error_message = $sth->errstr();
-          infobox($mw, "Database Error","Database returned error: $error_message on query $query");
+            $addcat_desc = $dbh->quote($addcat_desc);
+            $addcat_code =~ tr/a-z/A-Z/;
+
+            # Check to see if there's a duplicate of either entry
+
+            $checkquery =
+              "SELECT * FROM categories WHERE (code='$addcat_code' OR description=$addcat_desc)";
+            my $sth = $dbh->prepare($checkquery);
+            $result = $sth->execute;
+            if ( $sth->rows > 0 )
+            {
+                infobox(
+                    $mw,
+                    "Category Error",
+                    "A category with that name or code already exists.  Please try again"
+                );
+            }
+            else
+            {
+                my $query =
+                  "INSERT INTO categories VALUES ('$addcat_code',$addcat_desc)";
+                $sth = $dbh->prepare($query);
+                if ( !$sth->execute )
+                {
+                    my $error_message = $sth->errstr();
+                    infobox(
+                        $mw,
+                        "Database Error",
+                        "Database returned error: $error_message on query $query"
+                    );
+                }
+                else
+                {
+                    $status = "Added category $addcat_desc";
+                    infobox( $mw, "Success", "Category added." );
+                }
+                $sth->finish;
+            }
         }
         else
         {
-          $status = "Added category $addcat_desc";
-          infobox($mw,"Success","Category added.");
+            infobox( $mw, "Error",
+                "You must enter both a category code and a description" );
         }
-        $sth->finish;
-      }
     }
-    else 
+    else
     {
-      infobox($mw, "Error","You must enter both a category code and a description");
+        $status = "Cancelled adding category.";
     }
-  }
-  else
-  {
-    $status = "Cancelled adding category.";
-  }
-  $addcat_code="";
-  $addcat_desc="";
+    $addcat_code = "";
+    $addcat_desc = "";
 }
 
 sub edit_category
 {
-  my $edit_cat;
-  my $box = $mw->DialogBox(-title=>"Choose a category to edit", -buttons=>["Ok","Cancel"]);
-  $box->Icon(-image=>$icon);
-  $box->add("Label",-text=>"You may currently edit the long name, but not the code, of a category.\n\nChoose the category to edit below.")->pack(); 
-  my $query="SELECT * from categories ORDER BY description";
-  my $sth=$dbh->prepare($query);
-  $sth->execute or die "can't execute the query: $DBI::errstr\n";
-  my $editbox = $box->add("Scrolled","Listbox",-scrollbars=>'osoe',
-                                 -setgrid=>1,
-                                 -height=>10,
-                                 -width=>30,
-                                 -selectmode=>"single")->pack();
-  while (@table_row = $sth->fetchrow_array)
-  {
-    my $code=$table_row[0];
-    my $name=$table_row[1];
-    my $string = "$code - $name";
-    $editbox->insert('end',"$string");
-  }
-  $sth->finish;
-  my $choice = $box->Show();
-  if ( ($choice ne "Cancel") && ( defined($editbox->curselection()) ) )
-  {
-    # Throw up another dialog box to do the actual editing
-    my ($code,$desc) = split(/ - /,$editbox->get($editbox->curselection()));
-    my $editbox = $mw->DialogBox(-title=>"Edit a category", -buttons=>["Ok","Cancel"]);
-    $editbox->Icon(-image=>$icon);
-    $editbox->add("Label",-text=>"Edit the long name of the category: $desc.")->pack(); 
-    my $new_desc = $desc;
-    $editbox->add("Label",-text=>"CODE: $code", -anchor=>'w')->pack(-fill=>'x', -expand=>1);
-    my $labelframe = $editbox->add("Frame")->pack(-fill=>'x');
-    $labelframe->Label(-text=>"New Description: ")->pack(-side=>'left');
-    $labelframe->Entry(-width=>25,
-                       -textvariable=>\$new_desc)->pack(-side=>'left');
-    my $editchoice = $editbox->Show();
+    my $edit_cat;
+    my $box = $mw->DialogBox(
+        -title   => "Choose a category to edit",
+        -buttons => [ "Ok", "Cancel" ]
+    );
+    $box->Icon( -image => $icon );
+    $box->add( "Label",
+        -text =>
+          "You may currently edit the long name, but not the code, of a category.\n\nChoose the category to edit below."
+    )->pack();
+    my $query = "SELECT * from categories ORDER BY description";
+    my $sth   = $dbh->prepare($query);
+    $sth->execute or die "can't execute the query: $DBI::errstr\n";
+    my $editbox = $box->add(
+        "Scrolled", "Listbox",
+        -scrollbars => 'osoe',
+        -setgrid    => 1,
+        -height     => 10,
+        -width      => 30,
+        -selectmode => "single"
+    )->pack();
 
-    if ($editchoice ne "Cancel")
+    while ( @table_row = $sth->fetchrow_array )
     {
-      $query = "UPDATE categories SET description='$new_desc' WHERE code='$code'";
-      $sth=$dbh->prepare($query);
-      if (! $sth->execute)
-      {
-        my $error_message = $sth->errstr();
-        infobox($mw, "Database Error","Database returned error: $error_message on query $query");
-      }
-      else
-      {
-        $status = "Edited category: $new_desc";
-        infobox($mw,"Success","Category edited.");
-      }
-      $sth->finish;
+        my $code   = $table_row[0];
+        my $name   = $table_row[1];
+        my $string = "$code - $name";
+        $editbox->insert( 'end', "$string" );
     }
-    else
+    $sth->finish;
+    my $choice = $box->Show();
+    if ( ( $choice ne "Cancel" ) && ( defined( $editbox->curselection() ) ) )
     {
-      $status = "Cancelled category edit";
+
+        # Throw up another dialog box to do the actual editing
+        my ( $code, $desc ) =
+          split( / - /, $editbox->get( $editbox->curselection() ) );
+        my $editbox = $mw->DialogBox(
+            -title   => "Edit a category",
+            -buttons => [ "Ok", "Cancel" ]
+        );
+        $editbox->Icon( -image => $icon );
+        $editbox->add( "Label",
+            -text => "Edit the long name of the category: $desc." )->pack();
+        my $new_desc = $desc;
+        $editbox->add( "Label", -text => "CODE: $code", -anchor => 'w' )
+          ->pack( -fill => 'x', -expand => 1 );
+        my $labelframe = $editbox->add("Frame")->pack( -fill => 'x' );
+        $labelframe->Label( -text => "New Description: " )
+          ->pack( -side => 'left' );
+        $labelframe->Entry(
+            -width        => 25,
+            -textvariable => \$new_desc
+        )->pack( -side => 'left' );
+        my $editchoice = $editbox->Show();
+
+        if ( $editchoice ne "Cancel" )
+        {
+            $query =
+              "UPDATE categories SET description='$new_desc' WHERE code='$code'";
+            $sth = $dbh->prepare($query);
+            if ( !$sth->execute )
+            {
+                my $error_message = $sth->errstr();
+                infobox(
+                    $mw,
+                    "Database Error",
+                    "Database returned error: $error_message on query $query"
+                );
+            }
+            else
+            {
+                $status = "Edited category: $new_desc";
+                infobox( $mw, "Success", "Category edited." );
+            }
+            $sth->finish;
+        }
+        else
+        {
+            $status = "Cancelled category edit";
+        }
     }
-  }
 }
 
 sub delete_category
 {
-  my $box = $mw->DialogBox(-title=>"Delete a category",-buttons=>["Ok","Cancel"]);
-  $box->Icon(-image=>$icon);
-  $box->add("Label",-text=>"Choose a category to delete.")->pack();
+    my $box = $mw->DialogBox(
+        -title   => "Delete a category",
+        -buttons => [ "Ok", "Cancel" ]
+    );
+    $box->Icon( -image => $icon );
+    $box->add( "Label", -text => "Choose a category to delete." )->pack();
 
-  my $query="SELECT * from categories ORDER BY description";
-  my $sth=$dbh->prepare($query);
-  $sth->execute or die "can't execute the query: $DBI::errstr\n";
-  my $deletebox = $box->add("Scrolled","Listbox",-scrollbars=>'osoe',
-                            -setgrid=>1,
-                            -height=>10,
-                            -width=>30,
-                            -selectmode=>"single")->pack();
-  while (@table_row = $sth->fetchrow_array)
-  {
-    $code=$table_row[0];
-    $name=$table_row[1];
-    my $string = "$code - $name";
-    $deletebox->insert('end',"$string");
-  }
-  $sth->finish;
-  my $choice = $box->Show();
-  
-  if ( ($choice ne "Cancel") && (defined($deletebox->curselection()) ) )
-  {
-    my ($del_cat,$del_desc) = split(/ - /,$deletebox->get($deletebox->curselection()) );
-    $query = "SELECT * FROM mrvoice WHERE category='$del_cat'";
-    my $sth=$dbh->prepare($query);
-    $sth->execute;
-    $rows = $sth->rows;
-    $sth->finish;
-    if ($rows > 0)
+    my $query = "SELECT * from categories ORDER BY description";
+    my $sth   = $dbh->prepare($query);
+    $sth->execute or die "can't execute the query: $DBI::errstr\n";
+    my $deletebox = $box->add(
+        "Scrolled", "Listbox",
+        -scrollbars => 'osoe',
+        -setgrid    => 1,
+        -height     => 10,
+        -width      => 30,
+        -selectmode => "single"
+    )->pack();
+    while ( @table_row = $sth->fetchrow_array )
     {
-      infobox($mw, "Error","Could not delete category $del_cat because there are still entries in the database using it.  Delete all entries using this category before deleting the category");
-      $status = "Category not deleted";
+        $code = $table_row[0];
+        $name = $table_row[1];
+        my $string = "$code - $name";
+        $deletebox->insert( 'end', "$string" );
+    }
+    $sth->finish;
+    my $choice = $box->Show();
+
+    if ( ( $choice ne "Cancel" ) && ( defined( $deletebox->curselection() ) ) )
+    {
+        my ( $del_cat, $del_desc ) =
+          split( / - /, $deletebox->get( $deletebox->curselection() ) );
+        $query = "SELECT * FROM mrvoice WHERE category='$del_cat'";
+        my $sth = $dbh->prepare($query);
+        $sth->execute;
+        $rows = $sth->rows;
+        $sth->finish;
+        if ( $rows > 0 )
+        {
+            infobox( $mw, "Error",
+                "Could not delete category $del_cat because there are still entries in the database using it.  Delete all entries using this category before deleting the category"
+            );
+            $status = "Category not deleted";
+        }
+        else
+        {
+            $query = "DELETE FROM categories WHERE code='$del_cat'";
+            my $sth = $dbh->prepare($query);
+            if ( $sth->execute )
+            {
+                $status = "Deleted category $del_desc";
+                infobox( $mw, "Success",
+                    "Category \"$del_desc\" has been deleted." );
+            }
+            $sth->finish;
+        }
     }
     else
     {
-      $query = "DELETE FROM categories WHERE code='$del_cat'";
-      my $sth=$dbh->prepare($query);
-      if ($sth->execute)
-      {
-        $status = "Deleted category $del_desc";
-        infobox ($mw, "Success","Category \"$del_desc\" has been deleted.");
-      }
-      $sth->finish;
+        $status = "Category deletion cancelled";
     }
-  }
-  else
-  {
-    $status = "Category deletion cancelled";
-  }
 }
 
 sub move_file
 {
-  my ($oldfilename, $title, $artist) = @_;
+    my ( $oldfilename, $title, $artist ) = @_;
 
-  if ($artist)
-  {
-    $newfilename = "$artist-$title";
-  }
-  else
-  {
-    $newfilename = $title;
-  }
-  $newfilename =~ s/[^a-zA-Z0-9\-]//g;
- 
-  my ($name,$path,$extension) = fileparse($oldfilename,'\.\w+');
-  $extension=lc($extension);
-
-  if ( -e catfile($config{'filepath'}, "$newfilename$extension") ) 
-  {
-    $i=0;
-    while (1 == 1)
+    if ($artist)
     {
-      if (! -e catfile($config{'filepath'}, "$newfilename-$i$extension"))
-      {
-        $newfilename = "$newfilename-$i";
-        last;
-      }
-      $i++;
+        $newfilename = "$artist-$title";
     }
-  }
+    else
+    {
+        $newfilename = $title;
+    }
+    $newfilename =~ s/[^a-zA-Z0-9\-]//g;
 
-  $newfilename = "$newfilename$extension";
+    my ( $name, $path, $extension ) = fileparse( $oldfilename, '\.\w+' );
+    $extension = lc($extension);
 
-  copy ($oldfilename, catfile($config{'filepath'}, "$newfilename"));
+    if ( -e catfile( $config{'filepath'}, "$newfilename$extension" ) )
+    {
+        $i = 0;
+        while ( 1 == 1 )
+        {
+            if ( !-e catfile( $config{'filepath'}, "$newfilename-$i$extension" )
+              )
+            {
+                $newfilename = "$newfilename-$i";
+                last;
+            }
+            $i++;
+        }
+    }
 
-  return ($newfilename);
+    $newfilename = "$newfilename$extension";
+
+    copy( $oldfilename, catfile( $config{'filepath'}, "$newfilename" ) );
+
+    return ($newfilename);
 }
 
 sub add_new_song
 {
-  my $continue = 0;
-  my ($longcat,$addsong_cat);
-  my $addsong_publisher="OTHER";
-  while ($continue != 1)
-  {
-    $box = $mw->DialogBox(-title=>"Add New Song", -buttons=>["OK","Cancel"]);
-    $box->bind("<Key-Escape>", [\&stop_mp3]);
-    $box->Icon(-image=>$icon);
-    $box->add("Label",-text=>"Enter the following information for the new song, and choose the file to add.")->pack();
-    $box->add("Label",-text=>"Items in red are required.\n")->pack();
-    $frame1 = $box->add("Frame")->pack(-fill=>'x');
-    $frame1->Label(-text=>"Song Title",
-                   -foreground=>"#cdd226132613")->pack(-side=>'left');
-    $frame1->Entry(-width=>30,
-                   -textvariable=>\$addsong_title)->pack(-side=>'right');
-    $frame2 = $box->add("Frame")->pack(-fill=>'x');
-    $frame2->Label(-text=>"Artist")->pack(-side=>'left');
-    $frame2->Entry(-width=>30,
-                   -textvariable=>\$addsong_artist)->pack(-side=>'right');
-    $frame3 = $box->add("Frame")->pack(-fill=>'x');
-    $frame3->Label(-text=>"Category",
-                   -foreground=>"#cdd226132613")->pack(-side=>'left');
-    $menu=$frame3->Menubutton(-text=>"Choose Category",
-                              -relief=>'raised',
-                              -tearoff=>0,
-                              -indicatoron=>1)->pack(-side=>'right');
-    $frame3->Label(-textvariable=>\$longcat)->pack(-side=>'right');
-    $query="SELECT * from categories ORDER BY description";
-    my $sth=$dbh->prepare($query);
-    $sth->execute or die "can't execute the query: $DBI::errstr\n";
-    while (@table_row = $sth->fetchrow_array)
+    my $continue = 0;
+    my ( $longcat, $addsong_cat );
+    my $addsong_publisher = "OTHER";
+    while ( $continue != 1 )
     {
-      $code=$table_row[0];
-      $name=$table_row[1];
-      $menu->radiobutton(-label=>$name,
-                         -value=>$code,
-                         -variable=>\$addsong_cat,
-                         -command=>sub {
-                                $menu->configure(-text=>return_longcat($addsong_cat));});
-    }
-    $sth->finish;
-    $frame4 = $box->add("Frame")->pack(-fill=>'x');
-    $frame4->Label(-text=>"Category Extra Info")->pack(-side=>'left');
-    $frame4->Entry(-width=>30,
-                   -textvariable=>\$addsong_info)->pack(-side=>'right');
-    $pubframe = $box->add("Frame")->pack(-fill=>'x');
-    $pubframe->Label(-text=>'Publisher')->pack(-side=>'left');
-    $pubmenu=$pubframe->Menubutton(-text=>"Choose Publisher",
-                                   -relief=>'raised',
-                                   -tearoff=>0,
-                                   -indicatoron=>1)->pack(-side=>'right');
-    foreach my $item (@publishers)
-    {
-      $pubmenu->radiobutton(-label=>$item,
-                            -value=>$item,
-                            -variable=>\$addsong_publisher,
-                            -command=>sub {
-                              $pubmenu->configure(-text=>$addsong_publisher);});
-    }
-    $frame5 = $box->add("Frame")->pack(-fill=>'x');
-    $frame5->Label(-text=>"File to add",
-                   -foreground=>"#cdd226132613")->pack(-side=>'left');
-    $frame6 = $box->add("Frame")->pack(-fill=>'x');
-    $frame6->Button(-text=>"Select File",
-                    -command=>sub { 
-      $addsong_filename = $mw->getOpenFile(-title=>'Select File',
-                                           -filetypes=>$mp3types);
-      ($addsong_title,$addsong_artist) = get_title_artist($addsong_filename);
-                                  })->pack(-side=>'right');
-    $songentry = $frame5->Entry(-width=>30,
-                   -textvariable=>\$addsong_filename)->pack(-side=>'right');
-    $frame7 = $box->add("Frame")->pack(-fill=>'x');
-    $frame7->Button(-text=>"Preview song",
-                    -command=> sub {  my $tmpsong = $songentry->cget(-textvariable); play_mp3("addsong",$$tmpsong);})->pack(-side=>'right');
+        $box = $mw->DialogBox(
+            -title   => "Add New Song",
+            -buttons => [ "OK", "Cancel" ]
+        );
+        $box->bind( "<Key-Escape>", [ \&stop_mp3 ] );
+        $box->Icon( -image => $icon );
+        $box->add( "Label",
+            -text =>
+              "Enter the following information for the new song, and choose the file to add."
+        )->pack();
+        $box->add( "Label", -text => "Items in red are required.\n" )->pack();
+        $frame1 = $box->add("Frame")->pack( -fill => 'x' );
+        $frame1->Label(
+            -text       => "Song Title",
+            -foreground => "#cdd226132613"
+        )->pack( -side => 'left' );
+        $frame1->Entry(
+            -width        => 30,
+            -textvariable => \$addsong_title
+        )->pack( -side => 'right' );
+        $frame2 = $box->add("Frame")->pack( -fill => 'x' );
+        $frame2->Label( -text => "Artist" )->pack( -side => 'left' );
+        $frame2->Entry(
+            -width        => 30,
+            -textvariable => \$addsong_artist
+        )->pack( -side => 'right' );
+        $frame3 = $box->add("Frame")->pack( -fill => 'x' );
+        $frame3->Label(
+            -text       => "Category",
+            -foreground => "#cdd226132613"
+        )->pack( -side => 'left' );
+        $menu = $frame3->Menubutton(
+            -text        => "Choose Category",
+            -relief      => 'raised',
+            -tearoff     => 0,
+            -indicatoron => 1
+        )->pack( -side => 'right' );
+        $frame3->Label( -textvariable => \$longcat )->pack( -side => 'right' );
+        $query = "SELECT * from categories ORDER BY description";
+        my $sth = $dbh->prepare($query);
+        $sth->execute or die "can't execute the query: $DBI::errstr\n";
 
-    $result = $box->Show();
-  
-    if ($result eq "OK")
+        while ( @table_row = $sth->fetchrow_array )
+        {
+            $code = $table_row[0];
+            $name = $table_row[1];
+            $menu->radiobutton(
+                -label    => $name,
+                -value    => $code,
+                -variable => \$addsong_cat,
+                -command  => sub {
+                    $menu->configure( -text => return_longcat($addsong_cat) );
+                }
+            );
+        }
+        $sth->finish;
+        $frame4 = $box->add("Frame")->pack( -fill => 'x' );
+        $frame4->Label( -text => "Category Extra Info" )
+          ->pack( -side => 'left' );
+        $frame4->Entry(
+            -width        => 30,
+            -textvariable => \$addsong_info
+        )->pack( -side => 'right' );
+        $pubframe = $box->add("Frame")->pack( -fill => 'x' );
+        $pubframe->Label( -text => 'Publisher' )->pack( -side => 'left' );
+        $pubmenu = $pubframe->Menubutton(
+            -text        => "Choose Publisher",
+            -relief      => 'raised',
+            -tearoff     => 0,
+            -indicatoron => 1
+        )->pack( -side => 'right' );
+
+        foreach my $item (@publishers)
+        {
+            $pubmenu->radiobutton(
+                -label    => $item,
+                -value    => $item,
+                -variable => \$addsong_publisher,
+                -command  => sub {
+                    $pubmenu->configure( -text => $addsong_publisher );
+                }
+            );
+        }
+        $frame5 = $box->add("Frame")->pack( -fill => 'x' );
+        $frame5->Label(
+            -text       => "File to add",
+            -foreground => "#cdd226132613"
+        )->pack( -side => 'left' );
+        $frame6 = $box->add("Frame")->pack( -fill => 'x' );
+        $frame6->Button(
+            -text    => "Select File",
+            -command => sub {
+                $addsong_filename = $mw->getOpenFile(
+                    -title     => 'Select File',
+                    -filetypes => $mp3types
+                );
+                ( $addsong_title, $addsong_artist ) =
+                  get_title_artist($addsong_filename);
+            }
+        )->pack( -side => 'right' );
+        $songentry = $frame5->Entry(
+            -width        => 30,
+            -textvariable => \$addsong_filename
+        )->pack( -side => 'right' );
+        $frame7 = $box->add("Frame")->pack( -fill => 'x' );
+        $frame7->Button(
+            -text    => "Preview song",
+            -command => sub {
+                my $tmpsong = $songentry->cget( -textvariable );
+                play_mp3( "addsong", $$tmpsong );
+            }
+        )->pack( -side => 'right' );
+
+        $result = $box->Show();
+
+        if ( $result eq "OK" )
+        {
+            if ( !$addsong_cat )
+            {
+                infobox( $mw, "Error",
+                    "Could not add new song\n\nYou must choose a category" );
+            }
+            elsif ( !-r $addsong_filename )
+            {
+                infobox(
+                    $mw,
+                    "File Error",
+                    "Could not open input file $addsong_filename for reading.  Check file permissions"
+                );
+            }
+            elsif ( !$addsong_title )
+            {
+                infobox( $mw, "File Error",
+                    "You must provide the title for the song." );
+            }
+            elsif ( !-w $config{'filepath'} )
+            {
+                infobox(
+                    $mw,
+                    "File Error",
+                    "Could not write file to directory $config{'filepath'}\nPlease check the permissions"
+                );
+            }
+            else
+            {
+                $continue = 1;
+            }
+        }
+        else
+        {
+            $status            = "Cancelled song add";
+            $addsong_title     = "";
+            $addsong_artist    = "";
+            $addsong_info      = "";
+            $addsong_cat       = "";
+            $addsong_filename  = "";
+            $addsong_publisher = "";
+            return (1);
+        }
+    }    # End while continue loop
+
+    $newfilename =
+      move_file( $addsong_filename, $addsong_title, $addsong_artist );
+
+    $addsong_title = $dbh->quote($addsong_title);
+    if ( $addsong_info eq "" )
     {
-      if (! $addsong_cat)
-      {
-        infobox($mw, "Error","Could not add new song\n\nYou must choose a category");
-      }
-      elsif (! -r $addsong_filename)
-      {
-        infobox ($mw, "File Error","Could not open input file $addsong_filename for reading.  Check file permissions"); 
-      }
-      elsif (! $addsong_title)
-      {
-        infobox ($mw, "File Error","You must provide the title for the song."); 
-      }
-      elsif (! -w $config{'filepath'})
-      {
-        infobox ($mw, "File Error","Could not write file to directory $config{'filepath'}\nPlease check the permissions");
-      }
-      else
-      {
-        $continue = 1;
-      }
+        $addsong_info = "NULL";
     }
     else
     {
-      $status = "Cancelled song add";
-      $addsong_title="";
-      $addsong_artist="";
-      $addsong_info="";
-      $addsong_cat="";
-      $addsong_filename="";
-      $addsong_publisher="";
-      return (1);
+        $addsong_info = $dbh->quote($addsong_info);
     }
-  } # End while continue loop
-
-  $newfilename = move_file ($addsong_filename, $addsong_title, $addsong_artist);
-
-  $addsong_title = $dbh->quote($addsong_title);
-  if ($addsong_info eq "")
-  {
-    $addsong_info = "NULL";
-  }
-  else
-  {
-    $addsong_info = $dbh->quote($addsong_info);
-  }
-  if ($addsong_artist eq "")
-  {
-    $addsong_artist = "NULL";
-  }
-  else
-  {
-    $addsong_artist = $dbh->quote($addsong_artist);
-  }
-  $time = get_songlength($addsong_filename);
-  $query = "INSERT INTO mrvoice VALUES (NULL,$addsong_title,$addsong_artist,'$addsong_cat',$addsong_info,'$newfilename','$time',NULL,'$addsong_publisher')";
-  if ($dbh->do($query))
-  {
-    $addsong_filename = Win32::GetLongPathName($addsong_filename) if ($^O eq "MSWin32");
-    infobox ($mw, "File Added Successfully","Successfully added new song into database.\n\nYou may now delete/move/etc. the file: $addsong_filename as it is no longer needed by Mr. Voice");
-    $status = "File added";
-  }
-  else
-  {
-    infobox ($mw, "Error","Could not add song into database");
-    $status = "File add exited on database error";
-  }
-  $addsong_title="";
-  $addsong_artist="";
-  $addsong_info="";
-  $addsong_cat="";
-  $addsong_filename="";
+    if ( $addsong_artist eq "" )
+    {
+        $addsong_artist = "NULL";
+    }
+    else
+    {
+        $addsong_artist = $dbh->quote($addsong_artist);
+    }
+    $time  = get_songlength($addsong_filename);
+    $query =
+      "INSERT INTO mrvoice VALUES (NULL,$addsong_title,$addsong_artist,'$addsong_cat',$addsong_info,'$newfilename','$time',NULL,'$addsong_publisher')";
+    if ( $dbh->do($query) )
+    {
+        $addsong_filename = Win32::GetLongPathName($addsong_filename)
+          if ( $^O eq "MSWin32" );
+        infobox(
+            $mw,
+            "File Added Successfully",
+            "Successfully added new song into database.\n\nYou may now delete/move/etc. the file: $addsong_filename as it is no longer needed by Mr. Voice"
+        );
+        $status = "File added";
+    }
+    else
+    {
+        infobox( $mw, "Error", "Could not add song into database" );
+        $status = "File add exited on database error";
+    }
+    $addsong_title    = "";
+    $addsong_artist   = "";
+    $addsong_info     = "";
+    $addsong_cat      = "";
+    $addsong_filename = "";
 }
 
 sub edit_preferences
 {
-  my $box = $mw->DialogBox(-title=>"Edit Preferences",
-                           -buttons=>["Ok","Cancel"],
-                           -default_button=>"Ok");
-  $box->Icon(-image=>$icon);
-  my $notebook = $box->add('NoteBook', -ipadx=>6, -ipady=>6);
-  my $database_page = $notebook->add("database", 
-                                     -label=>"Database Options", 
-				     -underline=>0);
-  my $filepath_page = $notebook->add("filepath",
-                                     -label=>"File Paths",
-				     -underline=>0);
-  my $search_page = $notebook->add("search",
-                                   -label=>"Search Options",
-                                   -underline=>0);
-  my $other_page = $notebook->add("other",
-                                  -label=>"Other",
-				  -underline=>0);
+    my $box = $mw->DialogBox(
+        -title          => "Edit Preferences",
+        -buttons        => [ "Ok", "Cancel" ],
+        -default_button => "Ok"
+    );
+    $box->Icon( -image => $icon );
+    my $notebook = $box->add( 'NoteBook', -ipadx => 6, -ipady => 6 );
+    my $database_page = $notebook->add(
+        "database",
+        -label     => "Database Options",
+        -underline => 0
+    );
+    my $filepath_page = $notebook->add(
+        "filepath",
+        -label     => "File Paths",
+        -underline => 0
+    );
+    my $search_page = $notebook->add(
+        "search",
+        -label     => "Search Options",
+        -underline => 0
+    );
+    my $other_page = $notebook->add(
+        "other",
+        -label     => "Other",
+        -underline => 0
+    );
 
-  my $db_name_frame = $database_page->Frame()->pack(-fill=>'x');
-  $db_name_frame->Label(-text=>"Database Name")->pack(-side=>'left');
-  $db_name_frame->Entry(-width=>30,
-	                -textvariable=>\$config{'db_name'})->pack(-side=>'right');
+    my $db_name_frame = $database_page->Frame()->pack( -fill => 'x' );
+    $db_name_frame->Label( -text => "Database Name" )->pack( -side => 'left' );
+    $db_name_frame->Entry(
+        -width        => 30,
+        -textvariable => \$config{'db_name'}
+    )->pack( -side => 'right' );
 
-  my $db_user_frame = $database_page->Frame()->pack(-fill=>'x');
-  $db_user_frame->Label(-text=>"Database Username")->pack(-side=>'left');
-  $db_user_frame->Entry(-width=>30,
-	                -textvariable=>\$config{'db_username'})->pack(-side=>'right');
+    my $db_user_frame = $database_page->Frame()->pack( -fill => 'x' );
+    $db_user_frame->Label( -text => "Database Username" )
+      ->pack( -side => 'left' );
+    $db_user_frame->Entry(
+        -width        => 30,
+        -textvariable => \$config{'db_username'}
+    )->pack( -side => 'right' );
 
-  my $db_pass_frame = $database_page->Frame()->pack(-fill=>'x');
-  $db_pass_frame->Label(-text=>"Database Password")->pack(-side=>'left');
-  $db_pass_frame->Entry(-width=>30,
-	                -textvariable=>\$config{'db_pass'})->pack(-side=>'right');
+    my $db_pass_frame = $database_page->Frame()->pack( -fill => 'x' );
+    $db_pass_frame->Label( -text => "Database Password" )
+      ->pack( -side => 'left' );
+    $db_pass_frame->Entry(
+        -width        => 30,
+        -textvariable => \$config{'db_pass'}
+    )->pack( -side => 'right' );
 
-  my $mp3dir_frame = $filepath_page->Frame()->pack(-fill=>'x');
-  $mp3dir_frame->Label(-text=>"MP3 Directory")->pack(-side=>'left');
-  $mp3dir_frame->Button(-text=>"Select MP3 Directory",
-                        -command=>sub {
-                          if ($filepath = $box->chooseDirectory)
-                          { 
-                            $config{'filepath'} = $filepath;
-                          }
-                        })->pack(-side=>'right');
+    my $mp3dir_frame = $filepath_page->Frame()->pack( -fill => 'x' );
+    $mp3dir_frame->Label( -text => "MP3 Directory" )->pack( -side => 'left' );
+    $mp3dir_frame->Button(
+        -text    => "Select MP3 Directory",
+        -command => sub {
+            if ( $filepath = $box->chooseDirectory )
+            {
+                $config{'filepath'} = $filepath;
+            }
+        }
+    )->pack( -side => 'right' );
 
-  $mp3dir_frame->Entry(-width=>30,
-	               -textvariable=>\$config{'filepath'})->pack(-side=>'right');
+    $mp3dir_frame->Entry(
+        -width        => 30,
+        -textvariable => \$config{'filepath'}
+    )->pack( -side => 'right' );
 
-  my $hotkeydir_frame = $filepath_page->Frame()->pack(-fill=>'x');
-  $hotkeydir_frame->Label(-text=>"Hotkey Save Directory")->pack(-side=>'left');
-  $hotkeydir_frame->Button(-text=>"Select Hotkey Directory",
-                        -command=>sub {
-                          if ($savedir = $box->chooseDirectory)
-                          { 
-                            $config{'savedir'} = $savedir;
-                          }
-                        })->pack(-side=>'right');
-  $hotkeydir_frame->Entry(-width=>30,
-	                  -textvariable=>\$config{'savedir'})->pack(-side=>'right');
+    my $hotkeydir_frame = $filepath_page->Frame()->pack( -fill => 'x' );
+    $hotkeydir_frame->Label( -text => "Hotkey Save Directory" )
+      ->pack( -side => 'left' );
+    $hotkeydir_frame->Button(
+        -text    => "Select Hotkey Directory",
+        -command => sub {
+            if ( $savedir = $box->chooseDirectory )
+            {
+                $config{'savedir'} = $savedir;
+            }
+        }
+    )->pack( -side => 'right' );
+    $hotkeydir_frame->Entry(
+        -width        => 30,
+        -textvariable => \$config{'savedir'}
+    )->pack( -side => 'right' );
 
-  my $display_page = $search_page->Frame(-relief=>'groove',-bd=>1)->pack(-fill=>'x');
-  $display_page->Checkbutton(-text=>'Display publisher in search results?',-variable=>\$config{'show_publisher'})->pack(-side=>'left');
-  $search_page->Label(-text=>'Allow searches of music published by:')->pack(-side=>'top');
-  my $checkbox_frame = $search_page->Frame()->pack(-fill=>'x');
-  $checkbox_frame->Checkbutton(-text=>'ASCAP',-variable=>\$config{'search_ascap'})->pack(-side=>'left',-expand=>1);
-  $checkbox_frame->Checkbutton(-text=>'BMI',-variable=>\$config{'search_bmi'})->pack(-side=>'left',-expand=>1);
-  $checkbox_frame->Checkbutton(-text=>'Other',-variable=>\$config{'search_other'})->pack(-side=>'left',-expand=>1);
+    my $display_page =
+      $search_page->Frame( -relief => 'groove', -bd => 1 )
+      ->pack( -fill => 'x' );
+    $display_page->Checkbutton(
+        -text     => 'Display publisher in search results?',
+        -variable => \$config{'show_publisher'}
+    )->pack( -side => 'left' );
+    $search_page->Label( -text => 'Allow searches of music published by:' )
+      ->pack( -side => 'top' );
+    my $checkbox_frame = $search_page->Frame()->pack( -fill => 'x' );
+    $checkbox_frame->Checkbutton(
+        -text     => 'ASCAP',
+        -variable => \$config{'search_ascap'}
+    )->pack( -side => 'left', -expand => 1 );
+    $checkbox_frame->Checkbutton(
+        -text     => 'BMI',
+        -variable => \$config{'search_bmi'}
+    )->pack( -side => 'left', -expand => 1 );
+    $checkbox_frame->Checkbutton(
+        -text     => 'Other',
+        -variable => \$config{'search_other'}
+    )->pack( -side => 'left', -expand => 1 );
 
-  my $mp3frame = $other_page->Frame()->pack(-fill=>'x');
-  $mp3frame->Label(-text=>"MP3 Player")->pack(-side=>'left');
-  $mp3frame->Button(-text=>"Choose",
-                  -command=>sub { 
-                     $config{'mp3player'} = $mw->getOpenFile(-title=>'Select File');
-                                })->pack(-side=>'right');
-  $mp3frame->Entry(-width=>30,
-                 -textvariable=>\$config{'mp3player'})->pack(-side=>'right'); 
+    my $mp3frame = $other_page->Frame()->pack( -fill => 'x' );
+    $mp3frame->Label( -text => "MP3 Player" )->pack( -side => 'left' );
+    $mp3frame->Button(
+        -text    => "Choose",
+        -command => sub {
+            $config{'mp3player'} = $mw->getOpenFile( -title => 'Select File' );
+        }
+    )->pack( -side => 'right' );
+    $mp3frame->Entry(
+        -width        => 30,
+        -textvariable => \$config{'mp3player'}
+    )->pack( -side => 'right' );
 
-  my $numdyn_frame = $other_page->Frame()->pack(-fill=>'x');
-  $numdyn_frame->Label(-text=>"Number of Dynamic Documents To Show")->pack(-side=>'left');
-  $numdyn_frame->Entry(-width=>2,
-                 -textvariable=>\$savefile_max)->pack(-side=>'right');
+    my $numdyn_frame = $other_page->Frame()->pack( -fill => 'x' );
+    $numdyn_frame->Label( -text => "Number of Dynamic Documents To Show" )
+      ->pack( -side => 'left' );
+    $numdyn_frame->Entry(
+        -width        => 2,
+        -textvariable => \$savefile_max
+    )->pack( -side => 'right' );
 
-  my $httpq_frame = $other_page->Frame()->pack(-fill=>'x');
-  $httpq_frame->Label(-text=>"httpQ Password (WinAmp only, optional)")->pack(-side=>'left');
-  $httpq_frame->Entry(-width=>8,
-                      -textvariable=>\$config{'httpq_pw'})->pack(-side=>'right');
+    my $httpq_frame = $other_page->Frame()->pack( -fill => 'x' );
+    $httpq_frame->Label( -text => "httpQ Password (WinAmp only, optional)" )
+      ->pack( -side => 'left' );
+    $httpq_frame->Entry(
+        -width        => 8,
+        -textvariable => \$config{'httpq_pw'}
+    )->pack( -side => 'right' );
 
-  $notebook->pack(-expand=>"yes",
-                  -fill=>"both",
-		  -padx=>5,
-		  -pady=>5,
-		  -side=>"top");
-  my $result = $box->Show();
+    $notebook->pack(
+        -expand => "yes",
+        -fill   => "both",
+        -padx   => 5,
+        -pady   => 5,
+        -side   => "top"
+    );
+    my $result = $box->Show();
 
-  if ($result eq "Ok")
-  {
-    if ( (! $config{'db_name'}) || (! $config{'db_username'}) || (! $config{'db_pass'}) || (! $config{'filepath'}) || (! $config{'savedir'}) || (! $config{'mp3player'}) )
+    if ( $result eq "Ok" )
     {
-      infobox($mw, "Warning","All fields must be filled in\n");
-      edit_preferences();
+        if (   ( !$config{'db_name'} )
+            || ( !$config{'db_username'} )
+            || ( !$config{'db_pass'} )
+            || ( !$config{'filepath'} )
+            || ( !$config{'savedir'} )
+            || ( !$config{'mp3player'} ) )
+        {
+            infobox( $mw, "Warning", "All fields must be filled in\n" );
+            edit_preferences();
+        }
+        if ( !open( RCFILE, ">$rcfile" ) )
+        {
+            infobox( $mw, "Warning",
+                "Could not open $rcfile for writing. Your preferences will not be saved\n"
+            );
+        }
+        else
+        {
+            print RCFILE "db_name::$config{'db_name'}\n";
+            print RCFILE "db_username::$config{'db_username'}\n";
+            print RCFILE "db_pass::$config{'db_pass'}\n";
+            print RCFILE "filepath::$config{'filepath'}\n";
+            print RCFILE "savedir::$config{'savedir'}\n";
+            print RCFILE "mp3player::$config{'mp3player'}\n";
+            print RCFILE "savefile_max::$config{'savefile_max'}\n";
+            print RCFILE "httpq_pw::$config{'httpq_pw'}\n";
+            print RCFILE "search_ascap::$config{'search_ascap'}\n";
+            print RCFILE "search_bmi::$config{'search_bmi'}\n";
+            print RCFILE "search_other::$config{'search_other'}\n";
+            print RCFILE "show_publisher::$config{'show_publisher'}\n";
+            close(RCFILE);
+        }
     }
-    if (! open(RCFILE,">$rcfile"))
-    {
-      infobox($mw, "Warning","Could not open $rcfile for writing. Your preferences will not be saved\n");
-    }
-    else
-    {
-      print RCFILE "db_name::$config{'db_name'}\n";
-      print RCFILE "db_username::$config{'db_username'}\n";
-      print RCFILE "db_pass::$config{'db_pass'}\n";
-      print RCFILE "filepath::$config{'filepath'}\n";
-      print RCFILE "savedir::$config{'savedir'}\n";
-      print RCFILE "mp3player::$config{'mp3player'}\n";
-      print RCFILE "savefile_max::$config{'savefile_max'}\n";
-      print RCFILE "httpq_pw::$config{'httpq_pw'}\n";
-      print RCFILE "search_ascap::$config{'search_ascap'}\n";
-      print RCFILE "search_bmi::$config{'search_bmi'}\n";
-      print RCFILE "search_other::$config{'search_other'}\n";
-      print RCFILE "show_publisher::$config{'show_publisher'}\n";
-      close(RCFILE);
-    }
-  }
-  read_rcfile();
+    read_rcfile();
 }
 
 sub edit_song
 {
-  @selected = $mainbox->curselection();
-  $count = $#selected + 1;
-  if ($count == 1)
-  {
-    # We're looking to edit one song, so we can choose everything
-    my $id = get_song_id($mainbox,$selected[0]);
-    $query = "SELECT title,artist,category,info,publisher from mrvoice where id=$id";
-    ($edit_title,$edit_artist,$edit_category,$edit_info,$edit_publisher) = $dbh->selectrow_array($query);
-
-    $box = $mw->DialogBox(-title=>"Edit Song", -buttons=>["Edit","Cancel"],
-                                               -default_button=>"Edit");
-    $box->Icon(-image=>$icon);
-    $box->add("Label",-text=>"You may use this form to modify information about a song that is already in the database\n")->pack();
-    $frame1 = $box->add("Frame")->pack(-fill=>'x');
-    $frame1->Label(-text=>"Song Title")->pack(-side=>'left');
-    $frame1->Entry(-width=>30,
-                   -textvariable=>\$edit_title)->pack(-side=>'right');
-    $frame2 = $box->add("Frame")->pack(-fill=>'x');
-    $frame2->Label(-text=>"Artist")->pack(-side=>'left');
-    $frame2->Entry(-width=>30,
-                   -textvariable=>\$edit_artist)->pack(-side=>'right');
-    $frame3 = $box->add("Frame")->pack(-fill=>'x');
-    $frame3->Label(-text=>"Category")->pack(-side=>'left');
-    $menu=$frame3->Menubutton(-text=>"Choose Category",
-                              -relief=>'raised',
-                              -tearoff=>0,
-                              -indicatoron=>1)->pack(-side=>'right');
-      $query="SELECT * from categories ORDER BY description";
-      my $sth=$dbh->prepare($query);
-      $sth->execute or die "can't execute the query: $DBI::errstr\n";
-      while (@table_row = $sth->fetchrow_array)
-      {
-        $code=$table_row[0];
-        $name=$table_row[1];
-        $menu->radiobutton(-label=>$name,
-                           -value=>$code,
-                           -variable=>\$edit_category);
-      }
-      $sth->finish;
-
-    $frame4 = $box->add("Frame")->pack(-fill=>'x');
-    $frame4->Label(-text=>"Extra Info")->pack(-side=>'left');
-    $frame4->Entry(-width=>30,
-                   -textvariable=>\$edit_info)->pack(-side=>'right');
-    $pubframe = $box->add("Frame")->pack(-fill=>'x');
-    $pubframe->Label(-text=>'Publisher')->pack(-side=>'left');
-    $pubmenu = $pubframe->Menubutton(-text=>'Choose Publisher',
-                                     -relief=>'raised',
-                                     -tearoff=>0,
-                                     -indicatoron=>1)->pack(-side=>'right');
-    foreach my $item (@publishers)
+    @selected = $mainbox->curselection();
+    $count    = $#selected + 1;
+    if ( $count == 1 )
     {
-      $pubmenu->radiobutton(-label=>$item,
-                            -value=>$item,
-                            -variable=>\$edit_publisher);
+
+        # We're looking to edit one song, so we can choose everything
+        my $id = get_song_id( $mainbox, $selected[0] );
+        $query =
+          "SELECT title,artist,category,info,publisher from mrvoice where id=$id";
+        (
+            $edit_title, $edit_artist, $edit_category,
+            $edit_info,  $edit_publisher
+          )
+          = $dbh->selectrow_array($query);
+
+        $box = $mw->DialogBox(
+            -title          => "Edit Song",
+            -buttons        => [ "Edit", "Cancel" ],
+            -default_button => "Edit"
+        );
+        $box->Icon( -image => $icon );
+        $box->add( "Label",
+            -text =>
+              "You may use this form to modify information about a song that is already in the database\n"
+        )->pack();
+        $frame1 = $box->add("Frame")->pack( -fill => 'x' );
+        $frame1->Label( -text => "Song Title" )->pack( -side => 'left' );
+        $frame1->Entry(
+            -width        => 30,
+            -textvariable => \$edit_title
+        )->pack( -side => 'right' );
+        $frame2 = $box->add("Frame")->pack( -fill => 'x' );
+        $frame2->Label( -text => "Artist" )->pack( -side => 'left' );
+        $frame2->Entry(
+            -width        => 30,
+            -textvariable => \$edit_artist
+        )->pack( -side => 'right' );
+        $frame3 = $box->add("Frame")->pack( -fill => 'x' );
+        $frame3->Label( -text => "Category" )->pack( -side => 'left' );
+        $menu = $frame3->Menubutton(
+            -text        => "Choose Category",
+            -relief      => 'raised',
+            -tearoff     => 0,
+            -indicatoron => 1
+        )->pack( -side => 'right' );
+        $query = "SELECT * from categories ORDER BY description";
+        my $sth = $dbh->prepare($query);
+        $sth->execute or die "can't execute the query: $DBI::errstr\n";
+
+        while ( @table_row = $sth->fetchrow_array )
+        {
+            $code = $table_row[0];
+            $name = $table_row[1];
+            $menu->radiobutton(
+                -label    => $name,
+                -value    => $code,
+                -variable => \$edit_category
+            );
+        }
+        $sth->finish;
+
+        $frame4 = $box->add("Frame")->pack( -fill => 'x' );
+        $frame4->Label( -text => "Extra Info" )->pack( -side => 'left' );
+        $frame4->Entry(
+            -width        => 30,
+            -textvariable => \$edit_info
+        )->pack( -side => 'right' );
+        $pubframe = $box->add("Frame")->pack( -fill => 'x' );
+        $pubframe->Label( -text => 'Publisher' )->pack( -side => 'left' );
+        $pubmenu = $pubframe->Menubutton(
+            -text        => 'Choose Publisher',
+            -relief      => 'raised',
+            -tearoff     => 0,
+            -indicatoron => 1
+        )->pack( -side => 'right' );
+
+        foreach my $item (@publishers)
+        {
+            $pubmenu->radiobutton(
+                -label    => $item,
+                -value    => $item,
+                -variable => \$edit_publisher
+            );
+        }
+        $result = $box->Show();
+        if ( $result eq "Edit" )
+        {
+            $edit_artist = $dbh->quote($edit_artist);
+            $edit_title  = $dbh->quote($edit_title);
+            $edit_info   = $dbh->quote($edit_info);
+
+            $query =
+              "UPDATE mrvoice SET artist=$edit_artist, title=$edit_title, info=$edit_info, category='$edit_category' WHERE id=$id";
+            if ( $dbh->do($query) )
+            {
+                infobox(
+                    $mw,
+                    "Song Edited Successfully",
+                    "The song was edited successfully."
+                );
+                $status = "Edited song";
+            }
+            else
+            {
+                infobox( $mw, "Error",
+                    "There was an error editing the song. No changes made." );
+                $status = "Error editing song - no changes made";
+            }
+        }
+        else
+        {
+            $status = "Cancelled song edit.";
+        }
     }
-    $result = $box->Show();
-    if ($result eq "Edit")
+    elsif ( $count > 1 )
     {
-      $edit_artist = $dbh->quote($edit_artist);
-      $edit_title = $dbh->quote($edit_title);
-      $edit_info = $dbh->quote($edit_info);
- 
-      $query = "UPDATE mrvoice SET artist=$edit_artist, title=$edit_title, info=$edit_info, category='$edit_category' WHERE id=$id";
-      if ($dbh->do($query))
-      {
-        infobox ($mw, "Song Edited Successfully","The song was edited successfully.");
-        $status = "Edited song";
-      }
-      else
-      {
-        infobox ($mw, "Error","There was an error editing the song. No changes made.");
-        $status = "Error editing song - no changes made";
-      }
+
+        # We're editing multiple songs, so only put up a subset
+        # First, convert the indices to song ID's
+        my @songids;
+        my (
+            $clear_artist_cb, $clear_info_cb, $edit_artist,
+            $edit_info,       $edit_category
+        );
+        foreach $id (@selected)
+        {
+            my $songid = get_song_id( $mainbox, $id );
+            push( @songids, $songid );
+        }
+        $box = $mw->DialogBox(
+            -title          => "Edit $count Songs",
+            -buttons        => [ "Edit", "Cancel" ],
+            -default_button => "Edit"
+        );
+        $box->Icon( -image => $icon );
+        $box->add( "Label",
+            -text =>
+              "You are editing the attributes of $count songs.\nAny changes you make here will be applied to all $count.\n\nTo completely erase a field, use the checkbox beside the field\n"
+        )->pack();
+        $frame2 = $box->add("Frame")->pack( -fill => 'x' );
+        $frame2->Label( -text => "Artist" )->pack( -side => 'left' );
+        $frame2->Checkbutton(
+            -text     => "Clear Field",
+            -variable => \$clear_artist_cb
+        )->pack( -side => 'right' );
+        $frame2->Entry(
+            -width        => 30,
+            -textvariable => \$edit_artist
+        )->pack( -side => 'right' );
+        $frame3 = $box->add("Frame")->pack( -fill => 'x' );
+        $frame3->Label( -text => "Category" )->pack( -side => 'left' );
+        $menu = $frame3->Menubutton(
+            -text        => "Choose Category",
+            -relief      => 'raised',
+            -tearoff     => 0,
+            -indicatoron => 1
+        )->pack( -side => 'right' );
+        $query = "SELECT * from categories ORDER BY description";
+        my $sth = $dbh->prepare($query);
+        $sth->execute or die "can't execute the query: $DBI::errstr\n";
+
+        while ( @table_row = $sth->fetchrow_array )
+        {
+            $code = $table_row[0];
+            $name = $table_row[1];
+            $menu->radiobutton(
+                -label    => $name,
+                -value    => $code,
+                -variable => \$edit_category
+            );
+        }
+        $sth->finish;
+
+        $frame4 = $box->add("Frame")->pack( -fill => 'x' );
+        $frame4->Label( -text => "Extra Info" )->pack( -side => 'left' );
+        $frame4->Checkbutton(
+            -text     => "Clear Field",
+            -variable => \$clear_info_cb
+        )->pack( -side => 'right' );
+        $frame4->Entry(
+            -width        => 30,
+            -textvariable => \$edit_info
+        )->pack( -side => 'right' );
+        $pubframe = $box->add("Frame")->pack( -fill => 'x' );
+        $pubframe->Label( -text => 'Publisher' )->pack( -side => 'left' );
+        $pubmenu = $pubframe->Menubutton(
+            -text        => 'Choose Publisher',
+            -relief      => 'raised',
+            -tearoff     => 0,
+            -indicatoron => 1
+        )->pack( -side => 'right' );
+
+        foreach my $item (@publishers)
+        {
+            $pubmenu->radiobutton(
+                -label    => $item,
+                -value    => $item,
+                -variable => \$edit_publisher
+            );
+        }
+        $result = $box->Show();
+        if (
+            ( $result eq "Edit" )
+            && (   $edit_artist
+                || $edit_category
+                || $edit_info
+                || $edit_publisher
+                || $clear_artist_cb
+                || $clear_info_cb )
+          )
+        {
+
+            # Go into edit loop
+            my @querystring;
+            my $string;
+            $edit_artist = "artist=" . $dbh->quote($edit_artist)
+              if $edit_artist;
+            $edit_info = "info=" . $dbh->quote($edit_info) if $edit_info;
+            $edit_publisher = "publisher=" . $dbh->quote($edit_publisher)
+              if $edit_publisher;
+            $edit_category = "category=" . $dbh->quote($edit_category)
+              if $edit_category;
+
+            $edit_artist = "artist=NULL" if ( $clear_artist_cb == 1 );
+            $edit_info   = "info=NULL"   if ( $clear_info_cb == 1 );
+
+            push( @querystring, $edit_artist )    if $edit_artist;
+            push( @querystring, $edit_info )      if $edit_info;
+            push( @querystring, $edit_publisher ) if $edit_publisher;
+            push( @querystring, $edit_category )  if $edit_category;
+
+            $string = join( ", ", @querystring );
+
+            foreach $songid (@songids)
+            {
+                $query = "UPDATE mrvoice SET $string WHERE id=$songid";
+                $dbh->do($query);
+            }
+            $status = "Edited $count songs";
+        }
+        else
+        {
+            $status = "Cancelled editing $count songs";
+        }
     }
     else
     {
-      $status = "Cancelled song edit.";
+        $status = "No songs selected for editing";
     }
-  }
-  elsif ($count > 1)
-  {
-    # We're editing multiple songs, so only put up a subset
-    # First, convert the indices to song ID's
-    my @songids;
-    my ($clear_artist_cb, $clear_info_cb, $edit_artist,$edit_info,$edit_category);;
-    foreach $id (@selected)
-    {
-      my $songid = get_song_id($mainbox,$id);
-      push (@songids,$songid);
-    }
-    $box = $mw->DialogBox(-title=>"Edit $count Songs", -buttons=>["Edit","Cancel"],
-                                                       -default_button=>"Edit");
-    $box->Icon(-image=>$icon);
-    $box->add("Label",-text=>"You are editing the attributes of $count songs.\nAny changes you make here will be applied to all $count.\n\nTo completely erase a field, use the checkbox beside the field\n")->pack();
-    $frame2 = $box->add("Frame")->pack(-fill=>'x');
-    $frame2->Label(-text=>"Artist")->pack(-side=>'left');
-    $frame2->Checkbutton(-text=>"Clear Field",
-                         -variable=>\$clear_artist_cb)->pack(-side=>'right');
-    $frame2->Entry(-width=>30,
-                   -textvariable=>\$edit_artist)->pack(-side=>'right');
-    $frame3 = $box->add("Frame")->pack(-fill=>'x');
-    $frame3->Label(-text=>"Category")->pack(-side=>'left');
-    $menu=$frame3->Menubutton(-text=>"Choose Category",
-                              -relief=>'raised',
-                              -tearoff=>0,
-                              -indicatoron=>1)->pack(-side=>'right');
-      $query="SELECT * from categories ORDER BY description";
-      my $sth=$dbh->prepare($query);
-      $sth->execute or die "can't execute the query: $DBI::errstr\n";
-      while (@table_row = $sth->fetchrow_array)
-      {
-        $code=$table_row[0];
-        $name=$table_row[1];
-        $menu->radiobutton(-label=>$name,
-                           -value=>$code,
-                           -variable=>\$edit_category);
-      }
-      $sth->finish;
 
-    $frame4 = $box->add("Frame")->pack(-fill=>'x');
-    $frame4->Label(-text=>"Extra Info")->pack(-side=>'left');
-    $frame4->Checkbutton(-text=>"Clear Field",
-                         -variable=>\$clear_info_cb)->pack(-side=>'right');
-    $frame4->Entry(-width=>30,
-                   -textvariable=>\$edit_info)->pack(-side=>'right');
-    $pubframe = $box->add("Frame")->pack(-fill=>'x');
-    $pubframe->Label(-text=>'Publisher')->pack(-side=>'left');
-    $pubmenu = $pubframe->Menubutton(-text=>'Choose Publisher',
-                                     -relief=>'raised',
-                                     -tearoff=>0,
-                                     -indicatoron=>1)->pack(-side=>'right');
-    foreach my $item (@publishers)
-    {
-      $pubmenu->radiobutton(-label=>$item,
-                            -value=>$item,
-                            -variable=>\$edit_publisher);
-    }
-    $result = $box->Show();
-    if ( ($result eq "Edit") && ( $edit_artist || $edit_category || $edit_info || $edit_publisher || $clear_artist_cb || $clear_info_cb ) )
-    {
-      # Go into edit loop
-      my @querystring;
-      my $string;
-      $edit_artist = "artist=" . $dbh->quote($edit_artist) if $edit_artist;
-      $edit_info = "info=" . $dbh->quote($edit_info) if $edit_info;
-      $edit_publisher = "publisher=" . $dbh->quote($edit_publisher) if $edit_publisher;
-      $edit_category = "category=" . $dbh->quote($edit_category) if $edit_category;
-
-      $edit_artist = "artist=NULL" if ($clear_artist_cb == 1);
-      $edit_info = "info=NULL" if ($clear_info_cb == 1);
-
-      push (@querystring, $edit_artist) if $edit_artist;
-      push (@querystring, $edit_info) if $edit_info;
-      push (@querystring, $edit_publisher) if $edit_publisher;
-      push (@querystring, $edit_category) if $edit_category;
-
-      $string = join (", ", @querystring);
-
-
-      foreach $songid (@songids)
-      {
-        $query = "UPDATE mrvoice SET $string WHERE id=$songid";
-        $dbh->do($query);
-      }
-      $status = "Edited $count songs";
-    }
-    else
-    {
-      $status = "Cancelled editing $count songs";
-    }   
-  }
-  else
-  {
-    $status = "No songs selected for editing";
-  }
-
-  $edit_title="";
-  $edit_artist="";
-  $edit_category="";
-  $edit_publisher="";
-  $edit_info="";
+    $edit_title     = "";
+    $edit_artist    = "";
+    $edit_category  = "";
+    $edit_publisher = "";
+    $edit_info      = "";
 }
 
 sub delete_song
 {
-  my @selection = $mainbox->curselection();
-  my $count = $#selection + 1;
-  my @ids;
-  my $index;
-  foreach $index (@selection)
-  {
-    push (@ids, get_song_id($mainbox,$index));
-  }
-  if ($count >= 1)
-  {  
-    $box = $mw->DialogBox(-title=>"Confirm Deletion", 
-                          -default_button=>"Cancel",
-                          -buttons=>["Delete","Cancel"]);
-    $box->Icon(-image=>$icon);
-    if ($count == 1)
+    my @selection = $mainbox->curselection();
+    my $count     = $#selection + 1;
+    my @ids;
+    my $index;
+    foreach $index (@selection)
     {
-      $box->add("Label",-text=>"About to delete $count song from the database.\nBe sure this is what you want to do!")->pack();
+        push( @ids, get_song_id( $mainbox, $index ) );
+    }
+    if ( $count >= 1 )
+    {
+        $box = $mw->DialogBox(
+            -title          => "Confirm Deletion",
+            -default_button => "Cancel",
+            -buttons        => [ "Delete", "Cancel" ]
+        );
+        $box->Icon( -image => $icon );
+        if ( $count == 1 )
+        {
+            $box->add( "Label",
+                -text =>
+                  "About to delete $count song from the database.\nBe sure this is what you want to do!"
+            )->pack();
+        }
+        else
+        {
+            $box->add( "Label",
+                -text =>
+                  "About to delete $count songs from the database.\nBe sure this is what you want to do!"
+            )->pack();
+        }
+        $box->add(
+            "Checkbutton",
+            -text     => "Delete file on disk",
+            -variable => \$delete_file_cb
+        )->pack();
+        $result = $box->Show();
+        if ( $result eq "Delete" )
+        {
+            foreach $id (@ids)
+            {
+                if ( $delete_file_cb == 1 )
+                {
+                    $filequery = "SELECT filename FROM mrvoice WHERE id=$id";
+                    ($filename) = $dbh->selectrow_array($filequery);
+                }
+                $query = "DELETE FROM mrvoice WHERE id=$id";
+                my $sth = $dbh->prepare($query);
+                $sth->execute;
+                $sth->finish;
+                if ( $delete_file_cb == 1 )
+                {
+                    my $file = catfile( $config{'filepath'}, $filename );
+                    unlink("$file");
+                }
+                $status = "Deleted $count songs";
+            }
+        }
+        else
+        {
+            $status = "Cancelled deletion";
+        }
     }
     else
     {
-      $box->add("Label",-text=>"About to delete $count songs from the database.\nBe sure this is what you want to do!")->pack();
+        $status = "No song selected for deletion";
     }
-    $box->add("Checkbutton",-text=>"Delete file on disk",
-                            -variable=>\$delete_file_cb)->pack();
-    $result = $box->Show();
-    if ($result eq "Delete")
-    {
-      foreach $id (@ids)
-      {
-        if ($delete_file_cb == 1)
-        {
-          $filequery = "SELECT filename FROM mrvoice WHERE id=$id";
-          ($filename) = $dbh->selectrow_array($filequery);
-        }
-        $query = "DELETE FROM mrvoice WHERE id=$id";
-        my $sth=$dbh->prepare($query);
-        $sth->execute;
-        $sth->finish;
-        if ($delete_file_cb == 1)
-        {
-          my $file = catfile($config{'filepath'}, $filename);
-          unlink("$file");
-        }
-        $status = "Deleted $count songs";
-      }
-    } 
-    else
-    {
-      $status = "Cancelled deletion";
-    }
-  }
-  else
-  {
-    $status = "No song selected for deletion";
-  }
-  $delete_file_cb = 0;
+    $delete_file_cb = 0;
 }
 
-  
 sub show_about
 {
-  $rev = '$Revision: 1.296 $';
-  $rev =~ s/.*(\d+\.\d+).*/$1/;
-  my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
-  my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
-                           -buttons=>["OK"],
-                           -background=>'white');
-  $logo_photo = $mw->Photo(-data=>$logo_photo_data);
-  $box->Icon(-image=>$icon);
-  $box->add("Label",-image=>$logo_photo,
-                    -background=>'white')->pack();
-  $box->add("Label",-text=>"$string",
-                    -background=>'white')->pack();
-  $box->Show;
+    $rev = '$Revision: 1.297 $';
+    $rev =~ s/.*(\d+\.\d+).*/$1/;
+    my $string =
+      "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
+    my $box = $mw->DialogBox(
+        -title      => "About Mr. Voice",
+        -buttons    => ["OK"],
+        -background => 'white'
+    );
+    $logo_photo = $mw->Photo( -data => $logo_photo_data );
+    $box->Icon( -image => $icon );
+    $box->add(
+        "Label",
+        -image      => $logo_photo,
+        -background => 'white'
+    )->pack();
+    $box->add(
+        "Label",
+        -text       => "$string",
+        -background => 'white'
+    )->pack();
+    $box->Show;
 }
 
 #STARTCSZ
@@ -2160,934 +2565,1107 @@ sub show_about
 
 sub wipe_tank
 {
-  # Clears the holding tank
-  $tankbox->delete(0,'end');
+
+    # Clears the holding tank
+    $tankbox->delete( 0, 'end' );
 }
 
 sub clear_hotkeys
 {
-  # Backs up the hotkeys, then deletes all of them.
 
-  if ($lock_hotkeys == 1)
-  {
-    $status = "Can't clear all hotkeys - hotkeys locked";
-    return;
-  }
+    # Backs up the hotkeys, then deletes all of them.
 
-  backup_hotkeys();
-  foreach $fkeynum (1 .. 12)
-  {
-    $fkey = "f$fkeynum";
-    $fkeys{$fkey}->{id}='';
-    $fkeys{$fkey}->{filename}='';
-    $fkeys{$fkey}->{title}='';
-  }
-  $status = "All hotkeys cleared";
+    if ( $lock_hotkeys == 1 )
+    {
+        $status = "Can't clear all hotkeys - hotkeys locked";
+        return;
+    }
+
+    backup_hotkeys();
+    foreach $fkeynum ( 1 .. 12 )
+    {
+        $fkey                     = "f$fkeynum";
+        $fkeys{$fkey}->{id}       = '';
+        $fkeys{$fkey}->{filename} = '';
+        $fkeys{$fkey}->{title}    = '';
+    }
+    $status = "All hotkeys cleared";
 }
 
 sub clear_selected
 {
-  if ($lock_hotkeys == 1)
-  {
-    $status = "Can't clear selected hotkeys - hotkeys locked";
-    return;
-  }
-  # If a hotkey has its checkbox activated, then that hotkey will have
-  # its entry cleared.  Then all checkboxes are unselected.
+    if ( $lock_hotkeys == 1 )
+    {
+        $status = "Can't clear selected hotkeys - hotkeys locked";
+        return;
+    }
 
-  if ($f1_cb)
-  {
-    $fkeys{f1}->{title}='';
-    $fkeys{f1}->{id}='';
-    $fkeys{f1}->{filename}='';
-  }
-  if ($f2_cb)
-  {
-    $fkeys{f2}->{title}='';
-    $fkeys{f2}->{id}='';
-    $fkeys{f2}->{filename}='';
-  }
-  if ($f3_cb)
-  {
-    $fkeys{f3}->{title}='';
-    $fkeys{f3}->{id}='';
-    $fkeys{f3}->{filename}='';
-  }
-  if ($f4_cb)
-  {
-    $fkeys{f4}->{title}='';
-    $fkeys{f4}->{id}='';
-    $fkeys{f4}->{filename}='';
-  }
-  if ($f5_cb)
-  {
-    $fkeys{f5}->{title}='';
-    $fkeys{f5}->{id}='';
-    $fkeys{f5}->{filename}='';
-  }
-  if ($f6_cb)
-  {
-    $fkeys{f6}->{title}='';
-    $fkeys{f6}->{id}='';
-    $fkeys{f6}->{filename}='';
-  }
-  if ($f7_cb)
-  {
-    $fkeys{f7}->{title}='';
-    $fkeys{f7}->{id}='';
-    $fkeys{f7}->{filename}='';
-  }
-  if ($f8_cb)
-  {
-    $fkeys{f8}->{title}='';
-    $fkeys{f8}->{id}='';
-    $fkeys{f8}->{filename}='';
-  }
-  if ($f9_cb)
-  {
-    $fkeys{f9}->{title}='';
-    $fkeys{f9}->{id}='';
-    $fkeys{f9}->{filename}='';
-  }
-  if ($f10_cb)
-  {
-    $fkeys{f10}->{title}='';
-    $fkeys{f10}->{id}='';
-    $fkeys{f10}->{filename}='';
-  }
-  if ($f11_cb)
-  {
-    $fkeys{f11}->{title}='';
-    $fkeys{f11}->{id}='';
-    $fkeys{f11}->{filename}='';
-  }
-  if ($f12_cb)
-  {
-    $fkeys{f12}->{title}='';
-    $fkeys{f12}->{id}='';
-    $fkeys{f12}->{filename}='';
-  }
-  $f1_cb=0;
-  $f2_cb=0;
-  $f3_cb=0;
-  $f4_cb=0;
-  $f5_cb=0;
-  $f6_cb=0;
-  $f7_cb=0;
-  $f8_cb=0;
-  $f9_cb=0;
-  $f10_cb=0;
-  $f11_cb=0;
-  $f12_cb=0;
-  $status="Selected hotkeys cleared";
+    # If a hotkey has its checkbox activated, then that hotkey will have
+    # its entry cleared.  Then all checkboxes are unselected.
+
+    if ($f1_cb)
+    {
+        $fkeys{f1}->{title}    = '';
+        $fkeys{f1}->{id}       = '';
+        $fkeys{f1}->{filename} = '';
+    }
+    if ($f2_cb)
+    {
+        $fkeys{f2}->{title}    = '';
+        $fkeys{f2}->{id}       = '';
+        $fkeys{f2}->{filename} = '';
+    }
+    if ($f3_cb)
+    {
+        $fkeys{f3}->{title}    = '';
+        $fkeys{f3}->{id}       = '';
+        $fkeys{f3}->{filename} = '';
+    }
+    if ($f4_cb)
+    {
+        $fkeys{f4}->{title}    = '';
+        $fkeys{f4}->{id}       = '';
+        $fkeys{f4}->{filename} = '';
+    }
+    if ($f5_cb)
+    {
+        $fkeys{f5}->{title}    = '';
+        $fkeys{f5}->{id}       = '';
+        $fkeys{f5}->{filename} = '';
+    }
+    if ($f6_cb)
+    {
+        $fkeys{f6}->{title}    = '';
+        $fkeys{f6}->{id}       = '';
+        $fkeys{f6}->{filename} = '';
+    }
+    if ($f7_cb)
+    {
+        $fkeys{f7}->{title}    = '';
+        $fkeys{f7}->{id}       = '';
+        $fkeys{f7}->{filename} = '';
+    }
+    if ($f8_cb)
+    {
+        $fkeys{f8}->{title}    = '';
+        $fkeys{f8}->{id}       = '';
+        $fkeys{f8}->{filename} = '';
+    }
+    if ($f9_cb)
+    {
+        $fkeys{f9}->{title}    = '';
+        $fkeys{f9}->{id}       = '';
+        $fkeys{f9}->{filename} = '';
+    }
+    if ($f10_cb)
+    {
+        $fkeys{f10}->{title}    = '';
+        $fkeys{f10}->{id}       = '';
+        $fkeys{f10}->{filename} = '';
+    }
+    if ($f11_cb)
+    {
+        $fkeys{f11}->{title}    = '';
+        $fkeys{f11}->{id}       = '';
+        $fkeys{f11}->{filename} = '';
+    }
+    if ($f12_cb)
+    {
+        $fkeys{f12}->{title}    = '';
+        $fkeys{f12}->{id}       = '';
+        $fkeys{f12}->{filename} = '';
+    }
+    $f1_cb  = 0;
+    $f2_cb  = 0;
+    $f3_cb  = 0;
+    $f4_cb  = 0;
+    $f5_cb  = 0;
+    $f6_cb  = 0;
+    $f7_cb  = 0;
+    $f8_cb  = 0;
+    $f9_cb  = 0;
+    $f10_cb = 0;
+    $f11_cb = 0;
+    $f12_cb = 0;
+    $status = "Selected hotkeys cleared";
 }
 
 sub launch_tank_playlist
 {
-  # Launch an m3u playlist from the contents of the holding tank
-  my @indices = $tankbox->get(0,'end');
-  return if ($#indices < 0);
-  my ($fh, $filename) = tempfile(SUFFIX => '.m3u',UNLINK => 1);
-  print $fh "#EXTM3U\n";
-  foreach my $item (@indices)
-  {
-    my ($id,$description) = split(/:/,$item);
-    $file = get_filename($id);
-    my $path = catfile($config{filepath},$file);
-    print $fh "$path\n";
-  }
-  close ($fh) or die;
-  system ("$config{'mp3player'} $filename");
+
+    # Launch an m3u playlist from the contents of the holding tank
+    my @indices = $tankbox->get( 0, 'end' );
+    return if ( $#indices < 0 );
+    my ( $fh, $filename ) = tempfile( SUFFIX => '.m3u', UNLINK => 1 );
+    print $fh "#EXTM3U\n";
+    foreach my $item (@indices)
+    {
+        my ( $id, $description ) = split( /:/, $item );
+        $file = get_filename($id);
+        my $path = catfile( $config{filepath}, $file );
+        print $fh "$path\n";
+    }
+    close($fh) or die;
+    system("$config{'mp3player'} $filename");
 }
 
 sub holding_tank
 {
-  if (!Exists($holdingtank))
-  {
-    my $arrowdown = $mw->Photo(-data => <<'EOF');
+    if ( !Exists($holdingtank) )
+    {
+        my $arrowdown = $mw->Photo( -data => <<'EOF');
 R0lGODlhFgAWAIUAAPwCBAQCBAQGBBwaHDQyNExKTHx6fGxqbFxeXGRiZFRSVDw+PAwKDJSWlOzu7LSytJyenJSSlISGhISChIyOjFRWVDw6PPz+/MTCxLS2tGRmZDQ2NAwODJyanKSmpKSipIyKjHRydBQSFERCRExOTFxaXAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAWABYAAAasQIBwSCwah4FkQKBsDpoBIqFgOCASCYRWm1AUFgRGkdBwPCARiWRCaTwOFYvYSIhcMOiJpJGZaDYcR0IEHXceEQ0fICEWIoJDhHcQHxIHgI9SEHeVG46YUh8OISOen1INCqWmUnOYTUxQAU9NUlRWWFtbCiRgrYNlZ2lriG8lYUd1khETE24gCZeCkRgeFBAQIAeNn9OTlXKrBJoYnKrcoaPmpmSpq3S+7u50QQAh/mhDcmVhdGVkIGJ5IEJNUFRvR0lGIFBybyB2ZXJzaW9uIDIuNQ0KqSBEZXZlbENvciAxOTk3LDE5OTguIEFsbCByaWdodHMgcmVzZXJ2ZWQuDQpodHRwOi8vd3d3LmRldmVsY29yLmNvbQA7
 EOF
 
-    my $arrowup = $mw->Photo(-data => <<'EOF');
+        my $arrowup = $mw->Photo( -data => <<'EOF');
 R0lGODlhFgAWAIUAAPwCBAQCBGReZDQyNMTCxHx6fPz+/JyWnKyurHx2fDw6PJSSlISGhIyKjIyGjISChLy6vJyanOTm5PTy9OTi5MzKzLSytKSepMTGxMzGzLS2tLSutKymrHRydCQiJCwmLBwWHAwODLy2vHx+fAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAWABYAAAajQIBwSCwaj8RAAMkUBgSDZdP4JBSi06TAcEAkFNLp07BgLLzY5njRcDzO3zB1C4lEGI83Wj58SiYUFRUWdg0XEXFFAwIYGRoWGxwRZQUFHZdgRAObmx4fHiChISFKpVlKWUdPaalOAlasp1sHG4myZGZ7Yltsbgu1mUhjdRF5egmxfQJ/gYOFdrZDi40iFgiSCw8jBQmYcpydn6Ego6WorUwGQQAh/mhDcmVhdGVkIGJ5IEJNUFRvR0lGIFBybyB2ZXJzaW9uIDIuNQ0KqSBEZXZlbENvciAxOTk3LDE5OTguIEFsbCByaWdodHMgcmVzZXJ2ZWQuDQpodHRwOi8vd3d3LmRldmVsY29yLmNvbQA7
 EOF
 
-    $holdingtank = $mw->Toplevel();
-    $holdingtank->minsize(35,2);
-    $holdingtank->withdraw();
-    $holdingtank->Icon(-image=>$icon);
-    bind_hotkeys($holdingtank);              
-    $holdingtank->bind("<Control-Key-p>", [\&play_mp3,"Holding"]);
-    $holdingtank->title("Holding Tank");
-    $holdingtank->Label(-text=>"I'm Mr. Holding Tank - you put your songs in me.")->pack;
-    $holdingtank->Label(-text=>"Drag a song here from the main search box to store it")->pack;
-    $playlistbutton = $holdingtank->Button(-text=>"Launch Playlist",
-                                           -command=>\&launch_tank_playlist)->pack();
-    $playlistbutton->configure(-bg=>'dodgerblue',
-                               -activebackground=>'royalblue');
-    my $buttonframe = $holdingtank->Frame()->pack(-side=>'bottom',
-                                                  -fill=>'x');
-    $holdingtank->Button(-image=>$arrowup,
-                         -command=>[\&move_tank,"-1"])->pack(-side=>'left');
-    $holdingtank->Button(-image=>$arrowdown,
-                         -command=>[\&move_tank,"1"])->pack(-side=>'right');
-    $tankbox = $holdingtank->Scrolled('Listbox',
-                           -scrollbars=>'osoe',
-                           -width=>50,
-                           -setgrid=>1,
-                           -selectmode=>'extended')->pack(-fill=>'both',
-			                                  -expand=>1,
-                                                          -padx=>2,
-                                                          -side=>'top');
-    $tank_token = $tankbox->DragDrop(-event => '<B1-Motion>',
-                                -sitetypes => ['Local'],
-                                -startcommand => sub { StartDrag($tank_token) });
-    $tankbox->DropSite(-droptypes=>['Local'],
-                       -dropcommand=>[\&Tank_Drop, $dnd_token ]);
-    $tankbox->bind("<Double-Button-1>", \&play_mp3);
-#  $tankbox->bind("<Control-Key-p>", [\&play_mp3, "Holding"]);
-    &BindMouseWheel($tankbox);
-    my $playbutton = $buttonframe->Button(-text=>"Play Now",
-                                          -command=>[\&play_mp3,$tankbox])->pack(-side=>'left');
-    $playbutton->configure(-bg=>'green',
-                           -activebackground=>'SpringGreen2');
-    my $stopbutton = $buttonframe->Button(-text=>"Stop Now",
-                                          -command=>\&stop_mp3)->pack(-side=>'left');
-    $stopbutton->configure(-bg=>'red',
-                         -activebackground=>'tomato3');
-    $buttonframe->Button(-text=>"Close",
-                       -command=>sub {$holdingtank->withdraw})->pack(-side=>'right');
-    $buttonframe->Button(-text=>"Clear Selected",
-                         -command=>\&clear_tank)->pack(-side=>'right');
-    $holdingtank->update();
-    $holdingtank->deiconify();
-    $holdingtank->raise();
-  }
-  else
-  {
-    $holdingtank->deiconify();
-    $holdingtank->raise();
-  }
+        $holdingtank = $mw->Toplevel();
+        $holdingtank->minsize( 35, 2 );
+        $holdingtank->withdraw();
+        $holdingtank->Icon( -image => $icon );
+        bind_hotkeys($holdingtank);
+        $holdingtank->bind( "<Control-Key-p>", [ \&play_mp3, "Holding" ] );
+        $holdingtank->title("Holding Tank");
+        $holdingtank->Label(
+            -text => "I'm Mr. Holding Tank - you put your songs in me." )->pack;
+        $holdingtank->Label(
+            -text => "Drag a song here from the main search box to store it" )
+          ->pack;
+        $playlistbutton = $holdingtank->Button(
+            -text    => "Launch Playlist",
+            -command => \&launch_tank_playlist
+        )->pack();
+        $playlistbutton->configure(
+            -bg               => 'dodgerblue',
+            -activebackground => 'royalblue'
+        );
+        my $buttonframe = $holdingtank->Frame()->pack(
+            -side => 'bottom',
+            -fill => 'x'
+        );
+        $holdingtank->Button(
+            -image   => $arrowup,
+            -command => [ \&move_tank, "-1" ]
+        )->pack( -side => 'left' );
+        $holdingtank->Button(
+            -image   => $arrowdown,
+            -command => [ \&move_tank, "1" ]
+        )->pack( -side => 'right' );
+        $tankbox = $holdingtank->Scrolled(
+            'Listbox',
+            -scrollbars => 'osoe',
+            -width      => 50,
+            -setgrid    => 1,
+            -selectmode => 'extended'
+          )->pack(
+            -fill   => 'both',
+            -expand => 1,
+            -padx   => 2,
+            -side   => 'top'
+          );
+        $tank_token = $tankbox->DragDrop(
+            -event        => '<B1-Motion>',
+            -sitetypes    => ['Local'],
+            -startcommand => sub { StartDrag($tank_token) }
+        );
+        $tankbox->DropSite(
+            -droptypes   => ['Local'],
+            -dropcommand => [ \&Tank_Drop, $dnd_token ]
+        );
+        $tankbox->bind( "<Double-Button-1>", \&play_mp3 );
+
+        #  $tankbox->bind("<Control-Key-p>", [\&play_mp3, "Holding"]);
+        &BindMouseWheel($tankbox);
+        my $playbutton = $buttonframe->Button(
+            -text    => "Play Now",
+            -command => [ \&play_mp3, $tankbox ]
+        )->pack( -side => 'left' );
+        $playbutton->configure(
+            -bg               => 'green',
+            -activebackground => 'SpringGreen2'
+        );
+        my $stopbutton = $buttonframe->Button(
+            -text    => "Stop Now",
+            -command => \&stop_mp3
+        )->pack( -side => 'left' );
+        $stopbutton->configure(
+            -bg               => 'red',
+            -activebackground => 'tomato3'
+        );
+        $buttonframe->Button(
+            -text    => "Close",
+            -command => sub { $holdingtank->withdraw }
+        )->pack( -side => 'right' );
+        $buttonframe->Button(
+            -text    => "Clear Selected",
+            -command => \&clear_tank
+        )->pack( -side => 'right' );
+        $holdingtank->update();
+        $holdingtank->deiconify();
+        $holdingtank->raise();
+    }
+    else
+    {
+        $holdingtank->deiconify();
+        $holdingtank->raise();
+    }
 }
 
 sub move_tank
 {
-  # Blatantly cribbed from Mastering Perl/Tk's Tk::NavListbox example
-  my $lb = $tankbox;
-  my $direction = $_[0];
-  my $index = $lb->curselection;
 
-  # Sanity checks
-  return if ($index == 0 && $direction == -1);
-  return if ($index == $lb->size()-1 && $direction == 1);
+    # Blatantly cribbed from Mastering Perl/Tk's Tk::NavListbox example
+    my $lb        = $tankbox;
+    my $direction = $_[0];
+    my $index     = $lb->curselection;
 
-  my $newindex = $index + $direction;
+    # Sanity checks
+    return if ( $index == 0 && $direction == -1 );
+    return if ( $index == $lb->size() - 1 && $direction == 1 );
 
-  my $item = $lb->get($index);
-  $lb->delete($index);
-  $lb->insert($newindex, $item);
-  $lb->selectionSet($newindex);
+    my $newindex = $index + $direction;
+
+    my $item = $lb->get($index);
+    $lb->delete($index);
+    $lb->insert( $newindex, $item );
+    $lb->selectionSet($newindex);
 }
 
 sub clear_tank
 {
-  @selected = reverse($tankbox->curselection());
-  foreach $item (@selected)
-  {
-    $tankbox->delete($item);
-  }
+    @selected = reverse( $tankbox->curselection() );
+    foreach $item (@selected)
+    {
+        $tankbox->delete($item);
+    }
 }
-  
+
 sub list_hotkeys
 {
-  if (!Exists($hotkeysbox))
-  {
-    $hotkeysbox=$mw->Toplevel();
-    $hotkeysbox->withdraw();
-    $hotkeysbox->Icon(-image=>$icon);
-    bind_hotkeys($hotkeysbox);
-    $hotkeysbox->bind("<Control-Key-p>", [\&play_mp3,"Current"]);
-    $hotkeysbox->title("Hotkeys");
-    $hotkeysbox->Label(-text=>"Currently defined hotkeys:")->pack;
-    my $f1_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
-    $f1_frame->Checkbutton(-text=>"F1: ",
-                           -variable=>\$f1_cb)->pack(-side=>'left');
-    $f1_frame->Label(-textvariable=>\$fkeys{f1}->{title}, 
-                     -anchor=>'w')->pack(-side=>'left');
-    $f1_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, "f1"]);
-    my $f2_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
-    $f2_frame->Checkbutton(-text=>"F2: ",
-                           -variable=>\$f2_cb)->pack(-side=>'left');
-    $f2_frame->Label(-textvariable=>\$fkeys{f2}->{title},
-                     -anchor=>'w')->pack(-side=>'left');
-    $f2_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, "f2"]);
-    my $f3_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
-    $f3_frame->Checkbutton(-text=>"F3: ",
-                           -variable=>\$f3_cb)->pack(-side=>'left');
-    $f3_frame->Label(-textvariable=>\$fkeys{f3}->{title},
-                     -anchor=>'w')->pack(-side=>'left');
-    $f3_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, "f3"]);
-    my $f4_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
-    $f4_frame->Checkbutton(-text=>"F4: ",
-                           -variable=>\$f4_cb)->pack(-side=>'left');
-    $f4_frame->Label(-textvariable=>\$fkeys{f4}->{title},
-                     -anchor=>'w')->pack(-side=>'left');
-    $f4_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, "f4"]);
-    my $f5_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
-    $f5_frame->Checkbutton(-text=>"F5: ",
-                           -variable=>\$f5_cb)->pack(-side=>'left');
-    $f5_frame->Label(-textvariable=>\$fkeys{f5}->{title},
-                     -anchor=>'w')->pack(-side=>'left');
-    $f5_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, "f5"]);
-    my $f6_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
-    $f6_frame->Checkbutton(-text=>"F6: ",
-                           -variable=>\$f6_cb)->pack(-side=>'left');
-    $f6_frame->Label(-textvariable=>\$fkeys{f6}->{title},
-                     -anchor=>'w')->pack(-side=>'left');
-    $f6_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, "f6"]);
-    my $f7_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
-    $f7_frame->Checkbutton(-text=>"F7: ",
-                           -variable=>\$f7_cb)->pack(-side=>'left');
-    $f7_frame->Label(-textvariable=>\$fkeys{f7}->{title},
-                     -anchor=>'w')->pack(-side=>'left');
-    $f7_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, "f7"]);
-    my $f8_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
-    $f8_frame->Checkbutton(-text=>"F8: ",
-                           -variable=>\$f8_cb)->pack(-side=>'left');
-    $f8_frame->Label(-textvariable=>\$fkeys{f8}->{title},
-                     -anchor=>'w')->pack(-side=>'left');
-    $f8_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, "f8"]);
-    my $f9_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
-    $f9_frame->Checkbutton(-text=>"F9: ",
-                           -variable=>\$f9_cb)->pack(-side=>'left');
-    $f9_frame->Label(-textvariable=>\$fkeys{f9}->{title},
-                     -anchor=>'w')->pack(-side=>'left');
-    $f9_frame->DropSite(-droptypes=>['Local'],
-                        -dropcommand=>[\&Hotkey_Drop, "f9"]);
-    my $f10_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
-    $f10_frame->Checkbutton(-text=>"F10:",
-                            -variable=>\$f10_cb)->pack(-side=>'left');
-    $f10_frame->Label(-textvariable=>\$fkeys{f10}->{title},
-                      -anchor=>'w')->pack(-side=>'left');
-    $f10_frame->DropSite(-droptypes=>['Local'],
-                         -dropcommand=>[\&Hotkey_Drop, "f10"]);
-    my $f11_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
-    $f11_frame->Checkbutton(-text=>"F11:",
-                            -variable=>\$f11_cb)->pack(-side=>'left');
-    $f11_frame->Label(-textvariable=>\$fkeys{f11}->{title},
-                      -anchor=>'w')->pack(-side=>'left');
-    $f11_frame->DropSite(-droptypes=>['Local'],
-                         -dropcommand=>[\&Hotkey_Drop, "f11"]);
-    my $f12_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
-    $f12_frame->Checkbutton(-text=>"F12:",
-                            -variable=>\$f12_cb)->pack(-side=>'left');
-    $f12_frame->Label(-textvariable=>\$fkeys{f12}->{title},
-                      -anchor=>'w')->pack(-side=>'left');
-    $f12_frame->DropSite(-droptypes=>['Local'],
-                         -dropcommand=>[\&Hotkey_Drop, "f12"]);
-    my $buttonframe = $hotkeysbox->Frame()->pack(-side=>'bottom',
-                                                 -fill=>'x');
-    $buttonframe->Button(-text=>"Close",
-                         -command=>sub { $hotkeysbox->withdraw})->pack(-side=>'left');
-    $buttonframe->Button(-text=>"Clear Selected",
-                         -command=>\&clear_selected)->pack(-side=>'right');
-    $hotkeysbox->update();
-    $hotkeysbox->deiconify();
-    $hotkeysbox->raise();
-  }
-  else
-  {
-    $hotkeysbox->deiconify();
-    $hotkeysbox->raise();
-  }
+    if ( !Exists($hotkeysbox) )
+    {
+        $hotkeysbox = $mw->Toplevel();
+        $hotkeysbox->withdraw();
+        $hotkeysbox->Icon( -image => $icon );
+        bind_hotkeys($hotkeysbox);
+        $hotkeysbox->bind( "<Control-Key-p>", [ \&play_mp3, "Current" ] );
+        $hotkeysbox->title("Hotkeys");
+        $hotkeysbox->Label( -text => "Currently defined hotkeys:" )->pack;
+        my $f1_frame = $hotkeysbox->Frame()->pack( -fill => 'x' );
+        $f1_frame->Checkbutton(
+            -text     => "F1: ",
+            -variable => \$f1_cb
+        )->pack( -side => 'left' );
+        $f1_frame->Label(
+            -textvariable => \$fkeys{f1}->{title},
+            -anchor       => 'w'
+        )->pack( -side => 'left' );
+        $f1_frame->DropSite(
+            -droptypes   => ['Local'],
+            -dropcommand => [ \&Hotkey_Drop, "f1" ]
+        );
+        my $f2_frame = $hotkeysbox->Frame()->pack( -fill => 'x' );
+        $f2_frame->Checkbutton(
+            -text     => "F2: ",
+            -variable => \$f2_cb
+        )->pack( -side => 'left' );
+        $f2_frame->Label(
+            -textvariable => \$fkeys{f2}->{title},
+            -anchor       => 'w'
+        )->pack( -side => 'left' );
+        $f2_frame->DropSite(
+            -droptypes   => ['Local'],
+            -dropcommand => [ \&Hotkey_Drop, "f2" ]
+        );
+        my $f3_frame = $hotkeysbox->Frame()->pack( -fill => 'x' );
+        $f3_frame->Checkbutton(
+            -text     => "F3: ",
+            -variable => \$f3_cb
+        )->pack( -side => 'left' );
+        $f3_frame->Label(
+            -textvariable => \$fkeys{f3}->{title},
+            -anchor       => 'w'
+        )->pack( -side => 'left' );
+        $f3_frame->DropSite(
+            -droptypes   => ['Local'],
+            -dropcommand => [ \&Hotkey_Drop, "f3" ]
+        );
+        my $f4_frame = $hotkeysbox->Frame()->pack( -fill => 'x' );
+        $f4_frame->Checkbutton(
+            -text     => "F4: ",
+            -variable => \$f4_cb
+        )->pack( -side => 'left' );
+        $f4_frame->Label(
+            -textvariable => \$fkeys{f4}->{title},
+            -anchor       => 'w'
+        )->pack( -side => 'left' );
+        $f4_frame->DropSite(
+            -droptypes   => ['Local'],
+            -dropcommand => [ \&Hotkey_Drop, "f4" ]
+        );
+        my $f5_frame = $hotkeysbox->Frame()->pack( -fill => 'x' );
+        $f5_frame->Checkbutton(
+            -text     => "F5: ",
+            -variable => \$f5_cb
+        )->pack( -side => 'left' );
+        $f5_frame->Label(
+            -textvariable => \$fkeys{f5}->{title},
+            -anchor       => 'w'
+        )->pack( -side => 'left' );
+        $f5_frame->DropSite(
+            -droptypes   => ['Local'],
+            -dropcommand => [ \&Hotkey_Drop, "f5" ]
+        );
+        my $f6_frame = $hotkeysbox->Frame()->pack( -fill => 'x' );
+        $f6_frame->Checkbutton(
+            -text     => "F6: ",
+            -variable => \$f6_cb
+        )->pack( -side => 'left' );
+        $f6_frame->Label(
+            -textvariable => \$fkeys{f6}->{title},
+            -anchor       => 'w'
+        )->pack( -side => 'left' );
+        $f6_frame->DropSite(
+            -droptypes   => ['Local'],
+            -dropcommand => [ \&Hotkey_Drop, "f6" ]
+        );
+        my $f7_frame = $hotkeysbox->Frame()->pack( -fill => 'x' );
+        $f7_frame->Checkbutton(
+            -text     => "F7: ",
+            -variable => \$f7_cb
+        )->pack( -side => 'left' );
+        $f7_frame->Label(
+            -textvariable => \$fkeys{f7}->{title},
+            -anchor       => 'w'
+        )->pack( -side => 'left' );
+        $f7_frame->DropSite(
+            -droptypes   => ['Local'],
+            -dropcommand => [ \&Hotkey_Drop, "f7" ]
+        );
+        my $f8_frame = $hotkeysbox->Frame()->pack( -fill => 'x' );
+        $f8_frame->Checkbutton(
+            -text     => "F8: ",
+            -variable => \$f8_cb
+        )->pack( -side => 'left' );
+        $f8_frame->Label(
+            -textvariable => \$fkeys{f8}->{title},
+            -anchor       => 'w'
+        )->pack( -side => 'left' );
+        $f8_frame->DropSite(
+            -droptypes   => ['Local'],
+            -dropcommand => [ \&Hotkey_Drop, "f8" ]
+        );
+        my $f9_frame = $hotkeysbox->Frame()->pack( -fill => 'x' );
+        $f9_frame->Checkbutton(
+            -text     => "F9: ",
+            -variable => \$f9_cb
+        )->pack( -side => 'left' );
+        $f9_frame->Label(
+            -textvariable => \$fkeys{f9}->{title},
+            -anchor       => 'w'
+        )->pack( -side => 'left' );
+        $f9_frame->DropSite(
+            -droptypes   => ['Local'],
+            -dropcommand => [ \&Hotkey_Drop, "f9" ]
+        );
+        my $f10_frame = $hotkeysbox->Frame()->pack( -fill => 'x' );
+        $f10_frame->Checkbutton(
+            -text     => "F10:",
+            -variable => \$f10_cb
+        )->pack( -side => 'left' );
+        $f10_frame->Label(
+            -textvariable => \$fkeys{f10}->{title},
+            -anchor       => 'w'
+        )->pack( -side => 'left' );
+        $f10_frame->DropSite(
+            -droptypes   => ['Local'],
+            -dropcommand => [ \&Hotkey_Drop, "f10" ]
+        );
+        my $f11_frame = $hotkeysbox->Frame()->pack( -fill => 'x' );
+        $f11_frame->Checkbutton(
+            -text     => "F11:",
+            -variable => \$f11_cb
+        )->pack( -side => 'left' );
+        $f11_frame->Label(
+            -textvariable => \$fkeys{f11}->{title},
+            -anchor       => 'w'
+        )->pack( -side => 'left' );
+        $f11_frame->DropSite(
+            -droptypes   => ['Local'],
+            -dropcommand => [ \&Hotkey_Drop, "f11" ]
+        );
+        my $f12_frame = $hotkeysbox->Frame()->pack( -fill => 'x' );
+        $f12_frame->Checkbutton(
+            -text     => "F12:",
+            -variable => \$f12_cb
+        )->pack( -side => 'left' );
+        $f12_frame->Label(
+            -textvariable => \$fkeys{f12}->{title},
+            -anchor       => 'w'
+        )->pack( -side => 'left' );
+        $f12_frame->DropSite(
+            -droptypes   => ['Local'],
+            -dropcommand => [ \&Hotkey_Drop, "f12" ]
+        );
+        my $buttonframe = $hotkeysbox->Frame()->pack(
+            -side => 'bottom',
+            -fill => 'x'
+        );
+        $buttonframe->Button(
+            -text    => "Close",
+            -command => sub { $hotkeysbox->withdraw }
+        )->pack( -side => 'left' );
+        $buttonframe->Button(
+            -text    => "Clear Selected",
+            -command => \&clear_selected
+        )->pack( -side => 'right' );
+        $hotkeysbox->update();
+        $hotkeysbox->deiconify();
+        $hotkeysbox->raise();
+    }
+    else
+    {
+        $hotkeysbox->deiconify();
+        $hotkeysbox->raise();
+    }
 }
 
 sub get_song_id
 {
-  # This gets the current selection for the index passed in, and returns
-  # the database ID for that song.
 
-  $box = $_[0];
-  $index = $_[1];
-  my $selection = $box->get($index);
-  my ($id) = split /:/,$selection;
-  return ($id);
+    # This gets the current selection for the index passed in, and returns
+    # the database ID for that song.
+
+    $box   = $_[0];
+    $index = $_[1];
+    my $selection = $box->get($index);
+    my ($id) = split /:/, $selection;
+    return ($id);
 }
 
 sub update_time
 {
-  $mw->Busy(-recurse=>1);
-  my $percent_done = 0;
-  my $updated=0;
-  my $progressbox=$mw->Toplevel();
-  $progressbox->withdraw();
-  $progressbox->Icon(-image=>$icon);
-  $progressbox->title("Time Update");
-  $progressbox->Label(-text=>"Time Update Status (Percentage)")->pack(-side=>'top');
-  my $pb = $progressbox->ProgressBar(
-    -width => 150)->pack(-side=>'top');
-  my $progress_frame1 = $progressbox->Frame()->pack(-side=>'top');
-  $progress_frame1->Label(-text=>"Number of files updated: ")->pack(-side=>'left');
-  $progress_frame1->Label(-textvariable=>\$updated)->pack(-side=>'left');
-  my $donebutton = $progressbox->Button(
-    -text => "Done",
-    -state => 'disabled',
-    -command=>sub { $progressbox->destroy})->pack(-side=>'bottom');
-  $progressbox->update();
-  $progressbox->deiconify();
-  $progressbox->raise();
-
-  my $count = 0;
-  my $query = "SELECT id,filename,time FROM mrvoice";
-  my $get_rows_sth=$dbh->prepare($query);
-  $get_rows_sth->execute;
-  my $numrows = $get_rows_sth->rows;
-  my $update_query = "UPDATE mrvoice SET time=? WHERE id=?";
-  my $update_sth=$dbh->prepare($update_query);
-  while (@table_row = $get_rows_sth->fetchrow_array)
-  {
-    ($id,$filename,$time) = @table_row;
-    my $newtime = get_songlength(catfile($config{'filepath'},$filename));
-    if ($newtime ne $time)
-    {
-      $update_sth->execute($newtime,$id);
-      $updated++;
-    }
-    $count++;
-    $percent_done = int ( ($count / $numrows) * 100);
-    $pb->set($percent_done);
+    $mw->Busy( -recurse => 1 );
+    my $percent_done = 0;
+    my $updated      = 0;
+    my $progressbox  = $mw->Toplevel();
+    $progressbox->withdraw();
+    $progressbox->Icon( -image => $icon );
+    $progressbox->title("Time Update");
+    $progressbox->Label( -text => "Time Update Status (Percentage)" )
+      ->pack( -side => 'top' );
+    my $pb = $progressbox->ProgressBar( -width => 150 )->pack( -side => 'top' );
+    my $progress_frame1 = $progressbox->Frame()->pack( -side => 'top' );
+    $progress_frame1->Label( -text => "Number of files updated: " )
+      ->pack( -side => 'left' );
+    $progress_frame1->Label( -textvariable => \$updated )
+      ->pack( -side => 'left' );
+    my $donebutton = $progressbox->Button(
+        -text    => "Done",
+        -state   => 'disabled',
+        -command => sub { $progressbox->destroy }
+    )->pack( -side => 'bottom' );
     $progressbox->update();
-  }
-  $get_rows_sth->finish;
-  $donebutton->configure(-state=>'active');
-  $donebutton->focus;
-  $progressbox->update();
-  $mw->Unbusy(-recurse=>1);
-  $status = "Updated times on $updated files";
-}    
-  
+    $progressbox->deiconify();
+    $progressbox->raise();
+
+    my $count        = 0;
+    my $query        = "SELECT id,filename,time FROM mrvoice";
+    my $get_rows_sth = $dbh->prepare($query);
+    $get_rows_sth->execute;
+    my $numrows      = $get_rows_sth->rows;
+    my $update_query = "UPDATE mrvoice SET time=? WHERE id=?";
+    my $update_sth   = $dbh->prepare($update_query);
+    while ( @table_row = $get_rows_sth->fetchrow_array )
+    {
+        ( $id, $filename, $time ) = @table_row;
+        my $newtime =
+          get_songlength( catfile( $config{'filepath'}, $filename ) );
+        if ( $newtime ne $time )
+        {
+            $update_sth->execute( $newtime, $id );
+            $updated++;
+        }
+        $count++;
+        $percent_done = int( ( $count / $numrows ) * 100 );
+        $pb->set($percent_done);
+        $progressbox->update();
+    }
+    $get_rows_sth->finish;
+    $donebutton->configure( -state => 'active' );
+    $donebutton->focus;
+    $progressbox->update();
+    $mw->Unbusy( -recurse => 1 );
+    $status = "Updated times on $updated files";
+}
+
 sub get_filename
 {
-  # Takes a database ID as an argument, queries the database, and returns
-  # the MP3 filename for that song.
 
-  my $id = $_[0];
-  my $query = "SELECT filename FROM mrvoice WHERE id=$id";
-  my $sth=$dbh->prepare($query);
-  $sth->execute or die "can't execute the query: $DBI::errstr\n";
-  @result = $sth->fetchrow_array;
-  $sth->finish;
-  my $filename = $result[0];
-  return ($filename);
+    # Takes a database ID as an argument, queries the database, and returns
+    # the MP3 filename for that song.
+
+    my $id    = $_[0];
+    my $query = "SELECT filename FROM mrvoice WHERE id=$id";
+    my $sth   = $dbh->prepare($query);
+    $sth->execute or die "can't execute the query: $DBI::errstr\n";
+    @result = $sth->fetchrow_array;
+    $sth->finish;
+    my $filename = $result[0];
+    return ($filename);
 }
 
 sub validate_id
 {
-  my $id = $_[0];
-  my $query = "SELECT * FROM mrvoice WHERE id=$id";
-  my $sth=$dbh->prepare($query);
-  $sth->execute;
-  $numrows = $sth->rows;
-  if ($numrows == 1)
-  {
-    return (1);
-  }
-  else
-  {
-    return (0);
-  }
-  $sth->finish;
+    my $id    = $_[0];
+    my $query = "SELECT * FROM mrvoice WHERE id=$id";
+    my $sth   = $dbh->prepare($query);
+    $sth->execute;
+    $numrows = $sth->rows;
+    if ( $numrows == 1 )
+    {
+        return (1);
+    }
+    else
+    {
+        return (0);
+    }
+    $sth->finish;
 }
 
 sub get_title
 {
-  my $id = $_[0];
-  my $query = "SELECT title,artist FROM mrvoice WHERE id=$id";
-  my $sth=$dbh->prepare($query);
-  $sth->execute or die "can't execute the query: $DBI::errstr\n";
-  @result = $sth->fetchrow_array;
-  $sth->finish;
-  if ($result[1])
-  {
-    return ("\"$result[0]\" by $result[1]");
-  }
-  else
-  {
-    return ("\"$result[0]\"");
-  }
+    my $id    = $_[0];
+    my $query = "SELECT title,artist FROM mrvoice WHERE id=$id";
+    my $sth   = $dbh->prepare($query);
+    $sth->execute or die "can't execute the query: $DBI::errstr\n";
+    @result = $sth->fetchrow_array;
+    $sth->finish;
+    if ( $result[1] )
+    {
+        return ("\"$result[0]\" by $result[1]");
+    }
+    else
+    {
+        return ("\"$result[0]\"");
+    }
 }
 
 sub stop_mp3
 {
-  # Sends a stop command to the MP3 player.  Works for both xmms and WinAmp,
-  # though not particularly cleanly.
 
-  system ("$config{'mp3player'} --stop");
-  $status = "Playing Stopped";
+    # Sends a stop command to the MP3 player.  Works for both xmms and WinAmp,
+    # though not particularly cleanly.
+
+    system("$config{'mp3player'} --stop");
+    $status = "Playing Stopped";
 }
 
-sub play_mp3 
+sub play_mp3
 {
-  # See if the request is coming from one our hotkeys first...
-  if ( ($_[1] ) && ( ($_[1] =~ /^F.*/) || ($_[1] =~ /^ALT.*/) ) )
-  {
-    if ($_[1] eq "F1") { $filename = $fkeys{f1}->{filename}; }
-    elsif ($_[1] eq "F2") { $filename = $fkeys{f2}->{filename}; }
-    elsif ($_[1] eq "F3") { $filename = $fkeys{f3}->{filename}; }
-    elsif ($_[1] eq "F4") { $filename = $fkeys{f4}->{filename}; }
-    elsif ($_[1] eq "F5") { $filename = $fkeys{f5}->{filename}; }
-    elsif ($_[1] eq "F6") { $filename = $fkeys{f6}->{filename}; }
-    elsif ($_[1] eq "F7") { $filename = $fkeys{f7}->{filename}; }
-    elsif ($_[1] eq "F8") { $filename = $fkeys{f8}->{filename}; }
-    elsif ($_[1] eq "F9") { $filename = $fkeys{f9}->{filename}; }
-    elsif ($_[1] eq "F10") { $filename = $fkeys{f10}->{filename}; }
-    elsif ($_[1] eq "F11") { $filename = $fkeys{f11}->{filename}; }
-    elsif ($_[1] eq "F12") { $filename = $fkeys{f12}->{filename}; }
-  #STARTCSZ
-  #  elsif ($_[1] eq "ALT-T") { $filename = $altt; }
-  #  elsif ($_[1] eq "ALT-Y") { $filename = $alty; }
-  #  elsif ($_[1] eq "ALT-B") { $filename = $altb; }
-  #  elsif ($_[1] eq "ALT-G") { $filename = $altg; }
-  #  elsif ($_[1] eq "ALT-V") { $filename = $altv; }
-  #ENDCSZ
-  }
-  elsif ($_[0] eq "addsong")
-  {
-    # if we're playin from the "add new song dialog, the full path
-    # will already be set.
-    $filename = $_[1];
-    if ($^O eq "MSWin32")
+
+    # See if the request is coming from one our hotkeys first...
+    if ( ( $_[1] ) && ( ( $_[1] =~ /^F.*/ ) || ( $_[1] =~ /^ALT.*/ ) ) )
     {
-      $filename = Win32::GetShortPathName($filename);
+        if    ( $_[1] eq "F1" )  { $filename = $fkeys{f1}->{filename}; }
+        elsif ( $_[1] eq "F2" )  { $filename = $fkeys{f2}->{filename}; }
+        elsif ( $_[1] eq "F3" )  { $filename = $fkeys{f3}->{filename}; }
+        elsif ( $_[1] eq "F4" )  { $filename = $fkeys{f4}->{filename}; }
+        elsif ( $_[1] eq "F5" )  { $filename = $fkeys{f5}->{filename}; }
+        elsif ( $_[1] eq "F6" )  { $filename = $fkeys{f6}->{filename}; }
+        elsif ( $_[1] eq "F7" )  { $filename = $fkeys{f7}->{filename}; }
+        elsif ( $_[1] eq "F8" )  { $filename = $fkeys{f8}->{filename}; }
+        elsif ( $_[1] eq "F9" )  { $filename = $fkeys{f9}->{filename}; }
+        elsif ( $_[1] eq "F10" ) { $filename = $fkeys{f10}->{filename}; }
+        elsif ( $_[1] eq "F11" ) { $filename = $fkeys{f11}->{filename}; }
+        elsif ( $_[1] eq "F12" ) { $filename = $fkeys{f12}->{filename}; }
+
+        #STARTCSZ
+        #  elsif ($_[1] eq "ALT-T") { $filename = $altt; }
+        #  elsif ($_[1] eq "ALT-Y") { $filename = $alty; }
+        #  elsif ($_[1] eq "ALT-B") { $filename = $altb; }
+        #  elsif ($_[1] eq "ALT-G") { $filename = $altg; }
+        #  elsif ($_[1] eq "ALT-V") { $filename = $altv; }
+        #ENDCSZ
     }
-  }
-  else
-  {
-    if ( ($_[1]) && ($_[1] eq "Current") )
+    elsif ( $_[0] eq "addsong" )
     {
-      $box = $mainbox;
-    }
-    elsif ( ($_[1]) && ($_[1] eq "Holding") )
-    {
-      $box = $tankbox;
+
+        # if we're playin from the "add new song dialog, the full path
+        # will already be set.
+        $filename = $_[1];
+        if ( $^O eq "MSWin32" )
+        {
+            $filename = Win32::GetShortPathName($filename);
+        }
     }
     else
     {
-      $box = $_[0];
+        if ( ( $_[1] ) && ( $_[1] eq "Current" ) )
+        {
+            $box = $mainbox;
+        }
+        elsif ( ( $_[1] ) && ( $_[1] eq "Holding" ) )
+        {
+            $box = $tankbox;
+        }
+        else
+        {
+            $box = $_[0];
+        }
+
+        # We only care about playing one song
+        my @selection = $box->curselection();
+        my $id = get_song_id( $box, $selection[0] );
+        if ($id)
+        {
+            $query = "SELECT filename,title,artist from mrvoice WHERE id=$id";
+            my $sth = $dbh->prepare($query);
+            $sth->execute or die "can't execute the query: $DBI::errstr\n";
+            @result = $sth->fetchrow_array;
+            $sth->finish;
+            $filename     = $result[0];
+            $statustitle  = $result[1];
+            $statusartist = $result[2];
+        }
     }
-    # We only care about playing one song
-    my @selection = $box->curselection();
-    my $id = get_song_id($box,$selection[0]);
-    if ($id)
+    if ( ($filename) && ( $_[0] eq "addsong" ) )
     {
-      $query = "SELECT filename,title,artist from mrvoice WHERE id=$id";
-      my $sth=$dbh->prepare($query);
-      $sth->execute or die "can't execute the query: $DBI::errstr\n";
-      @result = $sth->fetchrow_array;
-      $sth->finish;
-      $filename = $result[0];
-      $statustitle = $result[1];
-      $statusartist = $result[2];
+        $status = "Previewing file $filename";
+        system("$config{'mp3player'} $filename");
     }
-  }
-  if ( ($filename) && ($_[0] eq "addsong") )
-  {
-    $status = "Previewing file $filename";
-    system ("$config{'mp3player'} $filename");
-  }
-  elsif ($filename)
-  {
-    if (($_[1]) && ($_[1] =~ /^F.*/))
+    elsif ($filename)
     {
-      $fkey = lc($_[1]);
-      $songstatusstring = $fkeys{$fkey}->{title};
+        if ( ( $_[1] ) && ( $_[1] =~ /^F.*/ ) )
+        {
+            $fkey             = lc( $_[1] );
+            $songstatusstring = $fkeys{$fkey}->{title};
+        }
+        elsif ($statusartist)
+        {
+            $songstatusstring = "\"$statustitle\" by $statusartist";
+        }
+        else
+        {
+            $songstatusstring = "\"$statustitle\"";
+        }
+        $status = "Playing $songstatusstring";
+        my $file = catfile( $config{'filepath'}, $filename );
+        system("$config{'mp3player'} $file");
+        $statustitle  = "";
+        $statusartist = "";
     }
-    elsif ($statusartist)
-    {
-      $songstatusstring = "\"$statustitle\" by $statusartist";
-    }
-    else
-    {
-      $songstatusstring = "\"$statustitle\"";
-    }
-    $status = "Playing $songstatusstring";
-    my $file = catfile($config{'filepath'},$filename);
-    system ("$config{'mp3player'} $file");
-    $statustitle = "";
-    $statusartist = "";
-  }
 }
 
 sub get_songlength
 {
-  #Generic function to return the length of a song in mm:ss format.
-  #Currently supports MP3 and WAV, with the appropriate modules.
 
-  $file = $_[0];
-  my $time = "";
-  if ($file =~ /.*\.mp3$/i)
-  {
-    # It's an MP3 file
-    my $info = get_mp3info("$file");
-    $minute = $info->{MM};
-    $minute = "0$minute" if ($minute < 10);
-    $second = $info->{SS};
-    $second = "0$second" if ($second < 10);
-    $time = "[$minute:$second]";
-  }
-  elsif ($file =~ /\.wav$/i)
-  {
-    # It's a WAV file
-    my $wav = new Audio::Wav;
-    my $read;
-    eval 
+    #Generic function to return the length of a song in mm:ss format.
+    #Currently supports MP3 and WAV, with the appropriate modules.
+
+    $file = $_[0];
+    my $time = "";
+    if ( $file =~ /.*\.mp3$/i )
     {
-      $read = $wav -> read( "$file" )
-    };
-    if (!$@) 
+
+        # It's an MP3 file
+        my $info = get_mp3info("$file");
+        $minute = $info->{MM};
+        $minute = "0$minute" if ( $minute < 10 );
+        $second = $info->{SS};
+        $second = "0$second" if ( $second < 10 );
+        $time   = "[$minute:$second]";
+    }
+    elsif ( $file =~ /\.wav$/i )
     {
-      my $audio_seconds = int ( $read -> length_seconds() );
-      $minute = int ($audio_seconds / 60);
-      $minute = "0$minute" if ($minute < 10);
-      $second = $audio_seconds % 60;
-      $second = "0$second" if ($second < 10);
-      $time = "[$minute:$second]";
+
+        # It's a WAV file
+        my $wav = new Audio::Wav;
+        my $read;
+        eval { $read = $wav->read("$file") };
+        if ( !$@ )
+        {
+            my $audio_seconds = int( $read->length_seconds() );
+            $minute = int( $audio_seconds / 60 );
+            $minute = "0$minute" if ( $minute < 10 );
+            $second = $audio_seconds % 60;
+            $second = "0$second" if ( $second < 10 );
+            $time   = "[$minute:$second]";
+        }
+        else
+        {
+            $time = "[??:??]";
+        }
+    }
+    elsif ( $file =~ /\.ogg$/i )
+    {
+
+        #It's an Ogg Vorbis file.
+        my $ogg = Ogg::Vorbis::Header::PurePerl->new($file);
+
+        #my $audio_seconds = %{$ogg->info}->{length};
+        my $audio_seconds = $ogg->info->{length};
+        $minute = int( $audio_seconds / 60 );
+        $minute = "0$minute" if ( $minute < 10 );
+        $second = $audio_seconds % 60;
+        $second = "0$second" if ( $second < 10 );
+        $time   = "[$minute:$second]";
+    }
+    elsif ( ( $file =~ /\.m3u$/i ) || ( $file =~ /\.pls$/i ) )
+    {
+
+        #It's a playlist
+        $time = "[PLAYLIST]";
     }
     else
     {
-      $time = "[??:??]";
+
+        # Unsupported file type
+        $time = "[??:??]";
     }
-  }
-  elsif ($file =~ /\.ogg$/i)
-  {
-    #It's an Ogg Vorbis file.
-    my $ogg = Ogg::Vorbis::Header::PurePerl->new($file);
-    #my $audio_seconds = %{$ogg->info}->{length};
-    my $audio_seconds = $ogg->info->{length};
-    $minute = int($audio_seconds / 60);
-    $minute = "0$minute" if ($minute < 10);
-    $second = $audio_seconds % 60;
-    $second = "0$second" if ($second < 10);
-    $time = "[$minute:$second]";
-  }
-  elsif ( ($file =~ /\.m3u$/i) || ($file =~ /\.pls$/i) )
-  {
-    #It's a playlist 
-    $time = "[PLAYLIST]";
-  }
-  else
-  {
-    # Unsupported file type
-    $time = "[??:??]";
-  }
-  return ($time);
+    return ($time);
 }
 
 sub do_search
 {
-  if ( ($_[0]) && ($_[0] eq "timespan") )
-  {
-    $date = DateCalc("today","- $_[1]"); 
-    $date =~ /^(\d{4})(\d{2})(\d{2}).*?/;
-    $year = $1;
-    $month = $2;
-    $date = $3;
-    $datestring = "$year-$month-$date";
-  }
-  elsif ( ($_[0]) && ($_[0] eq "range") )
-  {
-    $startdate = $_[1];
-    $enddate = $_[2];
-  }
-  if ($anyfield)
-  {
-    $anyfield_box->insert(0,$anyfield);
-    $anyfield =~ s/^\s*(.*?)\s*$/$1/;
-  }
-  if ($title)
-  {
-    $title_box->insert(0,$title);
-    $title =~ s/^\s*(.*?)\s*$/$1/;
-  }
-  if ($artist)
-  {
-    $artist_box->insert(0,$artist);
-    $artist =~ s/^\s*(.*?)\s*$/$1/;
-  }
-  if ($cattext)
-  {
-    $cattext_box->insert(0,$cattext);
-    $cattext =~ s/^\s*(.*?)\s*$/$1/;
-  }
-  $status="Starting search...";
-  $mw->Busy(-recurse=>1);
-  $mainbox->delete(0,'end');
-  my $query = "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.filename,mrvoice.time,mrvoice.publisher FROM mrvoice,categories WHERE mrvoice.category=categories.code ";
-  $query = $query . "AND publisher != 'ASCAP' " if ($config{'search_ascap'} == 0);
-  $query = $query . "AND publisher != 'BMI' " if ($config{'search_bmi'} == 0);
-  $query = $query . "AND publisher != 'OTHER' " if ($config{'search_other'} == 0);
-  $query = $query . "AND modtime >= '$datestring' " if ( ($_[0]) && ($_[0] eq "timespan"));
-  $query = $query . "AND modtime >= '$startdate' AND modtime <= '$enddate' " if (($_[0]) && ($_[0] eq "range"));
-  $query = $query . "AND category='$category' " if ($category ne "Any");
-  if ($anyfield)
-  {
-    $query = $query . "AND ( info LIKE '%$anyfield%' OR title LIKE '%$anyfield%' OR artist LIKE '%$anyfield%') ";
-  }
-  else
-  {
-    $query = $query . "AND info LIKE '%$cattext%' " if ($cattext);
-    $query = $query . "AND title LIKE '%$title%' " if ($title);
-    $query = $query . "AND artist LIKE '%$artist%' " if ($artist);
-  }
-  $query = $query . "ORDER BY category,info,title";
-  my $starttime = timelocal(localtime());
-  my $sth=$dbh->prepare($query);
-  $sth->execute or die "can't execute the query: $DBI::errstr\n";
-  $numrows = $sth->rows;
-  while (@table_row = $sth->fetchrow_array)
-  {
-    if (-e catfile($config{'filepath'},$table_row[5]))
+    if ( ( $_[0] ) && ( $_[0] eq "timespan" ) )
     {
-      $string="$table_row[0]:($table_row[1]";
-      $string = $string . " - $table_row[2]" if ($table_row[2]);
-      $string = $string . ") - \"$table_row[4]\"";
-      $string = $string. " by $table_row[3]" if ($table_row[3]);
-      $string = $string . " $table_row[6]";
-      $string = $string . " ($table_row[7])" if ($config{'show_publisher'} == 1);
-      $mainbox->insert('end',$string); 
+        $date = DateCalc( "today", "- $_[1]" );
+        $date =~ /^(\d{4})(\d{2})(\d{2}).*?/;
+        $year       = $1;
+        $month      = $2;
+        $date       = $3;
+        $datestring = "$year-$month-$date";
+    }
+    elsif ( ( $_[0] ) && ( $_[0] eq "range" ) )
+    {
+        $startdate = $_[1];
+        $enddate   = $_[2];
+    }
+    if ($anyfield)
+    {
+        $anyfield_box->insert( 0, $anyfield );
+        $anyfield =~ s/^\s*(.*?)\s*$/$1/;
+    }
+    if ($title)
+    {
+        $title_box->insert( 0, $title );
+        $title =~ s/^\s*(.*?)\s*$/$1/;
+    }
+    if ($artist)
+    {
+        $artist_box->insert( 0, $artist );
+        $artist =~ s/^\s*(.*?)\s*$/$1/;
+    }
+    if ($cattext)
+    {
+        $cattext_box->insert( 0, $cattext );
+        $cattext =~ s/^\s*(.*?)\s*$/$1/;
+    }
+    $status = "Starting search...";
+    $mw->Busy( -recurse => 1 );
+    $mainbox->delete( 0, 'end' );
+    my $query =
+      "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.filename,mrvoice.time,mrvoice.publisher FROM mrvoice,categories WHERE mrvoice.category=categories.code ";
+    $query = $query . "AND publisher != 'ASCAP' "
+      if ( $config{'search_ascap'} == 0 );
+    $query = $query . "AND publisher != 'BMI' "
+      if ( $config{'search_bmi'} == 0 );
+    $query = $query . "AND publisher != 'OTHER' "
+      if ( $config{'search_other'} == 0 );
+    $query = $query . "AND modtime >= '$datestring' "
+      if ( ( $_[0] ) && ( $_[0] eq "timespan" ) );
+    $query = $query . "AND modtime >= '$startdate' AND modtime <= '$enddate' "
+      if ( ( $_[0] ) && ( $_[0] eq "range" ) );
+    $query = $query . "AND category='$category' " if ( $category ne "Any" );
+
+    if ($anyfield)
+    {
+        $query = $query
+          . "AND ( info LIKE '%$anyfield%' OR title LIKE '%$anyfield%' OR artist LIKE '%$anyfield%') ";
     }
     else
     {
-      $numrows--;
+        $query = $query . "AND info LIKE '%$cattext%' "  if ($cattext);
+        $query = $query . "AND title LIKE '%$title%' "   if ($title);
+        $query = $query . "AND artist LIKE '%$artist%' " if ($artist);
     }
-  }
-  if ($numrows > 0)
-  {
-    $mainbox->selectionSet(0);
-  }
-  $sth->finish;
-  my $endtime = timelocal(localtime());
-  my $diff = $endtime - $starttime;
-  $cattext="";
-  $title="";
-  $artist="";
-  $anyfield="";
-  $category="Any";
-  $longcat="Any Category";
-  $mw->Unbusy(-recurse=>1);
-  if ($numrows == 1)     
-  {       
-    $status="Displaying $numrows search result ";     
-  }     
-  else     
-  {       
-    $status="Displaying $numrows search results ";     
-  }
-  if ($diff == 1)
-  {
-    $status .= "($diff second elapsed)";
-  }
-  else
-  {
-    $status .= "($diff seconds elapsed)";
-  }
+    $query = $query . "ORDER BY category,info,title";
+    my $starttime = timelocal( localtime() );
+    my $sth       = $dbh->prepare($query);
+    $sth->execute or die "can't execute the query: $DBI::errstr\n";
+    $numrows = $sth->rows;
+    while ( @table_row = $sth->fetchrow_array )
+    {
+
+        if ( -e catfile( $config{'filepath'}, $table_row[5] ) )
+        {
+            $string = "$table_row[0]:($table_row[1]";
+            $string = $string . " - $table_row[2]" if ( $table_row[2] );
+            $string = $string . ") - \"$table_row[4]\"";
+            $string = $string . " by $table_row[3]" if ( $table_row[3] );
+            $string = $string . " $table_row[6]";
+            $string = $string . " ($table_row[7])"
+              if ( $config{'show_publisher'} == 1 );
+            $mainbox->insert( 'end', $string );
+        }
+        else
+        {
+            $numrows--;
+        }
+    }
+    if ( $numrows > 0 )
+    {
+        $mainbox->selectionSet(0);
+    }
+    $sth->finish;
+    my $endtime = timelocal( localtime() );
+    my $diff    = $endtime - $starttime;
+    $cattext  = "";
+    $title    = "";
+    $artist   = "";
+    $anyfield = "";
+    $category = "Any";
+    $longcat  = "Any Category";
+    $mw->Unbusy( -recurse => 1 );
+
+    if ( $numrows == 1 )
+    {
+        $status = "Displaying $numrows search result ";
+    }
+    else
+    {
+        $status = "Displaying $numrows search results ";
+    }
+    if ( $diff == 1 )
+    {
+        $status .= "($diff second elapsed)";
+    }
+    else
+    {
+        $status .= "($diff seconds elapsed)";
+    }
 }
 
 sub return_longcat
 {
-  my $category = $_[0];
-  my $query = "SELECT description FROM categories WHERE code='$category'";
-  my $sth=$dbh->prepare($query);
-  $sth->execute;
-  my @row=$sth->fetchrow_array;
-  $sth->finish;
-  my $longcat = $row[0];
-  return ($longcat);
+    my $category = $_[0];
+    my $query    = "SELECT description FROM categories WHERE code='$category'";
+    my $sth      = $dbh->prepare($query);
+    $sth->execute;
+    my @row = $sth->fetchrow_array;
+    $sth->finish;
+    my $longcat = $row[0];
+    return ($longcat);
 }
-
 
 sub build_categories_menu
 {
-  # This builds the categories menu in the search area.  First, it deletes
-  # all entries from the menu.  Then it queries the categories table in 
-  # the database and builds a menu, with one radiobutton entry per
-  # category.  This ensures that adding or deleting categories will 
-  # cause the menu to reflect the most current information.
 
-  # Remove old entries
-  $catmenu->delete(0,'end');
-  $catmenu->configure(-tearoff=>0);
+    # This builds the categories menu in the search area.  First, it deletes
+    # all entries from the menu.  Then it queries the categories table in
+    # the database and builds a menu, with one radiobutton entry per
+    # category.  This ensures that adding or deleting categories will
+    # cause the menu to reflect the most current information.
 
-  # Query the database for new ones.
-  $catmenu->radiobutton(-label=>"Any category",
-                        -value=>"Any",
-                        -variable=>\$category,
-                        -command=>sub {
-                          $longcat = "Any Category"; });
-  $query="SELECT * from categories ORDER BY description";
-  my $sth=$dbh->prepare($query);
-  $sth->execute or die "can't execute the query: $DBI::errstr\n";
-  while (@table_row = $sth->fetchrow_array)
-  {
-    $code=$table_row[0];
-    $name=$table_row[1];
-    $catmenu->radiobutton(-label=>$name,
-                          -value=>$code,
-                          -variable=>\$category,
-                          -command=>sub {
-                            $longcat = return_longcat($category); });
-  }
-  $sth->finish;
+    # Remove old entries
+    $catmenu->delete( 0, 'end' );
+    $catmenu->configure( -tearoff => 0 );
+
+    # Query the database for new ones.
+    $catmenu->radiobutton(
+        -label    => "Any category",
+        -value    => "Any",
+        -variable => \$category,
+        -command  => sub {
+            $longcat = "Any Category";
+        }
+    );
+    $query = "SELECT * from categories ORDER BY description";
+    my $sth = $dbh->prepare($query);
+    $sth->execute or die "can't execute the query: $DBI::errstr\n";
+    while ( @table_row = $sth->fetchrow_array )
+    {
+        $code = $table_row[0];
+        $name = $table_row[1];
+        $catmenu->radiobutton(
+            -label    => $name,
+            -value    => $code,
+            -variable => \$category,
+            -command  => sub {
+                $longcat = return_longcat($category);
+            }
+        );
+    }
+    $sth->finish;
 }
 
 sub do_exit
 {
-  # Disconnects from the database, attempts to close the MP3 player, and 
-  # exits the program.
 
-  $box = $mw->Dialog(-title=>"Exit Mr. Voice", 
-                     -text=>"Exit Mr. Voice?",
-                     -bitmap=>"question",
-                     -buttons=>["Yes", "No"]);
-  $box->Icon(-image=>$icon);
-  $choice = $box->Show();
+    # Disconnects from the database, attempts to close the MP3 player, and
+    # exits the program.
 
-  if ($choice =~ /yes/i)
-  {
-    $dbh->disconnect;
-    if ("$^O" eq "MSWin32")
+    $box = $mw->Dialog(
+        -title   => "Exit Mr. Voice",
+        -text    => "Exit Mr. Voice?",
+        -bitmap  => "question",
+        -buttons => [ "Yes", "No" ]
+    );
+    $box->Icon( -image => $icon );
+    $choice = $box->Show();
+
+    if ( $choice =~ /yes/i )
     {
-      # Close the MP3 player on a Windows system
-      Win32::Process::KillProcess($mp3_pid,1);
+        $dbh->disconnect;
+        if ( "$^O" eq "MSWin32" )
+        {
+
+            # Close the MP3 player on a Windows system
+            Win32::Process::KillProcess( $mp3_pid, 1 );
+        }
+        else
+        {
+
+            # Close the MP3 player on a Unix system.
+            kill( 15, $mp3_pid );
+        }
+        Tk::exit;
     }
-    else
-    {
-      # Close the MP3 player on a Unix system.
-      kill (15,$mp3_pid);
-    }
-    Tk::exit;
-  }
-} 
+}
 
 sub rightclick_menu
 {
-  # Bound to the search results box, this function binds the creation
-  # of a popup menu to the right mouse button. The menu allows you to
-  # play, edit, or delete the current song.  The right-click finds the
-  # nearest search result to your mouse, and activates it.
 
-  my $rightmenu = $mw->Menu(-menuitems=>[
-                                        ["command" => "Play This Song",
-                                        -command => [\&play_mp3,$mainbox]],
-                                        ["command" => "Edit This Song",
-                                        -command => \&edit_song],
-                                        ["command" => "Delete This Song",
-                                        -command => \&delete_song]
-                                        ],
-                            -tearoff=>0);
+    # Bound to the search results box, this function binds the creation
+    # of a popup menu to the right mouse button. The menu allows you to
+    # play, edit, or delete the current song.  The right-click finds the
+    # nearest search result to your mouse, and activates it.
 
-  $rightmenu->Popup(-popover=>'cursor',
-                    -popanchor=>'nw');
+    my $rightmenu = $mw->Menu(
+        -menuitems => [
+            [
+                "command" => "Play This Song",
+                -command => [ \&play_mp3, $mainbox ]
+            ],
+            [
+                "command" => "Edit This Song",
+                -command  => \&edit_song
+            ],
+            [
+                "command" => "Delete This Song",
+                -command  => \&delete_song
+            ]
+        ],
+        -tearoff => 0
+    );
+
+    $rightmenu->Popup(
+        -popover   => 'cursor',
+        -popanchor => 'nw'
+    );
 }
 
 sub read_rcfile
 {
-  # Opens the configuration file, of the form var_name::value, and assigns
-  # the value to the variable name.
-  # On MS Windows, it also converts long pathnames to short ones.
 
-  if (-r $rcfile)
-  {
-    open (RCFILE,$rcfile);
-    while (<RCFILE>)
+    # Opens the configuration file, of the form var_name::value, and assigns
+    # the value to the variable name.
+    # On MS Windows, it also converts long pathnames to short ones.
+
+    if ( -r $rcfile )
     {
-      chomp;
-      ($key,$value) = split(/::/);
-      $config{$key} = $value;
+        open( RCFILE, $rcfile );
+        while (<RCFILE>)
+        {
+            chomp;
+            ( $key, $value ) = split(/::/);
+            $config{$key} = $value;
+        }
+        close(RCFILE);
     }
-    close (RCFILE);
-  }
-  else
-  {
-    infobox($mw, "Configuration not found","You don't appear to have configured Mr. Voice before.\nStarting configuration now\n");
-    edit_preferences();
-  }
-  if ($^O eq "MSWin32")
-  {
-    $config{'filepath'} = Win32::GetShortPathName($config{'filepath'});
-    $config{'savedir'} = Win32::GetShortPathName($config{'savedir'});
-    $config{'mp3player'} = Win32::GetShortPathName($config{'mp3player'});
-  }
-  else
-  {
-    $config{'savedir'} =~ s#(.*)/$#$1#;
-  }
+    else
+    {
+        infobox(
+            $mw,
+            "Configuration not found",
+            "You don't appear to have configured Mr. Voice before.\nStarting configuration now\n"
+        );
+        edit_preferences();
+    }
+    if ( $^O eq "MSWin32" )
+    {
+        $config{'filepath'}  = Win32::GetShortPathName( $config{'filepath'} );
+        $config{'savedir'}   = Win32::GetShortPathName( $config{'savedir'} );
+        $config{'mp3player'} = Win32::GetShortPathName( $config{'mp3player'} );
+    }
+    else
+    {
+        $config{'savedir'} =~ s#(.*)/$#$1#;
+    }
 
 }
 
 sub StartDrag
 {
-  # Starts the drag for the hotkey drag-and-drop.
-  $sound_icon = $mw->Pixmap(-data=>$sound_pixmap_data);
 
-  my ($token) = @_;
-  $current_token = $token;
-  my $widget = $current_token->parent;
-  my $event = $widget->XEvent;
-  my $index = $widget->nearest($event->y);
-  if (defined $index)
-  {
-    my $text = $widget->get($index);
-    $text =~ s/.*?(".*?").*/$1/;
-    $current_token->configure(-image=>$sound_icon);
-    my ($X, $Y) = ($event->X, $event->Y);
-    $current_token->raise;
-    $current_token->deiconify;
-    $current_token->FindSite($X, $Y, $event);
-  }
+    # Starts the drag for the hotkey drag-and-drop.
+    $sound_icon = $mw->Pixmap( -data => $sound_pixmap_data );
+
+    my ($token) = @_;
+    $current_token = $token;
+    my $widget = $current_token->parent;
+    my $event  = $widget->XEvent;
+    my $index  = $widget->nearest( $event->y );
+    if ( defined $index )
+    {
+        my $text = $widget->get($index);
+        $text =~ s/.*?(".*?").*/$1/;
+        $current_token->configure( -image => $sound_icon );
+        my ( $X, $Y ) = ( $event->X, $event->Y );
+        $current_token->raise;
+        $current_token->deiconify;
+        $current_token->FindSite( $X, $Y, $event );
+    }
 }
 
-sub Hotkey_Drop {
-  # Assigns the dragged token to the hotkey that it's dropped onto.
-
-  if ($lock_hotkeys == 1)
-  {
-    $status = "Can't drop hotkey - hotkeys locked";
-    return;
-  }
-  my ($fkey_var) = @_;
-  my $widget = $current_token->parent;
-  my @selection=$widget->curselection();
-  my $id = get_song_id($widget, $selection[0]);
-  my $filename = get_filename($id);
-  my $title = get_title($id);
-  $fkeys{$fkey_var}->{id} = $id;
-  $fkeys{$fkey_var}->{filename} = $filename;
-  $fkeys{$fkey_var}->{title} = $title;
-}
-
-sub Tank_Drop 
+sub Hotkey_Drop
 {
-  my ($dnd_source) = @_;
-  my $parent = $dnd_source->parent;
-  my @indices = $parent->curselection();
-  foreach $index (@indices)
-  {
-    my $entry = $parent->get($index);
-    $tankbox->insert('end',$entry);
-  } 
-  if ($#indices > 1)
-  {
-    $parent->selectionClear(0,'end');
-  }
+
+    # Assigns the dragged token to the hotkey that it's dropped onto.
+
+    if ( $lock_hotkeys == 1 )
+    {
+        $status = "Can't drop hotkey - hotkeys locked";
+        return;
+    }
+    my ($fkey_var) = @_;
+    my $widget     = $current_token->parent;
+    my @selection  = $widget->curselection();
+    my $id       = get_song_id( $widget, $selection[0] );
+    my $filename = get_filename($id);
+    my $title    = get_title($id);
+    $fkeys{$fkey_var}->{id}       = $id;
+    $fkeys{$fkey_var}->{filename} = $filename;
+    $fkeys{$fkey_var}->{title}    = $title;
+}
+
+sub Tank_Drop
+{
+    my ($dnd_source) = @_;
+    my $parent       = $dnd_source->parent;
+    my @indices      = $parent->curselection();
+    foreach $index (@indices)
+    {
+        my $entry = $parent->get($index);
+        $tankbox->insert( 'end', $entry );
+    }
+    if ( $#indices > 1 )
+    {
+        $parent->selectionClear( 0, 'end' );
+    }
 }
 
 #########
@@ -3095,77 +3673,126 @@ sub Tank_Drop
 #########
 $mw = MainWindow->new;
 $mw->withdraw();
-$mw->configure(-menu=>$menubar = $mw->Menu);
+$mw->configure( -menu => $menubar = $mw->Menu );
 $mw->geometry("+0+0");
 $mw->title("Mr. Voice");
-$mw->minsize(67,2);
-$mw->protocol('WM_DELETE_WINDOW',\&do_exit);
-$icon = $mw->Pixmap(-data=>$icon_data);
-$mw->Icon(-image=>$icon);
+$mw->minsize( 67, 2 );
+$mw->protocol( 'WM_DELETE_WINDOW', \&do_exit );
+$icon = $mw->Pixmap( -data => $icon_data );
+$mw->Icon( -image => $icon );
 
 read_rcfile();
 
-if (! ($dbh = DBI->connect("DBI:mysql:$config{'db_name'}",$config{'db_username'},$config{'db_pass'})))
+if (
+    !(
+        $dbh = DBI->connect(
+            "DBI:mysql:$config{'db_name'}", $config{'db_username'},
+            $config{'db_pass'}
+        )
+    )
+  )
 {
-  $box = $mw->DialogBox(-title=>"Fatal Error", -buttons=>["Ok"]);
-  $box->Icon(-image=>$icon);
-  $box->add("Label",-text=>"Could not connect to database.")->pack();
-  $box->add("Label",-text=>"Make sure your database configuration is correct, and that your database is running.")->pack();
-  $box->add("Label",-text=>"The preferences menu will now pop up for you to check or set any configuration options.")->pack();
-  $box->add("Label",-text=>"After you set the preferences, Mr. Voice will exit. You will need to restart to test your changes.")->pack();
-  $box->add("Label",-text=>"Database returned error: $DBI::errstr")->pack();
-  $result = $box->Show();
-  if ($result)
-  {
-    edit_preferences();
-    die "Died with database error $DBI::errstr\n";
-  }
+    $box = $mw->DialogBox( -title => "Fatal Error", -buttons => ["Ok"] );
+    $box->Icon( -image => $icon );
+    $box->add( "Label", -text => "Could not connect to database." )->pack();
+    $box->add( "Label",
+        -text =>
+          "Make sure your database configuration is correct, and that your database is running."
+    )->pack();
+    $box->add( "Label",
+        -text =>
+          "The preferences menu will now pop up for you to check or set any configuration options."
+    )->pack();
+    $box->add( "Label",
+        -text =>
+          "After you set the preferences, Mr. Voice will exit. You will need to restart to test your changes."
+    )->pack();
+    $box->add( "Label", -text => "Database returned error: $DBI::errstr" )
+      ->pack();
+    $result = $box->Show();
+
+    if ($result)
+    {
+        edit_preferences();
+        die "Died with database error $DBI::errstr\n";
+    }
 }
 
-if (! -W $config{'filepath'})
+if ( !-W $config{'filepath'} )
 {
-  $box = $mw->DialogBox(-title=>"Fatal Error", -buttons=>["Exit"]);
-  $box->Icon(-image=>$icon);
-  $box->add("Label",-text=>"MP3 Directory unavailable")->pack();
-  $box->add("Label",-text=>"The MP3 directory that you set is unavailable.  Check to make sure the directory is correct, and you have permission to access it.")->pack();
-  $box->add("Label",-text=>"The preferences menu will now pop up for you to check or set any configuration options.")->pack();
-  $box->add("Label",-text=>"After you set the preferences, Mr. Voice will exit. You will need to restart to test your changes.")->pack();
-  $box->add("Label",-text=>"Current MP3 Directory: $config{'filepath'}")->pack();
-  $result = $box->Show();
-  if ($result)
-  {
-    edit_preferences();
-    die ("Error accessing MP3 directory\n");
-  }
+    $box = $mw->DialogBox( -title => "Fatal Error", -buttons => ["Exit"] );
+    $box->Icon( -image => $icon );
+    $box->add( "Label", -text => "MP3 Directory unavailable" )->pack();
+    $box->add( "Label",
+        -text =>
+          "The MP3 directory that you set is unavailable.  Check to make sure the directory is correct, and you have permission to access it."
+    )->pack();
+    $box->add( "Label",
+        -text =>
+          "The preferences menu will now pop up for you to check or set any configuration options."
+    )->pack();
+    $box->add( "Label",
+        -text =>
+          "After you set the preferences, Mr. Voice will exit. You will need to restart to test your changes."
+    )->pack();
+    $box->add( "Label", -text => "Current MP3 Directory: $config{'filepath'}" )
+      ->pack();
+    $result = $box->Show();
+
+    if ($result)
+    {
+        edit_preferences();
+        die("Error accessing MP3 directory\n");
+    }
 }
 
-if (! -W $config{'savedir'})
+if ( !-W $config{'savedir'} )
 {
-  $box = $mw->DialogBox(-title=>"Warning", -buttons=>["Continue"]);
-  $box->Icon(-image=>$icon);
-  $box->add("Label",-text=>"Hotkey save directory unavailable")->pack();
-  $box->add("Label",-text=>"The hotkey save directory is unset or you do not have permission to write to it.")->pack();
-  $box->add("Label",-text=>"While this will not impact the operation of Mr. Voice, you should probably fix it in the File->Preferences menu.")->pack();
-  $box->add("Label",-text=>"Current Hotkey Directory: $config{'savedir'}")->pack();
-  $result = $box->Show();
+    $box = $mw->DialogBox( -title => "Warning", -buttons => ["Continue"] );
+    $box->Icon( -image => $icon );
+    $box->add( "Label", -text => "Hotkey save directory unavailable" )->pack();
+    $box->add( "Label",
+        -text =>
+          "The hotkey save directory is unset or you do not have permission to write to it."
+    )->pack();
+    $box->add( "Label",
+        -text =>
+          "While this will not impact the operation of Mr. Voice, you should probably fix it in the File->Preferences menu."
+    )->pack();
+    $box->add( "Label",
+        -text => "Current Hotkey Directory: $config{'savedir'}" )->pack();
+    $result = $box->Show();
 }
 
 # Check to see if the database is compatible with version 1.7+
 $query = "SELECT time FROM mrvoice LIMIT 1";
-if (! $dbh->do($query))
+if ( !$dbh->do($query) )
 {
-  $box = $mw->DialogBox(-title=>"Database Update Needed", -buttons=>["Continue","Quit"]);
-  $box->Icon(-image=>$icon);
-  $box->add("Label",-text=>"Your database is not compatible with Mr. Voice 1.7")->pack();
-  $box->add("Label",-text=>"With the 1.7 release, some database changes were introduced. Press the Continue button to automatically update your database, or Quit to exit.")->pack();
-  $box->add("Label",-text=>"Continuing will update your tables and record the song times into the database This process may take upwards of a few minutes, depending on the number of songs in your database.")->pack();
-  $result = $box->Show();
-  if ($result eq "Continue")
-  {
-    $box = $mw->DialogBox(-title=>"Updating Database", -buttons=>["Continue"]);
-    $box->Icon(-image=>$icon);
-    $box->add("Label",-text=>"Creating temp database...")->pack();
-    $query = "CREATE TABLE mrvoice2 (
+    $box = $mw->DialogBox(
+        -title   => "Database Update Needed",
+        -buttons => [ "Continue", "Quit" ]
+    );
+    $box->Icon( -image => $icon );
+    $box->add( "Label",
+        -text => "Your database is not compatible with Mr. Voice 1.7" )->pack();
+    $box->add( "Label",
+        -text =>
+          "With the 1.7 release, some database changes were introduced. Press the Continue button to automatically update your database, or Quit to exit."
+    )->pack();
+    $box->add( "Label",
+        -text =>
+          "Continuing will update your tables and record the song times into the database This process may take upwards of a few minutes, depending on the number of songs in your database."
+    )->pack();
+    $result = $box->Show();
+    if ( $result eq "Continue" )
+    {
+        $box = $mw->DialogBox(
+            -title   => "Updating Database",
+            -buttons => ["Continue"]
+        );
+        $box->Icon( -image => $icon );
+        $box->add( "Label", -text => "Creating temp database..." )->pack();
+        $query = "CREATE TABLE mrvoice2 (
    id int(8) NOT NULL auto_increment,
    title varchar(255) NOT NULL,
    artist varchar(255),
@@ -3176,158 +3803,189 @@ if (! $dbh->do($query))
    modtime timestamp(6),
    PRIMARY KEY (id))";
 
-    my $sth2=$dbh->prepare($query);
-    $sth2->execute;
-    if ($DBI::err)
-    {
-      $string = "$DBI::errstr";
-      $box->add("Label",-text=>"FAILED: $string")->pack();
+        my $sth2 = $dbh->prepare($query);
+        $sth2->execute;
+        if ($DBI::err)
+        {
+            $string = "$DBI::errstr";
+            $box->add( "Label", -text => "FAILED: $string" )->pack();
+        }
+        else
+        {
+            $box->add( "Label", -text => "SUCCEEDED" )->pack();
+        }
+        $sth2->finish;
+
+        $query = "SELECT * from mrvoice";
+
+        $percent_done = 0;
+        $progressbox  = $mw->Toplevel();
+        $progressbox->withdraw();
+        $progressbox->Icon( -image => $icon );
+        $progressbox->title("Song Conversion Status");
+        my $pb =
+          $progressbox->ProgressBar( -width => 150 )->pack( -side => 'top' );
+        $progressbox->Label( -text => "Song Conversion Status (Percentage)" )
+          ->pack( -side => 'top' );
+        $donebutton = $progressbox->Button(
+            -text    => "Done",
+            -state   => 'disabled',
+            -command => sub { $progressbox->destroy }
+        )->pack( -side => 'top' );
+        $progressbox->deiconify();
+        $progressbox->raise();
+
+        $sth3 = $dbh->prepare($query);
+        $sth3->execute;
+        $numrows  = $sth3->rows;
+        $rowcount = 0;
+        while ( @table_row = $sth3->fetchrow_array )
+        {
+            $tmpid       = $dbh->quote( $table_row[0] );
+            $tmptitle    = $dbh->quote( $table_row[1] );
+            $tmpartist   = $dbh->quote( $table_row[2] );
+            $tmpcategory = $dbh->quote( $table_row[3] );
+            $tmpinfo     = $dbh->quote( $table_row[4] );
+            $tmpfilename = $dbh->quote( $table_row[5] );
+            $tmpmodtime  = $dbh->quote( $table_row[6] );
+
+            $query =
+              "INSERT INTO mrvoice2 (id,title,artist,category,info,filename,time,modtime) VALUES ($tmpid, $tmptitle,";
+            if ( $tmpartist eq "" )
+            {
+                $query .= "NULL,";
+            }
+            else
+            {
+                $query .= "$tmpartist,";
+            }
+            $query .= "$tmpcategory,";
+            if ( $tmpinfo eq "" )
+            {
+                $query .= "NULL,";
+            }
+            else
+            {
+                $query .= "$tmpinfo,";
+            }
+            $query .= "$tmpfilename,";
+            $length =
+              get_songlength( catfile( $config{'filepath'}, $table_row[5] ) );
+            $query .= "'$length',$tmpmodtime)";
+            $sth4 = $dbh->prepare($query);
+            $sth4->execute;
+            $sth4->finish;
+            $rowcount++;
+            $percent_done = int( ( $rowcount / $numrows ) * 100 );
+            $pb->set($percent_done);
+            $progressbox->update();
+        }
+        $sth3->finish;
+        $donebutton->configure( -state => 'active' );
+        $progressbox->update();
+        while ( Exists($progressbox) )
+        {
+            $progressbox->update();
+        }
+        $box->add( "Label", -text => "Building new table...SUCCEEDED" )->pack();
+        $dbh->do("RENAME TABLE mrvoice TO oldmrvoice");
+        $dbh->do("RENAME TABLE mrvoice2 TO mrvoice");
+        $box->add( "Label", -text => "Renaming tables...SUCCEEDED" )->pack();
+        $box->add( "Label",
+            -text =>
+              "The database has been updated - song times are now stored in the database itself\nIn the future, if you modify a file in $config{'filepath'} directly, you will need to run the Update Song Times function from the Songs menu."
+        )->pack();
+        $box->Show();
     }
     else
     {
-      $box->add("Label",-text=>"SUCCEEDED")->pack();
+        do_exit;
     }
-    $sth2->finish;
- 
-    $query = "SELECT * from mrvoice";
-    
-    $percent_done = 0;
-    $progressbox=$mw->Toplevel();
-    $progressbox->withdraw();
-    $progressbox->Icon(-image=>$icon);
-    $progressbox->title("Song Conversion Status");
-    my $pb = $progressbox->ProgressBar(
-      -width => 150)->pack(-side=>'top');
-    $progressbox->Label(-text=>"Song Conversion Status (Percentage)")->pack(-side=>'top');
-    $donebutton = $progressbox->Button(
-      -text => "Done",
-      -state => 'disabled',
-      -command=>sub { $progressbox->destroy})->pack(-side=>'top');
-    $progressbox->deiconify();
-    $progressbox->raise();
-
-    $sth3=$dbh->prepare($query);
-    $sth3->execute;
-    $numrows = $sth3->rows;
-    $rowcount = 0;
-    while (@table_row = $sth3->fetchrow_array)
-    {
-      $tmpid = $dbh->quote($table_row[0]);
-      $tmptitle = $dbh->quote($table_row[1]);
-      $tmpartist = $dbh->quote($table_row[2]);
-      $tmpcategory = $dbh->quote($table_row[3]);
-      $tmpinfo = $dbh->quote($table_row[4]);
-      $tmpfilename = $dbh->quote($table_row[5]);
-      $tmpmodtime = $dbh->quote($table_row[6]);
-    
-      $query = "INSERT INTO mrvoice2 (id,title,artist,category,info,filename,time,modtime) VALUES ($tmpid, $tmptitle,";
-      if ($tmpartist eq "")
-      {
-        $query .= "NULL,";
-      }
-      else
-      {
-        $query .= "$tmpartist,";
-      }
-      $query .= "$tmpcategory,";
-      if ($tmpinfo eq "")
-      {
-        $query .= "NULL,";
-      }
-      else
-      {
-        $query .= "$tmpinfo,";
-      }
-      $query .= "$tmpfilename,";
-      $length = get_songlength(catfile($config{'filepath'},$table_row[5]));
-      $query .= "'$length',$tmpmodtime)";
-      $sth4=$dbh->prepare($query);
-      $sth4->execute;
-      $sth4->finish;
-      $rowcount++;
-      $percent_done = int ( ($rowcount / $numrows) * 100);
-      $pb->set($percent_done);
-      $progressbox->update();
-    }
-    $sth3->finish;
-    $donebutton->configure(-state=>'active');
-    $progressbox->update();
-    while (Exists($progressbox))
-    {
-      $progressbox->update();
-    }
-    $box->add("Label",-text=>"Building new table...SUCCEEDED")->pack();
-    $dbh->do("RENAME TABLE mrvoice TO oldmrvoice");
-    $dbh->do("RENAME TABLE mrvoice2 TO mrvoice");
-    $box->add("Label",-text=>"Renaming tables...SUCCEEDED")->pack();
-    $box->add("Label",-text=>"The database has been updated - song times are now stored in the database itself\nIn the future, if you modify a file in $config{'filepath'} directly, you will need to run the Update Song Times function from the Songs menu.")->pack();
-    $box->Show();
-  }
-  else
-  {
-    do_exit;
-  }
 }
-
 
 # Check to see if the database is compatible with version 1.10+
 $query = "SELECT publisher FROM mrvoice LIMIT 1";
-if (! $dbh->do($query))
+if ( !$dbh->do($query) )
 {
-  $box = $mw->DialogBox(-title=>"Database Update Needed", -buttons=>["Continue","Quit"]);
-  $box->Icon(-image=>$icon);
-  $box->add("Label",-text=>"Your database is not compatible with Mr. Voice 1.10")->pack();
-  $box->add("Label",-text=>"With the 1.10 release, some database changes were introduced.\nPress the Continue button to automatically update your database, or Quit to exit.")->pack();
-  $box->add("Label",-text=>"Continuing will add a new Publisher field to the database.")->pack();
-  $result = $box->Show();
-  if ($result eq "Continue")
-  {
-    $query = "ALTER TABLE mrvoice ADD COLUMN publisher VARCHAR(16) NOT NULL DEFAULT 'OTHER'";
-    my $sth=$dbh->prepare($query);
-    $sth->execute;
-    if ($DBI::err)
+    $box = $mw->DialogBox(
+        -title   => "Database Update Needed",
+        -buttons => [ "Continue", "Quit" ]
+    );
+    $box->Icon( -image => $icon );
+    $box->add( "Label",
+        -text => "Your database is not compatible with Mr. Voice 1.10" )
+      ->pack();
+    $box->add( "Label",
+        -text =>
+          "With the 1.10 release, some database changes were introduced.\nPress the Continue button to automatically update your database, or Quit to exit."
+    )->pack();
+    $box->add( "Label",
+        -text => "Continuing will add a new Publisher field to the database." )
+      ->pack();
+    $result = $box->Show();
+    if ( $result eq "Continue" )
     {
-      my $errorbox = $mw->DialogBox(-title=>"Database Update Failed", -buttons=>["Exit"]);
-      $errorbox->Icon(-image=>$icon);
-      $string = "$DBI::errstr";
-      $errorbox->add("Label",-text=>"FAILED: $string")->pack();
-      $errorbox->add("Label",-text=>"You must fix this error before you can run Mr. Voice 1.10")->pack();
-      my $result = $errorbox->Show();
-      do_exit if ($result);
+        $query =
+          "ALTER TABLE mrvoice ADD COLUMN publisher VARCHAR(16) NOT NULL DEFAULT 'OTHER'";
+        my $sth = $dbh->prepare($query);
+        $sth->execute;
+        if ($DBI::err)
+        {
+            my $errorbox = $mw->DialogBox(
+                -title   => "Database Update Failed",
+                -buttons => ["Exit"]
+            );
+            $errorbox->Icon( -image => $icon );
+            $string = "$DBI::errstr";
+            $errorbox->add( "Label", -text => "FAILED: $string" )->pack();
+            $errorbox->add( "Label",
+                -text =>
+                  "You must fix this error before you can run Mr. Voice 1.10" )
+              ->pack();
+            my $result = $errorbox->Show();
+            do_exit if ($result);
+        }
+        $sth->finish;
     }
-    $sth->finish;
-  }
 }
 
 # We use the following statement to open the MP3 player asynchronously
 # when the Mr. Voice app starts.
 
-if (! -x $config{'mp3player'})
+if ( !-x $config{'mp3player'} )
 {
-  infobox($mw,"Warning - MP3 Player Not Found","Warning - Could not execute your defined MP3 player:\n\n$config{'mp3player'}\n\nYou may need to select the proper file in the preferences.","warning");
+    infobox(
+        $mw,
+        "Warning - MP3 Player Not Found",
+        "Warning - Could not execute your defined MP3 player:\n\n$config{'mp3player'}\n\nYou may need to select the proper file in the preferences.",
+        "warning"
+    );
 }
 else
 {
-  if ("$^O" eq "MSWin32")
-  {
-    # Start the MP3 player on a Windows system
-    my $object;
-    Win32::Process::Create($object, $config{'mp3player'},'',1, NORMAL_PRIORITY_CLASS, ".");
-    $mp3_pid=$object->GetProcessID();
-    sleep(1);
-  }
-  else
-  {
-    # Start the MP3 player on a Unix system using fork/exec
-    $mp3_pid = fork();
-    if ($mp3_pid == 0) 
+    if ( "$^O" eq "MSWin32" )
     {
-      # We're the child of the fork
-      exec ("$config{'mp3player'}");
-    }
-  }
-}
 
+        # Start the MP3 player on a Windows system
+        my $object;
+        Win32::Process::Create( $object, $config{'mp3player'}, '', 1,
+            NORMAL_PRIORITY_CLASS, "." );
+        $mp3_pid = $object->GetProcessID();
+        sleep(1);
+    }
+    else
+    {
+
+        # Start the MP3 player on a Unix system using fork/exec
+        $mp3_pid = fork();
+        if ( $mp3_pid == 0 )
+        {
+
+            # We're the child of the fork
+            exec("$config{'mp3player'}");
+        }
+    }
+}
 
 # Menu bar
 # Using the new-style menubars from "Mastering Perl/Tk"
@@ -3338,405 +3996,579 @@ our $advancedmenu;
 our $helpmenu;
 our $filemenu;
 
-$filemenu = $menubar->cascade(-label=>'File',
-                              -tearoff=>0,
-                              -menuitems=> filemenu_items);
-$dynamicmenu=$menubar->entrycget('File', -menu)->entrycget('Recent Files', -menu);
-$hotkeysmenu = $menubar->cascade(-label=>'Hotkeys',
-                                 -tearoff=>0,
-                                 -menuitems=> hotkeysmenu_items);
-$hotkeysmenu->menu->entryconfigure("Restore Hotkeys", -state=>"disabled");
-$categoriesmenu = $menubar->cascade(-label=>'Categories',
-                                    -tearoff=>0,
-                                    -menuitems=> categoriesmenu_items);
-$songsmenu = $menubar->cascade(-label=>'Songs',
-                               -tearoff=>0,
-                               -menuitems=> songsmenu_items);
-$advancedmenu = $menubar->cascade(-label=>'Advanced Search',
-                                  -tearoff=>0,
-				  -menuitems=> advancedmenu_items);
-$helpmenu = $menubar->cascade(-label=>'Help',
-                              -tearoff=>0,
-                              -menuitems=> helpmenu_items);
+$filemenu = $menubar->cascade(
+    -label     => 'File',
+    -tearoff   => 0,
+    -menuitems => filemenu_items
+);
+$dynamicmenu =
+  $menubar->entrycget( 'File', -menu )->entrycget( 'Recent Files', -menu );
+$hotkeysmenu = $menubar->cascade(
+    -label     => 'Hotkeys',
+    -tearoff   => 0,
+    -menuitems => hotkeysmenu_items
+);
+$hotkeysmenu->menu->entryconfigure( "Restore Hotkeys", -state => "disabled" );
+$categoriesmenu = $menubar->cascade(
+    -label     => 'Categories',
+    -tearoff   => 0,
+    -menuitems => categoriesmenu_items
+);
+$songsmenu = $menubar->cascade(
+    -label     => 'Songs',
+    -tearoff   => 0,
+    -menuitems => songsmenu_items
+);
+$advancedmenu = $menubar->cascade(
+    -label     => 'Advanced Search',
+    -tearoff   => 0,
+    -menuitems => advancedmenu_items
+);
+$helpmenu = $menubar->cascade(
+    -label     => 'Help',
+    -tearoff   => 0,
+    -menuitems => helpmenu_items
+);
 
 sub filemenu_items
 {
-  [
-    ['command', 'Open Hotkey File', -command=>\&open_file, -accelerator=>'Ctrl-O'],
-    ['command', 'Save Hotkeys To A File', -command=>\&save_file, -accelerator=>'Ctrl-S'],
-    '',
-    ['command', 'Open Holding Tank File', -command=>\&open_tank],
-    ['command', 'Save Holding Tank To A File', -command=>\&save_tank],
-    '',
-    ['command', 'Backup Database To A File', -command=>\&dump_database],
-    ['command', 'Import Database Backup File', -command=>\&import_database],
-    '',
-    ['command', 'Preferences', -command=>\&edit_preferences],
-    ['cascade', 'Recent Files', -tearoff=>0],
-    '',
-    ['command', 'Exit', -command=>\&do_exit, -accelerator=>'Ctrl-X'],
-  ];
+    [
+        [
+            'command', 'Open Hotkey File',
+            -command     => \&open_file,
+            -accelerator => 'Ctrl-O'
+        ],
+        [
+            'command', 'Save Hotkeys To A File',
+            -command     => \&save_file,
+            -accelerator => 'Ctrl-S'
+        ],
+        '',
+        [ 'command', 'Open Holding Tank File',      -command => \&open_tank ],
+        [ 'command', 'Save Holding Tank To A File', -command => \&save_tank ],
+        '',
+        [ 'command', 'Backup Database To A File', -command => \&dump_database ],
+        [
+            'command',
+            'Import Database Backup File',
+            -command => \&import_database
+        ],
+        '',
+        [ 'command', 'Preferences',  -command => \&edit_preferences ],
+        [ 'cascade', 'Recent Files', -tearoff => 0 ],
+        '',
+        [ 'command', 'Exit', -command => \&do_exit, -accelerator => 'Ctrl-X' ],
+    ];
 }
 
 sub hotkeysmenu_items
 {
-  [
-    ['command', 'Show Hotkeys', -command=>\&list_hotkeys, -accelerator=>'Ctrl-H'],
-    ['command', 'Clear All Hotkeys', -command=>\&clear_hotkeys],
-    ['command', 'Show Holding Tank', -command=>\&holding_tank, -accelerator=>'Ctrl-T'],
+    [
+        [
+            'command', 'Show Hotkeys',
+            -command     => \&list_hotkeys,
+            -accelerator => 'Ctrl-H'
+        ],
+        [ 'command', 'Clear All Hotkeys', -command => \&clear_hotkeys ],
+        [
+            'command', 'Show Holding Tank',
+            -command     => \&holding_tank,
+            -accelerator => 'Ctrl-T'
+        ],
+
 #STARTCSZ
 #    ['command', 'Show Predefined Hotkeys', -command=>\&show_predefined_hotkeys],
 #ENDCSZ
-    "",
-    ['command', 'Restore Hotkeys', -command=>\&restore_hotkeys],
-    ['checkbutton', 'Lock Hotkeys', -variable=>\$lock_hotkeys],
-  ];
+        "",
+        [ 'command',     'Restore Hotkeys', -command  => \&restore_hotkeys ],
+        [ 'checkbutton', 'Lock Hotkeys',    -variable => \$lock_hotkeys ],
+    ];
 }
 
 sub categoriesmenu_items
 {
-  [
-    ['command', 'Add Category', -command=>\&add_category],
-    ['command', 'Delete Category', -command=>\&delete_category],
-    ['command', 'Edit Category', -command=>\&edit_category],
-  ];
+    [
+        [ 'command', 'Add Category',    -command => \&add_category ],
+        [ 'command', 'Delete Category', -command => \&delete_category ],
+        [ 'command', 'Edit Category',   -command => \&edit_category ],
+    ];
 }
 
 sub songsmenu_items
 {
-  [
-    ['command', 'Add New Song', -command=>\&add_new_song],
-    ['command', 'Edit Currently Selected Song(s)', -command=>\&edit_song],
-    ['command', 'Delete Currently Selected Song(s)', -command=>\&delete_song],
-    ['command', 'Bulk-Add Songs Into Category', -command=>\&bulk_add],
-    ['command', 'Update Song Times', -command=>\&update_time],
-  ];
+    [
+        [ 'command', 'Add New Song', -command => \&add_new_song ],
+        [
+            'command',
+            'Edit Currently Selected Song(s)',
+            -command => \&edit_song
+        ],
+        [
+            'command',
+            'Delete Currently Selected Song(s)',
+            -command => \&delete_song
+        ],
+        [ 'command', 'Bulk-Add Songs Into Category', -command => \&bulk_add ],
+        [ 'command', 'Update Song Times', -command => \&update_time ],
+    ];
 }
 
 sub advanced_search
 {
-  my $query="select modtime from mrvoice order by modtime asc limit 1";
-  my $sth=$dbh->prepare($query);
-  $sth->execute or die "can't execute the query: $DBI::errstr\n";
-  my @table_row = $sth->fetchrow_array;
-  my $firstdate=$table_row[0];
-  $sth->finish;
+    my $query = "select modtime from mrvoice order by modtime asc limit 1";
+    my $sth   = $dbh->prepare($query);
+    $sth->execute or die "can't execute the query: $DBI::errstr\n";
+    my @table_row = $sth->fetchrow_array;
+    my $firstdate = $table_row[0];
+    $sth->finish;
 
-  $firstdate =~ /(\d\d)(\d\d)(\d\d)/;
+    $firstdate =~ /(\d\d)(\d\d)(\d\d)/;
 
-  $start_month = $2;
-  $start_date = $3;
-  $start_year = "20$1"; 
+    $start_month = $2;
+    $start_date  = $3;
+    $start_year  = "20$1";
 
-  my @today = localtime();
-  $end_month = $today[4] + 1;
-  $end_date = $today[3];
-  $end_year = $today[5] + 1900;
+    my @today = localtime();
+    $end_month = $today[4] + 1;
+    $end_date  = $today[3];
+    $end_year  = $today[5] + 1900;
 
-  my $box = $mw->DialogBox(-title=>"Advanced Search", -buttons=>["Ok","Cancel"]);
-  $box->Icon(-image=>$icon);
-  $box->add("Label",-text=>"Use this form to search for songs modified between specific dates.")->pack();
-  my $adv_searchframe_start = $box->add("Frame",-borderwidth=>5)
-                                      ->pack(-side=>'top',
-                                             -anchor=>'w',
-					     -fill=>'x');
-  $adv_searchframe_start->Label(-text=>"Start date: ")->pack(-side=>'left');
-  my $start_month_button = $adv_searchframe_start->Menubutton(-text=>"Month ($start_month)",
-                                                        -relief=>'raised',
-		                                        -indicatoron=>1)->pack(-side=>"left");
-  $start_month_menu = $start_month_button->menu(-tearoff=>0);
-  $start_month_button->configure(-menu=>$start_month_menu);
-  for ($i=1; $i<=12; $i++)
-  {
-    $start_month_menu->radiobutton(-label=>$i,
-                                   -value=>$i,
-                                   -variable=>\$start_month,
-				   -command=>sub {update_button($start_month_button, "Month", $start_month); });
-  }
-  $adv_searchframe_start->Label(-text=>"/")->pack(-side=>'left');
+    my $box = $mw->DialogBox(
+        -title   => "Advanced Search",
+        -buttons => [ "Ok", "Cancel" ]
+    );
+    $box->Icon( -image => $icon );
+    $box->add( "Label",
+        -text =>
+          "Use this form to search for songs modified between specific dates." )
+      ->pack();
+    my $adv_searchframe_start = $box->add( "Frame", -borderwidth => 5 )->pack(
+        -side   => 'top',
+        -anchor => 'w',
+        -fill   => 'x'
+    );
+    $adv_searchframe_start->Label( -text => "Start date: " )
+      ->pack( -side => 'left' );
+    my $start_month_button = $adv_searchframe_start->Menubutton(
+        -text        => "Month ($start_month)",
+        -relief      => 'raised',
+        -indicatoron => 1
+    )->pack( -side => "left" );
+    $start_month_menu = $start_month_button->menu( -tearoff => 0 );
+    $start_month_button->configure( -menu => $start_month_menu );
 
-  my $start_date_button = $adv_searchframe_start->Menubutton(-text=>"Date ($start_date)",
-                                                       -relief=>'raised',
-                                                       -indicatoron=>1)->pack(-side=>"left");
-  $start_date_menu = $start_date_button->menu(-tearoff=>0);
-  $start_date_button->configure(-menu=>$start_date_menu);
-  for ($i=1; $i<=31; $i++)
-  {
-    $start_date_menu->radiobutton(-label=>$i,
-                                   -value=>$i,
-                                   -variable=>\$start_date,
-				   -command=>sub {update_button($start_date_button, "Date", $start_date); });
-  }
-  $adv_searchframe_start->Label(-text=>"/")->pack(-side=>'left');
-  my $start_year_button = $adv_searchframe_start->Menubutton(-text=>"Year ($start_year)",
-                                                       -relief=>'raised',
-                                                       -indicatoron=>1)->pack(-side=>"left");
-  $start_year_menu = $start_year_button->menu(-tearoff=>0);
-  $start_year_button->configure(-menu=>$start_year_menu);
-  for ($i=2000; $i<=2003; $i++)
-  {
-    $start_year_menu->radiobutton(-label=>$i,
-                                   -value=>$i,
-                                   -variable=>\$start_year,
-				   -command=>sub {update_button($start_year_button, "Year", $start_year); });
-  }
-
-  my $adv_searchframe_end = $box->add("Frame",-borderwidth=>5)
-                                                     ->pack(-side=>'top',
-                                                     -anchor=>'w',
-  				                     -fill=>'x');
-  $adv_searchframe_end->Label(-text=>"End date:   ")->pack(-side=>'left');
-  my $end_month_button = $adv_searchframe_end->Menubutton(-text=>"Month ($end_month)",
-                                                        -relief=>'raised',
-		                                        -indicatoron=>1)->pack(-side=>"left");
-  $end_month_menu = $end_month_button->menu(-tearoff=>0);
-  $end_month_button->configure(-menu=>$end_month_menu);
-  for ($i=1; $i<=12; $i++)
-  {
-    $end_month_menu->radiobutton(-label=>$i,
-                                   -value=>$i,
-                                   -variable=>\$end_month,
-				   -command=>sub {update_button($end_month_button, "Month", $end_month); });
-  }
-  $adv_searchframe_end->Label(-text=>"/")->pack(-side=>'left');
-
-  my $end_date_button = $adv_searchframe_end->Menubutton(-text=>"Date ($end_date)",
-                                                       -relief=>'raised',
-                                                       -indicatoron=>1)->pack(-side=>"left");
-  $end_date_menu = $end_date_button->menu(-tearoff=>0);
-  $end_date_button->configure(-menu=>$end_date_menu);
-  for ($i=1; $i<=31; $i++)
-  {
-    $end_date_menu->radiobutton(-label=>$i,
-                                   -value=>$i,
-                                   -variable=>\$end_date,
-				   -command=>sub {update_button($end_date_button, "Date", $end_date); });
-  }
-  $adv_searchframe_end->Label(-text=>"/")->pack(-side=>'left');
-  my $end_year_button = $adv_searchframe_end->Menubutton(-text=>"Year ($end_year)",
-                                                       -relief=>'raised',
-                                                       -indicatoron=>1)->pack(-side=>"left");
-  $end_year_menu = $end_year_button->menu(-tearoff=>0);
-  $end_year_button->configure(-menu=>$end_year_menu);
-  for ($i=2000; $i<=2003; $i++)
-  {
-    $end_year_menu->radiobutton(-label=>$i,
-                                -value=>$i,
-                                -variable=>\$end_year,
-                                -command=>sub {update_button($end_year_button, "Year", $end_year); });
-  }
-
-  my $button = $box->Show;
-
-  if ($button eq "Ok")
-  {
-    my $errorcode = 0;
-    my $errorstring = "";
-
-    # Check for invalid dates before we send stuff over to the database
-    if ( ! ParseDate("$start_month/$start_date/$start_year") )
+    for ( $i = 1 ; $i <= 12 ; $i++ )
     {
-      $errorcode = 1; 
-      $errorstring .= "Your start date of $start_month/$start_date/$start_year is invalid!\n";
+        $start_month_menu->radiobutton(
+            -label    => $i,
+            -value    => $i,
+            -variable => \$start_month,
+            -command  => sub {
+                update_button( $start_month_button, "Month", $start_month );
+            }
+        );
     }
-    if ( ! ParseDate("$end_month/$end_date/$end_year") )
+    $adv_searchframe_start->Label( -text => "/" )->pack( -side => 'left' );
+
+    my $start_date_button = $adv_searchframe_start->Menubutton(
+        -text        => "Date ($start_date)",
+        -relief      => 'raised',
+        -indicatoron => 1
+    )->pack( -side => "left" );
+    $start_date_menu = $start_date_button->menu( -tearoff => 0 );
+    $start_date_button->configure( -menu => $start_date_menu );
+    for ( $i = 1 ; $i <= 31 ; $i++ )
     {
-      $errorcode = 1;
-      $errorstring .= "Your end date of $end_month/$end_date/$end_year is invalid!\n";
+        $start_date_menu->radiobutton(
+            -label    => $i,
+            -value    => $i,
+            -variable => \$start_date,
+            -command  =>
+              sub { update_button( $start_date_button, "Date", $start_date ); }
+        );
+    }
+    $adv_searchframe_start->Label( -text => "/" )->pack( -side => 'left' );
+    my $start_year_button = $adv_searchframe_start->Menubutton(
+        -text        => "Year ($start_year)",
+        -relief      => 'raised',
+        -indicatoron => 1
+    )->pack( -side => "left" );
+    $start_year_menu = $start_year_button->menu( -tearoff => 0 );
+    $start_year_button->configure( -menu => $start_year_menu );
+    for ( $i = 2000 ; $i <= 2003 ; $i++ )
+    {
+        $start_year_menu->radiobutton(
+            -label    => $i,
+            -value    => $i,
+            -variable => \$start_year,
+            -command  =>
+              sub { update_button( $start_year_button, "Year", $start_year ); }
+        );
     }
 
-    if ($errorcode == 1)
+    my $adv_searchframe_end = $box->add( "Frame", -borderwidth => 5 )->pack(
+        -side   => 'top',
+        -anchor => 'w',
+        -fill   => 'x'
+    );
+    $adv_searchframe_end->Label( -text => "End date:   " )
+      ->pack( -side => 'left' );
+    my $end_month_button = $adv_searchframe_end->Menubutton(
+        -text        => "Month ($end_month)",
+        -relief      => 'raised',
+        -indicatoron => 1
+    )->pack( -side => "left" );
+    $end_month_menu = $end_month_button->menu( -tearoff => 0 );
+    $end_month_button->configure( -menu => $end_month_menu );
+    for ( $i = 1 ; $i <= 12 ; $i++ )
     {
-      $errorstring .= "Search cancelled - please try again.";
-      infobox($mw,"Invalid dates entered",$errorstring);
+        $end_month_menu->radiobutton(
+            -label    => $i,
+            -value    => $i,
+            -variable => \$end_month,
+            -command  =>
+              sub { update_button( $end_month_button, "Month", $end_month ); }
+        );
     }
+    $adv_searchframe_end->Label( -text => "/" )->pack( -side => 'left' );
+
+    my $end_date_button = $adv_searchframe_end->Menubutton(
+        -text        => "Date ($end_date)",
+        -relief      => 'raised',
+        -indicatoron => 1
+    )->pack( -side => "left" );
+    $end_date_menu = $end_date_button->menu( -tearoff => 0 );
+    $end_date_button->configure( -menu => $end_date_menu );
+    for ( $i = 1 ; $i <= 31 ; $i++ )
+    {
+        $end_date_menu->radiobutton(
+            -label    => $i,
+            -value    => $i,
+            -variable => \$end_date,
+            -command  =>
+              sub { update_button( $end_date_button, "Date", $end_date ); }
+        );
+    }
+    $adv_searchframe_end->Label( -text => "/" )->pack( -side => 'left' );
+    my $end_year_button = $adv_searchframe_end->Menubutton(
+        -text        => "Year ($end_year)",
+        -relief      => 'raised',
+        -indicatoron => 1
+    )->pack( -side => "left" );
+    $end_year_menu = $end_year_button->menu( -tearoff => 0 );
+    $end_year_button->configure( -menu => $end_year_menu );
+    for ( $i = 2000 ; $i <= 2003 ; $i++ )
+    {
+        $end_year_menu->radiobutton(
+            -label    => $i,
+            -value    => $i,
+            -variable => \$end_year,
+            -command  =>
+              sub { update_button( $end_year_button, "Year", $end_year ); }
+        );
+    }
+
+    my $button = $box->Show;
+
+    if ( $button eq "Ok" )
+    {
+        my $errorcode   = 0;
+        my $errorstring = "";
+
+        # Check for invalid dates before we send stuff over to the database
+        if ( !ParseDate("$start_month/$start_date/$start_year") )
+        {
+            $errorcode = 1;
+            $errorstring .=
+              "Your start date of $start_month/$start_date/$start_year is invalid!\n";
+        }
+        if ( !ParseDate("$end_month/$end_date/$end_year") )
+        {
+            $errorcode = 1;
+            $errorstring .=
+              "Your end date of $end_month/$end_date/$end_year is invalid!\n";
+        }
+
+        if ( $errorcode == 1 )
+        {
+            $errorstring .= "Search cancelled - please try again.";
+            infobox( $mw, "Invalid dates entered", $errorstring );
+        }
+        else
+        {
+
+            # Go on and do the search - data checks out
+            do_search(
+                "range",
+                "$start_year-$start_month-$start_date",
+                "$end_year-$end_month-$end_date"
+            );
+        }
+    }
+
     else
     {
-      # Go on and do the search - data checks out
-      do_search("range","$start_year-$start_month-$start_date","$end_year-$end_month-$end_date");
+        $status = "Advanced Search Cancelled";
     }
-  }
-
-  else
-  {
-    $status = "Advanced Search Cancelled";
-  }
 }
 
 sub update_button()
 {
-  $button = $_[0];
-  $label = $_[1];
-  $value = $_[2];
-  $button->configure(-text=>"$label ($value)");
+    $button = $_[0];
+    $label  = $_[1];
+    $value  = $_[2];
+    $button->configure( -text => "$label ($value)" );
 }
 
 sub advancedmenu_items
 {
-  [
-    ['command','Show songs added/changed today', -command=>[\&do_search,"timespan","0 days"]],
-    ['command','Show songs added/changed in past 7 days', -command=>[\&do_search,"timespan","7 days"]],
-    ['command','Show songs added/changed in past 14 days', -command=>[\&do_search,"timespan","14 days"]],
-    ['command','Show songs added/changed in past 30 days', -command=>[\&do_search,"timespan","30 days"]],
-    ['command','Advanced date search', -command=>\&advanced_search],
-  ];
+    [
+        [
+            'command',
+            'Show songs added/changed today',
+            -command => [ \&do_search, "timespan", "0 days" ]
+        ],
+        [
+            'command',
+            'Show songs added/changed in past 7 days',
+            -command => [ \&do_search, "timespan", "7 days" ]
+        ],
+        [
+            'command',
+            'Show songs added/changed in past 14 days',
+            -command => [ \&do_search, "timespan", "14 days" ]
+        ],
+        [
+            'command',
+            'Show songs added/changed in past 30 days',
+            -command => [ \&do_search, "timespan", "30 days" ]
+        ],
+        [ 'command', 'Advanced date search', -command => \&advanced_search ],
+    ];
 }
 
 sub helpmenu_items
 {
-  [
-    ['command', 'About', -command=>\&show_about],
-  ];
+    [ [ 'command', 'About', -command => \&show_about ], ];
 }
-			      
+
 #####
 # The search frame
-$searchframe=$mw->Frame()->pack(-side=>'top',
-                                -anchor=>'n',
-                                -fill=>'x');
+$searchframe = $mw->Frame()->pack(
+    -side   => 'top',
+    -anchor => 'n',
+    -fill   => 'x'
+);
 
-
-$catmenubutton=$searchframe->Menubutton(-text=>"Choose Category",
-                                        -relief=>'raised',
-                                        -indicatoron=>1)->pack(-side=>'left',
-                                                               -anchor=>'n');
+$catmenubutton = $searchframe->Menubutton(
+    -text        => "Choose Category",
+    -relief      => 'raised',
+    -indicatoron => 1
+  )->pack(
+    -side   => 'left',
+    -anchor => 'n'
+  );
 $catmenu = $catmenubutton->menu();
-$catmenubutton->configure(-menu=>$catmenu);
-$catmenubutton->menu()->configure(-postcommand=>\&build_categories_menu);
+$catmenubutton->configure( -menu                => $catmenu );
+$catmenubutton->menu()->configure( -postcommand => \&build_categories_menu );
 
-$searchframe->Label(-text=>"Currently Selected: ")->pack(-side=>'left',
-                                                         -anchor=>'n');
-$searchframe->Label(-textvariable=>\$longcat)->pack(-side=>'left',
-                                                     -anchor=>'n');
+$searchframe->Label( -text => "Currently Selected: " )->pack(
+    -side   => 'left',
+    -anchor => 'n'
+);
+$searchframe->Label( -textvariable => \$longcat )->pack(
+    -side   => 'left',
+    -anchor => 'n'
+);
+
 #
 ######
 
 #####
 # Extra Info
-$searchframe1=$mw->Frame()->pack(-side=>'top',
-                                 -fill=>'x',
-                                 -anchor=>'n');
-$searchframe1->Label(-text=>"where extra info contains",
-                     -width=>25,
-                     -anchor=>'w')->pack(-side=>'left');
-$cattext_box = $searchframe1->BrowseEntry(-variable=>\$cattext)->pack(-side=>'left');
+$searchframe1 = $mw->Frame()->pack(
+    -side   => 'top',
+    -fill   => 'x',
+    -anchor => 'n'
+);
+$searchframe1->Label(
+    -text   => "where extra info contains",
+    -width  => 25,
+    -anchor => 'w'
+)->pack( -side => 'left' );
+$cattext_box =
+  $searchframe1->BrowseEntry( -variable => \$cattext )->pack( -side => 'left' );
 
 #####
 # Artist
-$searchframe2=$mw->Frame()->pack(-side=>'top',
-                                 -fill=>'x',
-                                 -anchor=>'n');
-$searchframe2->Label(-text=>"Artist contains",
-                     -width=>25,
-                     -anchor=>"w")->pack(-side=>'left');
-$artist_box = $searchframe2->BrowseEntry(-variable=>\$artist)->pack(-side=>'left');
+$searchframe2 = $mw->Frame()->pack(
+    -side   => 'top',
+    -fill   => 'x',
+    -anchor => 'n'
+);
+$searchframe2->Label(
+    -text   => "Artist contains",
+    -width  => 25,
+    -anchor => "w"
+)->pack( -side => 'left' );
+$artist_box =
+  $searchframe2->BrowseEntry( -variable => \$artist )->pack( -side => 'left' );
+
 #
 #####
 
 #####
 # Title
-$searchframe3=$mw->Frame()->pack(-side=>'top',
-                                -fill=>'x');
-$searchframe3->Label(-text=>"Title contains",
-                     -width=>25,
-                     -anchor=>'w')->pack(-side=>'left');
-$title_box = $searchframe3->BrowseEntry(-variable=>\$title)->pack(-side=>'left');
+$searchframe3 = $mw->Frame()->pack(
+    -side => 'top',
+    -fill => 'x'
+);
+$searchframe3->Label(
+    -text   => "Title contains",
+    -width  => 25,
+    -anchor => 'w'
+)->pack( -side => 'left' );
+$title_box =
+  $searchframe3->BrowseEntry( -variable => \$title )->pack( -side => 'left' );
+
 #
 #####
 
 #####
 # Any Field
-$searchframe4=$mw->Frame()->pack(-side=>'top',
-                                -fill=>'x');
-$searchframe4->Label(-text=>"OR any field contains",
-                     -width=>25,
-                     -anchor=>'w')->pack(-side=>'left');
-$anyfield_box = $searchframe4->BrowseEntry(-variable=>\$anyfield)->pack(-side=>'left');
+$searchframe4 = $mw->Frame()->pack(
+    -side => 'top',
+    -fill => 'x'
+);
+$searchframe4->Label(
+    -text   => "OR any field contains",
+    -width  => 25,
+    -anchor => 'w'
+)->pack( -side => 'left' );
+$anyfield_box =
+  $searchframe4->BrowseEntry( -variable => \$anyfield )
+  ->pack( -side => 'left' );
 #####
 
 #####
 # Search Button
-$searchbuttonframe=$mw->Frame()->pack(-side=>'top',
-                                      -fill=>'x');
-$searchbuttonframe->Button(-text=>"Do Search",
-                           -cursor=>'question_arrow',
-                           -command=>\&do_search)->pack();
+$searchbuttonframe = $mw->Frame()->pack(
+    -side => 'top',
+    -fill => 'x'
+);
+$searchbuttonframe->Button(
+    -text    => "Do Search",
+    -cursor  => 'question_arrow',
+    -command => \&do_search
+)->pack();
+
 #
 #####
 
 #####
 # Main display area - search results
-$searchboxframe=$mw->Frame();
-$mainbox = $searchboxframe->Scrolled('Listbox',
-                       -scrollbars=>'osoe',
-                       -width=>100,
-                       -setgrid=>1,
-                       -selectmode=>"extended")->pack(-fill=>'both',
-                                                    -expand=>1,
-                                                    -side=>'top');
-$mainbox->bind("<Double-Button-1>", \&play_mp3);
+$searchboxframe = $mw->Frame();
+$mainbox        = $searchboxframe->Scrolled(
+    'Listbox',
+    -scrollbars => 'osoe',
+    -width      => 100,
+    -setgrid    => 1,
+    -selectmode => "extended"
+  )->pack(
+    -fill   => 'both',
+    -expand => 1,
+    -side   => 'top'
+  );
+$mainbox->bind( "<Double-Button-1>", \&play_mp3 );
 
-$mainbox->bind("<Button-3>", [\&rightclick_menu]);
+$mainbox->bind( "<Button-3>", [ \&rightclick_menu ] );
 
-$dnd_token = $mainbox->DragDrop(-event => '<B1-Motion>',
-                                -sitetypes => ['Local'],
-                                -startcommand => sub { StartDrag($dnd_token) });
+$dnd_token = $mainbox->DragDrop(
+    -event        => '<B1-Motion>',
+    -sitetypes    => ['Local'],
+    -startcommand => sub { StartDrag($dnd_token) }
+);
 
 # This works around brokenness in ActivePerl 5.8.  Thanks Slaven.
-$dnd_token->deiconify; $dnd_token->raise; $dnd_token->withdraw;
+$dnd_token->deiconify;
+$dnd_token->raise;
+$dnd_token->withdraw;
 
 &BindMouseWheel($mainbox);
+
 #
 #####
 
 #####
 # Status Frame
 
-$statusframe = $mw->Frame()->pack(-side=>'bottom',
-                                  -anchor=>'s',
-                                  -fill=>'x');
-$playbutton = $statusframe->Button(-text=>"Play Now",
-                     -command=>[\&play_mp3,$mainbox])->pack(-side=>'left');
-$playbutton->configure(-bg=>'green',
-                       -activebackground=>'SpringGreen2');
-$stopbutton = $statusframe->Button(-text=>"Stop Now",
-                     -command=>\&stop_mp3)->pack(-side=>'right');
-if ($^O eq "MSWin32")
+$statusframe = $mw->Frame()->pack(
+    -side   => 'bottom',
+    -anchor => 's',
+    -fill   => 'x'
+);
+$playbutton = $statusframe->Button(
+    -text    => "Play Now",
+    -command => [ \&play_mp3, $mainbox ]
+)->pack( -side => 'left' );
+$playbutton->configure(
+    -bg               => 'green',
+    -activebackground => 'SpringGreen2'
+);
+$stopbutton = $statusframe->Button(
+    -text    => "Stop Now",
+    -command => \&stop_mp3
+)->pack( -side => 'right' );
+if ( $^O eq "MSWin32" )
 {
-  # Windows users can shift-click on the stop button to activate WinAmp's
-  # automatic fadeout function.
-  # It's not changing the relief back after it's done, though.
-  $stopbutton->bindtags([$stopbutton,ref($stopbutton),$stopbutton->toplevel,'all']);
-  $stopbutton->bind("<Shift-ButtonRelease-1>" => sub {
-      $req = HTTP::Request->new(GET => "http://localhost:4800/fadeoutandstop?p=$config{'httpq_pw'}");
-      $res = $agent->request($req);
-    });
+
+    # Windows users can shift-click on the stop button to activate WinAmp's
+    # automatic fadeout function.
+    # It's not changing the relief back after it's done, though.
+    $stopbutton->bindtags(
+        [ $stopbutton, ref($stopbutton), $stopbutton->toplevel, 'all' ] );
+    $stopbutton->bind(
+        "<Shift-ButtonRelease-1>" => sub {
+            $req =
+              HTTP::Request->new( GET =>
+                  "http://localhost:4800/fadeoutandstop?p=$config{'httpq_pw'}"
+              );
+            $res = $agent->request($req);
+        }
+    );
 }
 
-$stopbutton->configure(-bg=>'red',
-                       -activebackground=>'tomato3');
+$stopbutton->configure(
+    -bg               => 'red',
+    -activebackground => 'tomato3'
+);
 
-$statusframe->Label(-textvariable=>\$status,
-                    -relief=>'sunken')->pack(-anchor=>'center',
-                                             -expand=>1,
-                                             -padx=>5,
-                                             -fill=>'x');
+$statusframe->Label(
+    -textvariable => \$status,
+    -relief       => 'sunken'
+  )->pack(
+    -anchor => 'center',
+    -expand => 1,
+    -padx   => 5,
+    -fill   => 'x'
+  );
+
 #
 #####
 
-$searchboxframe->pack(-side=>'bottom',
-                      -fill=>'both',
-	              -expand=>1);
-
-
+$searchboxframe->pack(
+    -side   => 'bottom',
+    -fill   => 'both',
+    -expand => 1
+);
 
 bind_hotkeys($mw);
-$mw->bind("<Control-Key-p>", [\&play_mp3,"Current"]);
+$mw->bind( "<Control-Key-p>", [ \&play_mp3, "Current" ] );
 
 # If the default hotkey file exists, load that up.
-if (-r catfile($config{'savedir'}, "default.mrv"))
+if ( -r catfile( $config{'savedir'}, "default.mrv" ) )
 {
-  open_file ($mw, catfile($config{'savedir'}, "default.mrv"));
+    open_file( $mw, catfile( $config{'savedir'}, "default.mrv" ) );
 }
 
 $mw->deiconify();
