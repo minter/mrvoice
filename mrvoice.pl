@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.166 2002/11/06 21:27:29 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.167 2002/11/07 15:34:38 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -54,6 +54,11 @@ our $savefile_max = 4;			# The maximum number of files to
                                         # Initial status message
 our $hotkeytypes = [
     ['Mr. Voice Hotkey Files', '.mrv'],
+    ['All Files', '*'],
+  ];
+
+our $databasefiles = [
+    ['Database Dump Files', '.sql'],
     ['All Files', '*'],
   ];
 
@@ -419,7 +424,8 @@ sub save_file
     }
     elsif ( ! -w dirname($selectedfile) )
     {
-      infobox($mw, "File Error!", "Could not write new file to directory dirname($selectedfile)");
+      my $directory = dirname($selectedfile);
+      infobox($mw, "Directory Error!", "Could not write new file to directory $directory");
     }
     else
     {
@@ -446,6 +452,56 @@ sub save_file
   {
     $status = "File save cancelled.";
   }
+}
+
+sub dump_database
+{
+  my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime();
+  $year += 1900;
+  $mon += 1;
+  $defaultfilename = "database-$year-$mon-$mday.sql";
+  $dumpfile = $mw->getSaveFile(-title=>'Choose Database Export File',
+                               -defaultextension=>".sql",
+                               -initialfile=>$defaultfilename,
+                               -filetypes=>$databasefiles);
+
+  if ($dumpfile)
+  {
+    if ( (! -w $dumpfile) && (-e $dumpfile) )
+    {
+      infobox($mw, "File Error!", "Could not open file $dumpfile for writing");
+    }
+    elsif ( ! -w dirname($dumpfile) )
+    {
+      my $directory = dirname($dumpfile);
+      infobox($mw, "Directory Error!", "Could not write new file to directory $directory");
+    }
+    else
+    {
+      # Run the MySQL Dump
+      if ($^O eq "MSWin32")
+      {
+        $dumpfile = Win32::GetShortPathName($dumpfile);
+        my $rc = system ("C:/mysql/bin/mysqldump --add-drop-table --user=$db_username --password=$db_pass $db_name > $dumpfile");
+        infobox($mw, "Database Dumped", "The contents of your database have been dumped to the file:\n$dumpfile\n\nNote: In order to have a full backup, you must also\nback up the files from the directory:\n$filepath\nas well as $rcfile");
+        $status = "Database dumped to $dumpfile";
+      }
+      else
+      {
+        my $rc = system ("mysqldump --add-drop-table --user=$db_username --password=$db_pass $db_name > $dumpfile");
+        infobox($mw, "Database Dumped", "The contents of your database have been dumped to the file:\n$dumpfile\n\nNote: In order to have a full backup, you must also\nback up the files from the directory:\n$filepath\nas well as $rcfile");
+        $status = "Database dumped to $dumpfile";
+      }
+    }
+  }
+  else
+  {
+    $status = "Database dump cancelled";
+  }
+}
+
+sub import_database
+{
 }
 
 sub dynamic_documents
@@ -1089,7 +1145,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.166 $';
+  $rev = '$Revision: 1.167 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -1958,6 +2014,8 @@ sub filemenu_items
   [
     ['command', 'Open Hotkey File', -command=>\&open_file, -accelerator=>'Ctrl-O'],
     ['command', 'Save Hotkeys To A File', -command=>\&save_file, -accelerator=>'Ctrl-S'],
+    ['command', 'Backup Database To A File', -command=>\&dump_database],
+    ['command', 'Import Database Backup File', -command=>\&import_database],
     ['command', 'Preferences', -command=>\&edit_preferences],
     ['cascade', 'Recent Files', -tearoff=>0],
     '',
