@@ -40,7 +40,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.221 2003/04/12 13:03:29 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.222 2003/04/12 13:18:19 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -138,7 +138,7 @@ else
 
 #####
 
-my $version = "1.8.1";			# Program version
+my $version = "1.8.2";			# Program version
 our $status = "Welcome to Mr. Voice version $version";		
 
 # Define 32x32 XPM icon data
@@ -1663,7 +1663,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.221 $';
+  $rev = '$Revision: 1.222 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
