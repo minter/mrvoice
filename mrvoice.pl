@@ -638,6 +638,22 @@ sub BindMouseWheel
 
 }    # end BindMouseWheel
 
+sub check_md5
+{
+    my $md5 = shift or return;
+    my $sth = $dbh->prepare("SELECT * FROM mrvoice WHERE md5='$md5'");
+    $sth->execute;
+
+    if ( my $row = $sth->fetchrow_hashref )
+    {
+        return $row->{id};
+    }
+    else
+    {
+        return;
+    }
+}
+
 sub bind_hotkeys
 {
 
@@ -3138,8 +3154,10 @@ sub import_bundle
             $sth->execute or die;
         }
 
+        my $imported = 0;
         foreach my $song_ref ( @{ $bundle->{songs} } )
         {
+            next if check_md5( $song_ref->{md5} );
             print "DEBUG: Working on song $song_ref->{title}\n";
             print "DEBUG: Testing for file ",
               catfile( $config{filepath}, $song_ref->{filename} ), "\n";
@@ -3522,6 +3540,7 @@ sub list_hotkeys
 
 sub update_time
 {
+    my $skip_modtime = shift;
     print "Updating song times and MD5 sums\n" if $debug;
     $mw->Busy( -recurse => 1 );
     print "Mainwindow now busy\n" if $debug;
@@ -3552,12 +3571,20 @@ sub update_time
     $progressbox->raise();
     print "Done\n" if $debug;
 
-    my $count        = 0;
-    my $query        = "SELECT id,filename,time,md5 FROM mrvoice";
-    my $arrayref     = $dbh->selectall_arrayref($query);
-    my $numrows      = scalar @$arrayref;
-    my $update_query =
-      "UPDATE mrvoice SET time=?, modtime=(SELECT strftime('%s','now')), md5=? WHERE id=?";
+    my $count    = 0;
+    my $query    = "SELECT id,filename,time,md5 FROM mrvoice";
+    my $arrayref = $dbh->selectall_arrayref($query);
+    my $numrows  = scalar @$arrayref;
+    my $update_query;
+    if ($skip_modtime)
+    {
+        $update_query = "UPDATE mrvoice SET time=?, md5=? WHERE id=?";
+    }
+    else
+    {
+        $update_query =
+          "UPDATE mrvoice SET time=?, modtime=(SELECT strftime('%s','now')), md5=? WHERE id=?";
+    }
     my $update_sth = $dbh->prepare($update_query);
 
     while ( my $table_row = shift @$arrayref )
@@ -5256,8 +5283,8 @@ sub songsmenu_items
             -command => \&delete_song
         ],
         [ 'command', 'Bulk-Add Songs Into Category', -command => \&bulk_add ],
-        [ 'command', 'Update Song Times',     -command => \&update_time ],
-        [ 'command', 'Add Songs From Bundle', -command => \&import_bundle ],
+        [ 'command', 'Update Song Times/MD5s', -command => \&update_time ],
+        [ 'command', 'Add Songs From Bundle',  -command => \&import_bundle ],
     ];
 }
 
@@ -5892,7 +5919,7 @@ unless ( $dbh->do("SELECT md5 FROM mrvoice LIMIT 1") )
         "INSERT INTO mrvoice (id, title, artist, category, info, filename, time, modtime,publisher) SELECT * FROM mrvoice_bak"
       )
       or die;
-    update_time();
+    update_time(1);
     $dbh->do("DROP TABLE mrvoice_bak")                          or die;
     $dbh->do("DROP TABLE categories")                           or die;
     $dbh->do("ALTER TABLE categories_bak RENAME TO categories") or die;
