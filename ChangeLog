@@ -1,3 +1,6 @@
+Wed  Mar  2 2005        H. Wade Minter (minter@lunenburg.org)
+     * Better reporting of module versions in the About box.
+
 Mon  Jan 17 2005	H. Wade Minter (minter@lunenburg.org)
      * Add the beginnings of a basic plugin architecture
 
