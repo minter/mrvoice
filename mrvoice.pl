@@ -14,8 +14,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/19 15:04:42 $
-#	CVS REVISION NUMBER:    $Revision: 1.58 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/24 00:33:58 $
+#	CVS REVISION NUMBER:    $Revision: 1.59 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -26,6 +26,8 @@ use MPEG::MP3Info;
 # CONFIGURATION VARIABLES
 # It is probably best to set this in your external config file, either
 # ~/.mrvoicerc (Unix) or C:\mrvoice.cfg (Windows)
+# NOTE: This section is deprecated and will be removed from future
+#       versions.  Use the preferences option under the File menu instead.
 #####
 $db_name = '';				# In the form DBNAME:HOSTNAME:PORT
 $db_username = '';                      # The username used to connect
@@ -732,42 +734,54 @@ sub list_hotkeys
   bind_hotkeys($hotkeysbox);
   $hotkeysbox->title("Hotkeys");
   $hotkeysbox->Label(-text=>"Currently defined hotkeys:")->pack;
-  $hotkeysbox->Checkbutton(-text=>"F1:",
-                           -variable=>\$f1_cb)->pack();
-  $hotkeysbox->Label(-textvariable=>\$f1)->pack();
-  $hotkeysbox->Checkbutton(-text=>"F2:",
-                           -variable=>\$f2_cb)->pack();
-  $hotkeysbox->Label(-textvariable=>\$f2)->pack();
-  $hotkeysbox->Checkbutton(-text=>"F3:",
-                           -variable=>\$f3_cb)->pack();
-  $hotkeysbox->Label(-textvariable=>\$f3)->pack();
-  $hotkeysbox->Checkbutton(-text=>"F4:",
-                           -variable=>\$f4_cb)->pack();
-  $hotkeysbox->Label(-textvariable=>\$f4)->pack();
-  $hotkeysbox->Checkbutton(-text=>"F5:",
-                           -variable=>\$f5_cb)->pack();
-  $hotkeysbox->Label(-textvariable=>\$f5)->pack();
-  $hotkeysbox->Checkbutton(-text=>"F6:",
-                           -variable=>\$f6_cb)->pack();
-  $hotkeysbox->Label(-textvariable=>\$f6)->pack();
-  $hotkeysbox->Checkbutton(-text=>"F7:",
-                           -variable=>\$f7_cb)->pack();
-  $hotkeysbox->Label(-textvariable=>\$f7)->pack();
-  $hotkeysbox->Checkbutton(-text=>"F8:",
-                           -variable=>\$f8_cb)->pack();
-  $hotkeysbox->Label(-textvariable=>\$f8)->pack();
-  $hotkeysbox->Checkbutton(-text=>"F9:",
-                           -variable=>\$f9_cb)->pack();
-  $hotkeysbox->Label(-textvariable=>\$f9)->pack();
-  $hotkeysbox->Checkbutton(-text=>"F10:",
-                           -variable=>\$f10_cb)->pack();
-  $hotkeysbox->Label(-textvariable=>\$f10)->pack();
-  $hotkeysbox->Checkbutton(-text=>"F11:",
-                           -variable=>\$f11_cb)->pack();
-  $hotkeysbox->Label(-textvariable=>\$f11)->pack();
-  $hotkeysbox->Checkbutton(-text=>"F12:",
-                           -variable=>\$f12_cb)->pack();
-  $hotkeysbox->Label(-textvariable=>\$f12)->pack();
+  my $f1_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
+  $f1_frame->Checkbutton(-text=>"F1:",
+                         -variable=>\$f1_cb)->pack(-side=>'left');
+  $f1_frame->Label(-textvariable=>\$f1)->pack(-side=>'left');
+  my $f2_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
+  $f2_frame->Checkbutton(-text=>"F2:",
+                         -variable=>\$f2_cb)->pack(-side=>'left');
+  $f2_frame->Label(-textvariable=>\$f2)->pack(-side=>'left');
+  my $f3_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
+  $f3_frame->Checkbutton(-text=>"F3:",
+                         -variable=>\$f3_cb)->pack(-side=>'left');
+  $f3_frame->Label(-textvariable=>\$f3)->pack(-side=>'left');
+  my $f4_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
+  $f4_frame->Checkbutton(-text=>"F4:",
+                         -variable=>\$f4_cb)->pack(-side=>'left');
+  $f4_frame->Label(-textvariable=>\$f4)->pack(-side=>'left');
+  my $f5_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
+  $f5_frame->Checkbutton(-text=>"F5:",
+                         -variable=>\$f5_cb)->pack(-side=>'left');
+  $f5_frame->Label(-textvariable=>\$f5)->pack(-side=>'left');
+  my $f6_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
+  $f6_frame->Checkbutton(-text=>"F6:",
+                         -variable=>\$f6_cb)->pack(-side=>'left');
+  $f6_frame->Label(-textvariable=>\$f6)->pack(-side=>'left');
+  my $f7_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
+  $f7_frame->Checkbutton(-text=>"F7:",
+                         -variable=>\$f7_cb)->pack(-side=>'left');
+  $f7_frame->Label(-textvariable=>\$f7)->pack(-side=>'left');
+  my $f8_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
+  $f8_frame->Checkbutton(-text=>"F8:",
+                         -variable=>\$f8_cb)->pack(-side=>'left');
+  $f8_frame->Label(-textvariable=>\$f8)->pack(-side=>'left');
+  my $f9_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
+  $f9_frame->Checkbutton(-text=>"F9:",
+                         -variable=>\$f9_cb)->pack(-side=>'left');
+  $f9_frame->Label(-textvariable=>\$f9)->pack(-side=>'left');
+  my $f10_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
+  $f10_frame->Checkbutton(-text=>"F10:",
+                          -variable=>\$f10_cb)->pack(-side=>'left');
+  $f10_frame->Label(-textvariable=>\$f10)->pack(-side=>'left');
+  my $f11_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
+  $f11_frame->Checkbutton(-text=>"F11:",
+                          -variable=>\$f11_cb)->pack(-side=>'left');
+  $f11_frame->Label(-textvariable=>\$f11)->pack(-side=>'left');
+  my $f12_frame = $hotkeysbox->Frame()->pack(-fill=>'x');
+  $f12_frame->Checkbutton(-text=>"F12:",
+                          -variable=>\$f12_cb)->pack(-side=>'left');
+  $f12_frame->Label(-textvariable=>\$f12)->pack(-side=>'left');
   $hotkeysbox->Button(-text=>"Close",
                       -command=>sub { $hotkeysbox->destroy})->pack(-side=>'left');
   $hotkeysbox->Button(-text=>"Clear Selected",
