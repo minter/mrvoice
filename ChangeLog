@@ -1,5 +1,7 @@
 Tue  Jul 22 2003	H. Wade Minter (minter@lunenburg.org)
      * Switched to using Tk::ProgressBar::Mac, which looks nicer.
+     * Switched to using Tk::Dialog instead of Tk::DialogBox in some
+       cases.
 
 Mon  Jul 21 2003        H. Wade Minter (minter@lunenburg.org)
      * Added a check to prevent duplicate categories.
@@ -454,4 +456,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.89 2003/07/22 14:56:56 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.90 2003/07/22 16:22:54 minter Exp $
