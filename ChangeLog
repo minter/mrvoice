@@ -1,3 +1,7 @@
+Sun  Sep 19  2004	H. Wade Minter (minter@lunenburg.org)
+     * Use shift() instead of ($scalar) = @_ when we only care about one
+       argument.
+
 Sat  Sep 18  2004	H. Wade Minter (minter@lunenburg.org)
      * Add a --config flag to point to an alternate mrvoicerc.
      * Wrap the database SQL import in a transaction for efficency.
