@@ -11,8 +11,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/02/25 23:32:41 $
-#	CVS REVISION NUMBER:    $Revision: 1.7 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/02/26 00:25:06 $
+#	CVS REVISION NUMBER:    $Revision: 1.8 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -408,8 +408,8 @@ $hotmenu->AddItems(["command"=>"Show Hotkeys",
                     -command=>\&list_hotkeys]);
 $hotmenu->AddItems(["command"=>"Clear All Hotkeys",
                     -command=>\&clear_hotkeys]);
-$hotmenu->AddItems(["command"=>"Show Predefined Hotkeys",
-                    -command=>\&show_predefined_hotkeys]);
+#$hotmenu->AddItems(["command"=>"Show Predefined Hotkeys",
+#                    -command=>\&show_predefined_hotkeys]);
 $helpmenu = $menuframe->Menubutton(-text=>"Help",
                                    -tearoff=>0)->pack(-side=>'right');
 $helpmenu->AddItems(["command"=>"About",
