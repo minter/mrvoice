@@ -39,7 +39,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.208 2003/04/04 02:33:29 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.209 2003/04/04 20:47:56 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -898,6 +898,9 @@ sub get_title_artist
     ($artist) = $ogg->comment('artist');
   }
 
+  $title =~ s/^\s*// if $title;
+  $artist =~ s/^\s*// if $artist;
+
   return ($title,$artist);
 }
 
@@ -994,11 +997,12 @@ sub restore_hotkeys
 
 sub bulk_add
 {
+  my (@accepted, @rejected);
   my $box1 = $mw->DialogBox(-title=>"Add all songs in directory",
                             -buttons=>["Continue","Cancel"]);
   $box1->Icon(-image=>$icon);
   my $box1frame1 = $box1->add("Frame")->pack(-fill=>'x');
-  $box1frame1->Label(-text=>"This will allow you to add all songs in a directory to a particular\ncategory, using the information stored in MP3 or OGG files to fill in\nthe title and artist.  You will have to go back after the fact to add Extra Info or do any\nediting.  If a file does not have at least a title embedded in it, it will not be added.\n\nChoose your directory and category below.")->pack(-side=>'top');
+  $box1frame1->Label(-text=>"This will allow you to add all songs in a directory to a particular\ncategory, using the information stored in MP3 or OGG files to fill in\nthe title and artist.  You will have to go back after the fact to add Extra Info or do any\nediting.  If a file does not have at least a title embedded in it, it will not be added.\n\nChoose your directory and category below.\n\n")->pack(-side=>'top');
   my $box1frame2 = $box1->add("Frame")->pack(-fill=>'x');
   $box1frame2->Label(-text=>"Add To Category: ")->pack(-side=>'left');
   my $menu = $box1frame2->Menubutton(-text=>"Choose Category",
@@ -1041,14 +1045,26 @@ sub bulk_add
     return;
   } 
 
-  print "The directory chosen is $directory\n";
-  print "The category is $db_cat\n";
+  if (! -r $directory)
+  {
+    infobox($mw,"Directory unreadable","Could not read files from the directory $directory\nPlease check permissions and try again.");
+    $status = "Bulk-Add exited due to directory error";
+    return(1);
+  }
+
+  if (! $db_cat)
+  {
+    infobox($mw,"Select a category","You must select a category to load the files into.\nPlease try again.");
+    $status = "Bulk-Add exited due to category error";
+    return(1);
+  }
 
   my $mp3glob = File::Spec->catfile($directory, "*.mp3");
   my $oggglob = File::Spec->catfile($directory, "*.ogg");
 
   my @list = <$mp3glob $oggglob>;
 
+  $mw->Busy(-recurse=>1);
   foreach $file (@list)
   {
     my ($title, $artist) = get_title_artist($file);
@@ -1058,7 +1074,7 @@ sub bulk_add
       my $time = get_songlength($file);
       my $db_title = $dbh->quote($title);
       my $db_artist;
-      if ( ($artist) && ($artist !~ /^\w*$/) )
+      if ( ($artist) && ($artist !~ /^\s*$/) )
       {
         $db_artist = $dbh->quote($artist);
       }  
@@ -1068,16 +1084,43 @@ sub bulk_add
       }
       $db_filename = move_file($file,$title,$artist);
       my $query = "INSERT INTO mrvoice (id,title,artist,category,filename,time,modtime) VALUES (NULL, $db_title, $db_artist, '$db_cat', '$db_filename', '$time', NULL)";
-      push (my @accepted, basename($file));
-      print "Running the query: $query\n";
+      my $sth=$dbh->prepare($query);
+      $sth->execute or die "can't execute the query: $DBI::errstr\n";
+      push (@accepted, basename($file));
     }
     else
     {
       # No title, no go.
-      push (my @rejected, basename($file));
+      push (@rejected, basename($file));
     }
   }
+  $mw->Unbusy(-recurse=>1);
 
+  # Final Summary
+  my $summarybox=$mw->Toplevel(-title=>"Bulk-Add Summary");
+  $summarybox->withdraw();
+  $summarybox->Icon(-image=>$icon);
+  my $lb = $summarybox->Scrolled("Listbox", -scrollbars=>"osoe",
+                                            -setgrid=>1,
+                                            -width=>50,
+                                            -height=>20,
+                                            -selectmode=>"single")->pack();
+  $lb->insert('end',"===> The following items were successfully added");
+  foreach $good (@accepted)
+  {
+    $lb->insert('end',$good);
+  }
+  $lb->insert('end', "","","===> The following files were NOT added:");
+  foreach $bad (@rejected)
+  {
+    $lb->insert('end',$bad);
+  }
+  $summarybox->Button(-text=>"Close", -command=> sub{
+                $summarybox->destroy if Tk::Exists($summarybox);
+  })->pack();
+  $summarybox->update();
+  $summarybox->deiconify();
+  $summarybox->raise();
 }
 
 sub add_category
@@ -1618,7 +1661,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.208 $';
+  $rev = '$Revision: 1.209 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
