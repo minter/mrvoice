@@ -6,7 +6,7 @@ no warnings 'redefine';
 
 #use strict;    # Yeah right
 use Encode::Unicode;
-use Tk;
+use Tk '804.026';
 use Tk::DialogBox;
 use Tk::Dialog;
 use Tk::DragDrop;
@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.356 2004/03/23 19:34:26 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.357 2004/03/23 19:53:21 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2251,7 +2251,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.356 $';
+    my $rev    = '$Revision: 1.357 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::mysql->VERSION;
