@@ -34,7 +34,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.144 2002/08/13 01:39:46 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.145 2002/08/13 19:30:37 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -45,36 +45,14 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 our ($db_name,$db_username,$db_pass,$category,$mp3player,$filepath,$savedir);
 
 #####
-# CONFIGURATION VARIABLES
-# It is probably best to set this in your external config file, either
-# ~/.mrvoicerc (Unix) or C:\mrvoice.cfg (Windows)
-# NOTE: This section is deprecated and will be removed from future
-#       versions.  Use the preferences option under the File menu instead.
-#####
-$db_name = '';				# In the form DBNAME:HOSTNAME:PORT
-$db_username = '';                      # The username used to connect
-                                        # to the database.
-$db_pass = '';                      	# The password used to connect
-                                        # to the database.
-$category = 'Any';			# The default category to search
-                                        # Initial status message
-
-$mp3player = '';			# Full path to MP3 player
-$filepath = '';				# Path that will be prepended onto
-					# the filename retrieved from the
-					# database, to find the actual
-					# MP3 on the local system.
-					# MUST END WITH TRAILING /
-$savedir = '';				# The default directory where 
-                                        # hotkey save files will live.
-
-#####
 # YOU SHOULD NOT NEED TO MODIFY ANYTHING BELOW HERE FOR NORMAL USE
 #####
 
 our $savefile_count = 0;		# Counter variables
 our $savefile_max = 4;			# The maximum number of files to
 					# keep in the "recently used" list.
+our $category = 'Any';			# The default category to search
+                                        # Initial status message
 our $hotkeytypes = [
     ['Mr. Voice Hotkey Files', '.mrv'],
     ['All Files', '*'],
@@ -1063,7 +1041,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.144 $';
+  $rev = '$Revision: 1.145 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
