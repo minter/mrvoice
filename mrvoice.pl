@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/25 19:27:08 $
-#	CVS REVISION NUMBER:    $Revision: 1.66 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/25 19:33:05 $
+#	CVS REVISION NUMBER:    $Revision: 1.67 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1018,9 +1018,11 @@ sub do_exit
 sub rightclick_menu
 {
   my $rightmenu = $mw->Menu(-menuitems=>[
-                                        ["command" => "Edit this song",
+                                        ["command" => "Play This Song",
+                                        -command => \&play_mp3],
+                                        ["command" => "Edit This Song",
                                         -command => \&edit_song],
-                                        ["command" => "Delete this song",
+                                        ["command" => "Delete This Song",
                                         -command => \&delete_song]
                                         ],
                             -tearoff=>0);
