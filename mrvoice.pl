@@ -14,8 +14,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/03/04 00:28:38 $
-#	CVS REVISION NUMBER:    $Revision: 1.12 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/04 01:01:33 $
+#	CVS REVISION NUMBER:    $Revision: 1.13 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -25,7 +25,6 @@ use MPEG::MP3Info;
 #####
 # CONFIGURATION VARIABLES
 #####
-$ostype = "unix";			# Valid values are "unix" and "windows"
 my $db_name = "";			# In the form DBNAME:HOSTNAME:PORT
 my $db_username = "";                   # The username used to connect
                                         # to the database.
@@ -34,7 +33,7 @@ my $db_pass = "";                       # The password used to connect
 $category = "Any";			# The default category to search
                                         # Initial status message
 
-# If you're using Windows, your paths must be of the form "C:\\path\\file.exe"
+# If you're using Windows, your paths must be of the form "C:/path/file.exe"
 # This is due to Windows using the \ character for its path, while perl
 # interprets this character as special.
 $mp3player = "/usr/bin/xmms";		# Full path to MP3 player
@@ -63,16 +62,8 @@ $savedir = "";				# The default directory where
 my $version = "0.8.1devel";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
 
-if ($ostype eq "windows")
-{
-  $filepath = "$filepath\\" unless ($filepath =~ "/.*\\\\$/");
-  $savedir = "$savedir\\" unless ($savedir =~ "/.*\\\\$/");
-}
-else
-{
-  $filepath = "$filepath/" unless ($filepath =~ "/.*\/$/");
-  $savedir = "$savedir/" unless ($savedir =~ "/.*\/$/");
-}
+$filepath = "$filepath/" unless ($filepath =~ "/.*\/$/");
+$savedir = "$savedir/" unless ($savedir =~ "/.*\/$/");
 
 sub open_file
 {
