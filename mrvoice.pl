@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.374 2004/04/23 11:28:43 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.375 2004/04/23 18:10:14 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -49,32 +49,37 @@ use subs
 ##########
 # Set up variables that need to be global for now
 ##########
-our %config;         # Holds the config variables
-our $mw;             # Mainwindow
-our $dbh;            # Database Handle
-our $icon;           # Window Icon
-our $mainbox;        # Main search box
-our $agent;          # LWP agent for Win32
-our $holdingtank;    # Holding Tank window
-our $tankbox;        # Holding tank listbox
-our %fkeys;          # Function keys
-our %oldfkeys;       # Used when restoring hotkeys
-our %fkeys_cb;       # The checkboxes in the Hotkeys box
-our @current;        # Array holding the dynamic documents
-our $mp3_pid;        # The Process ID of the MP3 player
-our $hotkeysbox;     # The hotkey display Toplevel
-our $tank_token;     # The Holding Tank D&D Token
-our $dnd_token;      # The main Search Box D&D Token
-##########
-
-our $current_token;
-our $lock_hotkeys   = 0;
+our %config;           # Holds the config variables
+our $mw;               # Mainwindow
+our $dbh;              # Database Handle
+our $icon;             # Window Icon
+our $mainbox;          # Main search box
+our $agent;            # LWP agent for Win32
+our $holdingtank;      # Holding Tank window
+our $tankbox;          # Holding tank listbox
+our %fkeys;            # Function keys
+our %oldfkeys;         # Used when restoring hotkeys
+our %fkeys_cb;         # The checkboxes in the Hotkeys box
+our @current;          # Array holding the dynamic documents
+our $mp3_pid;          # The Process ID of the MP3 player
+our $hotkeysbox;       # The hotkey display Toplevel
+our $tank_token;       # The Holding Tank D&D Token
+our $dnd_token;        # The main Search Box D&D Token
+our $current_token;    # Global holding the current D&D Token
+our $lock_hotkeys   = 0;        # Are hotkeys locked?
 our $savefile_count = 0;        # Counter variables
 our $savefile_max   = 4;        # The maximum number of files to
                                 # keep in the "recently used" list.
 our $category       = 'Any';    # The default category to search
 our $longcat        = 'Any';    # The default category to search
 our $rcfile;                    # Resource file
+our $dynamicmenu;               # The menu that lists "dynamic documents"
+our $hotkeysmenu;               # The main hotkeys menu
+our $title;                     # The "Title" search entry field
+our $artist;                    # The "Artist" search entry field
+our $anyfield;                  # The "Any Field" search entry field
+our $cattext;                   # The "Extra Info" search entry field
+##########
 
 # Allow searches of all music publishers by default.
 $config{'search_ascap'}   = 1;
@@ -2285,7 +2290,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.374 $';
+    my $rev    = '$Revision: 1.375 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::mysql->VERSION;
@@ -3014,6 +3019,7 @@ sub build_main_categories_menu
     # cause the menu to reflect the most current information.
 
     # Remove old entries
+    my $catmenu = shift;
     $catmenu->delete( 0, 'end' );
     $catmenu->configure( -tearoff => 0 );
 
@@ -4018,10 +4024,10 @@ my $catmenubutton = $category_frame->Menubutton(
     -side   => 'left',
     -anchor => 'n'
   );
-$catmenu = $catmenubutton->menu();
+my $catmenu = $catmenubutton->menu();
 $catmenubutton->configure( -menu => $catmenu );
 $catmenubutton->menu()
-  ->configure( -postcommand => \&build_main_categories_menu );
+  ->configure( -postcommand => [ \&build_main_categories_menu, $catmenu ] );
 
 $category_frame->Label( -text => "Currently Selected: " )->pack(
     -side   => 'left',
