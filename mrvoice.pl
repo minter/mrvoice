@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/24 19:58:59 $
-#	CVS REVISION NUMBER:    $Revision: 1.61 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/24 23:57:01 $
+#	CVS REVISION NUMBER:    $Revision: 1.62 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1053,7 +1053,10 @@ sub read_rcfile
   if ($^O eq "MSWin32")
   {
     $filepath = $filepath . "\\" unless ($filepath =~ /\\$/);
+    $filepath = Win32::GetShortPathName($filepath);
     $savedir = $savedir . "\\" unless ($savedir =~ /\\$/);
+    $savedir = Win32::GetShortPathName($savedir);
+    $mp3player = Win32::GetShortPathName($mp3player);
   }
   else
   {
