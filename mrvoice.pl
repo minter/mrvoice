@@ -41,7 +41,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.260 2003/08/04 19:40:16 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.261 2003/08/11 14:58:52 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1961,7 +1961,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.260 $';
+  $rev = '$Revision: 1.261 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2157,7 +2157,7 @@ EOF
     bind_hotkeys($holdingtank);              
     $holdingtank->bind("<Control-Key-p>", [\&play_mp3,"Holding"]);
     $holdingtank->title("Holding Tank");
-    $holdingtank->Label(-text=>"A place to store songs for later use")->pack;
+    $holdingtank->Label(-text=>"I'm Mr. Holding Tank - you put your songs in me.")->pack;
     $holdingtank->Label(-text=>"Drag a song here from the main search box to store it")->pack;
     my $buttonframe = $holdingtank->Frame()->pack(-side=>'bottom',
                                                   -fill=>'x');
