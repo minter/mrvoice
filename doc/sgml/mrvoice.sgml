@@ -4,7 +4,7 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.16 2001/11/14 14:44:19 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.17 2001/12/05 16:23:27 minter Exp $ 
 -->
 <book status="draft">
 
@@ -16,7 +16,7 @@
       <address><email>minter@lunenburg.org</email></address>
     </affiliation>
   </author>
-  <edition>User's Guide for Mr. Voice Version 1.3</edition>
+  <edition>User's Guide for Mr. Voice Version 1.4</edition>
   <copyright><year>2001</year><holder>H. Wade Minter</holder></copyright>
 </bookinfo>
 
@@ -24,12 +24,13 @@
   <para>Thanks to my wife, Holly, for encouragement and editorial help.</para>
   <para>Thanks to all of the voices at <ulink url="http://www.comedyworx.com/">ComedyWorx-Raleigh</ulink>, including (but not limited to) Jack Spencer, Larry Howard, Sam Adams, Bobby Rathbone, Ross White, Leo DiNapoli, and Bryan Cronk, for testing and feedback.</para>
   <para>Thanks to the ownership and players of <ulink url="http://www.comedyworx.com/">ComedyWorx</ulink> for giving me such a fun place to be a goofball for the past couple of years.</para>
-  <para>Thanks to the authors and publishers of the following books, without which none of this would have gotten done:
+  <para>Thanks to the authors and publishers, and contributors of the following books and newsgroups, without which none of this would have gotten done:
     <itemizedlist>
       <listitem><para><citetitle pubwork="book">Learning Perl, 2nd Edition</citetitle>, by Randal Schwartz and Tom Christiansen, published by O'Reilly and Associates.</para></listitem>
       <listitem><para><citetitle pubwork="book">Programming Perl, 2nd Edition</citetitle>, by Larry Wall, Randal Schwartz and Tom Christiansen, published by O'Reilly and Associates.</para></listitem>
       <listitem><para><citetitle pubwork="book">Learning Perl/TK</citetitle>, by Nancy Walsh, published by O'Reilly and Associates.</para></listitem>
       <listitem><para><citetitle pubwork="book">Programming the Perl DBI</citetitle>, by Alligator Descartes & Tim Bunce, published by O'Reilly and Associates.</para></listitem>
+      <listitem><para>The newsgroup comp.lang.perl.tk</para></listitem>
     </itemizedlist>
   </para>
   <para>Kasey Christie at <ulink url="http://www.spocomedy.com/">SpoComedy</ulink>, for feature suggestions and actually being willing to use this software!</para>
@@ -56,6 +57,7 @@
         <listitem><para>The Do Search button is bigger.</para></listitem>
         <listitem><para>The <guimenu>Recent Files</guimenu> menu is now a sub-menu off of the <guimenu>File</guimenu> menu, instead of just hanging off the end of <guimenu>File</guimenu>.</para></listitem>
         <listitem><para>Exiting Mr. Voice now also closes the MP3 player.</para></listitem>
+	<listitem><para>There is a "holding tank" to store songs for later use.</para></listitem>
       </itemizedlist>
     </para>
   </sect1>
