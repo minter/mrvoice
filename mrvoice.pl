@@ -37,6 +37,9 @@ use Getopt::Long;
 use XMLRPC::Lite;
 use MIME::Base64 qw(decode_base64 encode_base64);
 use Digest::MD5 qw(md5_hex);
+use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
+use XML::Simple;
+use Cwd;
 
 use subs
   qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_items advancedmenu_items helpmenu_items/;
@@ -225,7 +228,14 @@ else
         }
     }
     my $homedir = get_homedir();
-    $rcfile = ( $userrcfile eq "" ) ? "$homedir/.mrvoicerc" : $userrcfile;
+    if ( $^O eq "darwin" )
+    {
+        $rcfile = ( $userrcfile eq "" ) ? "$homedir/mrvoice.cfg" : $userrcfile;
+    }
+    else
+    {
+        $rcfile = ( $userrcfile eq "" ) ? "$homedir/.mrvoicerc" : $userrcfile;
+    }
     if ( ( defined($logfile) ) || ( $^O eq "darwin" ) )
     {
         $logfile = ( $logfile eq "" ) ? "$homedir/mrvoice.log" : $logfile;
@@ -240,6 +250,15 @@ else
 
 my $version = "2.0.4";    # Program version
 our $status = "Welcome to Mr. Voice version $version";
+
+sub get_category
+{
+    my $code = shift;
+    my $sth  = $dbh->prepare("SELECT * FROM categories WHERE code='$code'");
+    $sth->execute;
+    my $result = $sth->fetchrow_hashref;
+    return $result->{description};
+}
 
 sub get_rows
 {
@@ -3014,6 +3033,189 @@ sub return_all_indices
     return (@indexes);
 }
 
+sub import_bundle
+{
+    my $filename;
+    if ( ( $config{write_password} ) && ( !$authenticated ) )
+    {
+        print "There is a write_password of $config{write_password}\n"
+          if $debug;
+        if ( !authenticate_user() )
+        {
+            print "User authentication failed\n" if $debug;
+            $status = "You do not have permission to bulk-add songs";
+            return;
+        }
+    }
+
+    my $box1 = $mw->DialogBox(
+        -title   => "Add all songs in directory",
+        -buttons => [ "Continue", "Cancel" ]
+    );
+    $box1->Icon( -image => $icon );
+    $box1->add( "Label",
+        -text =>
+          "Select a Mr. Voice bundle file to import.  The songs will be added\nand your database populated from the information in the bundle.\nIf there are any songs in categories that you do not have defined,\nthose categories will be created."
+    )->pack( -side => 'top' );
+    my $fileframe = $box1->add("Frame")->pack( -fill => 'x' );
+
+    $fileframe->Label( -text => "Choose Bundle File: " )
+      ->pack( -side => 'left' );
+    $fileframe->Entry( -background => 'white', -textvariable => \$filename )
+      ->pack( -side => 'left' );
+    $fileframe->Button(
+        -text    => "Select Bundle File",
+        -command => sub {
+            $filename = $box1->getOpenFile(
+                -title      => 'Choose the bundle file to add',
+                -filetypes  => [ ['Zip Files', '.zip' ] ],
+                -initialdir => ( $^O eq "MSWin32" ) ? "C:\\" : get_homedir()
+            );
+        }
+    )->pack( -side => 'left' );
+
+    my $button = $box1->Show;
+    print "Got a response from the first box\n" if $debug;
+
+    if ( $button ne "Continue" )
+    {
+        $status = "Bundle Addition Cancelled";
+        return;
+    }
+
+    if ( !-r $filename )
+    {
+        infobox( $mw, "File unreadable", "Could not read file $filename" );
+        return;
+    }
+
+    my $zip = Archive::Zip->new();
+    unless ( $zip->read($filename) == AZ_OK )
+    {
+        infobox(
+            $mw,
+            "Zipfile Error",
+            "Couldn't read zip file $filename.  Is it really a .zip file?"
+        );
+        $status = "Error reading zipfile";
+        return;
+    }
+    my @files = $zip->memberNames();
+    my @grep = grep { /mrvoice.xml/ } @files;
+    unless ( scalar @grep > 0 )
+    {
+        infobox(
+            $mw,
+            "Bundle Error",
+            "Couldn't find mrvoice.xml in zipfile $filename.  Doesn't look like a Mr. Voice bundle."
+        );
+        $status = "Error finding mrvoice.xml";
+        return;
+    }
+
+    my $tmpdir = tempdir( CLEANUP => 1 );
+    print "DEBUG: My dir is $tmpdir\n";
+    my $cwd = getcwd();
+    chdir($tmpdir);
+
+    $zip->extractTree();
+
+    my $bundle = XMLin( 'mrvoice.xml', ForceArray => 1 ) or return;
+
+    foreach my $cat_ref ( @{ $bundle->{categories} } )
+    {
+        print
+          "DEBUG: Got code $cat_ref->{code} and desc $cat_ref->{description}\n";
+        unless ( get_category( $cat_ref->{code} ) )
+        {
+            print "Adding category $cat_ref->{code}, $cat_ref->{description}\n";
+            my $sth =
+              $dbh->prepare(
+                "INSERT INTO categories VALUES ('$cat_ref->{code}', '$cat_ref->{description}'"
+              )
+              or die;
+            $sth->execute or die;
+        }
+
+        foreach my $song_ref ( @{ $bundle->{songs} } )
+        {
+            print "DEBUG: Working on song $song_ref->{title}\n";
+            print "DEBUG: Testing for file ",
+              catfile( $config{filepath}, $song_ref->{filename} ), "\n";
+            if ( !-r catfile( $config{filepath}, $song_ref->{filename} ) )
+            {
+                print "Moving $song_ref->{filename} to $config{filepath}\n";
+                copy( $song_ref->{filename},
+                    catfile( $config{filepath}, $song_ref->{filename} ) )
+                  or die "Couldn't copy $song_ref->{filename}";
+                my $sth =
+                  $dbh->prepare(
+                    "INSERT INTO mrvoice VALUES (NULL, ?, ?, ?, ?, ?, ?, (SELECT strftime('%s','now')), ?)"
+                  )
+                  or die "Couldn't prepare query";
+                $sth->execute(
+                    $song_ref->{title},    $song_ref->{artist},
+                    $song_ref->{category}, $song_ref->{info},
+                    $song_ref->{filename}, $song_ref->{time},
+                    $song_ref->{publisher}
+                  )
+                  or die "Couldn't execute query";
+            }
+        }
+    }
+    $status = "Successfully imported bundle $filename";
+    chdir($cwd);
+}
+
+sub export_tank_bundle
+{
+    my @indices = return_all_indices($tankbox);
+    return if ( $#indices < 0 );
+
+    my $zip        = Archive::Zip->new();
+    my @time       = localtime;
+    my $timestring =
+      sprintf( "%04d-%02d-%02d", $time[5] + 1900, $time[4] + 1, $time[3] );
+
+    my %cathash;
+    my @songs;
+    my @categories;
+
+    foreach my $index (@indices)
+    {
+        my $info = get_info_from_id($index);
+        $cathash{ $info->{category} } = get_category( $info->{category} );
+        push( @songs, $info )
+          if ( -r catfile( $config{filepath}, $info->{filename} ) );
+    }
+
+    foreach my $key ( sort keys %cathash )
+    {
+        push( @categories, { code => $key, description => $cathash{$key} } );
+    }
+
+    my $olddir = getcwd();
+    chdir( $config{filepath} ) or die "Couldn't change to $config{filepath}";
+    foreach my $song (@songs)
+    {
+        my $cwd = getcwd();
+        my $member = $zip->addFile( catfile( ".", $song->{filename} ) );
+        $member->desiredCompressionMethod(COMPRESSION_STORED);
+    }
+
+    my $bundle = { categories => \@categories, songs => \@songs };
+
+    my $xml = XMLout( $bundle, AttrIndent => 1, KeepRoot => 1 );
+
+    $zip->addString( $xml, "mrvoice.xml" );
+
+    my $outfile = catfile( get_homedir(), "bundle-$timestring.zip" );
+
+    $zip->writeToFileNamed($outfile);
+    chdir($olddir);
+    $status = "Wrote Holding Tank to file $outfile";
+}
+
 sub launch_tank_playlist
 {
 
@@ -3399,6 +3601,7 @@ sub get_info_from_id
     $info{filename} = $result_hashref->{filename};
     $info{title}    = $result_hashref->{title};
     $info{artist}   = $result_hashref->{artist};
+    $info{category} = $result_hashref->{category};
     if ( $info{artist} )
     {
         $info{fulltitle} = "\"$info{title}\" by $info{artist}";
@@ -4995,6 +5198,11 @@ sub hotkeysmenu_items
             -accelerator => 'Ctrl-T'
         ],
         [ 'command', 'Flush the Holding Tank', -command => \&wipe_tank ],
+        [
+            'command',
+            'Export Holding Tank As Bundle',
+            -command => \&export_tank_bundle
+        ],
 
         "",
         [ 'command',     'Restore Hotkeys', -command  => \&restore_hotkeys ],
@@ -5026,7 +5234,8 @@ sub songsmenu_items
             -command => \&delete_song
         ],
         [ 'command', 'Bulk-Add Songs Into Category', -command => \&bulk_add ],
-        [ 'command', 'Update Song Times', -command => \&update_time ],
+        [ 'command', 'Update Song Times',     -command => \&update_time ],
+        [ 'command', 'Add Songs From Bundle', -command => \&import_bundle ],
     ];
 }
 
