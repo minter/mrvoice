@@ -4,6 +4,7 @@ use Tk::DialogBox;
 use Tk::DragDrop;
 use Tk::DropSite;
 use Tk::NoteBook;
+use Tk::BrowseEntry;
 use File::Basename;
 use File::Copy;
 use DBI;
@@ -15,7 +16,7 @@ use MPEG::MP3Info;
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.96 2002/01/27 21:14:59 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.97 2002/02/01 18:30:28 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1108,6 +1109,10 @@ sub play_mp3
 
 sub do_search
 {
+  $anyfield_box->insert(0,$anyfield) if ($anyfield);
+  $title_box->insert(0,$title) if ($title);
+  $artist_box->insert(0,$artist) if ($artist);
+  $cattext_box->insert(0,$cattext) if ($cattext);
   $status="Starting search...";
   $mw->Busy(-recurse=>1);
   $mainbox->delete(0,'end');
@@ -1479,8 +1484,7 @@ $searchframe1=$mw->Frame()->pack(-side=>'top',
 $searchframe1->Label(-text=>"where extra info contains",
                      -width=>25,
                      -anchor=>'w')->pack(-side=>'left');
-$searchframe1->Entry(-textvariable=>\$cattext,
-                     -width=>20)->pack(-side=>'left');
+$cattext_box = $searchframe1->BrowseEntry(-variable=>\$cattext)->pack(-side=>'left');
 
 #####
 # Artist
@@ -1490,8 +1494,7 @@ $searchframe2=$mw->Frame()->pack(-side=>'top',
 $searchframe2->Label(-text=>"Artist contains",
                      -width=>25,
                      -anchor=>"w")->pack(-side=>'left');
-$searchframe2->Entry(-textvariable=>\$artist,
-                     -width=>20)->pack(-side=>'left');
+$artist_box = $searchframe2->BrowseEntry(-variable=>\$artist)->pack(-side=>'left');
 #
 #####
 
@@ -1502,8 +1505,7 @@ $searchframe3=$mw->Frame()->pack(-side=>'top',
 $searchframe3->Label(-text=>"Title contains",
                      -width=>25,
                      -anchor=>'w')->pack(-side=>'left');
-$searchframe3->Entry(-textvariable=>\$title,
-                     -width=>20)->pack(-side=>'left');
+$title_box = $searchframe3->BrowseEntry(-variable=>\$title)->pack(-side=>'left');
 #
 #####
 
@@ -1514,9 +1516,7 @@ $searchframe4=$mw->Frame()->pack(-side=>'top',
 $searchframe4->Label(-text=>"OR any field contains",
                      -width=>25,
                      -anchor=>'w')->pack(-side=>'left');
-$searchframe4->Entry(-textvariable=>\$anyfield,
-                     -width=>20)->pack(-side=>'left');
-#
+$anyfield_box = $searchframe4->BrowseEntry(-variable=>\$anyfield)->pack(-side=>'left');
 #####
 
 #####
