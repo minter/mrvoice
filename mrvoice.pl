@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.382 2004/05/26 00:32:44 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.383 2004/05/26 15:00:17 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -528,6 +528,17 @@ sub BindMouseWheel
 
 }    # end BindMouseWheel
 
+sub TrueRows($)
+{
+    my ($sth) = @_;
+    my $count = 0;
+    while ( $sth->fetchrow_arrayref )
+    {
+        ++$count;
+    }
+    return $count;
+}
+
 sub update_110
 {
     my $query =
@@ -896,44 +907,47 @@ sub dump_database
         else
         {
 
-            # Run the MySQL Dump
-            if ( $^O eq "MSWin32" )
+            # Run the SQLite Dump
+            open( DUMPFILE, ">$dumpfile" )
+              or die "Could not open $dumpfile for writing";
+
+            # Get the table schema information
+            my $query =
+              "SELECT tbl_name,sql FROM sqlite_master WHERE sql NOT NULL";
+            my $sth = $dbh->prepare($query);
+            $sth->execute;
+            while ( my $row = $sth->fetchrow_hashref )
             {
-                my $cmd =
-                  "C:\\mysql\\bin\\mysqldump.exe --add-drop-table --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} > $shortdumpfile";
-                my $rc = system($cmd );
-                if ( $rc == 0 )
+                print DUMPFILE "DROP TABLE $row->{tbl_name};\n";
+                my $schema = $row->{sql};
+                $schema =~ s/\n//g;
+                print DUMPFILE "$schema;\n";
+
+                my $data_query = "SELECT * FROM $row->{tbl_name}";
+                my $data_sth   = $dbh->prepare($data_query);
+                $data_sth->execute();
+                while ( my @row = $data_sth->fetchrow_array )
                 {
-                    infobox(
-                        $mw,
-                        "Database Dumped",
-                        "The contents of your database have been dumped to the file: $dumpfile\n\nNote: In order to have a full backup, you must also back up the files from the directory: $config{'filepath'} as well as $rcfile and, optionally, the hotkeys from $config{'savedir'}"
-                    );
-                    $status = "Database dumped to $dumpfile";
+                    my @quoted;
+                    print DUMPFILE "INSERT INTO $row->{tbl_name} VALUES (";
+                    foreach my $item (@row)
+                    {
+                        push( @quoted, $dbh->quote($item) );
+                    }
+
+                    print DUMPFILE join( ",", @quoted ) . ");\n";
                 }
-                else
-                {
-                    infobox(
-                        $mw,
-                        "Database Dump Failed",
-                        "The database export to $dumpfile\nfailed with a status code $rc\n"
-                    );
-                    $status = "Failed database dump to $dumpfile";
-                }
+
             }
-            else
-            {
-                my $rc =
-                  system(
-                    "mysqldump --add-drop-table --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} > $dumpfile"
-                  );
-                infobox(
-                    $mw,
-                    "Database Dumped",
-                    "The contents of your database have been dumped to the file: $dumpfile\n\nNote: In order to have a full backup, you must also back up the files from the directory: $config{'filepath'} as well as $rcfile"
-                );
-                $status = "Database dumped to $dumpfile";
-            }
+
+            close DUMPFILE or die("Could not close $dumpfile after writing");
+
+            infobox(
+                $mw,
+                "Database Dumped",
+                "The contents of your database have been dumped to the file: $dumpfile\n\nNote: In order to have a full backup, you must also back up the files from the directory: $config{'filepath'} as well as $rcfile and, optionally, the hotkeys from $config{'savedir'}"
+            );
+            $status = "Database dumped to $dumpfile";
         }
     }
     else
@@ -980,31 +994,33 @@ sub import_database
 
             if ( $button eq "Ok" )
             {
-                if ( $^O eq "MSWin32" )
+                open( DUMPFILE, $dumpfile )
+                  or die "Cannot open $dumpfile for reading";
+                my $query;
+                my $errstat = 0;
+                while ( my $query = <DUMPFILE> )
                 {
-                    my $rc =
-                      system(
-                        "C:\\mysql\\bin\\mysql.exe --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} < $shortdumpfile"
-                      );
-                    infobox(
-                        $mw,
-                        "Database Imported",
-                        "The database backup file $dumpfile has been imported."
-                    );
-                    $status = "Database imported from $dumpfile";
+                    if ( $query =~ /^--/ )
+                    {
+                        $errstat = 2;
+                        last;
+                    }
+                    chomp $query;
+                    my $sth = $dbh->prepare($query);
+                    $errstat = 1 if ( !$sth->execute() );
+                }
+                close(DUMPFILE) or die "Cannot close $dumpfile after reading";
+                if ( $errstat == 1 )
+                {
+                    $status = "Database import HAD ERRORS";
+                }
+                elsif ( $errstat == 2 )
+                {
+                    $status = "Cannot import old MySQL dump $dumpfile";
                 }
                 else
                 {
-                    my $rc =
-                      system(
-                        "mysql --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} < $dumpfile"
-                      );
-                    infobox(
-                        $mw,
-                        "Database Imported",
-                        "The database backup file $dumpfile has been imported."
-                    );
-                    $status = "Database imported from $dumpfile";
+                    $status = "Database dump $dumpfile imported";
                 }
             }
             else
@@ -1281,7 +1297,7 @@ sub bulk_add
             }
             my $db_filename = move_file( $file, $title, $artist );
             my $query =
-              "INSERT INTO mrvoice (id,title,artist,category,filename,time,modtime) VALUES (NULL, $db_title, $db_artist, '$db_cat', '$db_filename', '$time', NULL)";
+              "INSERT INTO mrvoice (id,title,artist,category,filename,time,modtime) VALUES (NULL, $db_title, $db_artist, '$db_cat', '$db_filename', '$time', (SELECT strftime('%s','now')))";
             my $sth = $dbh->prepare($query);
             $sth->execute or die "can't execute the query: $DBI::errstr\n";
             $sth->finish;
@@ -1772,7 +1788,7 @@ sub add_new_song
     }
     my $time  = get_songlength($addsong_filename);
     my $query =
-      "INSERT INTO mrvoice VALUES (NULL,$addsong_title,$addsong_artist,'$addsong_cat',$addsong_info,'$newfilename','$time',NULL,'$addsong_publisher')";
+      "INSERT INTO mrvoice VALUES (NULL,$addsong_title,$addsong_artist,'$addsong_cat',$addsong_info,'$newfilename','$time',(SELECT strftime('%s','now')),'$addsong_publisher')";
     if ( $dbh->do($query) )
     {
         my $addsong_filename = Win32::GetLongPathName($addsong_filename)
@@ -1821,27 +1837,29 @@ sub edit_preferences
         -underline => 0
     );
 
-    my $db_name_frame = $database_page->Frame()->pack( -fill => 'x' );
-    $db_name_frame->Label( -text => "Database Name" )->pack( -side => 'left' );
-    $db_name_frame->Entry(
-        -width        => 30,
-        -textvariable => \$config{'db_name'}
+    my $dbfile_frame = $database_page->Frame()->pack( -fill => 'x' );
+    $dbfile_frame->Label( -text => "Database File" )->pack( -side => 'left' );
+    $dbfile_frame->Button(
+        -text    => "Select Database Location",
+        -command => sub {
+            if (
+                my $dbfile = $box->getOpenFile(
+                    -title            => 'Select Database File',
+                    -defaultextension => '.db',
+                    -initialfile      => 'mrvoice.db',
+                    -filetypes        => [ [ 'SQLite Database Files', '*.db' ] ]
+                )
+              )
+            {
+                $dbfile = Win32::GetShortPathName($dbfile)
+                  if ( $^O eq "MSWin32" );
+                $config{'db_file'} = $dbfile;
+            }
+        }
     )->pack( -side => 'right' );
-
-    my $db_user_frame = $database_page->Frame()->pack( -fill => 'x' );
-    $db_user_frame->Label( -text => "Database Username" )
-      ->pack( -side => 'left' );
-    $db_user_frame->Entry(
+    $dbfile_frame->Entry(
         -width        => 30,
-        -textvariable => \$config{'db_username'}
-    )->pack( -side => 'right' );
-
-    my $db_pass_frame = $database_page->Frame()->pack( -fill => 'x' );
-    $db_pass_frame->Label( -text => "Database Password" )
-      ->pack( -side => 'left' );
-    $db_pass_frame->Entry(
-        -width        => 30,
-        -textvariable => \$config{'db_pass'}
+        -textvariable => \$config{'db_file'}
     )->pack( -side => 'right' );
 
     my $mp3dir_frame = $filepath_page->Frame()->pack( -fill => 'x' );
@@ -1963,18 +1981,10 @@ sub edit_preferences
         }
         else
         {
-            print RCFILE "db_name::$config{'db_name'}\n";
-            print RCFILE "db_username::$config{'db_username'}\n";
-            print RCFILE "db_pass::$config{'db_pass'}\n";
-            print RCFILE "filepath::$config{'filepath'}\n";
-            print RCFILE "savedir::$config{'savedir'}\n";
-            print RCFILE "mp3player::$config{'mp3player'}\n";
-            print RCFILE "savefile_max::$config{'savefile_max'}\n";
-            print RCFILE "httpq_pw::$config{'httpq_pw'}\n";
-            print RCFILE "search_ascap::$config{'search_ascap'}\n";
-            print RCFILE "search_bmi::$config{'search_bmi'}\n";
-            print RCFILE "search_other::$config{'search_other'}\n";
-            print RCFILE "show_publisher::$config{'show_publisher'}\n";
+            foreach my $key ( sort keys %config )
+            {
+                print RCFILE "$key" . "::$config{$key}\n";
+            }
             close(RCFILE);
         }
     }
@@ -2062,7 +2072,7 @@ sub edit_song
             $edit_info   = $dbh->quote($edit_info);
 
             my $query =
-              "UPDATE mrvoice SET artist=$edit_artist, title=$edit_title, info=$edit_info, category='$edit_category' WHERE id=$id";
+              "UPDATE mrvoice SET artist=$edit_artist, title=$edit_title, info=$edit_info, category='$edit_category',modtime=(SELECT strftime('%s','now')) WHERE id=$id";
             if ( $dbh->do($query) )
             {
                 infobox(
@@ -2184,6 +2194,7 @@ sub edit_song
             push( @querystring, $edit_info )      if $edit_info;
             push( @querystring, $edit_publisher ) if $edit_publisher;
             push( @querystring, $edit_category )  if $edit_category;
+            push( @querystring, "modtime=(SELECT strftime('%s','now'))" );
 
             $string = join( ", ", @querystring );
 
@@ -2278,10 +2289,10 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.382 $';
+    my $rev    = '$Revision: 1.383 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
-    my $dbdver = DBD::mysql->VERSION;
+    my $dbdver = DBD::SQLite->VERSION;
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\nTk Version: $tkver\nDBI Version: $dbiver\nDBD Version: $dbdver\n\n(c)2001-2004, Released under the GNU General Public License";
@@ -2674,9 +2685,13 @@ sub update_time
     my $query        = "SELECT id,filename,time FROM mrvoice";
     my $get_rows_sth = $dbh->prepare($query);
     $get_rows_sth->execute;
-    my $numrows      = $get_rows_sth->rows;
-    my $update_query = "UPDATE mrvoice SET time=? WHERE id=?";
-    my $update_sth   = $dbh->prepare($update_query);
+    my $numrows = TrueRows($get_rows_sth);
+    $get_rows_sth = $dbh->prepare($query);
+    $get_rows_sth->execute;
+    my $update_query =
+      "UPDATE mrvoice SET time=?, modtime=(SELECT strftime('%s','now')) WHERE id=?";
+    my $update_sth = $dbh->prepare($update_query);
+
     while ( my @table_row = $get_rows_sth->fetchrow_array )
     {
         my ( $id, $filename, $time ) = @table_row;
@@ -2735,11 +2750,17 @@ sub validate_id
 sub stop_mp3
 {
 
+    my $widget = shift;
+
     # Sends a stop command to the MP3 player.  Works for both xmms and WinAmp,
     # though not particularly cleanly.
 
     system("$config{'mp3player'} --stop");
     $status = "Playing Stopped";
+    $widget->focus();
+
+    # Manually give the mainbox focus
+    $mainbox->focus();
 }
 
 sub play_mp3
@@ -2923,12 +2944,22 @@ sub do_search
     if ( $modifier eq "timespan" )
     {
         my $span = shift;
-        my $date = DateCalc( "today", "- $span" );
-        $date =~ /^(\d{4})(\d{2})(\d{2}).*?/;
-        my $year  = $1;
-        my $month = $2;
-        my $day   = $3;
-        $datestring = "$year-$month-$day";
+        my $date;
+        if ( $span eq "0 days" )
+        {
+            $date = ParseDate("midnight");
+        }
+        else
+        {
+            $date = DateCalc( "today", "- $span" );
+        }
+        $datestring = UnixDate( $date, "%s" );
+
+        #        $date =~ /^(\d{4})(\d{2})(\d{2}).*?/;
+        #        my $year  = $1;
+        #        my $month = $2;
+        #        my $day   = $3;
+        #        $datestring = "$year-$month-$day";
     }
     elsif ( ( $modifier eq "range" ) )
     {
@@ -2982,7 +3013,7 @@ sub do_search
         $mw->Unbusy( -recurse => 1 );
         return (1);
     }
-    my $numrows = $sth->rows;
+    my $numrows = 0;
     my $invalid = 0;
     while ( my $row_hashref = $sth->fetchrow_hashref )
     {
@@ -2997,6 +3028,8 @@ sub do_search
         $string = $string . " ($row_hashref->{publisher})"
           if ( $config{'show_publisher'} == 1 );
         $mainbox->insert( 'end', $string );
+        $numrows++;
+
         if ( !-e catfile( $config{'filepath'}, $row_hashref->{filename} ) )
         {
             $mainbox->itemconfigure(
@@ -3006,7 +3039,6 @@ sub do_search
             );
             $invalid++;
         }
-
     }
     if ( $numrows > 0 )
     {
@@ -3262,14 +3294,41 @@ $mw->Icon( -image => $icon );
 
 read_rcfile();
 
-if (
-    !(
-        $dbh = DBI->connect(
-            "DBI:mysql:$config{'db_name'}", $config{'db_username'},
-            $config{'db_pass'}
-        )
-    )
-  )
+if ( !defined $config{db_file} )
+{
+    my $box = $mw->DialogBox( -title => "Fatal Error", -buttons => ["Ok"] );
+    $box->Icon( -image => $icon );
+    $box->add( "Label",
+        -text =>
+          "You have not configured a location for your Mr. Voice database file.\nYou will now be taken to the preferences, where you can select the location\nof the file.  Then restart Mr. Voice to see the changes."
+    )->pack();
+    my $result = $box->Show();
+
+    if ($result)
+    {
+        edit_preferences();
+        die "Died because database file not set";
+    }
+}
+
+if ( !( -w $config{db_file} ) )
+{
+    my $box = $mw->DialogBox( -title => "Fatal Error", -buttons => ["Ok"] );
+    $box->Icon( -image => $icon );
+    $box->add( "Label",
+        -text =>
+          "Could not read database file $config{db_file}\nYou have configured Mr. Voice to find its database file at the location above, but\nthe file cannot be read.  Make sure that Mr. Voice has permission to write to\nthe file, or make sure that you are looking for the file in the right place.\nAfter fixing the problem, restart Mr. Voice."
+    )->pack();
+    my $result = $box->Show();
+
+    if ($result)
+    {
+        edit_preferences();
+        die "Died because we could not write to database file $config{db_file}";
+    }
+}
+
+if ( !( $dbh = DBI->connect( "dbi:SQLite:dbname=$config{db_file}", "", "" ) ) )
 {
     my $box = $mw->DialogBox( -title => "Fatal Error", -buttons => ["Ok"] );
     $box->Icon( -image => $icon );
@@ -3416,7 +3475,9 @@ if ( !$dbh->do($query_17) )
 
         my $select_all_sth = $dbh->prepare($selectall_query);
         $select_all_sth->execute;
-        my $numrows  = $select_all_sth->rows;
+        my $numrows = TrueRows($select_all_sth);
+        $select_all_sth = $dbh->prepare($selectall_query);
+        $select_all_sth->execute;
         my $rowcount = 0;
         while ( my @table_row = $select_all_sth->fetchrow_array )
         {
@@ -3814,12 +3875,13 @@ sub advanced_search
     my $query = "select modtime from mrvoice order by modtime asc limit 1";
     my $firstdate_ref = $dbh->selectrow_hashref($query);
     my $firstdate     = $firstdate_ref->{modtime};
+    my @timearray     = localtime($firstdate);
 
     $firstdate =~ /(\d\d)(\d\d)(\d\d)/;
 
-    my $start_month = $2;
-    my $start_date  = $3;
-    my $start_year  = "20$1";
+    my $start_month = $timearray[4] + 1;
+    my $start_date  = $timearray[3];
+    my $start_year  = $timearray[5] + 1900;
 
     my @today     = localtime();
     my $end_month = $today[4] + 1;
@@ -3991,11 +4053,13 @@ sub advanced_search
         {
 
             # Go on and do the search - data checks out
-            do_search(
-                "range",
-                "$start_year-$start_month-$start_date",
-                "$end_year-$end_month-$end_date"
-            );
+            my $startdate =
+              UnixDate( ParseDate("$start_year-$start_month-$start_date 00:00"),
+                "%s" );
+            my $enddate =
+              UnixDate( ParseDate("$end_year-$end_month-$end_date 23:59"),
+                "%s" );
+            do_search( "range", $startdate, $enddate );
         }
     }
 
