@@ -4,7 +4,7 @@ no warnings 'redefine';
 
 #use diagnostics;
 
-#use strict;    # Yeah right
+use strict;    # Works now!  Woo hoo!
 use Encode::Unicode;
 use Tk '804.026';
 use Tk::DialogBox;
@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.375 2004/04/23 18:10:14 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.376 2004/04/23 20:03:57 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2290,7 +2290,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.375 $';
+    my $rev    = '$Revision: 1.376 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::mysql->VERSION;
@@ -3514,7 +3514,7 @@ else
         # Start the MP3 player on a Windows system
         my $object;
         Win32::Process::Create( $object, $config{'mp3player'}, '', 1,
-            NORMAL_PRIORITY_CLASS, "." );
+            NORMAL_PRIORITY_CLASS(), "." );
         $mp3_pid = $object->GetProcessID();
         sleep(1);
     }
