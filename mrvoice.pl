@@ -41,7 +41,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.243 2003/07/24 16:18:35 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.244 2003/07/24 19:27:54 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -53,6 +53,7 @@ our ($db_name,$db_username,$db_pass,$category,$mp3player,$filepath,$savedir);
 # YOU SHOULD NOT NEED TO MODIFY ANYTHING BELOW HERE FOR NORMAL USE
 #####
 
+our $lock_hotkeys = 0;
 our $savefile_count = 0;		# Counter variables
 our $savefile_max = 4;			# The maximum number of files to
 					# keep in the "recently used" list.
@@ -796,6 +797,12 @@ sub open_file
   # Once we have the file, we read each line, of the form
   # hotkey_name::mp3_name, and assign the value to the hotkey.
   # Finally, we add this file to our dynamic documents menu.
+ 
+  if ($lock_hotkeys == 1)
+  {
+    $status = "Can't open saved hotkeys - current hotkeys locked";
+    return;
+  }
 
   my $parentwidget = $_[0];
   my $selectedfile = $_[1];
@@ -1913,7 +1920,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.243 $';
+  $rev = '$Revision: 1.244 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -1950,6 +1957,12 @@ sub clear_hotkeys
 {
   # Backs up the hotkeys, then deletes all of them.
 
+  if ($lock_hotkeys == 1)
+  {
+    $status = "Can't clear all hotkeys - hotkeys locked";
+    return;
+  }
+
   backup_hotkeys();
   foreach $fkeynum (1 .. 12)
   {
@@ -1963,6 +1976,11 @@ sub clear_hotkeys
 
 sub clear_selected
 {
+  if ($lock_hotkeys == 1)
+  {
+    $status = "Can't clear selected hotkeys - hotkeys locked";
+    return;
+  }
   # If a hotkey has its checkbox activated, then that hotkey will have
   # its entry cleared.  Then all checkboxes are unselected.
 
@@ -2839,6 +2857,11 @@ sub StartDrag
 sub Hotkey_Drop {
   # Assigns the dragged token to the hotkey that it's dropped onto.
 
+  if ($lock_hotkeys == 1)
+  {
+    $status = "Can't drop hotkey - hotkeys locked";
+    return;
+  }
   my ($fkey_var, $dnd_source) = @_;
   my @selection=$mainbox->curselection();
   my $id = get_song_id($mainbox, $selection[0]);
@@ -3123,6 +3146,7 @@ sub hotkeysmenu_items
 #ENDCSZ
     "",
     ['command', 'Restore Hotkeys', -command=>\&restore_hotkeys],
+    ['checkbutton', 'Lock Hotkeys', -variable=>\$lock_hotkeys],
   ];
 }
 
