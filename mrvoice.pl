@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/03/05 21:03:18 $
-#	CVS REVISION NUMBER:    $Revision: 1.21 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/03/05 22:34:40 $
+#	CVS REVISION NUMBER:    $Revision: 1.22 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -303,7 +303,8 @@ sub add_new_song
                  -textvariable=>\$addsong_info)->pack(-side=>'right');
   $frame5 = $box->add("Frame")->pack(-fill=>'x');
   $frame5->Label(-text=>"File to add")->pack(-side=>'left');
-  $frame5->Button(-text=>"Select File",
+  $frame6 = $box->add("Frame")->pack(-fill=>'x');
+  $frame6->Button(-text=>"Select File",
                   -command=>sub { 
                      $fileselectw = $mw->FileDialog(-Title=>'Select a File',
                                                     -FPat=>"*.mp3");
@@ -341,20 +342,26 @@ sub add_new_song
       }
       $newfilename =~ s/[^a-zA-Z0-9\-]//g;
       $newfilename = "$newfilename.mp3";
-      $addsong_title =~ s/([\'\\\(\)]\;)/\\$1/g;
-      $addsong_artist =~ s/([\'\\\(\)\;])/\\$1/g;
-      $query = "INSERT INTO mrvoice VALUES (NULL,'$addsong_title','$addsong_artist','$addsong_cat','$addsong_info','$newfilename',NULL)";
+      $addsong_title = $dbh->quote($addsong_title);
+      $addsong_artist = $dbh->quote($addsong_artist);
+      $addsong_info = $dbh->quote($addsong_info);
+      $query = "INSERT INTO mrvoice VALUES (NULL,$addsong_title,$addsong_artist,'$addsong_cat',$addsong_info,'$newfilename',NULL)";
       copy ($addsong_filename,"$filepath$newfilename");
       if ($dbh->do($query))
       {
         infobox ("File Added Successfully","Successfully added new song into database");
-        print "Copied $addsong_filename to $filepath$newfilename, and ran query $query\n";
+        $status = "File added successfully";
       }
       else
       {
         infobox ("Error","Could not add song into database");
+        $status = "File add exited on database error";
       }
     }
+  }
+  else
+  {
+    $status = "Cancelled song add";
   }
   $addsong_title="";
   $addsong_artist="";
@@ -365,7 +372,59 @@ sub add_new_song
 
 sub edit_song
 {
+  my $id = get_song_id();
+  $query = "SELECT title,artist,category,info from mrvoice where id=$id";
+  ($edit_title,$edit_artist,$edit_category,$edit_info) = $dbh->selectrow_array($query);
 
+  $box = $mw->DialogBox(-title=>"Edit Song", -buttons=>["Edit","Cancel"],
+                                             -default_button=>"Cancel");
+  $box->add("Label",-text=>"You may use this form to modify information about\na song that is already in the database\n")->pack();
+  $frame1 = $box->add("Frame")->pack(-fill=>'x');
+  $frame1->Label(-text=>"Song Title")->pack(-side=>'left');
+  $frame1->Entry(-width=>30,
+                 -textvariable=>\$edit_title)->pack(-side=>'right');
+  $frame2 = $box->add("Frame")->pack(-fill=>'x');
+  $frame2->Label(-text=>"Artist")->pack(-side=>'left');
+  $frame2->Entry(-width=>30,
+                 -textvariable=>\$edit_artist)->pack(-side=>'right');
+  $frame3 = $box->add("Frame")->pack(-fill=>'x');
+  $frame3->Label(-text=>"Category")->pack(-side=>'left');
+  $menu=$frame3->Menubutton(-text=>"Choose Category",
+                            -relief=>'raised',
+                            -tearoff=>0,
+                            -indicatoron=>1)->pack(-side=>'right');
+    $query="SELECT * from categories ORDER BY description";
+    my $sth=$dbh->prepare($query);
+    $sth->execute or die "can't execute the query: $DBI::errstr\n";
+    while (@table_row = $sth->fetchrow_array)
+    {
+      $code=$table_row[0];
+      $name=$table_row[1];
+      $menu->radiobutton(-label=>$name,
+                         -value=>$code,
+                         -variable=>\$edit_category);
+    }
+    $sth->finish;
+
+  $frame4 = $box->add("Frame")->pack(-fill=>'x');
+  $frame4->Label(-text=>"Extra Info")->pack(-side=>'left');
+  $frame4->Entry(-width=>30,
+                 -textvariable=>\$edit_info)->pack(-side=>'right');
+  $result = $box->Show();
+
+  if ($result eq "Edit")
+  {
+    
+  }
+  else
+  {
+    $status = "Cancelled song edit.";
+  }
+
+  $edit_title="";
+  $edit_artist="";
+  $edit_category="";
+  $edit_info="";
 }
 
 sub delete_song
