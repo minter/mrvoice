@@ -8,6 +8,7 @@ use strict;
 use DBI;
 use Date::Manip;
 use Text::Wrapper;
+use File::Spec::Functions;
 
 our %config;       # Configuration hash
 our $mw;           # Tk MainWindow
@@ -110,7 +111,7 @@ sub read_rcfile
 {
     if ( $^O eq "MSWin32" )
     {
-        $rcfile = "C:\\mrvoice.cfg";
+        $rcfile = catfile("C:", "mrvoice.cfg");
 
         # You have to manually set the time zone for Windows.
         my ( $l_min, $l_hour, $l_year, $l_yday ) =
@@ -284,7 +285,7 @@ unless (
 # Check to see if we're at the minimum database levels
 
 my $dbdir = get_dbdir;
-$config{db_file} = "$dbdir/mrvoice.db";
+$config{db_file} = catfile($dbdir, "mrvoice.db");
 
 print $wrapper->wrap(
     "\n\nYour new SQLite Mr. Voice 2.0 database will be created at:\n$config{db_file}\nYou can move this file after the upgrade if you want it somewhere else.\n\n"
