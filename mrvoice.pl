@@ -12,6 +12,7 @@ use Tk::Dialog;
 use Tk::DragDrop;
 use Tk::DragDrop::XDNDSite;
 use Tk::DragDrop::SunSite;
+use Tk::Bitmap;
 use Tk::DropSite;
 use Tk::NoteBook;
 use Tk::ProgressBar::Mac;
@@ -138,7 +139,7 @@ my $result = GetOptions(
     'debug'     => \$debug,
     'help'      => \$help
 );
-$debug = 1 if ($^O eq "darwin");
+$debug = 1 if ( $^O eq "darwin" );
 
 if ($help)
 {
@@ -225,7 +226,7 @@ else
         $logfile = ( $logfile eq "" ) ? "$homedir/mrvoice.log" : $logfile;
         print "DEBUG: Logfile is $logfile\n";
         open( STDOUT, ">$logfile" ) or die;
-        open( STDERR, ">&STDOUT" ) or die;
+        open( STDERR, ">&STDOUT" )  or die;
         print "Using Unix logfile $logfile\n"
           if ( $debug || ( $^O eq "darwin" ) );
     }
@@ -2845,7 +2846,8 @@ sub show_about
 {
     my @modules =
       qw/Tk DBI DBD::SQLite MPEG::MP3Info MP4::Info Audio::Wav Ogg::Vorbis::Header::PurePerl Date::Manip Time::Local Time::HiRes File::Glob File::Temp File::Basename File::Copy/;
-    push( @modules,
+    push(
+        @modules,
         qw/LWP::UserAgent HTTP::Request Win32::Process Win32::FileOp Audio::WMA/
       )
       if ( $^O eq "MSWin32" );
@@ -4614,6 +4616,7 @@ sub orphans
 
     # Cycle through each file and check whether or not a database entry
     # references it.
+    my $numfiles = scalar(@files);
     foreach my $file (@files)
     {
         print "Checking file $file\n" if $debug;
@@ -4625,7 +4628,7 @@ sub orphans
             print "File $file is an orphan\n" if $debug;
         }
         $file_count++;
-        $percent_done = int( ( $file_count / $#files ) * 100 );
+        $percent_done = int( ( $file_count / $numfiles ) * 100 );
         $pb->set($percent_done);
         $progressbox->update();
     }
