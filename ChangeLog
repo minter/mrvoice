@@ -1,3 +1,17 @@
+Tue  Mar  8 2005        H. Wade Minter (minter@lunenburg.org)
+     * Add initial XML-RPC upload code.
+
+Mon  Mar  7 2005        H. Wade Minter (minter@lunenburg.org)
+     * Add a menu item to wipe the holding tank (Thanks to Rambo in Portland).
+
+Sat  Mar  5 2005        H. Wade Minter (minter@lunenburg.org)
+     * Fix typo in the Mac::AppleScript module name.
+     * Always use Debug in darwin, since it's still unstable.
+     * Manually specify some Tk::DragDrop modules to help with the PAR binary.
+     * Fix an off-by-one in the orphan finder percentages.
+     * Make date calculations relative to midnight.
+     * Bump version to 2.0.4
+
 Wed  Mar  2 2005        H. Wade Minter (minter@lunenburg.org)
      * Better reporting of module versions in the About box.
 
