@@ -2231,6 +2231,7 @@ sub authenticate_user
     if ( $password eq $config{write_password} )
     {
         $authenticated = 1;
+        $status        = "Successfully authenticated for write access";
         return $authenticated;
     }
     else
