@@ -1,4 +1,9 @@
+Sun  Mar 04 2001	H. Wade Minter (minter@lunenburg.org)
+     * Finished the Category add/delete.
+     * Got song deletes working.
+
 Sat  Mar 03 2001	H. Wade Minter (minter@lunenburg.org)
+     * Got most of the Category add/delete functions working.
      * Added a test for the MP3 player.  Pops up an error box if
        the player isn't found.
      * Switched to Tk::FileDialog for the file dialogs.
@@ -42,4 +47,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.7 2001/03/04 14:45:13 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.8 2001/03/05 15:54:56 minter Exp $
