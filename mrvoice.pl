@@ -15,8 +15,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/04/19 02:17:40 $
-#	CVS REVISION NUMBER:    $Revision: 1.34 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/05/07 23:21:58 $
+#	CVS REVISION NUMBER:    $Revision: 1.35 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -26,10 +26,10 @@ use MPEG::MP3Info;
 #####
 # CONFIGURATION VARIABLES
 #####
-my $db_name = "";			# In the form DBNAME:HOSTNAME:PORT
-my $db_username = "";                   # The username used to connect
+$db_name = "";				# In the form DBNAME:HOSTNAME:PORT
+$db_username = "";                      # The username used to connect
                                         # to the database.
-my $db_pass = "";                       # The password used to connect
+$db_pass = "";                      	# The password used to connect
                                         # to the database.
 $category = "Any";			# The default category to search
                                         # Initial status message
@@ -57,7 +57,7 @@ $savedir = "";				# The default directory where
 
 #####
 
-my $version = "1.0.1";			# Program version
+my $version = "1.0.2";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
 
 $filepath = "$filepath/" unless ($filepath =~ "/.*\/$/");
@@ -768,9 +768,27 @@ sub do_exit
  exit;
 } 
 
+sub read_rcfile
+{
+  $filename = <~/.mrvoicerc>;
+  if (-r $filename)
+  {
+    open (RCFILE,$filename);
+    while (<RCFILE>)
+    {
+      chomp;
+      ($var1,$var2) = split(/::/);
+      $$var1=$var2;
+    }
+    close (RCFILE);
+  }
+}
+
 #########
 # MAIN PROGRAM
 #########
+read_rcfile();
+
 $mw = MainWindow->new;
 $mw->geometry("+0+0");
 $mw->title("Mr. Voice");
