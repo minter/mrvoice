@@ -14,7 +14,7 @@ use MPEG::MP3Info;
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.85 2001/11/14 19:49:42 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.86 2001/11/15 03:19:54 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1028,7 +1028,8 @@ sub play_mp3
 
 sub do_search
 {
-  $status="Starting search";
+  $status="Starting search...";
+  $mw->Busy(-recurse=>1);
   $mainbox->delete(0,'end');
   my $query = "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.filename from mrvoice,categories where mrvoice.category=categories.code ";
   $query = $query . "AND category='$category' " if ($category ne "Any");
@@ -1077,6 +1078,7 @@ sub do_search
   {       
     $status="Displaying $numrows search results";     
   }
+  $mw->Unbusy(-recurse=>1);
 }
 
 sub build_categories_menu
