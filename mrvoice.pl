@@ -33,7 +33,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.163 2002/11/01 21:38:20 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.164 2002/11/02 17:54:30 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1088,7 +1088,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.163 $';
+  $rev = '$Revision: 1.164 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", -buttons=>["OK"]);
@@ -1472,7 +1472,6 @@ sub play_mp3
   {
     # if we're playin from the "add new song dialog, the full path
     # will already be set.
-    $filepath="";
     $filename = $_[1];
     if ($^O eq "MSWin32")
     {
@@ -1504,7 +1503,12 @@ sub play_mp3
       $filename = $result[0];
     }
   }
-  if ($filename)
+  if ( ($filename) && ($_[0] eq "addsong") )
+  {
+    $status = "Previewing file $filename";
+    system ("$mp3player $filename");
+  }
+  elsif ($filename)
   {
     $status = "Playing file $filename";
     system ("$mp3player $filepath$filename");
