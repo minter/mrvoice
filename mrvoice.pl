@@ -1267,7 +1267,8 @@ sub bulk_add
     my $box1frame3 = $box1->add("Frame")->pack( -fill => 'x' );
     $box1frame3->Label( -text => "Choose Directory: " )
       ->pack( -side => 'left' );
-    $box1frame3->Entry( -textvariable => \$directory )->pack( -side => 'left' );
+    $box1frame3->Entry( -background => 'white', -textvariable => \$directory )
+      ->pack( -side => 'left' );
     $box1frame3->Button(
         -text    => "Select Source Directory",
         -command => sub {
@@ -1380,6 +1381,7 @@ sub bulk_add
     my $lb = $summarybox->Scrolled(
         "Listbox",
         -scrollbars => "osoe",
+        -background => 'white',
         -setgrid    => 1,
         -width      => 50,
         -height     => 20,
@@ -1417,6 +1419,7 @@ sub add_category
     my $acframe1 = $box->add("Frame")->pack( -fill => 'x' );
     $acframe1->Label( -text => "Category Code:  " )->pack( -side => 'left' );
     $acframe1->Entry(
+        -background   => 'white',
         -width        => 6,
         -textvariable => \$addcat_code
     )->pack( -side => 'left' );
@@ -1424,6 +1427,7 @@ sub add_category
     $acframe2->Label( -text => "Category Description:  " )
       ->pack( -side => 'left' );
     $acframe2->Entry(
+        -background   => 'white',
         -width        => 25,
         -textvariable => \$addcat_desc
     )->pack( -side => 'left' );
@@ -1499,6 +1503,7 @@ sub edit_category
     $sth->execute or die "can't execute the query: $DBI::errstr\n";
     my $editbox = $box->add(
         "Scrolled", "Listbox",
+        -background => 'white',
         -scrollbars => 'osoe',
         -setgrid    => 1,
         -height     => 10,
@@ -1533,6 +1538,7 @@ sub edit_category
         $labelframe->Label( -text => "New Description: " )
           ->pack( -side => 'left' );
         $labelframe->Entry(
+            -background   => 'white',
             -width        => 25,
             -textvariable => \$new_desc
         )->pack( -side => 'left' );
@@ -1580,6 +1586,7 @@ sub delete_category
     $sth->execute or die "Cannot execute the query: $DBI::errstr\n";
     my $deletebox = $box->add(
         "Scrolled", "Listbox",
+        -background => 'white',
         -scrollbars => 'osoe',
         -setgrid    => 1,
         -height     => 10,
@@ -1692,12 +1699,14 @@ sub add_new_song
             -foreground => "#cdd226132613"
         )->pack( -side => 'left' );
         $frame1->Entry(
+            -background   => 'white',
             -width        => 30,
             -textvariable => \$addsong_title
         )->pack( -side => 'right' );
         my $frame2 = $box->add("Frame")->pack( -fill => 'x' );
         $frame2->Label( -text => "Artist" )->pack( -side => 'left' );
         $frame2->Entry(
+            -background   => 'white',
             -width        => 30,
             -textvariable => \$addsong_artist
         )->pack( -side => 'right' );
@@ -1712,6 +1721,7 @@ sub add_new_song
         $frame4->Label( -text => "Category Extra Info" )
           ->pack( -side => 'left' );
         $frame4->Entry(
+            -background   => 'white',
             -width        => 30,
             -textvariable => \$addsong_info
         )->pack( -side => 'right' );
@@ -1754,6 +1764,7 @@ sub add_new_song
             }
         )->pack( -side => 'right' );
         my $songentry = $frame5->Entry(
+            -background   => 'white',
             -width        => 30,
             -textvariable => \$addsong_filename
         )->pack( -side => 'right' );
@@ -1903,6 +1914,7 @@ sub edit_preferences
         }
     )->pack( -side => 'right' );
     $dbfile_frame->Entry(
+        -background   => 'white',
         -width        => 30,
         -textvariable => \$config{'db_file'}
     )->pack( -side => 'right' );
@@ -1927,6 +1939,7 @@ sub edit_preferences
     )->pack( -side => 'right' );
 
     $mp3dir_frame->Entry(
+        -background   => 'white',
         -width        => 30,
         -textvariable => \$config{'filepath'}
     )->pack( -side => 'right' );
@@ -1951,6 +1964,7 @@ sub edit_preferences
         }
     )->pack( -side => 'right' );
     $hotkeydir_frame->Entry(
+        -background   => 'white',
         -width        => 30,
         -textvariable => \$config{'savedir'}
     )->pack( -side => 'right' );
@@ -1990,6 +2004,7 @@ sub edit_preferences
         }
     )->pack( -side => 'right' );
     $mp3frame->Entry(
+        -background   => 'white',
         -width        => 30,
         -textvariable => \$config{'mp3player'}
     )->pack( -side => 'right' );
@@ -1998,6 +2013,7 @@ sub edit_preferences
     $numdyn_frame->Label( -text => "Number of Dynamic Documents To Show" )
       ->pack( -side => 'left' );
     $numdyn_frame->Entry(
+        -background   => 'white',
         -width        => 2,
         -textvariable => \$savefile_max
     )->pack( -side => 'right' );
@@ -2006,6 +2022,7 @@ sub edit_preferences
     $httpq_frame->Label( -text => "httpQ Password (WinAmp only, optional)" )
       ->pack( -side => 'left' );
     $httpq_frame->Entry(
+        -background   => 'white',
         -width        => 8,
         -textvariable => \$config{'httpq_pw'}
     )->pack( -side => 'right' );
@@ -2079,12 +2096,14 @@ sub edit_song
         my $frame1 = $box->add("Frame")->pack( -fill => 'x' );
         $frame1->Label( -text => "Song Title" )->pack( -side => 'left' );
         $frame1->Entry(
+            -background   => 'white',
             -width        => 30,
             -textvariable => \$edit_title
         )->pack( -side => 'right' );
         my $frame2 = $box->add("Frame")->pack( -fill => 'x' );
         $frame2->Label( -text => "Artist" )->pack( -side => 'left' );
         $frame2->Entry(
+            -background   => 'white',
             -width        => 30,
             -textvariable => \$edit_artist
         )->pack( -side => 'right' );
@@ -2096,6 +2115,7 @@ sub edit_song
         my $frame4 = $box->add("Frame")->pack( -fill => 'x' );
         $frame4->Label( -text => "Extra Info" )->pack( -side => 'left' );
         $frame4->Entry(
+            -background   => 'white',
             -width        => 30,
             -textvariable => \$edit_info
         )->pack( -side => 'right' );
@@ -2182,6 +2202,7 @@ sub edit_song
             -variable => \$clear_artist_cb
         )->pack( -side => 'right' );
         $frame2->Entry(
+            -background   => 'white',
             -width        => 30,
             -textvariable => \$edit_artist
         )->pack( -side => 'right' );
@@ -2197,6 +2218,7 @@ sub edit_song
             -variable => \$clear_info_cb
         )->pack( -side => 'right' );
         $frame4->Entry(
+            -background   => 'white',
             -width        => 30,
             -textvariable => \$edit_info
         )->pack( -side => 'right' );
@@ -2565,6 +2587,7 @@ EOF
         $tankbox = $holdingtank->Scrolled(
             'HList',
             -scrollbars => 'osoe',
+            -background => 'white',
             -width      => 50,
             -selectmode => 'extended'
           )->pack(
@@ -3867,6 +3890,7 @@ sub orphans
       $orphanbox->Frame()->pack( -side => 'bottom', -fill => 'x' );
     my $lb = $orphanbox->Scrolled(
         "Listbox",
+        -background => 'white',
         -scrollbars => "osoe",
         -setgrid    => 1,
         -width      => 50,
@@ -4200,7 +4224,10 @@ $extrainfo_frame->Label(
     -width  => 25,
     -anchor => 'w'
 )->pack( -side => 'left' );
-$extrainfo_frame->Entry( -textvariable => \$cattext )->pack( -side => 'left' );
+$extrainfo_frame->Entry(
+    -background   => 'white',
+    -textvariable => \$cattext
+)->pack( -side => 'left' );
 
 #####
 # Artist
@@ -4214,7 +4241,10 @@ $artist_frame->Label(
     -width  => 25,
     -anchor => "w"
 )->pack( -side => 'left' );
-$artist_frame->Entry( -textvariable => \$artist )->pack( -side => 'left' );
+$artist_frame->Entry(
+    -background   => 'white',
+    -textvariable => \$artist
+)->pack( -side => 'left' );
 
 #
 #####
@@ -4230,7 +4260,10 @@ $title_frame->Label(
     -width  => 25,
     -anchor => 'w'
 )->pack( -side => 'left' );
-$title_frame->Entry( -textvariable => \$title )->pack( -side => 'left' );
+$title_frame->Entry(
+    -background   => 'white',
+    -textvariable => \$title
+)->pack( -side => 'left' );
 
 #
 #####
@@ -4246,7 +4279,10 @@ $anyfield_frame->Label(
     -width  => 25,
     -anchor => 'w'
 )->pack( -side => 'left' );
-$anyfield_frame->Entry( -textvariable => \$anyfield )->pack( -side => 'left' );
+$anyfield_frame->Entry(
+    -background   => 'white',
+    -textvariable => \$anyfield
+)->pack( -side => 'left' );
 #####
 
 #####
@@ -4270,6 +4306,7 @@ our $searchboxframe = $mw->Frame();
 $mainbox = $searchboxframe->Scrolled(
     'HList',
     -scrollbars => 'osoe',
+    -background => 'white',
     -width      => 100,
     -selectmode => "extended"
   )->pack(
