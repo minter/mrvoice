@@ -41,7 +41,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.262 2003/08/12 16:34:52 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.263 2003/08/17 15:57:40 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -822,7 +822,7 @@ sub open_file
     }
     else
     {
-      backup_hotkeys();
+      clear_hotkeys();
       open (HOTKEYFILE,$selectedfile);
       while (<HOTKEYFILE>)
       {
@@ -1961,7 +1961,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.262 $';
+  $rev = '$Revision: 1.263 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
