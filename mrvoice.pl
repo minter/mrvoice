@@ -45,7 +45,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.281 2003/12/30 12:58:20 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.282 2003/12/30 14:46:55 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1996,6 +1996,7 @@ sub show_docs
   $docsbox->withdraw();
   $docsbox->Icon(-image=>$icon);
   my $web = Tk::Web->new($docsbox);
+  $web->configure(-background=>'white');
   $web->pack(-expand => 1, -fill => 'both');
   $web->url("/home/minter/mrvoice/doc/html/index.html");
   $docsbox->AddScrollbars($web);
@@ -2010,7 +2011,7 @@ sub show_docs
   
 sub show_about
 {
-  $rev = '$Revision: 1.281 $';
+  $rev = '$Revision: 1.282 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
