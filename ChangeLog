@@ -5,6 +5,8 @@ Thu  Mar 24 2005	H. Wade Minter (minter@lunenburg.org)
        be used by the version check.
      * Add some prepackaged online searches.
      * Fix an inconsistency in the get_md5 subroutine.
+     * Pop up an infobox on OS X if Audion isn't found.  Thanks to Tim Klein.
+     * Handle a missing Audion better.
 
 Wed  Mar 23 2005	H. Wade Minter (minter@lunenburg.org)
      * Add code to do an XML-RPC version check on start.
