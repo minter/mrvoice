@@ -2,7 +2,7 @@
 use warnings;
 no warnings 'redefine';
 
-use diagnostics;
+#use diagnostics;
 
 #use strict; # Yeah right
 use Encode::Unicode;
@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.334 2004/03/09 17:59:54 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.335 2004/03/09 18:11:20 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -886,15 +886,8 @@ sub import_database
         -filetypes        => $databasefiles
     );
 
-    my $shortdumpfile;
-    if ( $^O eq "MSWin32" )
-    {
-        $shortdumpfile = Win32::GetShortPathName($dumpfile);
-    }
-    else
-    {
-        $shortdumpfile = $dumpfile;
-    }
+    my $shortdumpfile =
+      $^O eq "MSWin32" ? Win32::GetShortPathName($dumpfile) : $dumpfile;
 
     if ($dumpfile)
     {
@@ -2205,7 +2198,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.334 $';
+    my $rev = '$Revision: 1.335 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
