@@ -42,8 +42,12 @@ sub scoreboard_plugin
     $scoreboard->Icon( -image => $icon );
     my $vis_side  = $scoreboard->Frame()->pack( -side => 'left',  -padx => 5 );
     my $home_side = $scoreboard->Frame()->pack( -side => 'right', -padx => 5 );
-    $vis_side->Label( -text         => 'Visitor' )->pack( -side   => 'top' );
-    $vis_side->Label( -textvariable => \$vis_score )->pack( -side => 'top' );
+    $vis_side->Label( -text => 'Visitor' )->pack( -side => 'top' );
+    $vis_side->Label(
+        -fg           => 'blue',
+        -textvariable => \$vis_score,
+        -font         => [ -family => 'times new roman', -size => 50 ]
+    )->pack( -side => 'top' );
     my $vis_plus = $vis_side->Frame()->pack( -side => 'top' );
     $vis_plus->Button( -text => '+1', -command => sub { $vis_score += 1 } )
       ->pack( -side => 'left' );
@@ -59,8 +63,12 @@ sub scoreboard_plugin
     $vis_minus->Button( -text => '-10', -command => sub { $vis_score -= 10 } )
       ->pack( -side => 'left' );
 
-    $home_side->Label( -text         => 'Home' )->pack( -side       => 'top' );
-    $home_side->Label( -textvariable => \$home_score )->pack( -side => 'top' );
+    $home_side->Label( -text => 'Home' )->pack( -side => 'top' );
+    $home_side->Label(
+        -fg           => 'red',
+        -textvariable => \$home_score,
+        -font         => [ -family => 'times new roman', -size => 50 ]
+    )->pack( -side => 'top' );
     my $home_plus = $home_side->Frame()->pack( -side => 'top' );
     $home_plus->Button( -text => '+1', -command => sub { $home_score += 1 } )
       ->pack( -side => 'left' );
