@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: config-mrvoice.sgml,v 1.4 2001/09/26 17:07:48 minter Exp $
+  CVS ID: $Id: config-mrvoice.sgml,v 1.5 2001/09/26 17:14:16 minter Exp $
 -->
 
 <chapter><title>Configuring Mr. Voice</title>
@@ -41,6 +41,7 @@
 
   <sect1><title>Windows Configuration</title>
     <para>The Windows configuration is slightly more complex than the Unix installation, since most Windows users are used to a GUI config tool, and Mr. Voice requires you to edit a config file by hand.  However, it's not insurmountable.</para>
+    <para>Like the Unix version, you can configure Mr. Voice by editing the <filename>mrvoice.pl</filename> file directly, or by creating a file named <filename>C:\mrvoice.cfg</filename>, which will hold configuration values.  Like in the Unix instructions above, we will discuss editing <filename>mrvoice.pl</filename> directly first, but using <filename>C:\mrvoice.cfg</filename> is the <emphasis>preferred</emphasis> way to configure Mr. Voice, as it lets you easily keep your configuration when you upgrade.</para>
     <para>Open a DOS window and cd to <filename>C:\mrvoice-x.x\</filename>.  From there, run:  "edit mrvoice.pl".  This will bring up the DOS editor with the Mr. Voice source code in it.  Editors like Notepad seem to have trouble with the source code at the moment - I'm working on a fix.  Until then, DOS Edit is your best bet.</para>
     <para>Due to some Windows weirdness, the way you enter paths will be kind of odd in the configuration section.  So we'll go through the variables now, with Windows-specific notes.</para>
     <itemizedlist>
@@ -67,6 +68,13 @@
        </listitem>
      </itemizedlist>
      <para>Nothing else should need to be edited for normal operation.  Save the file and exit out of the DOS editor.</para>
+    <sect2><title>The <filename>C:\mrvoice.cfg</filename> File</title>
+      <para>If the file <filename>C:\mrvoice.cfg</filename> exists on your computer, any variables that you define in that file will <emphasis>override</emphasis> the ones in the <filename>mrvoice.pl</filename> script itself.  The variables take the form:</para>
+      <para>variable_name::value</para>
+      <para>So, for example, to define a <varname>$savepath</varname> of <filename>/tmp/</filename> in the <filename>C:\mrvoice.cfg</filename> file, you would include the line:</para>
+      <para>savepath::/tmp/</para>
+    </sect2>
   </sect1>
+
 
 </chapter>
