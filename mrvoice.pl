@@ -5,7 +5,6 @@ no warnings 'redefine';
 #use diagnostics;
 
 #use strict;    # Yeah right
-#use strict 'vars';
 use Encode::Unicode;
 use Tk '804.026';
 use Tk::DialogBox;
@@ -38,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.371 2004/04/22 20:07:29 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.372 2004/04/22 20:25:48 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -62,6 +61,7 @@ our %fkeys;          # Function keys
 our %oldfkeys;       # Used when restoring hotkeys
 our %fkeys_cb;       # The checkboxes in the Hotkeys box
 our @current;        # Array holding the dynamic documents
+our $mp3_pid;        # The Process ID of the MP3 player
 ##########
 
 our $current_token;
@@ -2282,7 +2282,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.371 $';
+    my $rev    = '$Revision: 1.372 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::mysql->VERSION;
@@ -2655,7 +2655,7 @@ sub update_time
             $updated++;
         }
         $count++;
-        my $percent_done = int( ( $count / $numrows ) * 100 );
+        $percent_done = int( ( $count / $numrows ) * 100 );
         $pb->set($percent_done);
         $progressbox->update();
     }
@@ -3356,8 +3356,8 @@ if ( !$dbh->do($query_17) )
 
         my $selectall_query = "SELECT * from mrvoice";
 
-        $percent_done = 0;
-        my $progressbox = $mw->Toplevel();
+        my $percent_done = 0;
+        my $progressbox  = $mw->Toplevel();
         $progressbox->withdraw();
         $progressbox->Icon( -image => $icon );
         $progressbox->title("Song Conversion Status");
@@ -4006,7 +4006,7 @@ my $category_frame = $mw->Frame()->pack(
     -fill   => 'x'
 );
 
-$catmenubutton = $category_frame->Menubutton(
+my $catmenubutton = $category_frame->Menubutton(
     -text        => "Choose Category",
     -relief      => 'raised',
     -indicatoron => 1
