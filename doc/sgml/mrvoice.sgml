@@ -4,7 +4,7 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.30 2002/08/14 17:24:39 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.31 2002/08/14 17:27:41 minter Exp $ 
 -->
 <book status="draft">
 
@@ -64,10 +64,10 @@
         <listitem><para>Fixed a bug in the dynamic documents list, so that the same document won't show up twice in the list.</para></listitem>
         <listitem><para>Strip leading and trailing whitespace from search terms, so that searches won't fail if you accidentally search for "Beatles " instead of "Beatles".</para></listitem>
         <listitem><para>Added an "Edit Category" function, so you can edit the long, descriptive name of a category</para></listitem>
-        <listitem><para><keycombo action='simul'> <keycap>Control</keycap> <keycap>P</keycap> </keycombo> will now play the song selected in the Holding Tank, if the Holding Tank is the active window.  Suggested by Bill C. in Portland.</para></listitem>
-        <listitem><para>The Add Song box will now, if it finds an error, keep the stuff you've already entered and let you fix the error, rather than making you start over completely.  Suggested by Bill C. in Portland.</listitem></para>
+        <listitem><para><keycombo action='simul'> <keycap>Control</keycap> <keycap>P</keycap> </keycombo> will now play the song selected in the Holding Tank, if the Holding Tank is the active window.  (Suggested by Bill C. in Portland)</para></listitem>
+        <listitem><para>The Add Song box will now, if it finds an error, keep the stuff you've already entered and let you fix the error, rather than making you start over completely.  (Suggested by Bill C. in Portland)</para></listitem>
         <listitem><para>Added better handling for displaying the playing time of <ulink url="http://www.vorbis.com/">Ogg Vorbis</ulink> files under Linux.  Windows/ActivePerl doesn't have the Ogg::Vorbis module yet, so it's currently Linux-only.</para></listitem> 
-        <listitem><para>Added the option to use the <ulink url="http://www.csc.uvic.ca/~karvanit/">httpQ</ulink> WinAmp plugin.  If you install and configure the plugin (see Windows installation section), you can shift-click on the <guibutton>Stop</guibutton> button, or press <keycombo action='simul'> <keycap>Shift</keycap> <keycap>Escape</keycap> </keycombo>, and the currently-playing song will fade out and stop over a couple of seconds, instead of stopping abruptly.  <emphasis>This is a Windows/WinAmp-only feature.</emphasis>  Suggested by Randy in KC.</para></listitem> 
+        <listitem><para>Added the option to use the <ulink url="http://www.csc.uvic.ca/~karvanit/">httpQ</ulink> WinAmp plugin.  If you install and configure the plugin (see Windows installation section), you can shift-click on the <guibutton>Stop</guibutton> button, or press <keycombo action='simul'> <keycap>Shift</keycap> <keycap>Escape</keycap> </keycombo>, and the currently-playing song will fade out and stop over a couple of seconds, instead of stopping abruptly.  <emphasis>This is a Windows/WinAmp-only feature.</emphasis>  (Suggested by Randy in KC)</para></listitem> 
       </itemizedlist>
     </para>
   </sect1>
