@@ -5,7 +5,7 @@
   <!ENTITY epilogue SYSTEM "troubleshooting.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.50 2004/03/11 21:54:19 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.51 2004/03/12 03:17:35 minter Exp $ 
 -->
 <book status="draft">
 
@@ -23,7 +23,7 @@
 <dedication><title>Acknowledgements</title>
   <para>Thanks to my wife, Holly, for encouragement and editorial help.</para>
   <para>Thanks to all of the voices at <ulink url="http://www.comedyworx.com/">ComedyWorx-Raleigh</ulink>, including (but not limited to) Jack Spencer, Larry Howard, Sam Adams, Bobby Rathbone, Ross White, Leo DiNapoli, Jason Matthews, and Bryan Cronk, as well as users in other cities, such as Kasey Christie, Randy Tennison, Bill Cernansky, Eric Wood, and Randy Tayler for testing and feedback.</para>
-  <para>Thanks to the ownership and players of <ulink url="http://www.comedyworx.com/">ComedyWorx</ulink> for giving me such a fun place to be a goofball for the past couple of years.</para>
+  <para>Thanks to the ownership and players of <ulink url="http://www.comedyworx.com/">ComedyWorx</ulink> for giving me such a fun place to be a goofball for nearly five years.</para>
   <para>Thanks to the authors and publishers, and contributors of the following books and newsgroups, without which none of this would have gotten done:
     <itemizedlist>
       <listitem><para><citetitle pubwork="book">Learning Perl, 2nd Edition</citetitle>, by Randal Schwartz and Tom Christiansen, published by O'Reilly and Associates.</para></listitem>
