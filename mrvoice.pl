@@ -45,7 +45,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.292 2003/12/31 20:00:27 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.293 2003/12/31 20:15:35 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2154,7 +2154,7 @@ sub show_docs
   
 sub show_about
 {
-  $rev = '$Revision: 1.292 $';
+  $rev = '$Revision: 1.293 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -3311,7 +3311,7 @@ if (! $dbh->do($query))
   $result = $box->Show();
   if ($result eq "Continue")
   {
-    $query = "ALTER TABLE mrvoice ADD COLUMN publisher VARCHAR(16) DEFAULT 'OTHER'";
+    $query = "ALTER TABLE mrvoice ADD COLUMN publisher VARCHAR(16) NOT NULL DEFAULT 'OTHER'";
     my $sth=$dbh->prepare($query);
     $sth->execute;
     if ($DBI::err)
