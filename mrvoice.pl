@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl 
 use Tk;
 use Tk::DialogBox;
 use Tk::DragDrop;
@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.comedyworx.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/11/03 19:27:14 $
-#	CVS REVISION NUMBER:    $Revision: 1.79 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/11/08 22:00:54 $
+#	CVS REVISION NUMBER:    $Revision: 1.80 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -95,7 +95,7 @@ else
 
 #####
 
-my $version = "1.3";			# Program version
+my $version = "1.3.1";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
 
 # This function is redefined due to evilness that keeps the focus on 
@@ -122,7 +122,7 @@ sub bind_hotkeys
   # This will set up hotkeybindings for the window that is passed
   # in as the first argument.
 
-  $window = $_[0];
+  my $window = $_[0];
   $window->bind("<Key-F1>", [\&play_mp3,"F1"]);
   $window->bind("<Key-F2>", [\&play_mp3,"F2"]);
   $window->bind("<Key-F3>", [\&play_mp3,"F3"]);
@@ -148,7 +148,15 @@ sub bind_hotkeys
 
 sub open_file
 {
-  $selectedfile = $_[0];
+  # Used to open a saved hotkey file.
+  # Takes an optional argument.  If the argument is given, we attempt
+  # to open the file for reading.  If not, we pop up a file dialog
+  # box and get the name of a file first.
+  # Once we have the file, we read each line, of the form
+  # hotkey_name::mp3_name, and assign the value to the hotkey.
+  # Finally, we add this file to our dynamic documents menu.
+
+  my $selectedfile = $_[0];
   if (!$selectedfile)
   {
      $selectedfile = $mw->getOpenFile(-filetypes=>$hotkeytypes,
@@ -160,9 +168,7 @@ sub open_file
   {
     if (! -r $selectedfile)
     {
-      $box = $mw->DialogBox(-title=>"File Error!", -buttons=>["OK"]);
-      $box->add("Label",-text=>"Could not open file $selectedfile for reading")->pack();
-      $box->Show;
+      infobox($mw, "File Error", "Could not open file $selectedfile for reading");
     }
     else
     {
@@ -171,7 +177,7 @@ sub open_file
       while (<HOTKEYFILE>)
       {
         chomp;
-        ($var1,$var2) = split(/::/);
+        my ($var1,$var2) = split(/::/);
         $$var1=$var2;
       }
       close (HOTKEYFILE);
@@ -187,24 +193,25 @@ sub open_file
 
 sub save_file
 {
-   $selectedfile = $mw->getSaveFile(-title=>'Save a File',
-                                    -defaultextension=>".mrv",
-                                    -filetypes=>$hotkeytypes,
-                                    -initialdir=>"$savedir");
+  # Used to save a set of hotkeys to a file on disk.
+  # We pop up a save file dialog box to get the filename and path. We
+  # then write out the data in the form of hotkey_number::mp3_name.
+  # Finally, we add this file to our dynamic documents menu.
+
+  $selectedfile = $mw->getSaveFile(-title=>'Save a File',
+                                   -defaultextension=>".mrv",
+                                   -filetypes=>$hotkeytypes,
+                                   -initialdir=>"$savedir");
 
   if ($selectedfile)
   {
     if ( (! -w $selectedfile) && (-e $selectedfile) )
     {
-      $box = $mw->DialogBox(-title=>"File Error!", -buttons=>["OK"]);
-      $box->add("Label",-text=>"Could not open file $selectedfile for writing")->pack();
-      $box->Show;
+      infobox($mw, "File Error!", "Could not open file $selectedfile for writing");
     }
     elsif ( ! -w dirname($selectedfile) )
     {
-      $box = $mw->DialogBox(-title=>"File Error!", -buttons=>["OK"]);
-      $box->add("Label",-text=>"Could not write new file to directory dirname($selectedfile)")->pack();
-      $box->Show;
+      infobox($mw, "File Error!", "Could not write new file to directory dirname($selectedfile)");
     }
     else
     {
@@ -235,6 +242,12 @@ sub save_file
 
 sub dynamic_documents
 {
+  # This function takes a filename as an argument.  It then increments
+  # a counter to keep track of how many documents we've accessed in this
+  # session.  
+  # It adds the file to the "Recent Files" menu off of Files, and if we're
+  # over the user-specified limit, removes the oldest file from the list.
+  
   $file = $_[0];
   $savefile_count++;
 
@@ -245,7 +258,6 @@ sub dynamic_documents
 
   if ($#current >= $savefile_max)
   {
-    print "Over the limit!\n";
     $dynamicmenu->delete(0);
     shift (@current);
   }
@@ -253,13 +265,21 @@ sub dynamic_documents
 
 sub infobox
 {
-  $box = $mw->DialogBox(-title=>"$_[0]", -buttons=>["OK"]);
-  $box->add("Label",-text=>"$_[1]")->pack();
+  # A generic wrapper function to pop up an information box.  It takes
+  # a reference to the parent widget, the title for the box, and a 
+  # formatted string of data to display.
+  
+  my ($parent_window, $title, $string) = @_;
+  my $box = $parent_window->DialogBox(-title=>"$title", -buttons=>["OK"]);
+  $box->add("Label",-text=>"$string")->pack();
   $box->Show;
 }
 
 sub backup_hotkeys
 {
+  # This saves the contents of the hotkeys to temporary variables, so 
+  # you can restore them after a file open, etc.
+
   $old_f1 = $f1;
   $old_f2 = $f2;
   $old_f3 = $f3;
@@ -277,6 +297,8 @@ sub backup_hotkeys
 
 sub restore_hotkeys
 {
+  # Replaces the hotkeys with the old ones from backup_hotkeys()
+
   $f1 = $old_f1;
   $f2 = $old_f2;
   $f3 = $old_f3;
@@ -295,38 +317,38 @@ sub restore_hotkeys
 
 sub add_category
 {
-  $box = $mw->DialogBox(-title=>"Add a category", -buttons=>["Ok","Cancel"]);
-  $acframe1 = $box->add("Frame")->pack(-fill=>'x');
+  my $box = $mw->DialogBox(-title=>"Add a category", -buttons=>["Ok","Cancel"]);
+  my $acframe1 = $box->add("Frame")->pack(-fill=>'x');
   $acframe1->Label(-text=>"Category Code:  ")->pack(-side=>'left');
   $acframe1->Entry(-width=>6,
                   -textvariable=>\$addcat_code)->pack(-side=>'left');
-  $acframe2 = $box->add("Frame")->pack(-fill=>'x');
+  my $acframe2 = $box->add("Frame")->pack(-fill=>'x');
   $acframe2->Label(-text=>"Category Description:  ")->pack(-side=>'left');
   $acframe2->Entry(-width=>25,
                   -textvariable=>\$addcat_desc)->pack(-side=>'left');
-  $button = $box->Show;
+  my $button = $box->Show;
   if ($button eq "Ok")
   {
     if (($addcat_code) && ($addcat_desc))
     {
       $addcat_desc = $dbh->quote($addcat_desc);
       $addcat_code =~ tr/a-z/A-Z/;
-      $query = "INSERT INTO categories VALUES ('$addcat_code',$addcat_desc)";
+      my $query = "INSERT INTO categories VALUES ('$addcat_code',$addcat_desc)";
       my $sth=$dbh->prepare($query);
       if (! $sth->execute)
       {
-        $error_message = $sth->errstr();
-        infobox("Database Error","Database returned error: $error_message\non query $query");
+        my $error_message = $sth->errstr();
+        infobox($mw, "Database Error","Database returned error: $error_message\non query $query");
       }
       else
       {
 	$status = "Added category $addcat_desc";
-        infobox("Success","Category successfully added.");
+        infobox($mw,"Success","Category successfully added.");
       }
     }
     else 
     {
-      infobox("Error","You must enter both a category code and a description");
+      infobox($mw, "Error","You must enter both a category code and a description");
     }
   }
   else
@@ -369,7 +391,7 @@ sub delete_category
     $rows = $sth->rows;
     if ($rows > 0)
     {
-      infobox("Error","Could not delete category $del_cat because\nthere are still entries in the database\nusing it.  Delete all entries using\nthis category before deleting the category");
+      infobox($mw, "Error","Could not delete category $del_cat because\nthere are still entries in the database\nusing it.  Delete all entries using\nthis category before deleting the category");
       $status = "Category not deleted";
     }
     else
@@ -379,7 +401,7 @@ sub delete_category
       if ($sth->execute)
       {
         $status = "Deleted category $del_cat";
-        infobox ("Success","Category $del_cat has been deleted.");
+        infobox ($mw, "Success","Category $del_cat has been deleted.");
       }
     }
   }
@@ -444,19 +466,19 @@ sub add_new_song
   {
     if (! $addsong_cat)
     {
-      infobox("Error","Could not add new song\n\nYou must choose a category");
+      infobox($mw, "Error","Could not add new song\n\nYou must choose a category");
     }
     elsif (! -r $addsong_filename)
     {
-      infobox ("File Error","Could not open input file $addsong_filename\nfor reading.  Check file permissions"); 
+      infobox ($mw, "File Error","Could not open input file $addsong_filename\nfor reading.  Check file permissions"); 
     }
     elsif (! $addsong_title)
     {
-      infobox ("File Error","You must provide the title for the song."); 
+      infobox ($mw, "File Error","You must provide the title for the song."); 
     }
     elsif (! -w $filepath)
     {
-      infobox ("File Error","Could not write file to directory $filepath\nPlease check the permissions");
+      infobox ($mw, "File Error","Could not write file to directory $filepath\nPlease check the permissions");
     }
     else
     {
@@ -491,12 +513,12 @@ sub add_new_song
       copy ($addsong_filename,"$filepath$newfilename");
       if ($dbh->do($query))
       {
-        infobox ("File Added Successfully","Successfully added new song into database");
+        infobox ($mw, "File Added Successfully","Successfully added new song into database");
         $status = "File added successfully";
       }
       else
       {
-        infobox ("Error","Could not add song into database");
+        infobox ($mw, "Error","Could not add song into database");
         $status = "File add exited on database error";
       }
     }
@@ -557,12 +579,12 @@ sub edit_preferences
   {
     if ( (! $db_name) || (! $db_username) || (! $db_pass) || (! $filepath) || (! $savedir) || (! $mp3player) )
     {
-      infobox("Warning","All fields must be filled in\n");
+      infobox($mw, "Warning","All fields must be filled in\n");
       edit_preferences();
     }
     if (! open(RCFILE,">$rcfile"))
     {
-      infobox("Warning","Could not open $rcfile for writing.\nYour preferences will not be saved\n");
+      infobox($mw, "Warning","Could not open $rcfile for writing.\nYour preferences will not be saved\n");
     }
     else
     {
@@ -629,12 +651,12 @@ sub edit_song
     $query = "UPDATE mrvoice SET artist=$edit_artist, title=$edit_title, info=$edit_info, category='$edit_category' WHERE id=$id";
     if ($dbh->do($query))
     {
-      infobox ("Song Edited Successfully","The song was edited successfully.");
+      infobox ($mw, "Song Edited Successfully","The song was edited successfully.");
       $status = "Edited song successfully";
     }
     else
     {
-      infobox ("Error","There was an error editing the song.\nNo changes made.");
+      infobox ($mw, "Error","There was an error editing the song.\nNo changes made.");
       $status = "Error editing song - no changes made";
     }
   }
@@ -674,9 +696,9 @@ sub delete_song
       $sth->finish;
       if ($delete_file_cb == 1)
       {
-        infobox("File Deletion Error","Could not delete file $filepath$filename from the disk\n\nEntry was removed from the database") unless ( unlink("$filepath$filename") );
+        infobox($mw, "File Deletion Error","Could not delete file $filepath$filename from the disk\n\nEntry was removed from the database") unless ( unlink("$filepath$filename") );
       }
-      infobox("Song Deleted","Deleted song with ID $id");
+      infobox($mw, "Song Deleted","Deleted song with ID $id");
       $status = "Deleted song id $id";
     } 
     else
@@ -693,7 +715,7 @@ sub delete_song
 
 sub show_about
 {
-  infobox("About Mr. Voice","Mr. Voice Version $version\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License");
+  infobox($mw, "About Mr. Voice","Mr. Voice Version $version\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License");
 }
 
 #STARTCSZ
@@ -714,6 +736,8 @@ sub show_about
 
 sub clear_hotkeys
 {
+  # Backs up the hotkeys, then deletes all of them.
+
   backup_hotkeys();
   $f1="";
   $f2="";
@@ -732,6 +756,9 @@ sub clear_hotkeys
 
 sub clear_selected
 {
+  # If a hotkey has its checkbox activated, then that hotkey will have
+  # its entry cleared.  Then all checkboxes are unselected.
+
   $f1="" if ($f1_cb);
   $f2="" if ($f2_cb);
   $f3="" if ($f3_cb);
@@ -845,6 +872,9 @@ sub list_hotkeys
 
 sub get_song_id
 {
+  # This gets the current selection from the search results box, and returns
+  # the database ID for that song.
+
   my $selection = $mainbox->get($mainbox->curselection());
   my ($id) = split /:/,$selection;
   return ($id);
@@ -852,13 +882,16 @@ sub get_song_id
 
 sub get_filename
 {
-  my $id = @_[0];
+  # Takes a database ID as an argument, queries the database, and returns
+  # the MP3 filename for that song.
+
+  my $id = $_[0];
   my $query = "SELECT filename FROM mrvoice WHERE id=$id";
   my $sth=$dbh->prepare($query);
   $sth->execute or die "can't execute the query: $DBI::errstr\n";
   @result = $sth->fetchrow_array;
   $sth->finish;
-  $filename = $result[0];
+  my $filename = $result[0];
   return ($filename);
 }
 
@@ -931,6 +964,9 @@ sub set_hotkey
 
 sub stop_mp3
 {
+  # Sends a stop command to the MP3 player.  Works for both xmms and WinAmp,
+  # though not particularly cleanly.
+
   system ("$mp3player --stop");
   $status = "Playing Stopped";
 }
@@ -938,25 +974,28 @@ sub stop_mp3
 sub play_mp3 
 {
   # See if the request is coming from one our hotkeys first...
-  if ($_[1] eq "F1") { $filename = $f1; }
-  elsif ($_[1] eq "F2") { $filename = $f2; }
-  elsif ($_[1] eq "F3") { $filename = $f3; }
-  elsif ($_[1] eq "F4") { $filename = $f4; }
-  elsif ($_[1] eq "F5") { $filename = $f5; }
-  elsif ($_[1] eq "F6") { $filename = $f6; }
-  elsif ($_[1] eq "F7") { $filename = $f7; }
-  elsif ($_[1] eq "F8") { $filename = $f8; }
-  elsif ($_[1] eq "F9") { $filename = $f9; }
-  elsif ($_[1] eq "F10") { $filename = $f10; }
-  elsif ($_[1] eq "F11") { $filename = $f11; }
-  elsif ($_[1] eq "F12") { $filename = $f12; }
-#STARTCSZ
-#  elsif ($_[1] eq "ALT-T") { $filename = $altt; }
-#  elsif ($_[1] eq "ALT-Y") { $filename = $alty; }
-#  elsif ($_[1] eq "ALT-B") { $filename = $altb; }
-#  elsif ($_[1] eq "ALT-G") { $filename = $altg; }
-#  elsif ($_[1] eq "ALT-V") { $filename = $altv; }
-#ENDCSZ
+  if ($_[1])
+  {
+    if ($_[1] eq "F1") { $filename = $f1; }
+    elsif ($_[1] eq "F2") { $filename = $f2; }
+    elsif ($_[1] eq "F3") { $filename = $f3; }
+    elsif ($_[1] eq "F4") { $filename = $f4; }
+    elsif ($_[1] eq "F5") { $filename = $f5; }
+    elsif ($_[1] eq "F6") { $filename = $f6; }
+    elsif ($_[1] eq "F7") { $filename = $f7; }
+    elsif ($_[1] eq "F8") { $filename = $f8; }
+    elsif ($_[1] eq "F9") { $filename = $f9; }
+    elsif ($_[1] eq "F10") { $filename = $f10; }
+    elsif ($_[1] eq "F11") { $filename = $f11; }
+    elsif ($_[1] eq "F12") { $filename = $f12; }
+  #STARTCSZ
+  #  elsif ($_[1] eq "ALT-T") { $filename = $altt; }
+  #  elsif ($_[1] eq "ALT-Y") { $filename = $alty; }
+  #  elsif ($_[1] eq "ALT-B") { $filename = $altb; }
+  #  elsif ($_[1] eq "ALT-G") { $filename = $altg; }
+  #  elsif ($_[1] eq "ALT-V") { $filename = $altv; }
+  #ENDCSZ
+  }
   else
   {
     # If not, find the selected song.
@@ -983,7 +1022,7 @@ sub do_search
 {
   $status="Starting search";
   $mainbox->delete(0,'end');
-  $query = "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.filename from mrvoice,categories where mrvoice.category=categories.code ";
+  my $query = "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.filename from mrvoice,categories where mrvoice.category=categories.code ";
   $query = $query . "AND category='$category' " if ($category ne "Any");
   if ($anyfield)
   {
@@ -1034,11 +1073,16 @@ sub do_search
 
 sub build_categories_menu
 {
+  # This builds the categories menu in the search area.  First, it deletes
+  # all entries from the menu.  Then it queries the categories table in 
+  # the database and builds a menu, with one radiobutton entry per
+  # category.  This ensures that adding or deleting categories will 
+  # cause the menu to reflect the most current information.
+
   # Remove old entries
   $catmenu->delete(0,'end');
 
   # Query the database for new ones.
-  $catmenu->configure(-tearoff=>1);
   $catmenu->radiobutton(-label=>"Any category",
                         -value=>"Any",
                         -variable=>\$category);
@@ -1058,13 +1102,21 @@ sub build_categories_menu
 
 sub do_exit
 {
+ # Disconnects from the database, attempts to close the MP3 player, and 
+ # exits the program.
+
  $dbh->disconnect;
  close (XMMS);
- exit;
+ Tk::exit;
 } 
 
 sub rightclick_menu
 {
+  # Bound to the search results box, this function binds the creation
+  # of a popup menu to the right mouse button. The menu allows you to
+  # play, edit, or delete the current song.  The right-click finds the
+  # nearest search result to your mouse, and activates it.
+
   my $rightmenu = $mw->Menu(-menuitems=>[
                                         ["command" => "Play This Song",
                                         -command => \&play_mp3],
@@ -1088,6 +1140,10 @@ sub rightclick_menu
 
 sub read_rcfile
 {
+  # Opens the configuration file, of the form var_name::value, and assigns
+  # the value to the variable name.
+  # On MS Windows, it also converts long pathnames to short ones.
+
   if (-r $rcfile)
   {
     open (RCFILE,$rcfile);
@@ -1101,7 +1157,7 @@ sub read_rcfile
   }
   else
   {
-    infobox("Configuration not found","You don't appear to have configured Mr. Voice before.\nStarting configuration now\n");
+    infobox($mw, "Configuration not found","You don't appear to have configured Mr. Voice before.\nStarting configuration now\n");
     edit_preferences();
   }
   if ($^O eq "MSWin32")
@@ -1121,6 +1177,8 @@ sub read_rcfile
 
 sub StartDrag
 {
+  # Starts the drag for the hotkey drag-and-drop.
+
   my ($token) = @_;
   my $widget = $token->parent;
   my $event = $widget->XEvent;
@@ -1138,6 +1196,8 @@ sub StartDrag
 }
 
 sub Hotkey_Drop {
+  # Assigns the dragged token to the hotkey that it's dropped onto.
+
   my ($fkey_var, $dnd_source) = @_;
   my $id = get_song_id($dnd_source->cget(-text));
   my $filename = get_filename($id);
