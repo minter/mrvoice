@@ -4,6 +4,9 @@ Sat  Sep 11  2004	H. Wade Minter (minter@lunenburg.org)
        to the previous policy of ignoring invalid files.
      * Provide a sane -initialdir to getOpenFile, getSaveFile, and
        chooseDirectory, if none is set.
+     * Remove obsolete code to upgrade to 1.7 (song times in database) and
+       1.10 (publisher) table schemas.  If they haven't done it by now,
+       this is handled by the upgrade_20.pl utility.
 
 Fri  Sep 10  2004	H. Wade Minter (minter@lunenburg.org)
      * Fixed a bug in the delete_categories function that was causing
