@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.350 2004/03/12 19:47:55 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.351 2004/03/12 20:25:51 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2213,7 +2213,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.350 $';
+    my $rev = '$Revision: 1.351 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3134,8 +3134,8 @@ sub build_main_categories_menu
             $longcat = "Any Category";
         }
     );
-    $query = "SELECT * from categories ORDER BY description";
-    my $sth = $dbh->prepare($query);
+    my $query = "SELECT * from categories ORDER BY description";
+    my $sth   = $dbh->prepare($query);
     $sth->execute or die "can't execute the query: $DBI::errstr\n";
     while ( my $cat_hashref = $sth->fetchrow_hashref )
     {
@@ -3157,14 +3157,14 @@ sub do_exit
     # Disconnects from the database, attempts to close the MP3 player, and
     # exits the program.
 
-    $box = $mw->Dialog(
+    my $box = $mw->Dialog(
         -title   => "Exit Mr. Voice",
         -text    => "Exit Mr. Voice?",
         -bitmap  => "question",
         -buttons => [ "Yes", "No" ]
     );
     $box->Icon( -image => $icon );
-    $choice = $box->Show();
+    my $choice = $box->Show();
 
     if ( $choice =~ /yes/i )
     {
@@ -3230,7 +3230,7 @@ sub read_rcfile
         while (<RCFILE>)
         {
             chomp;
-            ( $key, $value ) = split(/::/);
+            my ( $key, $value ) = split(/::/);
             $config{$key} = $value;
         }
         close(RCFILE);
@@ -3339,7 +3339,7 @@ if (
     )
   )
 {
-    $box = $mw->DialogBox( -title => "Fatal Error", -buttons => ["Ok"] );
+    my $box = $mw->DialogBox( -title => "Fatal Error", -buttons => ["Ok"] );
     $box->Icon( -image => $icon );
     $box->add( "Label", -text => "Could not connect to database." )->pack();
     $box->add( "Label",
@@ -3356,7 +3356,7 @@ if (
     )->pack();
     $box->add( "Label", -text => "Database returned error: $DBI::errstr" )
       ->pack();
-    $result = $box->Show();
+    my $result = $box->Show();
 
     if ($result)
     {
@@ -3367,7 +3367,7 @@ if (
 
 if ( !-W $config{'filepath'} )
 {
-    $box = $mw->DialogBox( -title => "Fatal Error", -buttons => ["Exit"] );
+    my $box = $mw->DialogBox( -title => "Fatal Error", -buttons => ["Exit"] );
     $box->Icon( -image => $icon );
     $box->add( "Label", -text => "MP3 Directory unavailable" )->pack();
     $box->add( "Label",
@@ -3384,7 +3384,7 @@ if ( !-W $config{'filepath'} )
     )->pack();
     $box->add( "Label", -text => "Current MP3 Directory: $config{'filepath'}" )
       ->pack();
-    $result = $box->Show();
+    my $result = $box->Show();
 
     if ($result)
     {
@@ -3395,7 +3395,7 @@ if ( !-W $config{'filepath'} )
 
 if ( !-W $config{'savedir'} )
 {
-    $box = $mw->DialogBox( -title => "Warning", -buttons => ["Continue"] );
+    my $box = $mw->DialogBox( -title => "Warning", -buttons => ["Continue"] );
     $box->Icon( -image => $icon );
     $box->add( "Label", -text => "Hotkey save directory unavailable" )->pack();
     $box->add( "Label",
@@ -3408,12 +3408,12 @@ if ( !-W $config{'savedir'} )
     )->pack();
     $box->add( "Label",
         -text => "Current Hotkey Directory: $config{'savedir'}" )->pack();
-    $result = $box->Show();
+    my $result = $box->Show();
 }
 
 # Check to see if the database is compatible with version 1.7+
-$query = "SELECT time FROM mrvoice LIMIT 1";
-if ( !$dbh->do($query) )
+my $query_17 = "SELECT time FROM mrvoice LIMIT 1";
+if ( !$dbh->do($query_17) )
 {
     my $box = $mw->DialogBox(
         -title   => "Database Update Needed",
@@ -3496,7 +3496,7 @@ if ( !$dbh->do($query) )
             $tmpfilename = $dbh->quote( $table_row[5] );
             $tmpmodtime  = $dbh->quote( $table_row[6] );
 
-            $query =
+            my $query =
               "INSERT INTO mrvoice2 (id,title,artist,category,info,filename,time,modtime) VALUES ($tmpid, $tmptitle,";
             if ( $tmpartist eq "" )
             {
@@ -3551,8 +3551,8 @@ if ( !$dbh->do($query) )
 }
 
 # Check to see if the database is compatible with version 1.10+
-$query = "SELECT publisher FROM mrvoice LIMIT 1";
-if ( !$dbh->do($query) )
+my $query_110 = "SELECT publisher FROM mrvoice LIMIT 1";
+if ( !$dbh->do($query_110) )
 {
     $mw->deiconify();
     $mw->raise();
@@ -4067,9 +4067,7 @@ sub advanced_search
 
 sub update_button()
 {
-    $button = $_[0];
-    $label  = $_[1];
-    $value  = $_[2];
+    my ( $button, $label, $value ) = @_;
     $button->configure( -text => "$label ($value)" );
 }
 
