@@ -1,3 +1,6 @@
+Fri  Apr  4 2003        H. Wade Minter (minter@lunenburg.org)
+     * Pretty much done with bulk-add.
+
 Thu  Apr  3 2003	H. Wade Minter (minter@lunenburg.org)
      * Move the move-file-to-new-location code to its own subroutine.
      * More bulk-add work.
@@ -411,4 +414,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.78 2003/04/03 21:08:43 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.79 2003/04/04 20:48:33 minter Exp $
