@@ -39,7 +39,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.206 2003/04/03 21:06:46 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.207 2003/04/04 01:28:27 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -97,6 +97,8 @@ if ("$^O" eq "MSWin32")
       Win32::Process->import();
       require Tk::RadioButton;
       Tk::RadioButton->import();
+      require Win32::FileOp;
+      Win32::FileOp->import();
     }
   }
   $agent = LWP::UserAgent->new;
@@ -121,6 +123,8 @@ else
                      )
               }ex;
   our $rcfile = "$homedir/.mrvoicerc";
+  require Tk::DirSelect;
+  Tk::DirSelect->import();
 }
 
 #STARTCSZ
@@ -1016,11 +1020,17 @@ sub bulk_add
   my $box1frame3 = $box1->add("Frame")->pack(-fill=>'x');
   $box1frame3->Label(-text=>"Choose Directory: ")->pack(-side=>'left');
   $box1frame3->Entry(-textvariable=>\$directory)->pack(-side=>'left');
-  $box1frame3->Button(-text=>"Select One File From Target Directory",
+  $box1frame3->Button(-text=>"Select Source Directory",
                     -command=>sub { 
-                     my $filename = $mw->getOpenFile(-title=>'Select File',
-                                                     -filetypes=>$bulkaddtypes);
-                      $directory = dirname($filename);
+		     if ($^O eq "MSWin32")
+		     {
+		        $directory = BrowseForFolder("Choose Directory", CSIDL_DESKTOP);
+			$directory =~ s|\\|/|g;
+		     }
+		     else
+		     {
+		       $directory = $box1->DirSelect(-width=>'50')->Show;
+		     }
   })->pack(-side=>'left');
 
   my $firstbutton = $box1->Show;
@@ -1609,7 +1619,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.206 $';
+  $rev = '$Revision: 1.207 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
