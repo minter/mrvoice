@@ -1,3 +1,6 @@
+Mon  Apr 29 2003        H. Wade Minter (minter@lunenburg.org)
+     * Use a Tk::ProgressBar in the update_times subroutine.
+
 Tue  Apr 15 2003        H. Wade Minter (minter@lunenburg.org)
      * Use the directory selector for the MP3/Hotkey directory preferences.
 
@@ -430,4 +433,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.84 2003/04/15 20:41:12 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.85 2003/04/29 17:03:51 minter Exp $
