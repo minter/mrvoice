@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/24 23:57:01 $
-#	CVS REVISION NUMBER:    $Revision: 1.62 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/25 14:56:57 $
+#	CVS REVISION NUMBER:    $Revision: 1.63 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1227,12 +1227,22 @@ while (@table_row = $sth->fetchrow_array)
                         -variable=>\$category);
 }
 $sth->finish;
-$searchframe->Label(-text=>"where extra info contains ")->pack(-side=>'left',
-                                                               -anchor=>'n');
-$searchframe->Entry(-textvariable=>\$cattext)->pack(-side=>'left',
-                                                    -anchor=>'n');
+$searchframe->Label(-text=>"Currently Selected: ")->pack(-side=>'left',
+                                                         -anchor=>'n');
+$searchframe->Label(-textvariable=>\$category)->pack(-side=>'left',
+                                                     -anchor=>'n');
 #
 ######
+
+#####
+# Extra Info
+$searchframe1=$mw->Frame()->pack(-side=>'top',
+                                 -fill=>'x',
+                                 -anchor=>'n');
+$searchframe1->Label(-text=>"where extra info contains ")->pack(-side=>'left',
+                                                               -anchor=>'n');
+$searchframe1->Entry(-textvariable=>\$cattext)->pack(-side=>'left',
+                                                    -anchor=>'n');
 
 #####
 # Artist
