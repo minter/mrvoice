@@ -72,6 +72,7 @@
 	</listitem>
         <listitem>
           <para>Compile and/or install any required software from above (perl modules, etc.).  I will skip the software setup, assuming that if you're trying to run this on a Unix system, you're geeky enough to install the required stuff by yourself.  ;-)  If you run into issues, feel free to email me or check the software's website. </para>
+        </listitem>
       </itemizedlist>
       <para>At this point, all of the software should be set up and ready for configuration!</para>
     </sect2>
