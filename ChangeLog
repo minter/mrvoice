@@ -1,4 +1,12 @@
-Tues Feb 27 2001	H. Wade Minter (minter@lunenburg.org)
+Sat  Mar 03 2001	H. Wade Minter (minter@lunenburg.org)
+     * Added a test for the MP3 player.  Pops up an error box if
+       the player isn't found.
+
+Thu  Mar 01 2001	H. Wade Minter (minter@lunenburg.org)
+     * Got most of the save/load functions working.
+     * Using DialogBox for a couple of static dialogs.
+
+Tue  Feb 27 2001	H. Wade Minter (minter@lunenburg.org)
      * Fixed a couple of fairly serious bugs that would prevent
        MP3s from playing.
      * Released version 0.8.1 (Bugfix)
@@ -33,4 +41,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.5 2001/02/28 02:54:36 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.6 2001/03/04 00:29:35 minter Exp $
