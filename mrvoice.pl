@@ -199,16 +199,10 @@ our $status = "Welcome to Mr. Voice version $version";
 
 sub get_rows
 {
-
-    # Work around the lack of $dbh->rows in SQLite.
-    my $sth  = shift;
-    my $rows = 0;
-    while ( my @row = $sth->fetchrow_array )
-    {
-        $rows++;
-    }
-    $sth->finish;
-    return $rows;
+    my $query = shift;
+    my $sth   = $dbh->prepare($query);
+    $sth->execute;
+    return $sth->rows;
 }
 
 sub get_homedir
@@ -1426,9 +1420,7 @@ sub add_category
 
             my $checkquery =
               "SELECT * FROM categories WHERE (code='$addcat_code' OR description=$addcat_desc)";
-            my $sth    = $dbh->prepare($checkquery);
-            my $result = $sth->execute;
-            if ( get_rows($sth) > 0 )
+            if ( get_rows($checkquery) > 0 )
             {
                 infobox(
                     $mw,
@@ -1440,10 +1432,10 @@ sub add_category
             {
                 my $query =
                   "INSERT INTO categories VALUES ('$addcat_code',$addcat_desc)";
-                $sth = $dbh->prepare($query);
-                if ( !$sth->execute )
+                my $insert_sth = $dbh->prepare($query);
+                if ( !$insert_sth->execute )
                 {
-                    my $error_message = $sth->errstr();
+                    my $error_message = $insert_sth->errstr();
                     infobox(
                         $mw,
                         "Database Error",
@@ -1455,7 +1447,7 @@ sub add_category
                     $status = "Added category $addcat_desc";
                     infobox( $mw, "Success", "Category added." );
                 }
-                $sth->finish;
+                $insert_sth->finish;
             }
         }
         else
@@ -1585,12 +1577,9 @@ sub delete_category
     if ( ( $choice ne "Cancel" ) && ( defined( $deletebox->curselection() ) ) )
     {
         my ( $del_cat, $del_desc ) =
-          split( /-/, $deletebox->get( $deletebox->curselection() ) );
+          split( / - /, $deletebox->get( $deletebox->curselection() ) );
         $query = "SELECT * FROM mrvoice WHERE category='$del_cat'";
-        my $sth = $dbh->prepare($query);
-        $sth->execute;
-        my $rows = get_rows($sth);
-        if ( $rows > 0 )
+        if ( get_rows($query) > 0 )
         {
             infobox( $mw, "Error",
                 "Could not delete category $del_cat because there are still entries in the database using it.  Delete all entries using this category before deleting the category"
@@ -1600,14 +1589,14 @@ sub delete_category
         else
         {
             $query = "DELETE FROM categories WHERE code='$del_cat'";
-            my $sth = $dbh->prepare($query);
-            if ( $sth->execute )
+            my $delete_sth = $dbh->prepare($query);
+            if ( $delete_sth->execute )
             {
                 $status = "Deleted category $del_desc";
                 infobox( $mw, "Success",
                     "Category \"$del_desc\" has been deleted." );
             }
-            $sth->finish;
+            $delete_sth->finish;
         }
     }
     else
@@ -2768,11 +2757,9 @@ sub get_info_from_id
 
 sub validate_id
 {
-    my $id    = shift;
-    my $query = "SELECT * FROM mrvoice WHERE id=$id";
-    my $sth   = $dbh->prepare($query);
-    $sth->execute;
-    my $numrows = get_rows($sth);
+    my $id      = shift;
+    my $query   = "SELECT * FROM mrvoice WHERE id=$id";
+    my $numrows = get_rows($query);
     return $numrows == 1 ? 1 : 0;
 }
 
@@ -3659,10 +3646,8 @@ if ( !$dbh->do($query_17) )
         $progressbox->deiconify();
         $progressbox->raise();
 
+        my $numrows        = get_rows($selectall_query);
         my $select_all_sth = $dbh->prepare($selectall_query);
-        $select_all_sth->execute;
-        my $numrows = get_rows($select_all_sth);
-        $select_all_sth = $dbh->prepare($selectall_query);
         $select_all_sth->execute;
         my $rowcount = 0;
         while ( my @table_row = $select_all_sth->fetchrow_array )
@@ -3983,10 +3968,7 @@ sub orphans
     {
         $file = basename($file);
         my $query = "SELECT * FROM mrvoice WHERE filename='$file'";
-        my $sth   = $dbh->prepare($query);
-        $sth->execute;
-        my $row_count = get_rows($sth);
-        if ( $row_count == 0 )
+        if ( get_rows($query) == 0 )
         {
             push( @orphans, $file );
         }
