@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.364 2004/04/18 15:12:45 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.365 2004/04/19 00:02:21 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -86,19 +86,12 @@ our $holdingtanktypes =
 our $databasefiles =
   [ [ 'Database Dump Files', '.sql' ], [ 'All Files', '*' ], ];
 
+our $bulkaddtypes =
+  [ [ 'Audio Files', [ '*.mp3', '*.MP3', '*.ogg', '*.OGG' ] ] ];
+
 if ( $^O eq "MSWin32" )
 {
-    our $bulkaddtypes = [
-        [
-            'MP3/WMA/Ogg files',
-            [ '*.mp3', '*.MP3', '*.ogg', '*.OGG', '*.wma', '*.WMA' ]
-        ]
-    ];
-}
-else
-{
-    our $bulkaddtypes =
-      [ [ 'MP3 and OGG files', [ '*.mp3', '*.MP3', '*.ogg', '*.OGG' ] ] ];
+    push @{ $bulkaddtypes->[0][1] }, ( "*.wma", "*.WMA" );
 }
 
 our $mp3types = [
@@ -115,6 +108,13 @@ our $mp3types = [
     [ 'Playlists',    [ '*.m3u', '*.M3U', '*.pls', '*.PLS' ] ],
     [ 'All Files', '*' ],
 ];
+
+if ( $^O eq "MSWin32" )
+{
+    push @{ $mp3types->[0][1] }, ( "*.wma", "*.WMA" );
+    my $wmaref = [ [ 'WMA Files', [ '*.wma', '*.WMA' ] ] ];
+    splice( @{$mp3types}, 4, 0, @{$wmaref} );
+}
 
 # Check to see if we're on Windows or Linux, and set the RC file accordingly.
 if ( "$^O" eq "MSWin32" )
@@ -1249,8 +1249,11 @@ sub bulk_add
 
     my @mp3glob = glob( catfile( $directory, "*.mp3" ) );
     my @oggglob = glob( catfile( $directory, "*.ogg" ) );
+    my @wmaglob = glob( catfile( $directory, "*.wma" ) )
+      if ( $^O eq "MSWin32" );
 
     my @list = ( @mp3glob, @oggglob );
+    push( @list, @wmaglob ) if ( $^O eq "MSWin32" );
 
     $mw->Busy( -recurse => 1 );
     foreach my $file (@list)
@@ -2271,7 +2274,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev    = '$Revision: 1.364 $';
+    my $rev    = '$Revision: 1.365 $';
     my $tkver  = Tk->VERSION;
     my $dbiver = DBI->VERSION;
     my $dbdver = DBD::mysql->VERSION;
@@ -3939,7 +3942,10 @@ sub orphans
     my @wavfiles = glob( catfile( $config{filepath}, "*.wav" ) );
     my @m3ufiles = glob( catfile( $config{filepath}, "*.m3u" ) );
     my @plsfiles = glob( catfile( $config{filepath}, "*.pls" ) );
+    my @wmafiles = glob( catfile( $config{filepath}, "*.wma" ) )
+      if ( $^O eq "MSWin32" );
     my @files = ( @mp3files, @oggfiles, @wavfiles, @m3ufiles, @plsfiles );
+    push( @files, @wmafiles ) if ( $^O eq "MSWin32" );
     my @orphans;
 
     # Display a ProgressBar while we scan the files
