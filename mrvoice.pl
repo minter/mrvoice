@@ -2,7 +2,8 @@
 use warnings;
 no warnings 'redefine';
 
-#use diagnostics;
+use diagnostics;
+
 #use strict; # Yeah right
 use Encode::Unicode;
 use Tk;
@@ -36,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.330 2004/03/09 16:58:52 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.331 2004/03/09 17:03:26 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -812,12 +813,12 @@ sub dump_database
 
     if ($dumpfile)
     {
+        my $dirname = dirname($dumpfile);
         if ( ( !-w $dumpfile ) && ( -e $dumpfile ) )
         {
             infobox( $mw, "File Error!",
                 "Could not open file $dumpfile for writing" );
         }
-        my $dirname = dirname($dumpfile);
         elsif ( !-w dirname($dirname) )
         {
             infobox(
@@ -2187,7 +2188,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.330 $';
+    my $rev = '$Revision: 1.331 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
