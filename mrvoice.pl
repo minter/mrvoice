@@ -3087,8 +3087,8 @@ sub clear_selected
 
 sub return_all_indices
 {
-    print "Returning all indices for a hlist\n" if $debug;
-    my $hlist = shift;
+    my $hlist = shift or return;
+    print "Returning all indices for a hlist $hlist\n" if $debug;
     my @indexes;
     my $curr_entry = ( $hlist->info("children") )[0];
     while ( defined $curr_entry )
@@ -3097,8 +3097,8 @@ sub return_all_indices
         push( @indexes, $data );
         $curr_entry = $hlist->info( "next", $curr_entry );
     }
-    print "Returning " . join( ", " => @indexes ) . "\n";
-    return (@indexes);
+    print "Returning @indexes\n";
+    return @indexes;
 }
 
 sub import_bundle
@@ -4303,6 +4303,7 @@ sub compare_online
 
     if ( $arg eq "show_local" )
     {
+        my $count = 0;
         foreach my $md5 (
             sort { $local_md5{$a}->{category} cmp $local_md5{$b}->{category} }
             keys %local_md5
@@ -4327,9 +4328,10 @@ sub compare_online
                     -data => $row_hashref->{id},
                     -text => $string
                 );
+                $count++;
             }
         }
-
+        $status = "Online search returned $count local items";
     }
     elsif ( $arg eq "show_remote" )
     {
