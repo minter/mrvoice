@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.340 2004/03/10 20:56:50 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.341 2004/03/11 13:57:06 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2199,7 +2199,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.340 $';
+    my $rev = '$Revision: 1.341 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -2810,14 +2810,7 @@ sub validate_id
     my $id      = $_[0];
     my $query   = "SELECT * FROM mrvoice WHERE id=$id";
     my $numrows = $dbh->do($query);
-    if ( $numrows == 1 )
-    {
-        return (1);
-    }
-    else
-    {
-        return (0);
-    }
+    return $numrows == 1 ? 1 : 0;
 }
 
 sub stop_mp3
@@ -3091,22 +3084,9 @@ sub do_search
     $longcat  = "Any Category";
     $mw->Unbusy( -recurse => 1 );
 
-    if ( $numrows == 1 )
-    {
-        $status = "Displaying $numrows search result ";
-    }
-    else
-    {
-        $status = "Displaying $numrows search results ";
-    }
-    if ( $diff == 1 )
-    {
-        $status .= "($diff second elapsed)";
-    }
-    else
-    {
-        $status .= "($diff seconds elapsed)";
-    }
+    $status = sprintf( "Displaying %d search result%s ",
+        $numrows, $numrows == 1 ? "" : "s" );
+    $status .= "($diff seconds elapsed)";
     $mainbox->update();
     $mainbox->focus();
 }
