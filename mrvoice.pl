@@ -35,7 +35,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.195 2003/03/27 18:26:27 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.196 2003/03/27 19:42:40 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -418,8 +418,13 @@ sub open_file
       while (<HOTKEYFILE>)
       {
         chomp;
-        my ($var1,$var2) = split(/::/);
-        $$var1=$var2;
+        my ($key,$id) = split(/::/);
+        if ( ($id) && (validate_id($id)) )
+        {
+          $fkeys{$key}->{id} = $id;
+          $fkeys{$key}->{title} = get_title($id);
+          $fkeys{$key}->{filename} = get_filename($id);
+        }
       }
       close (HOTKEYFILE);
       $status = "Loaded hotkey file $selectedfile";
@@ -437,7 +442,7 @@ sub save_file
 {
   # Used to save a set of hotkeys to a file on disk.
   # We pop up a save file dialog box to get the filename and path. We
-  # then write out the data in the form of hotkey_number::mp3_name.
+  # then write out the data in the form of hotkey_number::id.
   # Finally, we add this file to our dynamic documents menu.
 
   $selectedfile = $mw->getSaveFile(-title=>'Save a File',
@@ -460,18 +465,18 @@ sub save_file
     {
       $selectedfile = "$selectedfile.mrv" unless ($selectedfile =~ /.*\.mrv$/);
       open (HOTKEYFILE,">$selectedfile");
-      print HOTKEYFILE "f1::$f1\n";
-      print HOTKEYFILE "f2::$f2\n";
-      print HOTKEYFILE "f3::$f3\n";
-      print HOTKEYFILE "f4::$f4\n";
-      print HOTKEYFILE "f5::$f5\n";
-      print HOTKEYFILE "f6::$f6\n";
-      print HOTKEYFILE "f7::$f7\n";
-      print HOTKEYFILE "f8::$f8\n";
-      print HOTKEYFILE "f9::$f9\n";
-      print HOTKEYFILE "f10::$f10\n";
-      print HOTKEYFILE "f11::$f11\n";
-      print HOTKEYFILE "f12::$f12\n";
+      print HOTKEYFILE "f1::$fkeys{f1}->{id}\n";
+      print HOTKEYFILE "f2::$fkeys{f2}->{id}\n";
+      print HOTKEYFILE "f3::$fkeys{f3}->{id}\n";
+      print HOTKEYFILE "f4::$fkeys{f4}->{id}\n";
+      print HOTKEYFILE "f5::$fkeys{f5}->{id}\n";
+      print HOTKEYFILE "f6::$fkeys{f6}->{id}\n";
+      print HOTKEYFILE "f7::$fkeys{f7}->{id}\n";
+      print HOTKEYFILE "f8::$fkeys{f8}->{id}\n";
+      print HOTKEYFILE "f9::$fkeys{f9}->{id}\n";
+      print HOTKEYFILE "f10::$fkeys{f10}->{id}\n";
+      print HOTKEYFILE "f11::$fkeys{f11}->{id}\n";
+      print HOTKEYFILE "f12::$fkeys{f12}->{id}\n";
       close (HOTKEYFILE);
       $status = "Finished saving hotkeys to $selectedfile";
       dynamic_documents($selectedfile);
@@ -1251,7 +1256,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.195 $';
+  $rev = '$Revision: 1.196 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -1614,6 +1619,23 @@ sub get_filename
   $sth->finish;
   my $filename = $result[0];
   return ($filename);
+}
+
+sub validate_id
+{
+  my $id = $_[0];
+  my $query = "SELECT * FROM mrvoice WHERE id=$id";
+  my $sth=$dbh->prepare($query);
+  $sth->execute;
+  $numrows = $sth->rows;
+  if ($numrows == 1)
+  {
+    return (1);
+  }
+  else
+  {
+    return (0);
+  }
 }
 
 sub get_title
