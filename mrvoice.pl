@@ -14,8 +14,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/03 18:11:33 $
-#	CVS REVISION NUMBER:    $Revision: 1.54 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/11 19:13:50 $
+#	CVS REVISION NUMBER:    $Revision: 1.55 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -399,7 +399,6 @@ sub add_new_song
                   -command=>sub { 
                      $addsong_filename = $mw->getOpenFile(-title=>'Select File',
                                                           -filetypes=>$mp3types);
-
                                 })->pack(-side=>'right');
   $frame5->Entry(-width=>30,
                  -textvariable=>\$addsong_filename)->pack(-side=>'right');
@@ -476,6 +475,67 @@ sub add_new_song
   $addsong_info="";
   $addsong_cat="";
   $addsong_filename="";
+}
+
+sub edit_preferences
+{
+  my $box = $mw->DialogBox(-title=>"Edit Preferences",
+                           -buttons=>["Ok","Cancel"],
+                           -default_button=>"Ok");
+  $box->add("Label",-text=>"You may use this form to modify the operating\npreferences for the Mr. Voice software.\n")->pack();
+  my $frame1 = $box->add("Frame")->pack(-fill=>'x');
+  $frame1->Label(-text=>"Database Name")->pack(-side=>'left');
+  $frame1->Entry(-width=>30,
+                 -textvariable=>\$db_name)->pack(-side=>'right'); 
+  my $frame2 = $box->add("Frame")->pack(-fill=>'x');
+  $frame2->Label(-text=>"Database User Name")->pack(-side=>'left');
+  $frame2->Entry(-width=>30,
+                 -textvariable=>\$db_username)->pack(-side=>'right'); 
+  my $frame3 = $box->add("Frame")->pack(-fill=>'x');
+  $frame3->Label(-text=>"Database Password")->pack(-side=>'left');
+  $frame3->Entry(-width=>30,
+                 -textvariable=>\$db_pass)->pack(-side=>'right'); 
+  my $frame4 = $box->add("Frame")->pack(-fill=>'x');
+  $frame4->Label(-text=>"MP3 Directory")->pack(-side=>'left');
+  $frame4->Entry(-width=>30,
+                 -textvariable=>\$filepath)->pack(-side=>'right'); 
+  my $frame5 = $box->add("Frame")->pack(-fill=>'x');
+  $frame5->Label(-text=>"Hotkey Directory")->pack(-side=>'left');
+  $frame5->Entry(-width=>30,
+                 -textvariable=>\$savedir)->pack(-side=>'right'); 
+  my $frame6 = $box->add("Frame")->pack(-fill=>'x');
+  $frame6->Label(-text=>"MP3 Player")->pack(-side=>'left');
+  $frame6->Button(-text=>"Choose",
+                  -command=>sub { 
+                     $mp3player = $mw->getOpenFile(-title=>'Select File');
+                                })->pack(-side=>'right');
+  $frame6->Entry(-width=>30,
+                 -textvariable=>\$mp3player)->pack(-side=>'right'); 
+
+  my $result = $box->Show();
+
+  if ($result eq "Ok")
+  {
+    if ( (! $db_name) || (! $db_username) || (! $db_pass) || (! $filepath) || (! $savedir) || (! $mp3player) )
+    {
+      infobox("Warning","All fields must be filled in\n");
+      edit_preferences();
+    }
+    if (! open(RCFILE,">$rcfile"))
+    {
+      infobox("Warning","Could not open $rcfile for writing.\nYour preferences will not be saved\n");
+    }
+    else
+    {
+      print RCFILE "db_name::$db_name\n";
+      print RCFILE "db_username::$db_username\n";
+      print RCFILE "db_pass::$db_pass\n";
+      print RCFILE "filepath::$filepath\n";
+      print RCFILE "savedir::$savedir\n";
+      print RCFILE "mp3player::$mp3player\n";
+      close(RCFILE);
+    }
+  }
 }
 
 sub edit_song
@@ -909,6 +969,11 @@ sub read_rcfile
     }
     close (RCFILE);
   }
+  else
+  {
+    infobox("Configuration not found","You don't appear to have configured Mr. Voice before.\nStarting configuration now\n");
+    edit_preferences();
+  }
   if ($^O eq "MSWin32")
   {
     $filepath = $filepath . "\\" unless ($filepath =~ /\\$/);
@@ -924,12 +989,12 @@ sub read_rcfile
 #########
 # MAIN PROGRAM
 #########
-read_rcfile();
-
 $mw = MainWindow->new;
 $mw->geometry("+0+0");
 $mw->title("Mr. Voice");
 $mw->minsize(67,0);
+
+read_rcfile();
 
 if (! ($dbh = DBI->connect("DBI:mysql:$db_name",$db_username,$db_pass)))
 {
@@ -958,6 +1023,9 @@ $filemenu->AddItems(["command"=>"Open Hotkey File",
                     -command=>\&open_file]); 
 $filemenu->AddItems(["command"=>"Save Hotkeys To A File",
                     -command=>\&save_file]); 
+$filemenu->AddItems("-");
+$filemenu->AddItems(["command"=>"Preferences",
+                    -command=>\&edit_preferences]);
 $filemenu->AddItems("-");
 $filemenu->AddItems(["command"=>"Exit", 
                      -command=>sub { 
