@@ -1,3 +1,6 @@
+Mon  Jan 17 2005	H. Wade Minter (minter@lunenburg.org)
+     * Add the beginnings of a basic plugin architecture
+
 Wed  Jan  5 2005	H. Wade Minter (minter@lunenburg.org)
      * Change some hardcoded paths into File::Spec calls to hopefully help things
        out on Win98.
