@@ -1,3 +1,6 @@
+Sun  Jan 27 2001	H. Wade Minter (minter@lunenburg.org)
+     * Changed code so that it does file types other than MP3.  
+
 Fri  Dec 22 2001	H. Wade Minter (minter@lunenburg.org)
      * Using Makefiles for the docs now.  Yes, I'm bored.
 
@@ -174,4 +177,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.30 2001/12/21 19:17:15 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.31 2002/01/27 21:17:12 minter Exp $
