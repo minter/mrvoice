@@ -5,6 +5,8 @@ Thu  May  2 2002	H. Wade Minter (minter@lunenburg.org)
      * Added code to check for a file named "default.mrv" in the hotkey
        save directory.  If that exists, load up those hotkeys when
        the program starts.  Suggested by Randy at CSZ-KC.
+     * Fixed a bug where the "Number of items returned" count wouldn't
+       decrement when an MP3 is unavailable/unreadable.
 
 Wed  Apr 24 2002	H. Wade Minter (minter@lunenburg.org)
      * More documentation work between 4/15 and now.
@@ -228,4 +230,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.41 2002/05/02 19:31:30 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.42 2002/05/02 23:26:37 minter Exp $
