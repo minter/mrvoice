@@ -1279,6 +1279,7 @@ sub bulk_add
         return (1);
     }
 
+    $directory =~ s/(\s)/\\$1/g;
     my @mp3glob = glob( catfile( $directory, "*.mp3" ) );
     my @oggglob = glob( catfile( $directory, "*.ogg" ) );
     my @m4aglob = glob( catfile( $directory, "*.m4a" ) );
