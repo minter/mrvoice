@@ -1,3 +1,6 @@
+Wed  Apr  2 2003	H. Wade Minter (minter@lunenburg.org)
+     * Worked around Windows crash with the drag-and-drop icon (Thanks Slaven!)
+
 Mon  Mar 31 2003	H. Wade Minter (minter@lunenburg.org)
      * Changed the drag-and-drop icon from GIF to XPM.
      * Fixed minor coding errors.
@@ -404,4 +407,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.76 2003/03/31 15:51:24 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.77 2003/04/03 14:18:20 minter Exp $
