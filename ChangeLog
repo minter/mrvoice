@@ -1,5 +1,10 @@
+Fri  Dec 22 2001	H. Wade Minter (minter@lunenburg.org)
+     * Using Makefiles for the docs now.  Yes, I'm bored.
+
 Thu  Dec 21 2001        H. Wade Minter (minter@lunenburg.org)
      * Moved the PHP frontend file into the tools subdirectory.
+     * Fixed bug that kept the Play option on the right-click menu
+       from working.
 
 Wed  Dec 20 2001	H. Wade Minter (minter@lunenburg.org)
      * Created a "tools" subdirectory to hold useful utilities.
@@ -169,4 +174,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.29 2001/12/20 15:30:45 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.30 2001/12/21 19:17:15 minter Exp $
