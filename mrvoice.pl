@@ -2711,13 +2711,14 @@ sub update_time
     my $count        = 0;
     my $query        = "SELECT id,filename,time FROM mrvoice";
     my $arrayref     = $dbh->selectall_arrayref($query);
+    my $numrows      = scalar @$arrayref;
     my $update_query =
       "UPDATE mrvoice SET time=?, modtime=(SELECT strftime('%s','now')) WHERE id=?";
     my $update_sth = $dbh->prepare($update_query);
-    my $numrows    = scalar @$arrayref;
 
     while ( my $table_row = shift @$arrayref )
     {
+        $count++;
         my ( $id, $filename, $time ) = @$table_row;
         next if ( !-r catfile( $config{filepath}, $filename ) );
         my $newtime =
@@ -2727,7 +2728,6 @@ sub update_time
             $update_sth->execute( $newtime, $id );
             $updated++;
         }
-        $count++;
         $percent_done = int( ( $count / $numrows ) * 100 );
         $pb->set($percent_done);
         $progressbox->update();
