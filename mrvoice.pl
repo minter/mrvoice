@@ -14,8 +14,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/09/28 16:16:38 $
-#	CVS REVISION NUMBER:    $Revision: 1.50 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/09/28 16:20:49 $
+#	CVS REVISION NUMBER:    $Revision: 1.51 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -90,7 +90,7 @@ else
 
 #####
 
-my $version = "1.2";			# Program version
+my $version = "1.2.1";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
 
 sub bind_hotkeys
