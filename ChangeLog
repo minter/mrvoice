@@ -1,5 +1,7 @@
 Tue  Mar  2 2004	H. Wade Minter (minter@lunenburg.org)
      * More switching to fetchrow_hashref to improve readability.
+     * Consolidate a bunch of repeated category menubutton code into
+       one function.
 
 Sun  Feb 29 2004	H. Wade Minter (minter@lunenburg.org)
      * Lots of minor cleanup while working on the TPJ article.
@@ -570,4 +572,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.120 2004/03/02 17:53:10 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.121 2004/03/02 19:47:11 minter Exp $
