@@ -1,3 +1,20 @@
+Wed  Dec 11 2002	H. Wade Minter (minter@lunenburg.org)
+     * Use a progress bar to show the status of the initial time
+       conversion.
+
+Tue  Dec 10 2002	H. Wade Minter (minter@lunenburg.org)
+     * Put in code to check if the database is at 1.7 levels, and if
+       it's not, convert the database.
+
+Tue  Dec  3 2002	H. Wade Minter (minter@lunenburg.org)
+     * Store the song length time in the database now.  This speeds
+       up searches to an absurd rate.
+
+Wed  Nov 13 2002	H. Wade Minter (minter@lunenburg.org)
+     * Removed the "Assign Hotkey" button from the bottom of the main
+       window.  Apparently nobody was using it anyway.
+     * Relocated the Stop button to the bottom-right corner.
+
 Tue  Nov 12 2002	H. Wade Minter (minter@lunenburg.org)
      * Changed the status bar display for playing a song from
        the filename to a title/artist view.
@@ -364,4 +381,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.69 2002/11/12 21:02:58 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.70 2002/12/11 20:38:40 minter Exp $
