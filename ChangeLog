@@ -1,3 +1,11 @@
+Wed  Dec 31 2003	H. Wade Minter (minter@lunenburg.org)
+     * Implemented a database column for the publisher of songs.  You can
+       restrict searches based on the publisher.  Requested by ComedySportz
+       Inc.
+     * Moved from Tk::DirSelect to chooseDirectory (new in 804.xxx).  This
+       had the added side effect of removing a directory select bug on
+       first run.
+
 Tue  Dec 30 2003	H. Wade Minter (minter@lunenburg.org)
      * Use Cwd 'abs_path' to find the root of the docs tree.
      * Allow the ability to save and load a holding tank, like you can
@@ -524,4 +532,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.109 2003/12/30 18:12:38 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.110 2003/12/31 20:11:49 minter Exp $
