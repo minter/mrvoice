@@ -1,3 +1,7 @@
+Wed  Nov  6 2002	H. Wade Minter (minter@lunenburg.org)
+     * Made a change so that when you load hotkeys, the hotkey
+       box will display.  Bugzilla ID #10
+
 Sat  Nov  2 2002        H. Wade Minter (minter@lunenburg.org)
      * Fixed a bug I introduced that would lead to the $filepath
        variable getting overwritten.
@@ -347,4 +351,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.64 2002/11/02 18:32:09 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.65 2002/11/06 21:18:17 minter Exp $
