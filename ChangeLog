@@ -1,3 +1,7 @@
+Wed  Sep 8  2004	H. Wade Minter (minter@lunenburg.org)
+     * Work around the lack of $dbh->numrows in SQLite for the 
+       validate_id function.
+
 Tue  Sep 7  2004	H. Wade Minter (minter@lunenburg.org)
      * Fixed a bug in the "Select new location for DB file" dialog in
        Preferences.
