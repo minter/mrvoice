@@ -14,8 +14,8 @@ use MPEG::MP3Info;
 #              http://www.greatamericancomedy.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/09/27 15:47:22 $
-#	CVS REVISION NUMBER:    $Revision: 1.47 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/09/27 18:22:03 $
+#	CVS REVISION NUMBER:    $Revision: 1.48 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -75,6 +75,16 @@ else
                      )
               }ex;
 }
+
+#STARTCSZ
+# The following variables set the locations of MP3s for static hotkey'd
+# sounds
+#$altt = "TaDa.mp3";
+#$alty = "CalloutMusic.mp3";
+#$altb = "BrownBag.mp3";
+#$altg = "Groaner.mp3";
+#$altv = "PriceIsRightTheme.mp3";
+#ENDCSZ
 
 #####
 
@@ -206,7 +216,7 @@ sub backup_hotkeys
   $old_f10 = $f10;
   $old_f11 = $f11;
   $old_f12 = $f12;
-  $hotmenu->menu->entryconfigure(3, -state=>"normal");
+  $hotmenu->menu->entryconfigure("Restore Hotkeys", -state=>"normal");
 }
 
 sub restore_hotkeys
@@ -224,7 +234,7 @@ sub restore_hotkeys
   $f11 = $old_f11;
   $f12 = $old_f12;
   $status = "Previous hotkeys restored.";
-  $hotmenu->menu->entryconfigure(3, -state=>"disabled");
+  $hotmenu->menu->entryconfigure("Restore Hotkeys", -state=>"disabled");
 }
 
 sub add_category
@@ -555,6 +565,22 @@ sub show_about
   infobox("About Mr. Voice","Mr. Voice Version $version\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\n(c)2001, Released under the GNU General Public License");
 }
 
+#STARTCSZ
+#sub show_predefined_hotkeys
+#{
+#  $box = $mw->DialogBox(-title=>"Predefined Hotkeys", -buttons=>["Close"]);
+#  $box->add("Label",-text=>"The following hotkeys are always available\nand
+#may not be changed")->pack();
+#  $box->add("Label",-text=>"<Escape> - Stop the currently playing MP3")->pack();
+#  $box->add("Label",-text=>"<Enter> - Perform the currently entered search")->pack();
+#  $box->add("Label",-text=>"<ALT-t> - The \"Ta-Da\" MIDI")->pack();
+#  $box->add("Label",-text=>"<ALT-y> - The \"You're Out\" MIDI")->pack();
+#  $box->add("Label",-text=>"<ALT-b> - The Brown Bag MIDI")->pack();
+#  $box->add("Label",-text=>"<ALT-v> - The Price Is Right theme (Volunteer photos)")->pack();
+#  $box->Show;
+#}
+#ENDCSZ
+
 sub clear_hotkeys
 {
   backup_hotkeys();
@@ -750,6 +776,13 @@ sub play_mp3
   elsif ($_[1] eq "F10") { $filename = $f10; }
   elsif ($_[1] eq "F11") { $filename = $f11; }
   elsif ($_[1] eq "F12") { $filename = $f12; }
+#STARTCSZ
+#  elsif ($_[1] eq "ALT-T") { $filename = $altt; }
+#  elsif ($_[1] eq "ALT-Y") { $filename = $alty; }
+#  elsif ($_[1] eq "ALT-B") { $filename = $altb; }
+#  elsif ($_[1] eq "ALT-G") { $filename = $altg; }
+#  elsif ($_[1] eq "ALT-V") { $filename = $altv; }
+#ENDCSZ
   else
   {
     # If not, find the selected song.
@@ -907,10 +940,14 @@ $hotmenu->AddItems(["command"=>"Show Hotkeys",
                     -command=>\&list_hotkeys]);
 $hotmenu->AddItems(["command"=>"Clear All Hotkeys",
                     -command=>\&clear_hotkeys]);
+#STARTCSZ
+#$hotmenu->AddItems(["command"=>"Show Predefined Hotkeys",
+#                    -command=>\&show_predefined_hotkeys]);
+#ENDCSZ
 $hotmenu->AddItems("-");
 $hotmenu->AddItems(["command"=>"Restore Hotkeys",
                    -command=>\&restore_hotkeys]);
-$hotmenu->menu->entryconfigure(3, -state=>"disabled");
+$hotmenu->menu->entryconfigure("Restore Hotkeys", -state=>"disabled");
 $catmenu = $menuframe->Menubutton(-text=>"Categories",
                                   -tearoff=>0)->pack(-side=>'left');
 $catmenu->AddItems(["command"=>"Add Category",
@@ -1038,6 +1075,13 @@ $mw->bind("<Key-F11>", [\&play_mp3,"F11"]);
 $mw->bind("<Key-F12>", [\&play_mp3,"F12"]);
 $mw->bind("<Key-Return>", [\&do_search]);
 $mw->bind("<Key-Escape>", [\&stop_mp3]);
+#STARTCSZ
+#$mw->bind("<Alt-Key-t>", [\&play_mp3,"ALT-T"]);
+#$mw->bind("<Alt-Key-y>", [\&play_mp3,"ALT-Y"]);
+#$mw->bind("<Alt-Key-b>", [\&play_mp3,"ALT-B"]);
+#$mw->bind("<Alt-Key-g>", [\&play_mp3,"ALT-G"]);
+#$mw->bind("<Alt-Key-v>", [\&play_mp3,"ALT-V"]);
+#ENDCSZ
 #####
 
 if (! -x $mp3player)
