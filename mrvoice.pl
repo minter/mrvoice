@@ -128,11 +128,38 @@ if ( $^O eq "MSWin32" )
 my $logfile;
 my $userrcfile;
 my $debug;
+my $help;
 my $result = GetOptions(
     'logfile:s' => \$logfile,
     'config=s'  => \$userrcfile,
-    'debug'     => \$debug
+    'debug'     => \$debug,
+    'help'      => \$help
 );
+
+if ($help)
+{
+    print <<EOL;
+USAGE: mrvoice [--logfile filename] [--config filename] [--debug]
+
+--logfile filename : Send all program output to the named file, or to a 
+                     default file (C:/mrvoice.log on windows, ~/mrvoice.log
+                     on Unix).  If you omit the filename and just supply
+                     the --logfile flag, you will get the default. 
+
+--config filename  : Use the named file as the Mr. Voice configuration file,
+                     instead of the default (which is C:/mrvoice.cfg on 
+                     Windows and ~/.mrvoicerc on Unix).
+
+--debug            : Cause a ton of debugging output to get sent to the 
+                     screen or to your logfile.  Useful when trying to track
+                     down problems.
+
+--help             : Print this information.
+EOL
+
+    exit;
+
+}
 
 # Check to see if we're on Windows or Linux, and set the RC file accordingly.
 if ( "$^O" eq "MSWin32" )
