@@ -46,7 +46,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.305 2004/02/23 20:47:03 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.306 2004/02/24 21:13:35 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -974,8 +974,8 @@ sub open_file
                 elsif ( ($id) && ( validate_id($id) ) )
                 {
                     $fkeys{$key}->{id}       = $id;
-                    $fkeys{$key}->{title}    = get_title($id);
-                    $fkeys{$key}->{filename} = get_filename($id);
+                    $fkeys{$key}->{title}    = get_info_from_id($id)->{fulltitle};
+                    $fkeys{$key}->{filename} = get_info_from_id($id)->{filename};
                 }
             }
             close(HOTKEYFILE);
@@ -2501,7 +2501,7 @@ sub delete_song
 
 sub show_about
 {
-    $rev = '$Revision: 1.305 $';
+    $rev = '$Revision: 1.306 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -2681,7 +2681,7 @@ sub launch_tank_playlist
     foreach my $item (@indices)
     {
         my ( $id, $description ) = split( /:/, $item );
-        $file = get_filename($id);
+        $file = get_info_from_id($id)->{filename};
         my $path = catfile( $config{filepath}, $file );
         print $fh "$path\n";
     }
@@ -3082,22 +3082,29 @@ sub update_time
     $status = "Updated times on $updated files";
 }
 
-sub get_filename
+sub get_info_from_id
 {
-
-    # Takes a database ID as an argument, queries the database, and returns
-    # the MP3 filename for that song.
-
-    my $id    = $_[0];
-    my $query = "SELECT filename FROM mrvoice WHERE id=$id";
-    my $sth   = $dbh->prepare($query);
-    $sth->execute or die "can't execute the query: $DBI::errstr\n";
-    @result = $sth->fetchrow_array;
-    $sth->finish;
-    my $filename = $result[0];
-    return ($filename);
+   # Returns a hash reference containing all the info for a specified ID
+ 
+   my $id = $_[0];
+   my %info;
+   my $query = "SELECT * FROM mrvoice WHERE id=$id";
+   my $result_hashref = $dbh->selectrow_hashref($query);
+   $info{filename} = $result_hashref->{filename};
+   $info{title} = $result_hashref->{title};
+   $info{artist} = $result_hashref->{artist};
+   if ($info{artist})
+   {
+     $info{fulltitle} = "\"$info{title}\" by $info{artist}";
+   }
+   else
+   {
+     $info{fulltitle} = $info{title};
+   }
+   $info{info} = $result_hashref->{info};
+   return \%info;
 }
-
+  
 sub validate_id
 {
     my $id    = $_[0];
@@ -3114,24 +3121,6 @@ sub validate_id
         return (0);
     }
     $sth->finish;
-}
-
-sub get_title
-{
-    my $id    = $_[0];
-    my $query = "SELECT title,artist FROM mrvoice WHERE id=$id";
-    my $sth   = $dbh->prepare($query);
-    $sth->execute or die "can't execute the query: $DBI::errstr\n";
-    @result = $sth->fetchrow_array;
-    $sth->finish;
-    if ( $result[1] )
-    {
-        return ("\"$result[0]\" by $result[1]");
-    }
-    else
-    {
-        return ("\"$result[0]\"");
-    }
 }
 
 sub stop_mp3
@@ -3626,8 +3615,8 @@ sub Hotkey_Drop
     my $widget      = $current_token->parent;
     my (@selection) = $widget->curselection();
     my $id       = get_song_id( $widget, $selection[0] );
-    my $filename = get_filename($id);
-    my $title    = get_title($id);
+    my $filename = get_info_from_id($id)->{filename};
+    my $title    = get_info_from_id($id)->{fulltitle};
     $fkeys{$fkey_var}->{id}       = $id;
     $fkeys{$fkey_var}->{filename} = $filename;
     $fkeys{$fkey_var}->{title}    = $title;
