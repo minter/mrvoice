@@ -45,7 +45,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.283 2003/12/30 17:54:10 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.284 2003/12/30 17:57:35 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2058,7 +2058,7 @@ sub show_docs
   
 sub show_about
 {
-  $rev = '$Revision: 1.283 $';
+  $rev = '$Revision: 1.284 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2218,9 +2218,10 @@ sub clear_selected
 sub launch_tank_playlist
 {
   # Launch an m3u playlist from the contents of the holding tank
+  my @indices = $tankbox->get(0,'end');
+  return if ($#indices < 0);
   my ($fh, $filename) = tempfile(SUFFIX => '.m3u',UNLINK => 1);
   print $fh "#EXTM3U\n";
-  my @indices = $tankbox->get(0,'end');
   foreach my $item (@indices)
   {
     my ($id,$description) = split(/:/,$item);
