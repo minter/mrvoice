@@ -216,12 +216,13 @@ else
     }
     my $homedir = get_homedir();
     $rcfile = ( $userrcfile eq "" ) ? "$homedir/.mrvoicerc" : $userrcfile;
-    if ( defined($logfile) )
+    if ( ( defined($logfile) ) || ( $^O eq "darwin" ) )
     {
         $logfile = ( $logfile eq "" ) ? "$homedir/mrvoice.log" : $logfile;
         open( STDOUT, ">$logfile" );
         open( STDERR, ">&STDOUT" );
-        print "Using Unix logfile $logfile\n" if $debug;
+        print "Using Unix logfile $logfile\n"
+          if ( $debug || ( $^O eq "darwin" ) );
     }
 }
 
