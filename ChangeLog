@@ -1,3 +1,7 @@
+Wed  Mar 17 2004	H. Wade Minter (minter@lunenburg.org)
+     * Add an ugly hack to work around brokenness in getOpenFile and
+       getSaveFile with the -initialdir option under Win32.
+
 Fri  Mar 12 2004	H. Wade Minter (minter@lunenburg.org)
      * Send STDERR and STDOUT to a file by default, since Win32 builds
        use the --gui flag and thus have no console for output any more.
@@ -605,4 +609,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.127 2004/03/12 20:47:24 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.128 2004/03/17 17:29:34 minter Exp $
