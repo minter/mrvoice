@@ -37,7 +37,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.348 2004/03/12 19:07:15 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.349 2004/03/12 19:16:57 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -49,11 +49,15 @@ use subs
 ##########
 # Set up variables that need to be global for now
 ##########
-our %config;     # Holds the config variables
-our $mw;         # Mainwindow
-our $dbh;        # Database Handle
-our $icon;       # Window Icon
-our $mainbox;    # Main search box
+our %config;         # Holds the config variables
+our $mw;             # Mainwindow
+our $dbh;            # Database Handle
+our $icon;           # Window Icon
+our $mainbox;        # Main search box
+our $agent;          # LWP agent for Win32
+our $holdingtank;    # Holding Tank window
+our $tankbox;        # Holding tank listbox
+our %fkeys;          # Function keys
 ##########
 
 our $current_token;
@@ -552,7 +556,7 @@ sub bind_hotkeys
         $window->bind(
             "<Shift-Key-Escape>",
             sub {
-                $req =
+                my $req =
                   HTTP::Request->new( GET =>
                       "http://localhost:4800/fadeoutandstop?p=$config{'httpq_pw'}"
                   );
@@ -584,13 +588,13 @@ sub open_tank
             holding_tank() if ( !Exists($holdingtank) );
             wipe_tank();
             open( TANKFILE, $selectedfile );
-            while ( $id = <TANKFILE> )
+            while ( my $id = <TANKFILE> )
             {
                 chomp($id);
                 my $query =
                   "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.time from mrvoice,categories where mrvoice.category=categories.code AND mrvoice.id=$id";
                 my $tank_ref = $dbh->selectrow_hashref($query);
-                $string = "$id:($tank_ref->{description}";
+                my $string   = "$id:($tank_ref->{description}";
                 $string = $string . " - $tank_ref->{info}"
                   if ( $tank_ref->{info} );
                 $string = $string . ") - \"$tank_ref->{title}\"";
@@ -752,7 +756,7 @@ sub save_file
     # then write out the data in the form of hotkey_number::id.
     # Finally, we add this file to our dynamic documents menu.
 
-    $selectedfile = $mw->getSaveFile(
+    my $selectedfile = $mw->getSaveFile(
         -title            => 'Save a File',
         -defaultextension => ".mrv",
         -filetypes        => $hotkeytypes,
@@ -2208,7 +2212,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.348 $';
+    my $rev = '$Revision: 1.349 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
