@@ -9,12 +9,20 @@ current release is 3.23.  You will be able to download the modules that
 you need from ActivePerl's PPM package manager - see their documentation
 for details.
 
+I don't believe that Tk::FileDialog.pm is available through PPM.  So you
+can find the .tar.gz module from the ActiveState website search, use
+WinZip to uncompress it, and copy FileDialog.pm to C:\perl\site\lib\Tk\.
+
 The other big change is path names.  In Unix, a path name would look
 like "/path/to/filename".  For Windows, you'll change that to be
-"C:/path/to/file.exe".  Note that this is a change from the normal
-DOS/Windows way, which uses a backslash to separate items in the path (ie
-"C:\path\to\file.exe".  The "\" character is special under perl, so use
-the "/", and it'll work fine.
+"C:\\path\\to\\file.exe".  Note that this is a change from the normal
+DOS/Windows way, which uses a single backslash to separate items in 
+the path (ie "C:\path\to\file.exe".  The "\" character is special under 
+perl, so use the "\\", and it'll work fine.
+
+In addition, you'll have to use the eight-character name for long files.
+For example, use "C:\\progra~1\\file.exe" instead of
+"C:\\program files\file.exe".
 
 --
-CVS ID: $Id: README.windows,v 1.1 2001/03/07 00:42:49 minter Exp $
+CVS ID: $Id: README.windows,v 1.2 2001/03/07 13:18:00 minter Exp $
