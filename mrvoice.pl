@@ -640,6 +640,7 @@ sub BindMouseWheel
 
 sub check_version
 {
+    return if ( $config{last_update_check} > ( time() - 604800 ) );
     my $xmlrpc;
     unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
     {
@@ -653,7 +654,8 @@ sub check_version
             os      => $^O,
             version => $version
         }
-    );
+      )
+      or die "Couldn't call search_call";
 
     my $result = $search_call->result;
     if ( !$result )
@@ -669,6 +671,9 @@ sub check_version
         infobox( $mw, "A Newer Version of Mr. Voice is Available",
             $result->{message} );
     }
+
+    $config{last_update_check} = time();
+    save_config( \%config );
 
 }
 
@@ -2493,7 +2498,12 @@ sub edit_preferences
     $online_page->Checkbutton(
         -text     => 'Enable online functionality',
         -variable => \$config{'enable_online'}
-    )->pack( -side => 'top' );
+    )->pack( -side => 'top', -anchor => 'w' );
+
+    $online_page->Checkbutton(
+        -text     => 'Check weekly for new versions of Mr. Voice',
+        -variable => \$config{'check_version'}
+    )->pack( -side => 'top', -anchor => 'w' );
 
     my $keyframe = $online_page->Frame()->pack( -fill => 'x' );
     $keyframe->Label( -text =>
@@ -2530,7 +2540,7 @@ sub edit_preferences
     $numdyn_frame->Entry(
         -background   => 'white',
         -width        => 2,
-        -textvariable => \$savefile_max
+        -textvariable => \$config{savefile_max}
     )->pack( -side => 'right' );
 
     my $httpq_frame = $other_page->Frame()->pack( -fill => 'x' );
@@ -2576,24 +2586,31 @@ sub edit_preferences
             infobox( $mw, "Warning", "All fields must be filled in\n" );
             edit_preferences();
         }
-        if ( !open( my $rcfile_fh, ">", $rcfile ) )
-        {
-            print "Couldn't open $rcfile for writing\n" if $debug;
-            infobox( $mw, "Warning",
-                "Could not open $rcfile for writing. Your preferences will not be saved\n"
-            );
-        }
-        else
-        {
-            print "Writing config to $rcfile\n" if $debug;
-            foreach my $key ( sort keys %config )
-            {
-                print "Writing key $key and value $config{$key}\n" if $debug;
-                print $rcfile_fh "$key" . "::$config{$key}\n";
-            }
-        }
+        save_config( \%config );
     }
     read_rcfile();
+}
+
+sub save_config
+{
+    my $config_ref = shift;
+    if ( !open( my $rcfile_fh, ">", $rcfile ) )
+    {
+        print "Couldn't open $rcfile for writing\n" if $debug;
+        infobox( $mw, "Warning",
+            "Could not open $rcfile for writing. Your preferences will not be saved\n"
+        );
+    }
+    else
+    {
+        print "Writing config to $rcfile\n" if $debug;
+        foreach my $key ( sort keys %$config_ref )
+        {
+            print "Writing key $key and value $config_ref->{$key}\n" if $debug;
+            print $rcfile_fh "$key" . "::$config_ref->{$key}\n";
+        }
+    }
+
 }
 
 sub edit_song
@@ -4482,7 +4499,8 @@ sub online_search_window
         $onlinewin->bind(
             "<Key-Return>",
             sub {
-                search_online( $onlinebox, $online_search_term );
+                search_online( $onlinebox, $online_search_term, $category,
+                    $person );
                 $online_search_term = undef;
                 $category           = "any";
                 $catmenu->configure(

@@ -1,3 +1,9 @@
+Thu  Mar 24 2005	H. Wade Minter (minter@lunenburg.org)
+     * Add a preference entry to check the app version.
+     * Fix the Return key binding in Online Search.
+     * Move the config file writing into its own subroutine to it can
+       be used by the version check.
+
 Wed  Mar 23 2005	H. Wade Minter (minter@lunenburg.org)
      * Add code to do an XML-RPC version check on start.
 
