@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: using-mrvoice.sgml,v 1.31 2003/08/31 19:30:50 minter Exp $
+  CVS ID: $Id: using-mrvoice.sgml,v 1.32 2004/03/11 21:40:41 minter Exp $
 -->
 
 <chapter><title>Using Mr. Voice</title>
@@ -108,6 +108,23 @@
       <para>Finally, if you want to edit a song in the database, left-click a song in the main display window, and choose <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Edit Currently Selected Song</guimenuitem> </menuchoice>.  You can also right-click on a song and choose the <guimenuitem>Edit Song</guimenuitem> option.  A box will pop up that is similar to the one for <menuchoice> <guimenu>Songs</guimenu> <guimenuitem>Add New Song</guimenuitem> </menuchoice>, except without the file selector option.  You can make any needed changes to the song, then press <guibutton>Ok</guibutton> to commit them.</para>
       <note><title>Shortcut!</title><para>You can also right-click a song in the main display box to bring up a shortcut menu.  From this menu, you can choose to edit or delete the selected song.</para></note>
       <para>If you have multiple songs selected and choose to edit, you will only be able to edit the Extra Info, Category, or Artist fields, not the Title.</para>
+      <sect3><title>Orphaned Files</title>
+        <para>Orphaned files are audio files in your MP3 directory that are not referenced by any entries in the Mr. Voice database.  They normally result from deleting a song from the database without deleting the file on disk.  Since nothing in the database knows about them, they are unneeded and just take up space.</para>
+        <para>In previous versions of Mr. Voice, a separate program named <filename>orphans.pl</filename> was provided to weed out these old files.  However, with Mr. Voice 1.10, the orphan checker is integrated into the main program.  You can find it under <menuchoice><guimenu>Advanced Search</guimenu><guimenuitem>Find orphaned files</guimenuitem></menuchoice>.  When you choose that menu item, Mr. Voice will scan your MP3 directory and compare it with your database, and if it finds any orphaned files, display them for you.
+          <figure>
+            <title>Orphaned Files Report</title>
+            <mediaobject>
+              <imageobject>
+                <imagedata fileref="../images/orphans.png" format="png">
+              </imageobject>
+              <textobject>
+                <phrase>Screenshot of the Orphaned Files report</phrase>
+              </textobject>
+            </mediaobject>
+          </figure>
+        </para>
+        <para>When the Orphaned File report is displayed, you have a couple of choices.  If you just want to read the report without taking action, you can close the window and no changes will be made.  You can also select one or more files from the report to delete.  To do so, Control-click on a filename to add it to the selection group.  Or, hit the <guibutton>Select All</guibutton> button to select all entries, and Control-click to deselect any you do not want to delete.  Then press the <guibutton>Delete Selected</guibutton> button to remove all selected files from your computer.</para>
+      </sect3>
     </sect2>
   </sect1>
 
@@ -170,7 +187,7 @@
       <para>The most recent hotkey files that you have accessed via a save or open will be listed on the <menuchoice> <guimenu>File</guimenu> <guimenuitem>Recent Files</guimenuitem> </menuchoice> menu.  These filenames can be selected directly for one-click access that recently-used hotkey files.  To adjust the number of files that are displayed, use the <menuchoice> <guimenu>File</guimenu> <guimenuitem>Preferences</guimenuitem> </menuchoice> menu.  Four is the default.</para>
     </sect2>
     <sect2><title>The Holding Tank</title>
-      <para>Somewhere in a netherworld between the search box and hotkeys exists the Holding Tank.  The Holding Tank can be accessed via the <menuchoice> <guimenu>Hotkeys</guimenu> <guimenuitem>Show Holding Tank</guimenuitem> </menuchoice> menu choice or by pressing <keycombo action='simul'> <keycap>Control</keycap> <keycap>T</keycap></keycombo>.  You can drag songs to it, like with the Hotkeys window.  Unlike the Hotkeys window, though, you can have an unlimited number of songs in there at any time, but you can't get one-button access to playing those songs, nor can you save the contents of the Holding Tank to a file.
+      <para>Somewhere in a netherworld between the search box and hotkeys exists the Holding Tank.  The Holding Tank can be accessed via the <menuchoice> <guimenu>Hotkeys</guimenu> <guimenuitem>Show Holding Tank</guimenuitem> </menuchoice> menu choice or by pressing <keycombo action='simul'> <keycap>Control</keycap> <keycap>T</keycap></keycombo>.  You can drag songs to it, like with the Hotkeys window.  Unlike the Hotkeys window, though, you can have an unlimited number of songs in there at any time, but you can't get one-button access to playing those songs.  New in Mr. Voice 1.10, you can save and load the contents of Holding Tanks to a file, just like hotkeys.  Find those options under the <menuchoice><guimenu>File</guimenu></menuchoice> menu.
       <figure>
         <title>The Holding Tank window</title>
         <mediaobject>
@@ -183,10 +200,9 @@
         </mediaobject>
       </figure> 
       </para>
-      <para>You populate the Holding Tank by dragging and dropping songs from the search results box onto it.  The items in the Holding Tank will appear in the order you add them - there is currently no way to reorder them.</para>
+      <para>You populate the Holding Tank by dragging and dropping songs from the search results box onto it.  The items in the Holding Tank will appear in the order you add them.  To reorder the songs within the Holding Tank, highlight the song you want to move and press the <guibutton>Up Arrow</guibutton> or <guibutton>Down Arrow</guibutton> buttons to move it up and down in the list.</para>
       <para>To play a song from the Holding Tank, you can either double-click the song in the Holding Tank window, or single-click the song and press the <guibutton>Play</guibutton> button.</para>
       <para>To remove a song from the holding tank, click on the name of the song, then press the <guibutton>Clear Selected</guibutton> button.  You can press the <keycap>Control</keycap> key while clicking to select more than one song, then use the <guibutton>Clear Selected</guibutton> button to clear all selected songs.</para>
-      <para>To reorder the songs in the Holding Tank, select a song and press the up or down arrow icons in the tank to move the song up or down in the list.</para>
     </sect2>
   </sect1>
   
