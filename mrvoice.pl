@@ -16,8 +16,8 @@ use MPEG::MP3Info;
 #              http://www.comedyworx.com/
 # CVS INFORMATION:
 #	LAST COMMIT BY AUTHOR:  $Author: minter $
-#	LAST COMMIT DATE (GMT): $Date: 2001/10/29 21:44:53 $
-#	CVS REVISION NUMBER:    $Revision: 1.72 $
+#	LAST COMMIT DATE (GMT): $Date: 2001/10/29 21:51:13 $
+#	CVS REVISION NUMBER:    $Revision: 1.73 $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -323,6 +323,7 @@ sub add_category
       {
 	clear_categories_menu();
 	build_categories_menu();
+	$status = "Added category";
         infobox("Success","Category successfully added.");
       }
     }
@@ -382,8 +383,8 @@ sub delete_category
       {
         clear_categories_menu();
         build_categories_menu();
-        infobox ("Success","Category $del_cat has been deleted.");
         $status = "Deleted category";
+        infobox ("Success","Category $del_cat has been deleted.");
       }
     }
   }
@@ -1038,6 +1039,7 @@ sub do_search
 
 sub build_categories_menu
 {
+  $catmenu->configure(-tearoff=>1);
   $catmenu->radiobutton(-label=>"Any category",
                         -value=>"Any",
                         -variable=>\$category);
@@ -1274,7 +1276,7 @@ $catmenubutton=$searchframe->Menubutton(-text=>"Choose Category",
                                         -relief=>'raised',
                                         -indicatoron=>1)->pack(-side=>'left',
                                                                -anchor=>'n');
-$catmenu = $catmenubutton->menu(-tearoff => 1);
+$catmenu = $catmenubutton->menu();
 $catmenubutton->configure(-menu=>$catmenu);
 build_categories_menu();
 
