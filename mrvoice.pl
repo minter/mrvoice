@@ -46,7 +46,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.300 2004/01/16 20:03:45 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.301 2004/01/19 20:04:40 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2171,8 +2171,8 @@ sub edit_preferences
 
 sub edit_song
 {
-    @selected = $mainbox->curselection();
-    $count    = $#selected + 1;
+    my (@selected) = $mainbox->curselection();
+    $count = $#selected + 1;
     if ( $count == 1 )
     {
 
@@ -2442,8 +2442,8 @@ sub edit_song
 
 sub delete_song
 {
-    my @selection = $mainbox->curselection();
-    my $count     = $#selection + 1;
+    my (@selection) = $mainbox->curselection();
+    my $count = $#selection + 1;
     my @ids;
     my $index;
     foreach $index (@selection)
@@ -2513,7 +2513,7 @@ sub delete_song
 
 sub show_about
 {
-    $rev = '$Revision: 1.300 $';
+    $rev = '$Revision: 1.301 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -2809,9 +2809,10 @@ sub move_tank
 {
 
     # Blatantly cribbed from Mastering Perl/Tk's Tk::NavListbox example
-    my $lb        = $tankbox;
-    my $direction = $_[0];
-    my $index     = $lb->curselection;
+    my $lb          = $tankbox;
+    my $direction   = $_[0];
+    my (@selection) = $lb->curselection;
+    my $index       = $selection[0];
 
     # Sanity checks
     return if ( $index == 0 && $direction == -1 );
@@ -3209,7 +3210,7 @@ sub play_mp3
         }
 
         # We only care about playing one song
-        my @selection = $box->curselection();
+        my (@selection) = $box->curselection();
         my $id = get_song_id( $box, $selection[0] );
         if ($id)
         {
@@ -3633,9 +3634,9 @@ sub Hotkey_Drop
         $status = "Can't drop hotkey - hotkeys locked";
         return;
     }
-    my ($fkey_var) = @_;
-    my $widget     = $current_token->parent;
-    my @selection  = $widget->curselection();
+    my ($fkey_var)  = @_;
+    my $widget      = $current_token->parent;
+    my (@selection) = $widget->curselection();
     my $id       = get_song_id( $widget, $selection[0] );
     my $filename = get_filename($id);
     my $title    = get_title($id);
@@ -3648,7 +3649,7 @@ sub Tank_Drop
 {
     my ($dnd_source) = @_;
     my $parent       = $dnd_source->parent;
-    my @indices      = $parent->curselection();
+    my (@indices)    = $parent->curselection();
     foreach $index (@indices)
     {
         my $entry = $parent->get($index);
