@@ -35,7 +35,7 @@ use File::Temp qw/ tempfile tempdir /;
 use Cwd 'abs_path';
 use Getopt::Long;
 use XMLRPC::Lite;
-use MIME::Base64 qw(encode_base64);
+use MIME::Base64 qw(decode_base64 encode_base64);
 use Digest::MD5 qw(md5_hex);
 
 use subs
@@ -2019,8 +2019,18 @@ sub add_new_song
         $addsong_title, $addsong_artist,   $addsong_info,
         $addsong_cat,   $addsong_filename, $addsong_publisher
     );
-    if ( $addsong_filename = shift )
+    my $arg = shift;
+    if ( $arg && ( ref $arg eq "HASH" ) )
     {
+        $addsong_title     = $arg->{title};
+        $addsong_artist    = $arg->{artist};
+        $addsong_info      = $arg->{info};
+        $addsong_filename  = $arg->{filename};
+        $addsong_publisher = $arg->{publisher};
+    }
+    elsif ( $arg && ( !ref $arg ) )
+    {
+        $addsong_filename = $arg;
         ( $addsong_title, $addsong_artist ) =
           get_title_artist($addsong_filename);
     }
@@ -3910,8 +3920,8 @@ sub do_exit
 
 sub search_online
 {
-    print "My arguments are @_\n";
-    my $win  = shift;
+    my $listbox = shift;
+    $listbox->delete('all');
     my $term = shift;
     my $xmlrpc;
     unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
@@ -3930,8 +3940,6 @@ sub search_online
     );
 
     my $result = $search_call->result;
-    print "DEBUG: My result is $result\n";
-    print "That array is @$result\n";
 
     if ( !$result )
     {
@@ -3943,14 +3951,79 @@ sub search_online
 
     foreach my $row (@$result)
     {
-        print "ROW is $row\n";
-        $mainbox->add(
+        $listbox->add(
             $row->{id},
             -data => $row->{id},
             -text => $row->{string}
         );
 
     }
+
+}
+
+sub online_download
+{
+    my $listbox = shift;
+    my $xmlrpc;
+
+    my @selection = $listbox->info('selection');
+    if ( scalar @selection == 0 )
+    {
+        $status = "No song selected to upload";
+        return;
+    }
+    my $index = $selection[0];
+    my $id    = $listbox->info( 'data', $index );
+
+    unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
+    {
+        $status = "Could not initialize XMLRPC";
+        return;
+    }
+
+    $mw->Busy();
+    my $download_call = $xmlrpc->call(
+        'download_song',
+        {
+            online_key => $config{online_key},
+            song_id    => $id,
+        }
+    );
+
+    my $result = $download_call->result;
+    $mw->Unbusy();
+
+    if ( !$result )
+    {
+        chomp( my $error = $download_call->faultstring );
+        infobox( $mw, "XMLRPC download error", $error );
+        $status = "XMLRPC download error";
+        return;
+    }
+
+    my $temp_dir = tempdir( CLEANUP => 1 );
+    open( my $temp_fh, ">", "$temp_dir/$result->{filename}" ) or die;
+
+    my $bindata = decode_base64( $result->{encoded_data} );
+    my $md5     = md5_hex($bindata);
+    if ( $result->{md5} ne $md5 )
+    {
+        infobox(
+            $mw,
+            "File checksum error",
+            "The MD5 checksum of the file did not match the online copy.  There may have been an error downloading the file."
+        );
+        $status = "XMLRPC file checksum error";
+        return;
+    }
+    else
+    {
+        print $temp_fh $bindata;
+        close($temp_fh);
+    }
+
+    $result->{filename} = "$temp_dir/$result->{filename}";
+    add_new_song($result);
 
 }
 
@@ -3964,14 +4037,13 @@ sub online_search_window
         print "The online search window does not exist, so we create it\n"
           if $debug;
         print "Creating toplevel\n" if $debug;
-        $onlinewin = $mw->Toplevel();
+        $onlinewin = $mw->Toplevel( -title => 'Mr. Voice Online Search' );
         $onlinewin->withdraw();
         $onlinewin->Icon( -image => $icon );
         bind_hotkeys($onlinewin);
 
         my $searchframe =
-          $onlinewin->Frame()
-          ->pack( -expand => 1, -fill => 'x', -side => 'top' );
+          $onlinewin->Frame()->pack( -fill => 'x', -side => 'top' );
         $searchframe->Label( -text => 'Search any field for ' )
           ->pack( -side => 'left' );
         $searchframe->Entry(
@@ -3979,13 +4051,33 @@ sub online_search_window
             -textvariable => \$online_search_term
         )->pack( -side => 'left' );
 
+        my $buttonframe =
+          $onlinewin->Frame()->pack( -fill => 'x', -side => 'bottom' );
+        my $stopbutton = $buttonframe->Button(
+            -text    => "Stop Now",
+            -command => \&stop_mp3
+        )->pack( -side => 'right' );
+        $stopbutton->configure(
+            -bg               => 'red',
+            -activebackground => 'tomato3'
+        );
+
+        my $addbutton = $buttonframe->Button(
+            -text    => "Download/Add",
+            -command => sub { online_download($onlinebox) }
+        )->pack( -side => 'left' );
+        $addbutton->configure(
+            -bg               => 'dodgerblue',
+            -activebackground => 'royalblue'
+        );
+
         $onlinebox = $onlinewin->Scrolled(
             'HList',
             -scrollbars       => 'osoe',
             -background       => 'white',
             -selectbackground => 'navy',
             -selectforeground => 'white',
-            -width            => 100,
+            -width            => 70,
             -selectmode       => "extended"
           )->pack(
             -fill   => 'both',
@@ -4001,10 +4093,13 @@ sub online_search_window
                 $online_search_term = undef;
             }
         )->pack( -side => 'top' );
-
-        my $buttonframe =
-          $onlinewin->Frame()
-          ->pack( -fill => 'x', -expand => 1, -side => 'bottom' );
+        $onlinewin->bind(
+            "<Key-Return>",
+            sub {
+                search_online( $onlinebox, $online_search_term );
+                $online_search_term = undef;
+            }
+        );
 
         $onlinewin->update();
         $onlinewin->deiconify();
