@@ -8,25 +8,24 @@
    # the Mr. Voice mp3s.  It must be writable by the user that your 
    # web server is running as.  This will be prepended to the filename
    # from the database result, so plan accordingly.
-   $path = "/home/minter/html/csz";
+   $path = "/PATH/TO/MP3s";
  
    # These four options set the name, hostname, username, and password for
    # your database.
    # $database_username must have INSERT access on the mrvoice 
    # database/tables.
-   $database = "comedysportz";
+   $database = "DBNAME";
    $database_host = "localhost";
-   $database_username = "mrvoice";
-   $database_password = "howie404";
+   $database_username = "USERNAME";
+   $database_password = "PASSWORD";
 
-   # CVS ID: $Id: mrvoice-add.php,v 1.2 2001/02/16 21:45:28 minter Exp $
+   # CVS ID: $Id: mrvoice-add.php,v 1.3 2001/02/21 03:06:16 minter Exp $
 ?>
 
 <TITLE>Mr. Voice MP3 Database Insertion</TITLE>
 <BODY BGCOLOR=#FFFFFF>
 <H1>Add a song to the Mr. Voice Database</H1>
-<P>This is an online version of my <a href=http://www.greatamericancomedy.com/csz/>ComedySportz-Raleigh</A> Mr. Voice MP3 Database.  You can search for songs in various categories and use the MP3s for your own neferious purposes.
-<P>The "Extra Info." modifier is a companion to whichever category you choose to search.  For the "Game" category, it's the name of the game.  For the "Theme/Style" category, it's the type of style.  Etc.
+<P>Use this form to add songs to the Mr. Voice database.
 <HR>
   
 <FORM ENCTYPE="multipart/form-data" ACTION="<? print $PHP_SELF ?>" METHOD=POST>
@@ -81,7 +80,7 @@
     {
       $filename = $title;
     }
-    $filename = ereg_replace ("[^A-Za-z\-]","",$filename);
+    $filename = ereg_replace ("[^A-Za-z0-9\-]","",$filename);
 
     if (! file_exists("$path/$filename.mp3"))
     {
@@ -112,7 +111,7 @@
 
     }
         
-    $query = "INSERT INTO mrvoice VALUES (0,'$title','$artist','$category','$extrainfo','/mp3/$filename',NULL)";
+    $query = "INSERT INTO mrvoice VALUES (0,'$title','$artist','$category','$extrainfo','$filename',NULL)";
 
     if (!($dbresult = mysql_query($query,$dblink)))
     {
@@ -129,4 +128,5 @@
 ?>
 
 <HR>
-<I>Designed and maintained by H. Wade Minter &lt<a href="mailto:minter@lunenburg.org?subject=Mr. Voice">minter@lunenburg.org</A>&gt.  Did you like this database?  Find it useful?  Drop me a line!</I>
+<I>Designed by <a href=http://www.lunenburg.org/>H. Wade Minter</A> &lt<a href="mailto:minter@lunenburg.org">minter@lunenburg.org</A>&gt.
+
