@@ -1,3 +1,6 @@
+Sat  Sep 18  2004	H. Wade Minter (minter@lunenburg.org)
+     * Add a --config flag to point to an alternate mrvoicerc.
+
 Fri  Sep 17  2004	H. Wade Minter (minter@lunenburg.org)
      * Get the move_tank function working with the HList.  Thanks to 
        Kyle at sickduck.org for the help.

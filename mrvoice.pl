@@ -125,12 +125,15 @@ if ( $^O eq "MSWin32" )
     splice( @{$mp3types}, 4, 0, @{$wmaref} );
 }
 
+my $logfile;
+my $userrcfile;
+my $result = GetOptions( 'logfile:s' => \$logfile, 'config=s' => \$userrcfile );
+
 # Check to see if we're on Windows or Linux, and set the RC file accordingly.
 if ( "$^O" eq "MSWin32" )
 {
-    $rcfile = "C:\\mrvoice.cfg";
+    $rcfile = ( $userrcfile eq "" ) ? "C:\\mrvoice.cfg" : $userrcfile;
     my $logfile = "unset";
-    my $result = GetOptions( 'logfile:s' => \$logfile );
     if ( ( $logfile eq "" ) || ( $logfile ne "unset" ) )
     {
         $logfile = ( $logfile eq "" ) ? "C:/mrvoice.log" : $logfile;
@@ -171,9 +174,8 @@ if ( "$^O" eq "MSWin32" )
 else
 {
     my $homedir = get_homedir();
-    $rcfile = "$homedir/.mrvoicerc";
+    $rcfile = ( $userrcfile eq "" ) ? "$homedir/.mrvoicerc" : $userrcfile;
     my $logfile = "unset";
-    my $result = GetOptions( 'logfile:s' => \$logfile );
     if ( ( $logfile eq "" ) || ( $logfile ne "unset" ) )
     {
         $logfile = ( $logfile eq "" ) ? "$homedir/mrvoice.log" : $logfile;
