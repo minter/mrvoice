@@ -2943,7 +2943,7 @@ sub show_about
 
     $about_lb->insert( 'end', "Perl Version: $]" );
     $about_lb->insert( 'end', "Operating System: $^O" );
-    foreach my $module (sort @modules)
+    foreach my $module ( sort @modules )
     {
         no strict 'refs';
         my $versionstring = "${module}::VERSION";
@@ -3067,7 +3067,7 @@ sub import_bundle
         -command => sub {
             $filename = $box1->getOpenFile(
                 -title      => 'Choose the bundle file to add',
-                -filetypes  => [ ['Zip Files', '.zip' ] ],
+                -filetypes  => [ [ 'Zip Files', '.zip' ] ],
                 -initialdir => ( $^O eq "MSWin32" ) ? "C:\\" : get_homedir()
             );
         }
@@ -3520,7 +3520,7 @@ sub list_hotkeys
 
 sub update_time
 {
-    print "Updating song times\n";
+    print "Updating song times and MD5 sums\n" if $debug;
     $mw->Busy( -recurse => 1 );
     print "Mainwindow now busy\n" if $debug;
     my $percent_done = 0;
@@ -3530,8 +3530,8 @@ sub update_time
     print "Done\n" if $debug;
     $progressbox->withdraw();
     $progressbox->Icon( -image => $icon );
-    $progressbox->title("Time Update");
-    $progressbox->Label( -text => "Time Update Status (Percentage)" )
+    $progressbox->title("Time/MD5 Update");
+    $progressbox->Label( -text => "Time/MD5 Update Status (Percentage)" )
       ->pack( -side => 'top' );
     my $pb = $progressbox->ProgressBar( -width => 150 )->pack( -side => 'top' );
     my $progress_frame1 = $progressbox->Frame()->pack( -side => 'top' );
@@ -3551,26 +3551,36 @@ sub update_time
     print "Done\n" if $debug;
 
     my $count        = 0;
-    my $query        = "SELECT id,filename,time FROM mrvoice";
+    my $query        = "SELECT id,filename,time,md5 FROM mrvoice";
     my $arrayref     = $dbh->selectall_arrayref($query);
     my $numrows      = scalar @$arrayref;
     my $update_query =
-      "UPDATE mrvoice SET time=?, modtime=(SELECT strftime('%s','now')) WHERE id=?";
+      "UPDATE mrvoice SET time=?, modtime=(SELECT strftime('%s','now')), md5=? WHERE id=?";
     my $update_sth = $dbh->prepare($update_query);
 
     while ( my $table_row = shift @$arrayref )
     {
         $count++;
-        my ( $id, $filename, $time ) = @$table_row;
+        my ( $id, $filename, $time, $md5 ) = @$table_row;
         next if ( !-r catfile( $config{filepath}, $filename ) );
         my $newtime =
           get_songlength( catfile( $config{'filepath'}, $filename ) );
-        if ( $newtime ne $time )
+        my $newmd5;
+        {
+            local $/ = undef;
+            open( my $fh, "<", catfile( $config{filepath}, $filename ) );
+            my $bindata = <$fh>;
+            $newmd5 = md5_hex($bindata);
+        }
+        if ( ( $newtime ne $time ) || ( $newmd5 ne $md5 ) )
         {
             print
               "Song ID $id has database time $time but file time $newtime, so updating\n"
               if $debug;
-            $update_sth->execute( $newtime, $id );
+            print
+              "Song ID $id has database md5 $md5 but file md5 $newmd5, so updating\n"
+              if $debug;
+            $update_sth->execute( $newtime, $newmd5, $id );
             $updated++;
         }
         $percent_done = int( ( $count / $numrows ) * 100 );
@@ -3582,7 +3592,7 @@ sub update_time
     $progressbox->update();
     $mw->Unbusy( -recurse => 1 );
     print "Updated $updated files\n" if $debug;
-    $status = "Updated times on $updated files";
+    $status = "Updated times/md5s on $updated files";
 }
 
 sub get_info_from_id
@@ -4812,16 +4822,24 @@ sub Tank_Drop
 
 sub create_new_database
 {
-    my $dbfile = shift;
-    my $create_dbh;
+    my $dbfile     = shift;
+    my $create_dbh = shift;
     my @queries;
-    print "Connecting to dbi:SQLite:dbname=$dbfile\n" if $debug;
-    if (
-        !( $create_dbh = DBI->connect( "dbi:SQLite:dbname=$dbfile", "", "" ) ) )
+
+    unless ($create_dbh)
     {
-        die "Could not create new database file $dbfile via DBI";
+        print "Connecting to dbi:SQLite:dbname=$dbfile\n" if $debug;
+        if (
+            !(
+                $create_dbh =
+                DBI->connect( "dbi:SQLite:dbname=$dbfile", "", "" )
+            )
+          )
+        {
+            die "Could not create new database file $dbfile via DBI";
+        }
+        print "Connected to dbi:SQLite:dbname=$dbfile\n" if $debug;
     }
-    print "Connected to dbi:SQLite:dbname=$dbfile\n" if $debug;
 
     my $query;
     while ( my $line = <DATA> )
@@ -5857,6 +5875,25 @@ $mw->deiconify();
 $mw->raise();
 print "Deiconified and raised, running MainLoop now\n" if $debug;
 
+# Check for 2.1 upgrade
+unless ( $dbh->do("SELECT md5 FROM mrvoice LIMIT 1") )
+{
+    print "Need to upgrade to 2.1 schema (md5)\n" if $debug;
+    copy( $config{db_file}, "$config{db_file}.bak" );
+    $dbh->do("ALTER TABLE mrvoice RENAME TO mrvoice_bak")       or die;
+    $dbh->do("ALTER TABLE categories RENAME TO categories_bak") or die;
+    create_new_database( $config{db_file}, $dbh ) or die;
+    $dbh->do(
+        "INSERT INTO mrvoice (id, title, artist, category, info, filename, time, modtime,publisher) SELECT * FROM mrvoice_bak"
+      )
+      or die;
+    update_time();
+    $dbh->do("DROP TABLE mrvoice_bak")                          or die;
+    $dbh->do("DROP TABLE categories")                           or die;
+    $dbh->do("ALTER TABLE categories_bak RENAME TO categories") or die;
+    print "2.1 schema upgrade complete\n" if $debug;
+}
+
 foreach my $file ( glob( catfile( $config{plugin_dir}, "*.pl" ) ) )
 {
     require $file;
@@ -5877,7 +5914,8 @@ CREATE TABLE mrvoice (
    filename varchar(255) NOT NULL,
    time varchar(10),
    modtime timestamp(6),
-   publisher varchar(16)
+   publisher varchar(16),
+   md5 varchar(32)
 );
 
 CREATE TABLE categories (
