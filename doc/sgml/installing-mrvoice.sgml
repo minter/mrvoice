@@ -12,8 +12,8 @@
       <para>The following components are required to run Mr. Voice under Windows 95 or higher.
       <itemizedlist>
         <listitem> <para>An MP3 player.  <ulink url="http://www.winamp.com/">WinAmp</ulink> version 5 is recommended.  If you plan on playing Windows Media Audio (WMA) files, you will need at least WinAmp Version 5, Full install (not "Lite")</para></listitem>
-        <listitem><para>The <ulink url="http://www.kostaa.com/winamp/index.html">httpQ plugin</ulink> for WinAmp.  <emphasis>Optional, but recommended</emphasis></para></listitem>
-        <listitem><para>The <ulink url="http://www.lunenburg.org/mrvoice/files/">Ogg Vorbis plugin</ulink> for WinAmp.  <emphasis>Optional, but recommended</emphasis></para></listitem>
+        <listitem><para>The <ulink url="http://www.kostaa.com/winamp/index.html">httpQ plugin</ulink> for WinAmp.  <emphasis>Optional, but recommended, since it allows you to fade-stop songs.</emphasis></para></listitem>
+        <listitem><para>The <ulink url="http://www.lunenburg.org/mrvoice/files/">Ogg Vorbis plugin</ulink> for WinAmp.  <emphasis>Optional, but required if you want to play .ogg files.</emphasis></para></listitem>
         <listitem><para>The <ulink url="http://www.rarewares.org/mp4.html">AAC plugin</ulink> for WinAmp.  <emphasis>Optional, but required if you want to use AAC/MP4 files</emphasis></para></listitem>
       </itemizedlist>
       </para>
@@ -51,7 +51,7 @@
                 <para><ulink url="http://www.cpan.org/modules/by-module/Time/">Time::HiRes</ulink></para>
               </listitem>
               <listitem>
-                <para><ulink url="http://www.cpan.org/modules/by-module/Tk/">Tk</ulink>804.x (Version 800.x is unsupported as of Mr. Voice version 1.10)</para>
+                <para><ulink url="http://www.cpan.org/modules/by-module/Tk/">Tk</ulink> version 804.x (Version 800.x is unsupported as of Mr. Voice version 1.10)</para>
               </listitem>
               <listitem>
                 <para><ulink url="http://www.cpan.org/modules/by-module/Tk/">Tk::ProgressBar::Mac</ulink></para>
@@ -73,13 +73,13 @@
   <sect1><title>Installation Steps</title>
     <para>This will help you get Mr. Voice up and running on either a Unix or Windows system.</para>
     <sect2><title>Upgrading to Mr. Voice 2.0</title>
+      <para>If you are installing Mr. Voice on a new machine, one which does not contain an existing Mr. Voice 0.x or 1.x installation, skip these steps and go straight to the installation section.</para>
       <para>Mr. Voice 2.0 involves a migration from the old database backend (MySQL) used in Mr. Voice 1.10.6 and before, to a new database backend (SQLite).  In order to migrate your data from the old database to the new one, you need to run the migration utility.</para>
       <para>Windows users should double-click on the <filename>upgrade20.exe</filename> file.  It will open up a DOS box.  Follow the instructions on-screen and, if there are no errors, it will create the new Mr. Voice database file and update your configuration to point to it.  If there are errors, your MySQL database will not be modified, so you can always use 1.10.6 or lower as usual while I'm working on the problem.</para>
       <para>Unix users should run the <filename>tools/upgrade20.pl</filename> script, and it will do the same as in the Windows instructions.</para>
       <para>Once you are comfortable that the upgrade worked properly and that you're set up in Mr. Voice 2.0, you can delete your old MySQL installation to save disk space and system resources.</para>  
       <para>Windows users can disable the MySQL service, while keeping the software installed, by right-clicking on the stoplight in the system tray and choosing <menuchoice> <guimenu>WinNT</guimenu> <guimenuitem>Stop Service</guimenuitem> </menuchoice>.  This will leave your old data alone, but the MySQL service will not be running and using system resources.  To completely remove MySQL from your system, go to Add/Remove Programs, choose MySQL, and hit "Remove".  Then, you can delete the <filename>C:\mysql</filename> directory.  Once that is done, MySQL is gone, along with your old database.</para>
       <para>For Unix users, you may want to go into the MySQL command shell and "drop database mrvoice", and/or uninstall MySQL from your system completely (if it was only being used for Mr. Voice, of course)</para>
-      <para>If you are installing Mr. Voice 2.0 on a new system for the first time, you do <emphasis>not</emphasis> need to do these upgrade steps</para>
     </sect2>
     <sect2><title>Unix Installation Instructions</title>
       <itemizedlist>
@@ -102,6 +102,7 @@
           <listitem><para>Under the General tab, put in a password (your choosing), leave the port at 4800, and check the box to start the service automatically.  Hit the Apply button, then the x at the top-right.  Close the preferences, and exit from WinAmp.  <emphasis>Remember the password you just set up - you will need it later.</emphasis></para></listitem>
         </itemizedlist>
       </para>
+      <para>Any other WinAmp plugins (OGG, AAC, etc.) should be installed in the default way following the instructions provided with the package.</para>
       <sect3><title>Installing the Mr. Voice software on Windows</title>
         <para>Unzip the <filename>mrvoice-current.zip</filename> file to your desired location.  It will create a directory named <filename>mrvoice-x.x</filename> under the location that you choose.  These instructions will assume that you unzip it to <filename>C:\</filename>, creating the <filename>C:\mrvoice-x.x\</filename> directory, where x.x is the version number.</para>
         <para>The first time you run Mr. Voice on a particular computer, you will need to set up the configuration.   With later releases, you can just unzip the new version, and skip these remaining steps.</para> 
@@ -114,6 +115,7 @@
             <listitem><para>Database File: <filename>C:\MRVOICE.DB</filename></para></listitem>
           </itemizedlist>
         </para>
+        <para>After doing the initial setup, Mr. Voice will exit.  Restart it, and it will initialize your database and run the program.</para>
       </sect3>
     </sect2>
   </sect1>
