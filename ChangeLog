@@ -1,3 +1,7 @@
+Fri  Mar  5 2004	H. Wade Minter (minter@lunenburg.org)
+     * Rework the 1.10 database update to be a little nicer, including
+       giving the user a chance to back up their database.
+
 Thu  Mar  4 2004	H. Wade Minter (minter@lunenburg.org)
      * Give the main or Tank listboxes focus() when they're clicked on. 
        Allows for keyboard navigation.
@@ -580,4 +584,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.122 2004/03/04 22:19:28 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.123 2004/03/05 16:43:09 minter Exp $
