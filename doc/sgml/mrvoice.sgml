@@ -4,7 +4,7 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.17 2001/12/05 16:23:27 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.18 2002/01/27 21:22:25 minter Exp $ 
 -->
 <book status="draft">
 
@@ -58,6 +58,7 @@
         <listitem><para>The <guimenu>Recent Files</guimenu> menu is now a sub-menu off of the <guimenu>File</guimenu> menu, instead of just hanging off the end of <guimenu>File</guimenu>.</para></listitem>
         <listitem><para>Exiting Mr. Voice now also closes the MP3 player.</para></listitem>
 	<listitem><para>There is a "holding tank" to store songs for later use.</para></listitem>
+	<listitem><para>Mr. Voice is friendler to audio file formats other than MP3.  You can use WAV files, OGG files, etc.</para></listitem>
       </itemizedlist>
     </para>
   </sect1>
