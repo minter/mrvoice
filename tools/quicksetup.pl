@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# $Id: quicksetup.pl,v 1.1 2003/08/21 20:42:36 minter Exp $
+# $Id: quicksetup.pl,v 1.2 2003/08/22 13:38:34 minter Exp $
 
 use warnings;
 use DBI;
@@ -7,6 +7,20 @@ use Cwd;
 use Win32::FileOp;
 
 my $error = 0;
+
+sub do_exit
+{
+  $exitcode = $_[0];
+  print "\nPress Enter to exit.\n";
+  my $exit = <STDIN>;
+  exit($exitcode);
+}
+  
+if ($^O ne "MSWin32")
+{
+  print "This utility can only be run on Windows systems\n";
+  do_exit(1);
+}
 
 print <<EOF;
 This utility will set up a fresh installation of Mr. Voice on your system.
@@ -22,7 +36,7 @@ chomp ($choice);
 unless ($choice =~ /^y/i)
 {
   print "Setup cancelled\n";
-  exit (1);
+  do_exit (1);
 }
 
 print "\n--> Checking for WinAmp and MySQL <--\n\n";
@@ -58,7 +72,7 @@ Install and configure them first, then come back and run this utility again.
 If you need to install them in a nonstandard location for some reason, you
 will need to set up Mr. Voice manually according to the documentation.
 EOF
-  exit (2);
+  do_exit (2);
 }
 
 print "\n\n--> Setting up the database <--\n\n";
@@ -72,7 +86,7 @@ perchance set up MySQL before?  If so, you will need to manually set up
 Mr. Voice as described in the documentation - this quick setup script will
 not work.
 EOF
-  exit (3);
+  do_exit (3);
 }
 else
 {
@@ -84,7 +98,7 @@ if (! ($dbh->do("UPDATE user SET Password=password('mrvoice') WHERE User='root'"
 {
   print "FAILED\n";
   print "Could not set the superuser password.  MySQL error follows:\n$DBI::errstr\n";
-  exit (4);
+  do_exit (4);
 }
 else
 { 
@@ -96,7 +110,7 @@ if (! ($dbh->do("CREATE DATABASE mrvoice")) )
 {
   print "FAILED\n";
   print "Could not create the database.  MySQL error follows:\n$DBI::errstr\n";
-  exit (5);
+  do_exit (5);
 }
 else
 { 
@@ -108,7 +122,7 @@ if (! ($dbh->do("GRANT ALL ON mrvoice.* TO mrvoice\@localhost IDENTIFIED BY 'mrv
 {
   print "FAILED\n";
   print "Could not create the DB user.  MySQL error follows:\n$DBI::errstr\n";
-  exit (6);
+  do_exit (6);
 }
 else
 { 
@@ -125,7 +139,7 @@ if (! -r $path )
 {
   print "FAILED\n";
   print "Could not read the Mr. Voice schema file at $path\n";
-  exit (8);
+  do_exit (8);
 }
 else
 { 
@@ -139,7 +153,7 @@ if ($result ne "" )
 {
   print "FAILED\n";
   print "Could not import Mr. Voice schema.  Error follows:\n$result\n";
-  exit (9);
+  do_exit (9);
 }
 else
 { 
@@ -180,6 +194,3 @@ print "MP3 Directory: C:\\mp3\n";
 print "Hotkey Directory: C:\\hotkeys\n";
 print "\nYou can adjust non-password things by going to File->Preferences within\nMr. Voice\n";
 print "At this point, Mr. Voice should be configured.  You may want to add the httpq\nplugin (if you haven't already) and set a password in the preferences.\nOtherwise, run mrvoice.exe and start Voicing!\n";
-print "\nPress Enter to exit.\n";
-my $exit = <STDIN>;
-exit(0);
