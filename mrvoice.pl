@@ -14,7 +14,7 @@ use MPEG::MP3Info;
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.86 2001/11/15 03:19:54 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.87 2001/11/15 12:54:26 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -1386,18 +1386,22 @@ $searchframe->Label(-textvariable=>\$category)->pack(-side=>'left',
 $searchframe1=$mw->Frame()->pack(-side=>'top',
                                  -fill=>'x',
                                  -anchor=>'n');
-$searchframe1->Label(-text=>"where extra info contains ")->pack(-side=>'left',
-                                                               -anchor=>'n');
-$searchframe1->Entry(-textvariable=>\$cattext)->pack(-side=>'left',
-                                                    -anchor=>'n');
+$searchframe1->Label(-text=>"where extra info contains",
+                     -width=>25,
+                     -anchor=>'w')->pack(-side=>'left');
+$searchframe1->Entry(-textvariable=>\$cattext,
+                     -width=>20)->pack(-side=>'left');
 
 #####
 # Artist
 $searchframe2=$mw->Frame()->pack(-side=>'top',
                                  -fill=>'x',
                                  -anchor=>'n');
-$searchframe2->Label(-text=>"Artist contains ")->pack(-side=>'left');
-$searchframe2->Entry(-textvariable=>\$artist)->pack(-side=>'left');
+$searchframe2->Label(-text=>"Artist contains",
+                     -width=>25,
+                     -anchor=>"w")->pack(-side=>'left');
+$searchframe2->Entry(-textvariable=>\$artist,
+                     -width=>20)->pack(-side=>'left');
 #
 #####
 
@@ -1405,17 +1409,23 @@ $searchframe2->Entry(-textvariable=>\$artist)->pack(-side=>'left');
 # Title
 $searchframe3=$mw->Frame()->pack(-side=>'top',
                                 -fill=>'x');
-$searchframe3->Label(-text=>"Title contains   ")->pack(-side=>'left');
-$searchframe3->Entry(-textvariable=>\$title)->pack(-side=>'left');
+$searchframe3->Label(-text=>"Title contains",
+                     -width=>25,
+                     -anchor=>'w')->pack(-side=>'left');
+$searchframe3->Entry(-textvariable=>\$title,
+                     -width=>20)->pack(-side=>'left');
 #
 #####
 
 #####
-# Title
+# Any Field
 $searchframe4=$mw->Frame()->pack(-side=>'top',
                                 -fill=>'x');
-$searchframe4->Label(-text=>"OR any field contains   ")->pack(-side=>'left');
-$searchframe4->Entry(-textvariable=>\$anyfield)->pack(-side=>'left');
+$searchframe4->Label(-text=>"OR any field contains",
+                     -width=>25,
+                     -anchor=>'w')->pack(-side=>'left');
+$searchframe4->Entry(-textvariable=>\$anyfield,
+                     -width=>20)->pack(-side=>'left');
 #
 #####
 
