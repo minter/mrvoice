@@ -4,12 +4,12 @@
   <!ENTITY chapter3 SYSTEM "using-mrvoice.sgml">
 ]>
 <!-- 
-  CVS ID: $Id: mrvoice.sgml,v 1.29 2002/05/23 14:32:14 minter Exp $ 
+  CVS ID: $Id: mrvoice.sgml,v 1.30 2002/08/14 17:24:39 minter Exp $ 
 -->
 <book status="draft">
 
 <bookinfo>
-  <title>Mr. Voice 1.5.3 Installation and Reference Manual</title>
+  <title>Mr. Voice 1.6 Installation and Reference Manual</title>
   <author>
     <firstname>H. Wade</firstname><surname>Minter</surname>
     <affiliation>
@@ -56,6 +56,21 @@
 <preface>
   <title>What's New</title>
   <para>A quick reference to what's changed between versions.</para>
+  <sect1><title>What's new in Version 1.6</title>
+    <para>
+      <itemizedlist>
+        <listitem><para>Added a timer to show you how long database searches take.</para></listitem>
+        <listitem><para>Added advanced searching functions under the "Advanced Search" menu, allowing you to quickly see what songs have changed in a particular timespan.</para></listitem>
+        <listitem><para>Fixed a bug in the dynamic documents list, so that the same document won't show up twice in the list.</para></listitem>
+        <listitem><para>Strip leading and trailing whitespace from search terms, so that searches won't fail if you accidentally search for "Beatles " instead of "Beatles".</para></listitem>
+        <listitem><para>Added an "Edit Category" function, so you can edit the long, descriptive name of a category</para></listitem>
+        <listitem><para><keycombo action='simul'> <keycap>Control</keycap> <keycap>P</keycap> </keycombo> will now play the song selected in the Holding Tank, if the Holding Tank is the active window.  Suggested by Bill C. in Portland.</para></listitem>
+        <listitem><para>The Add Song box will now, if it finds an error, keep the stuff you've already entered and let you fix the error, rather than making you start over completely.  Suggested by Bill C. in Portland.</listitem></para>
+        <listitem><para>Added better handling for displaying the playing time of <ulink url="http://www.vorbis.com/">Ogg Vorbis</ulink> files under Linux.  Windows/ActivePerl doesn't have the Ogg::Vorbis module yet, so it's currently Linux-only.</para></listitem> 
+        <listitem><para>Added the option to use the <ulink url="http://www.csc.uvic.ca/~karvanit/">httpQ</ulink> WinAmp plugin.  If you install and configure the plugin (see Windows installation section), you can shift-click on the <guibutton>Stop</guibutton> button, or press <keycombo action='simul'> <keycap>Shift</keycap> <keycap>Escape</keycap> </keycombo>, and the currently-playing song will fade out and stop over a couple of seconds, instead of stopping abruptly.  <emphasis>This is a Windows/WinAmp-only feature.</emphasis>  Suggested by Randy in KC.</para></listitem> 
+      </itemizedlist>
+    </para>
+  </sect1>
   <sect1><title>What's new in Version 1.5.3</title>
     <para>
       <itemizedlist>
@@ -91,22 +106,6 @@
       </itemizedlist>
     </para>
   </sect1>
-
-  <sect1>
-    <title>What's New In Version 1.3</title>
-    <para>
-      <itemizedlist>
-        <listitem><para>There is now a <menuchoice> <guimenu>File</guimenu> <guimenuitem>Preferences</guimenuitem> </menuchoice> menu, where you can set up most configurable options for Mr. Voice.  This is now the preferred way to set up Mr. Voice.  You should <emphasis>NOT</emphasis> need to edit variables directly in <filename>mrvoice.pl</filename> any more.</para></listitem>
-	<listitem><para>Right-clicking on a song within the search results box will give you a quick-options menu, where you can choose to play, edit, or delete the selected song.</para></listitem>
-	<listitem><para>The Show Hotkeys box now displays the hotkey name and attached song in a side-by-side listing, intead of having the hotkey name above the song.  Suggested by K. Christie.</para></listitem>
-	<listitem><para>The <guibutton>Play</guibutton> button is now green, and the <guibutton>Stop</guibutton> button is now red.  Suggested by K. Christie.</para></listitem>
-	<listitem><para>You can now drag-and-drop songs from the search results box to the Show Hotkeys box, and have them assigned to a hotkey that way.  Suggested by L. Howard.</para></listitem>
-	<listitem><para>Windows pathnames can now be specified in "long form" (ie. C:\Program Files\My Files\Filename) - Mr. Voice figures out the short pathname automatically.</para></listitem>
-	<listitem><para>The category listing menu in the search box now has a lable to show you which category you've selected.  Suggested by K. Christie.</para></listitem>
-	<listitem><para>You can now set the number of items to keep on the "Dynamic Documents" list under the <guimenu>File</guimenu> menu with the Preferences option.</para></listitem>
-      </itemizedlist>
-    </para>
-  </sect1>
 </preface>
 
 &chapter1
@@ -118,10 +117,10 @@
 <appendix><title>Known Bugs and Issues</title>
   <para>The following items are known as bugs that need to be fixed and/or enhancements that should be made:
     <itemizedlist>
-      <listitem><para>There needs to be a way to edit categories.</para></listitem>
-      <listitem><para>The "last files accessed" menu should be smarter about recognizing if files that are already on the list are being accessed.  Right now, it'll just add another listing for the same file on the bottom of the list.</para></listitem>
       <listitem><para>The Holding Tank is still very gimpy - more work is needed to figure out how to best use it.</para></listitem>
-      <listitem><para>There needs to be an advanced search feature.</para></listitem>
+      <listitem><para>Display database-based information in the Hotkeys listing, instead of just the MP3 filename.</para></listitem>
+      <listitem><para>Drag-And-Drop between the Hotkeys listing and the Holding Tank.
+</para></listitem>
     </itemizedlist>
   </para>
 </appendix>
