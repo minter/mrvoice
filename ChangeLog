@@ -1,3 +1,11 @@
+Thu  Feb  7 2002	H. Wade Minter (minter@lunenburg.org)
+     * Changed the Add Song box to use color instead of *'s to denote
+       required fields.
+
+Wed  Feb  6 2002	H. Wade Minter (minter@lunenburg.org)
+     * Took a first stab at adding an icon for the program.  Maybe one
+       of these days Holly will draw me one that looks better.
+
 Tue  Feb  5 2002	H. Wade Minter (minter@lunenburg.org)
      * Minor change to the "Open File" box, so that it searches
        for both upper and lowercase in file extensions (*.mp3 and
@@ -192,4 +200,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.34 2002/02/05 20:05:10 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.35 2002/02/07 12:30:14 minter Exp $
