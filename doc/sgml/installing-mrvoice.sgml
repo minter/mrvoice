@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.12 2002/02/11 14:14:54 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.13 2002/04/16 00:32:20 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
@@ -21,9 +21,6 @@
             </listitem>
             <listitem>
               <para><ulink url="http://www.cpan.org/modules/by-module/DBD/">DBD </ulink> driver for your database (Msql-Mysql-modules if you're using MySQL)</para>
-            </listitem>
-            <listitem>
-              <para><ulink url="http://www.cpan.org/modules/by-module/Data/">Data-Dumper</ulink></para>
             </listitem>
             <listitem>
               <para><ulink url="http://www.cpan.org/modules/by-module/Tk/">Tk</ulink></para>
@@ -53,7 +50,7 @@
           <para>Unpack the <filename>mrvoice-x.x.tar.gz</filename> archive.  It will create a <filename>mrvoice-x.x</filename> directory.  The <filename>mrvoice.pl</filename> file is the only one needed to run the program (meaning that you can move <filename>mrvoice.pl</filename> to another location after you're done configuring it), but there are other files in the archive, such as the <filename>dbinit.sql</filename> database initilization script, documentation, licenses, etc.</para>
 	</listitem>
         <listitem>
-          <para>Compile and/or install any required software from above (perl modules, etc.).  This configuration is currently beyond the scope of this documentation - if you run into issues, feel free to email me or check the software's website. </para>
+          <para>Compile and/or install any required software from above (perl modules, etc.).  I will skip the software setup, assuming that if you're trying to run this on a Unix system, you're geeky enough to install the required stuff by yourself.  ;-)  If you run into issues, feel free to email me or check the software's website. </para>
         <para>Set up your database properly (set up a superuser account, etc.) and start it.  Some further tips are available in the Windows installation section.</para>
         </listitem>
         <listitem>
@@ -87,7 +84,7 @@ mysql>
     </sect2>
 
     <sect2><title>Windows Installation Instructions</title>
-      <para>First, install all of the supporting software.  Install WinAmp and ActivePerl the normal way, by double-clicking the installer icons and using the defaults provided.</para>
+      <para>First, download WinAmp, ActivePerl, and MySQL from their respective websites.  Install WinAmp and ActivePerl the normal way, by double-clicking the installer icons and using the defaults provided.</para>
       <sect3><title>Installing and Setting Up MySQL</title>
         <itemizedlist>
           <listitem>
@@ -100,10 +97,11 @@ mysql>
             <para>While you're messing with MySQL, it's a good time to set up your superuser password and create the database that you're going to use for Mr. Voice.  To do this, go to <filename>C:\mysql\bin\</filename> and run <filename>mysql.exe</filename>.  It will open a DOS window with a <prompt>MySQL></prompt> prompt.  At this prompt, enter <userinput>use mysql;</userinput>.</para>
           </listitem>
           <listitem>
-            <para>If that succeeds, run <userinput>update user set Password=password('<replaceable>YOUR_PASSWORD</replaceable>') where User='root';</userinput>.  This will set your superuser up to be username "root" with password <replaceable>YOUR_PASSWORD</replaceable>.  Run the command <userinput>flush privileges;</userinput> to have the changes take effect.</para>
+            <para>If that succeeds, run <userinput>update user set Password=password('<replaceable>YOUR_PASSWORD</replaceable>') where User='root';</userinput>.  This will set your superuser up to be username "root" with password <replaceable>YOUR_PASSWORD</replaceable>.  Run the command <userinput>flush privileges;</userinput> to have the changes take effect. <emphasis>Remember this password</emphasis> - if you lose it, you won't be able to administer your database in the future!</para>
           </listitem>
           <listitem>
-            <para>Finally, run <userinput>create database <replaceable>DATABASE_NAME</replaceable>;</userinput>, where <replaceable>DATABASE_NAME</replaceable> is the name of the database that you want to house the Mr. Voice tables.  The one I use is called "comedysportz", you can pick anything.  Bear in mind that the database name can't contain spaces or other weird characters - make it alphanumeric.</para>
+            <para>Run <userinput>create database <replaceable>DATABASE_NAME</replaceable>;</userinput>, where <replaceable>DATABASE_NAME</replaceable> is the name of the database that you want to house the Mr. Voice tables.  The one I use is called "comedysportz", you can pick anything.  Bear in mind that the database name can't contain spaces or other weird characters - make it alphanumeric.</para>
+	    <para>Finally, set up a normal user to access this database.  Run <userinput>grant all on <replaceable>DATABASE_NAME</replaceable>.* to <replaceable>USERNAME</replaceable>@localhost identified by '<replaceable>PASSWORD</replaceable>';</userinput>  Replacing <replaceable>USERNAME</replaceable> and <replaceable>PASSWORD</replaceable> with ones of your choosing.  Remember this username and password, they're the ones you will use when you configure Mr. Voice later.  For the purposes of this documentation, we will assume that you chose the username of "mrvoice" and password of "password" - your choices may vary.</para>
           </listitem>
           <listitem>
             <para>After you've done all of these steps, enter <userinput>\q</userinput> at the <prompt>MySQL></prompt> prompt.  For more information on MySQL, read the documentation included in the .ZIP file, or visit the MySQL website.</para>
@@ -118,9 +116,6 @@ mysql>
           </listitem>
           <listitem>
             <para>Enter <userinput>search mysql</userinput>.  At the <prompt>PPM></prompt> prompt, enter <userinput>install mysql</userinput> to install the MySQL module.</para>
-          </listitem>
-          <listitem>
-            <para>Enter <userinput>search dump</userinput>.  At the <prompt>PPM></prompt> prompt, enter <userinput>install Data-Dump</userinput> to install the Data::Dumper module.</para>
           </listitem>
           <listitem>
             <para>Enter <userinput>search Tk</userinput>.  At the <prompt>PPM></prompt> prompt, enter <userinput>install Tk</userinput> to install the Tk module.</para>
