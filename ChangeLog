@@ -1,5 +1,5 @@
 Thu  Mar 27 2003	H. Wade Minter (minter@lunenburg.org)
-     * Started rewrite of hotkey subsystem.
+     * Rewrote the hotkey subsystem to be a little more robust.
 
 Fri  Jan  3 2003	H. Wade Minter (minter@lunenburg.org)
      * Fixed a bug where invalid WAV files would crash the program.
@@ -396,4 +396,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.73 2003/03/27 18:29:06 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.74 2003/03/27 19:43:12 minter Exp $
