@@ -17,7 +17,7 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.103 2002/02/05 19:52:44 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.104 2002/02/06 22:13:55 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 # CREDITS:
@@ -102,7 +102,7 @@ my $version = "1.4";			# Program version
 $status = "Welcome to Mr. Voice version $version";		
 
 # Define 32x32 XPM icon data
-my $icon_data = <<'end-of-icon-data';
+$icon_data = <<'end-of-icon-data';
 /* XPM */
 static char * icon_xpm[] = {
 "32 32 21 1",
@@ -160,6 +160,7 @@ static char * icon_xpm[] = {
 ".................)'''>..........",
 ".................{~~~^.........."};
 end-of-icon-data
+
 
 # This function is redefined due to evilness that keeps the focus on 
 # the dragged token.  Thanks to Slaven Rezic <slaven.rezic@berlin.de>
@@ -894,7 +895,7 @@ sub holding_tank
     return;
   }
   $holdingtank = $mw->Toplevel();
-#  $holdingtank->Icon(-image=>$mw->Pixmap(-data=>$icon_data));
+  $holdingtank->iconimage($icon);
   bind_hotkeys($holdingtank);              
   $holdingtank->title("Holding Tank");
   $holdingtank->Label(-text=>"A place to store songs for later use")->pack;
@@ -943,7 +944,7 @@ sub list_hotkeys
     return;
   }
   $hotkeysbox=$mw->Toplevel();
-#  $hotkeysbox->Icon(-image=>$mw->Pixmap(-data=>$icon_data));
+  $hotkeysbox->iconimage($icon);
   bind_hotkeys($hotkeysbox);
   $hotkeysbox->title("Hotkeys");
   $hotkeysbox->Label(-text=>"Currently defined hotkeys:")->pack;
@@ -1397,6 +1398,7 @@ $mw->title("Mr. Voice");
 $mw->minsize(67,2);
 $mw->protocol('WM_DELETE_WINDOW',\&do_exit);
 $mw->Icon(-image=>$mw->Pixmap(-data=>$icon_data));
+$icon = $mw->Pixmap(-data=>$icon_data);
 
 read_rcfile();
 
