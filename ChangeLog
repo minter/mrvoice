@@ -1,8 +1,12 @@
-Wed  Jan  7 2003	H. Wade Minter (minter@lunenburg.org)
+Tue  Jan 13 2004	H. Wade Minter (minter@lunenburg.org)
+     * Ran the whole code through perltidy.  Funny how it looks a lot
+       nicer now...
+
+Wed  Jan  7 2004	H. Wade Minter (minter@lunenburg.org)
      * Add a check to make sure that the publisher update worked, in case
        of problems.
 
-Fri  Jan  2 2003	H. Wade Minter (minter@lunenburg.org)
+Fri  Jan  2 2004	H. Wade Minter (minter@lunenburg.org)
      * On second thought, maybe we don't need the integrated HTML viewer.
 
 Wed  Dec 31 2003	H. Wade Minter (minter@lunenburg.org)
@@ -539,4 +543,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.112 2004/01/07 22:04:36 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.113 2004/01/13 18:33:40 minter Exp $
