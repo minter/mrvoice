@@ -1,8 +1,7 @@
 Things I'm currently working on:
 
 * Debug mode - log stuff to a file with the proper switch.
-* Fix DirSelect problem on first run.
 * General cleanup and pretty-fication.
 
 --
-CVS ID: $Id: TODO,v 1.31 2003/12/30 18:12:38 minter Exp $
+CVS ID: $Id: TODO,v 1.32 2003/12/31 20:11:49 minter Exp $
