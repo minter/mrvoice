@@ -2,8 +2,7 @@
 use warnings;
 no warnings 'redefine';
 
-use diagnostics;
-
+#use diagnostics;
 #use strict; # Yeah right
 use Encode::Unicode;
 use Tk;
@@ -36,7 +35,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.321 2004/03/02 17:48:00 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.322 2004/03/02 19:46:33 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -1050,26 +1049,15 @@ sub restore_hotkeys
         -state => "disabled" );
 }
 
-sub bulk_add
+sub build_category_menubutton
 {
-    my ( @accepted, @rejected, $directory, $longcat, $db_cat );
-    my $box1 = $mw->DialogBox(
-        -title   => "Add all songs in directory",
-        -buttons => [ "Continue", "Cancel" ]
-    );
-    $box1->Icon( -image => $icon );
-    my $box1frame1 = $box1->add("Frame")->pack( -fill => 'x' );
-    $box1frame1->Label( -text =>
-          "This will allow you to add all songs in a directory to a particular\ncategory, using the information stored in MP3 or OGG files to fill in the title and\nartist.  You will have to go back after the fact to add Extra Info or do any editing.\nIf a file does not have at least a title embedded in it, it will not be added.\n\nChoose your directory and category below.\n\n"
-    )->pack( -side => 'top' );
-    my $box1frame2 = $box1->add("Frame")->pack( -fill => 'x' );
-    $box1frame2->Label( -text => "Add To Category: " )->pack( -side => 'left' );
-    my $menu = $box1frame2->Menubutton(
+    my $parent = $_[0];
+    my $menu   = $parent->Menubutton(
         -text        => "Choose Category",
         -relief      => 'raised',
         -tearoff     => 0,
         -indicatoron => 1
-    )->pack( -side => 'left' );
+    );
     my $query = "SELECT * from categories ORDER BY description";
     my $sth   = $dbh->prepare($query);
     $sth->execute or die "can't execute the query: $DBI::errstr\n";
@@ -1086,6 +1074,26 @@ sub bulk_add
         );
     }
     $sth->finish;
+    return ($menu);
+}
+
+sub bulk_add
+{
+    my ( @accepted, @rejected, $directory, $longcat, $db_cat );
+    my $box1 = $mw->DialogBox(
+        -title   => "Add all songs in directory",
+        -buttons => [ "Continue", "Cancel" ]
+    );
+    $box1->Icon( -image => $icon );
+    my $box1frame1 = $box1->add("Frame")->pack( -fill => 'x' );
+    $box1frame1->Label( -text =>
+          "This will allow you to add all songs in a directory to a particular\ncategory, using the information stored in MP3 or OGG files to fill in the title and\nartist.  You will have to go back after the fact to add Extra Info or do any editing.\nIf a file does not have at least a title embedded in it, it will not be added.\n\nChoose your directory and category below.\n\n"
+    )->pack( -side => 'top' );
+    my $box1frame2 = $box1->add("Frame")->pack( -fill => 'x' );
+    $box1frame2->Label( -text => "Add To Category: " )->pack( -side => 'left' );
+    my $menu = build_category_menubutton($box1frame2);
+    $menu->pack( -side => 'left' );
+
     my $box1frame3 = $box1->add("Frame")->pack( -fill => 'x' );
     $box1frame3->Label( -text => "Choose Directory: " )
       ->pack( -side => 'left' );
@@ -1521,28 +1529,8 @@ sub add_new_song
             -text       => "Category",
             -foreground => "#cdd226132613"
         )->pack( -side => 'left' );
-        $menu = $frame3->Menubutton(
-            -text        => "Choose Category",
-            -relief      => 'raised',
-            -tearoff     => 0,
-            -indicatoron => 1
-        )->pack( -side => 'right' );
-        $query = "SELECT * from categories ORDER BY description";
-        my $sth = $dbh->prepare($query);
-        $sth->execute or die "can't execute the query: $DBI::errstr\n";
-
-        while ( my $cat_hashref = $sth->fetchrow_hashref )
-        {
-            $menu->radiobutton(
-                -label    => $cat_hashref{description},
-                -value    => $cat_hashref{code},
-                -variable => \$addsong_cat,
-                -command  => sub {
-                    $menu->configure( -text => return_longcat($addsong_cat) );
-                }
-            );
-        }
-        $sth->finish;
+        my $menu = build_category_menubutton($frame3);
+        $menu->pack( -side => 'right' );
         $frame4 = $box->add("Frame")->pack( -fill => 'x' );
         $frame4->Label( -text => "Category Extra Info" )
           ->pack( -side => 'left' );
@@ -1912,29 +1900,8 @@ sub edit_song
         )->pack( -side => 'right' );
         $frame3 = $box->add("Frame")->pack( -fill => 'x' );
         $frame3->Label( -text => "Category" )->pack( -side => 'left' );
-        $menu = $frame3->Menubutton(
-            -text        => "Choose Category",
-            -relief      => 'raised',
-            -tearoff     => 0,
-            -indicatoron => 1
-        )->pack( -side => 'right' );
-        $query = "SELECT * from categories ORDER BY description";
-        my $sth = $dbh->prepare($query);
-        $sth->execute or die "can't execute the query: $DBI::errstr\n";
-
-        while ( my $cat_hashref = $sth->fetchrow_hashref )
-        {
-            $menu->radiobutton(
-                -label    => $cat_hashref->{description},
-                -value    => $cat_hashref->{code},
-                -variable => \$edit_category,
-                -command  => sub {
-                    $menu->configure( -text => return_longcat($edit_category) );
-                }
-            );
-        }
-        $menu->configure( -text => return_longcat($edit_category) );
-        $sth->finish;
+        my $menu = build_category_menubutton($frame3);
+        $menu->pack( -side => 'right' );
 
         $frame4 = $box->add("Frame")->pack( -fill => 'x' );
         $frame4->Label( -text => "Extra Info" )->pack( -side => 'left' );
@@ -2030,28 +1997,8 @@ sub edit_song
         )->pack( -side => 'right' );
         $frame3 = $box->add("Frame")->pack( -fill => 'x' );
         $frame3->Label( -text => "Category" )->pack( -side => 'left' );
-        $menu = $frame3->Menubutton(
-            -text        => "Choose Category",
-            -relief      => 'raised',
-            -tearoff     => 0,
-            -indicatoron => 1
-        )->pack( -side => 'right' );
-        $query = "SELECT * from categories ORDER BY description";
-        my $sth = $dbh->prepare($query);
-        $sth->execute or die "can't execute the query: $DBI::errstr\n";
-
-        while ( my $cat_hashref = $sth->fetchrow_hashref )
-        {
-            $menu->radiobutton(
-                -label    => $cat_hashref->{description},
-                -value    => $cat_hashref->{code},
-                -variable => \$edit_category,
-                -command  => sub {
-                    $menu->configure( -text => return_longcat($edit_category) );
-                }
-            );
-        }
-        $sth->finish;
+        my $menu = build_category_menubutton($frame3);
+        $menu->pack( -side => 'right' );
 
         $frame4 = $box->add("Frame")->pack( -fill => 'x' );
         $frame4->Label( -text => "Extra Info" )->pack( -side => 'left' );
@@ -2207,7 +2154,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.321 $';
+    my $rev = '$Revision: 1.322 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -3114,7 +3061,7 @@ sub return_longcat
     return ( $longcat_ref->{description} );
 }
 
-sub build_categories_menu
+sub build_main_categories_menu
 {
 
     # This builds the categories menu in the search area.  First, it deletes
@@ -4018,8 +3965,9 @@ $catmenubutton = $category_frame->Menubutton(
     -anchor => 'n'
   );
 $catmenu = $catmenubutton->menu();
-$catmenubutton->configure( -menu                => $catmenu );
-$catmenubutton->menu()->configure( -postcommand => \&build_categories_menu );
+$catmenubutton->configure( -menu => $catmenu );
+$catmenubutton->menu()
+  ->configure( -postcommand => \&build_main_categories_menu );
 
 $category_frame->Label( -text => "Currently Selected: " )->pack(
     -side   => 'left',
