@@ -21,6 +21,7 @@ use MPEG::MP3Info;
 use Audio::Wav;
 use Date::Manip;
 use Time::Local;
+use Time::HiRes qw(gettimeofday);
 use Ogg::Vorbis::Header::PurePerl;
 use File::Glob qw(:globally :nocase);
 use File::Temp qw/ tempfile tempdir /;
@@ -35,7 +36,7 @@ use subs
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.324 2004/03/04 14:37:30 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.325 2004/03/04 22:17:17 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
@@ -2155,7 +2156,7 @@ sub delete_song
 
 sub show_about
 {
-    my $rev = '$Revision: 1.324 $';
+    my $rev = '$Revision: 1.325 $';
     $rev =~ s/.*(\d+\.\d+).*/$1/;
     my $string =
       "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
@@ -2411,7 +2412,7 @@ EOF
         $tankbox->bind( "<Double-Button-1>", \&play_mp3 );
 
         #  $tankbox->bind("<Control-Key-p>", [\&play_mp3, "Holding"]);
-	$tankbox->bind( "<Button-1>", sub { $tankbox->focus(); } );
+        $tankbox->bind( "<Button-1>", sub { $tankbox->focus(); } );
         &BindMouseWheel($tankbox);
         my $playbutton = $buttonframe->Button(
             -text    => "Play Now",
@@ -2996,7 +2997,7 @@ sub do_search
         $query = $query . "AND artist LIKE '%$artist%' " if ($artist);
     }
     $query = $query . "ORDER BY category,info,title";
-    my $starttime = timelocal( localtime() );
+    my $starttime = gettimeofday();
     my $sth       = $dbh->prepare($query);
     $sth->execute or die "can't execute the query: $DBI::errstr\n";
     $numrows = $sth->rows;
@@ -3026,8 +3027,8 @@ sub do_search
         $mainbox->selectionSet(0);
     }
     $sth->finish;
-    my $endtime = timelocal( localtime() );
-    my $diff    = $endtime - $starttime;
+    my $endtime = gettimeofday();
+    my $diff = sprintf( "%.2f", $endtime - $starttime );
     $cattext  = "";
     $title    = "";
     $artist   = "";
@@ -4076,7 +4077,6 @@ $mainbox        = $searchboxframe->Scrolled(
   );
 $mainbox->bind( "<Double-Button-1>", \&play_mp3 );
 $mainbox->bind( "<Button-1>", sub { $mainbox->focus(); } );
-
 $mainbox->bind( "<Button-3>", [ \&rightclick_menu ] );
 
 $dnd_token = $mainbox->DragDrop(
