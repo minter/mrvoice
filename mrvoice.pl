@@ -41,13 +41,12 @@ use subs qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_item
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
 #              http://www.comedyworx.com/
-# CVS ID: $Id: mrvoice.pl,v 1.258 2003/07/31 14:25:33 minter Exp $
+# CVS ID: $Id: mrvoice.pl,v 1.259 2003/08/01 20:17:06 minter Exp $
 # CHANGELOG:
 #   See ChangeLog file
 ##########
 
-# Declare global variables, until I'm good enough to work around them.
-our ($db_name,$db_username,$db_pass,$category,$mp3player,$filepath,$savedir);
+our %config;	# Holds the config variables
 
 #####
 # YOU SHOULD NOT NEED TO MODIFY ANYTHING BELOW HERE FOR NORMAL USE
@@ -82,6 +81,7 @@ our $mp3types = [
     ['Playlists', ['*.m3u', '*.M3U', '*.pls', '*.PLS']],
     ['All Files', '*'],
   ];
+
 
 # Check to see if we're on Windows or Linux, and set the RC file accordingly.
 if ("$^O" eq "MSWin32")
@@ -783,7 +783,7 @@ sub bind_hotkeys
   if ($^O eq "MSWin32")
   {
     $window->bind("<Shift-Key-Escape>", sub {
-      $req = HTTP::Request->new(GET => "http://localhost:4800/fadeoutandstop?p=$httpq_pw");
+      $req = HTTP::Request->new(GET => "http://localhost:4800/fadeoutandstop?p=$config{'httpq_pw'}");
       $res = $agent->request($req);
     });
   }
@@ -810,7 +810,7 @@ sub open_file
   if (!$selectedfile)
   {
      $selectedfile = $mw->getOpenFile(-filetypes=>$hotkeytypes,
-                                      -initialdir=>$savedir,
+                                      -initialdir=>$config{'savedir'},
                                       -title=>'Open a File');
   }
                       
@@ -862,7 +862,7 @@ sub save_file
   $selectedfile = $mw->getSaveFile(-title=>'Save a File',
                                    -defaultextension=>".mrv",
                                    -filetypes=>$hotkeytypes,
-                                   -initialdir=>"$savedir");
+                                   -initialdir=>"$config{'savedir'}");
 
   if ($selectedfile)
   {
@@ -932,14 +932,14 @@ sub dump_database
         $dirname = Win32::GetShortPathName(dirname($dumpfile));
         $filename = basename($dumpfile);
         $shortdumpfile = File::Spec->catfile ($dirname, $filename);
-        my $rc = system ("C:\\mysql\\bin\\mysqldump.exe --add-drop-table --user=$db_username --password=$db_pass $db_name > $shortdumpfile");
-        infobox($mw, "Database Dumped", "The contents of your database have been dumped to the file:\n$dumpfile\n\nNote: In order to have a full backup, you must also\nback up the files from the directory:\n$filepath\nas well as $rcfile and, optionally, the hotkeys from $savedir");
+        my $rc = system ("C:\\mysql\\bin\\mysqldump.exe --add-drop-table --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} > $shortdumpfile");
+        infobox($mw, "Database Dumped", "The contents of your database have been dumped to the file:\n$dumpfile\n\nNote: In order to have a full backup, you must also\nback up the files from the directory:\n$config{'filepath'}\nas well as $rcfile and, optionally, the hotkeys from $config{'savedir'}");
         $status = "Database dumped to $dumpfile";
       }
       else
       {
-        my $rc = system ("mysqldump --add-drop-table --user=$db_username --password=$db_pass $db_name > $dumpfile");
-        infobox($mw, "Database Dumped", "The contents of your database have been dumped to the file:\n$dumpfile\n\nNote: In order to have a full backup, you must also\nback up the files from the directory:\n$filepath\nas well as $rcfile");
+        my $rc = system ("mysqldump --add-drop-table --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} > $dumpfile");
+        infobox($mw, "Database Dumped", "The contents of your database have been dumped to the file:\n$dumpfile\n\nNote: In order to have a full backup, you must also\nback up the files from the directory:\n$config{'filepath'}\nas well as $rcfile");
         $status = "Database dumped to $dumpfile";
       }
     }
@@ -980,13 +980,13 @@ sub import_database
           $dirname = Win32::GetShortPathName(dirname($dumpfile));
           $filename = basename($dumpfile);
           $shortdumpfile = File::Spec->catfile ($dirname, $filename);
-          my $rc = system ("C:\\mysql\\bin\\mysql.exe --user=$db_username --password=$db_pass $db_name < $shortdumpfile");
+          my $rc = system ("C:\\mysql\\bin\\mysql.exe --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} < $shortdumpfile");
           infobox($mw, "Database Imported", "The database backup file $dumpfile\nhas been imported.");
           $status = "Database imported from $dumpfile";
         }
         else
         {
-          my $rc = system ("mysql --user=$db_username --password=$db_pass $db_name < $dumpfile");
+          my $rc = system ("mysql --user=$config{'db_username'} --password=$config{'db_pass'} $config{'db_name'} < $dumpfile");
           infobox($mw, "Database Imported", "The database backup file $dumpfile\nhas been imported.");
           $status = "Database imported from $dumpfile";
         }
@@ -1458,12 +1458,12 @@ sub move_file
   my ($name,$path,$extension) = fileparse($oldfilename,'\.\w+');
   $extension=lc($extension);
 
-  if ( -e File::Spec->catfile($filepath, "$newfilename$extension") ) 
+  if ( -e File::Spec->catfile($config{'filepath'}, "$newfilename$extension") ) 
   {
     $i=0;
     while (1 == 1)
     {
-      if (! -e File::Spec->catfile($filepath, "$newfilename-$i$extension"))
+      if (! -e File::Spec->catfile($config{'filepath'}, "$newfilename-$i$extension"))
       {
         $newfilename = "$newfilename-$i";
         last;
@@ -1474,7 +1474,7 @@ sub move_file
 
   $newfilename = "$newfilename$extension";
 
-  copy ($oldfilename, File::Spec->catfile($filepath, "$newfilename"));
+  copy ($oldfilename, File::Spec->catfile($config{'filepath'}, "$newfilename"));
 
   return ($newfilename);
 }
@@ -1558,9 +1558,9 @@ sub add_new_song
       {
         infobox ($mw, "File Error","You must provide the title for the song."); 
       }
-      elsif (! -w $filepath)
+      elsif (! -w $config{'filepath'})
       {
-        infobox ($mw, "File Error","Could not write file to directory $filepath\nPlease check the permissions");
+        infobox ($mw, "File Error","Could not write file to directory $config{'filepath'}\nPlease check the permissions");
       }
       else
       {
@@ -1638,17 +1638,17 @@ sub edit_preferences
   my $db_name_frame = $database_page->Frame()->pack(-fill=>'x');
   $db_name_frame->Label(-text=>"Database Name")->pack(-side=>'left');
   $db_name_frame->Entry(-width=>30,
-	                -textvariable=>\$db_name)->pack(-side=>'right');
+	                -textvariable=>\$config{'db_name'})->pack(-side=>'right');
 
   my $db_user_frame = $database_page->Frame()->pack(-fill=>'x');
   $db_user_frame->Label(-text=>"Database Username")->pack(-side=>'left');
   $db_user_frame->Entry(-width=>30,
-	                -textvariable=>\$db_username)->pack(-side=>'right');
+	                -textvariable=>\$config{'db_username'})->pack(-side=>'right');
 
   my $db_pass_frame = $database_page->Frame()->pack(-fill=>'x');
   $db_pass_frame->Label(-text=>"Database Password")->pack(-side=>'left');
   $db_pass_frame->Entry(-width=>30,
-	                -textvariable=>\$db_pass)->pack(-side=>'right');
+	                -textvariable=>\$config{'db_pass'})->pack(-side=>'right');
 
   my $mp3dir_frame = $filepath_page->Frame()->pack(-fill=>'x');
   $mp3dir_frame->Label(-text=>"MP3 Directory")->pack(-side=>'left');
@@ -1656,18 +1656,18 @@ sub edit_preferences
                         -command=>sub {
                           if ($^O eq "MSWin32")
                           {
-                            $filepath = BrowseForFolder("Choose Directory", CSIDL_DESKTOP);
-                            $filepath =~ s|\\|/|g;
-                            $filepath = Win32::GetShortPathName($filepath);
+                            $config{'filepath'} = BrowseForFolder("Choose Directory", CSIDL_DESKTOP);
+                            $config{'filepath'} =~ s|\\|/|g;
+                            $config{'filepath'} = Win32::GetShortPathName($config{'filepath'});
                           }
                           else
                           {
-                            $filepath = $box->DirSelect(-width=>'50')->Show;
+                            $config{'filepath'} = $box->DirSelect(-width=>'50')->Show;
                           }
                         })->pack(-side=>'right');
 
   $mp3dir_frame->Entry(-width=>30,
-	               -textvariable=>\$filepath)->pack(-side=>'right');
+	               -textvariable=>\$config{'filepath'})->pack(-side=>'right');
 
   my $hotkeydir_frame = $filepath_page->Frame()->pack(-fill=>'x');
   $hotkeydir_frame->Label(-text=>"Hotkey Save Directory")->pack(-side=>'left');
@@ -1675,26 +1675,26 @@ sub edit_preferences
                         -command=>sub {
                           if ($^O eq "MSWin32")
                           {
-                            $savedir = BrowseForFolder("Choose Directory", CSIDL_DESKTOP);
-                            $savedir =~ s|\\|/|g;
-                            $savedir = Win32::GetShortPathName($savedir);
+                            $config{'savedir'} = BrowseForFolder("Choose Directory", CSIDL_DESKTOP);
+                            $config{'savedir'} =~ s|\\|/|g;
+                            $config{'savedir'} = Win32::GetShortPathName($config{'savedir'});
                           }
                           else
                           {
-                            $savedir = $box->DirSelect(-width=>'50')->Show;
+                            config{'savedir'} = $box->DirSelect(-width=>'50')->Show;
                           }
                         })->pack(-side=>'right');
   $hotkeydir_frame->Entry(-width=>30,
-	                  -textvariable=>\$savedir)->pack(-side=>'right');
+	                  -textvariable=>\$config{'savedir'})->pack(-side=>'right');
 
   my $mp3frame = $other_page->Frame()->pack(-fill=>'x');
   $mp3frame->Label(-text=>"MP3 Player")->pack(-side=>'left');
   $mp3frame->Button(-text=>"Choose",
                   -command=>sub { 
-                     $mp3player = $mw->getOpenFile(-title=>'Select File');
+                     $config{'mp3player'} = $mw->getOpenFile(-title=>'Select File');
                                 })->pack(-side=>'right');
   $mp3frame->Entry(-width=>30,
-                 -textvariable=>\$mp3player)->pack(-side=>'right'); 
+                 -textvariable=>\$config{'mp3player'})->pack(-side=>'right'); 
 
   my $numdyn_frame = $other_page->Frame()->pack(-fill=>'x');
   $numdyn_frame->Label(-text=>"Number of Dynamic Documents To Show")->pack(-side=>'left');
@@ -1704,7 +1704,7 @@ sub edit_preferences
   my $httpq_frame = $other_page->Frame()->pack(-fill=>'x');
   $httpq_frame->Label(-text=>"httpQ Password (WinAmp only, optional)")->pack(-side=>'left');
   $httpq_frame->Entry(-width=>8,
-                      -textvariable=>\$httpq_pw)->pack(-side=>'right');
+                      -textvariable=>\$config{'httpq_pw'})->pack(-side=>'right');
 
   $notebook->pack(-expand=>"yes",
                   -fill=>"both",
@@ -1715,7 +1715,7 @@ sub edit_preferences
 
   if ($result eq "Ok")
   {
-    if ( (! $db_name) || (! $db_username) || (! $db_pass) || (! $filepath) || (! $savedir) || (! $mp3player) )
+    if ( (! $config{'db_name'}) || (! $config{'db_username'}) || (! $config{'db_pass'}) || (! $config{'filepath'}) || (! $config{'savedir'}) || (! $config{'mp3player'}) )
     {
       infobox($mw, "Warning","All fields must be filled in\n");
       edit_preferences();
@@ -1726,14 +1726,14 @@ sub edit_preferences
     }
     else
     {
-      print RCFILE "db_name::$db_name\n";
-      print RCFILE "db_username::$db_username\n";
-      print RCFILE "db_pass::$db_pass\n";
-      print RCFILE "filepath::$filepath\n";
-      print RCFILE "savedir::$savedir\n";
-      print RCFILE "mp3player::$mp3player\n";
-      print RCFILE "savefile_max::$savefile_max\n";
-      print RCFILE "httpq_pw::$httpq_pw\n";
+      print RCFILE "db_name::$config{'db_name'}\n";
+      print RCFILE "db_username::$config{'db_username'}\n";
+      print RCFILE "db_pass::$config{'db_pass'}\n";
+      print RCFILE "filepath::$config{'filepath'}\n";
+      print RCFILE "savedir::$config{'savedir'}\n";
+      print RCFILE "mp3player::$config{'mp3player'}\n";
+      print RCFILE "savefile_max::$config{'savefile_max'}\n";
+      print RCFILE "httpq_pw::$config{'httpq_pw'}\n";
       close(RCFILE);
     }
   }
@@ -1941,7 +1941,7 @@ sub delete_song
         $sth->finish;
         if ($delete_file_cb == 1)
         {
-          my $file = File::Spec->catfile($filepath, $filename);
+          my $file = File::Spec->catfile($config{'filepath'}, $filename);
           unlink("$file");
         }
         $status = "Deleted $count songs";
@@ -1961,7 +1961,7 @@ sub delete_song
 
 sub show_about
 {
-  $rev = '$Revision: 1.258 $';
+  $rev = '$Revision: 1.259 $';
   $rev =~ s/.*(\d+\.\d+).*/$1/;
   my $string = "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001, Released under the GNU General Public License";
   my $box = $mw->DialogBox(-title=>"About Mr. Voice", 
@@ -2384,7 +2384,7 @@ sub update_time
   while (@table_row = $sth->fetchrow_array)
   {
     ($id,$filename,$time) = @table_row;
-    my $newtime = get_songlength(File::Spec->catfile($filepath,$filename));
+    my $newtime = get_songlength(File::Spec->catfile($config{'filepath'},$filename));
     if ($newtime ne $time)
     {
       my $query = "UPDATE mrvoice SET time='$newtime' WHERE id='$id'";
@@ -2462,7 +2462,7 @@ sub stop_mp3
   # Sends a stop command to the MP3 player.  Works for both xmms and WinAmp,
   # though not particularly cleanly.
 
-  system ("$mp3player --stop");
+  system ("$config{'mp3player'} --stop");
   $status = "Playing Stopped";
 }
 
@@ -2533,7 +2533,7 @@ sub play_mp3
   if ( ($filename) && ($_[0] eq "addsong") )
   {
     $status = "Previewing file $filename";
-    system ("$mp3player $filename");
+    system ("$config{'mp3player'} $filename");
   }
   elsif ($filename)
   {
@@ -2551,8 +2551,8 @@ sub play_mp3
       $songstatusstring = "\"$statustitle\"";
     }
     $status = "Playing $songstatusstring";
-    my $file = File::Spec->catfile($filepath,$filename);
-    system ("$mp3player $file");
+    my $file = File::Spec->catfile($config{'filepath'},$filename);
+    system ("$config{'mp3player'} $file");
     $statustitle = "";
     $statusartist = "";
   }
@@ -2683,7 +2683,7 @@ sub do_search
   $numrows = $sth->rows;
   while (@table_row = $sth->fetchrow_array)
   {
-    if (-e File::Spec->catfile($filepath,$table_row[5]))
+    if (-e File::Spec->catfile($config{'filepath'},$table_row[5]))
     {
       $string="$table_row[0]:($table_row[1]";
       $string = $string . " - $table_row[2]" if ($table_row[2]);
@@ -2845,8 +2845,8 @@ sub read_rcfile
     while (<RCFILE>)
     {
       chomp;
-      ($var1,$var2) = split(/::/);
-      $$var1=$var2;
+      ($key,$value) = split(/::/);
+      $config{$key} = $value;
     }
     close (RCFILE);
   }
@@ -2857,16 +2857,13 @@ sub read_rcfile
   }
   if ($^O eq "MSWin32")
   {
-#    $filepath = $filepath . "\\" unless ($filepath =~ /\\$/);
-    $filepath = Win32::GetShortPathName($filepath);
-#    $savedir = $savedir . "\\" unless ($savedir =~ /\\$/);
-    $savedir = Win32::GetShortPathName($savedir);
-    $mp3player = Win32::GetShortPathName($mp3player);
+    $config{'filepath'} = Win32::GetShortPathName($config{'filepath'});
+    $config{'savedir'} = Win32::GetShortPathName($config{'savedir'});
+    $config{'mp3player'} = Win32::GetShortPathName($config{'mp3player'});
   }
   else
   {
-#    $filepath = $filepath . "/" unless ($filepath =~ /\/$/);
-    $savedir =~ s#(.*)/$#$1#;
+    $config{'savedir'} =~ s#(.*)/$#$1#;
   }
 
 }
@@ -2932,7 +2929,7 @@ $mw->Icon(-image=>$icon);
 
 read_rcfile();
 
-if (! ($dbh = DBI->connect("DBI:mysql:$db_name",$db_username,$db_pass)))
+if (! ($dbh = DBI->connect("DBI:mysql:$config{'db_name'}",$config{'db_username'},$config{'db_pass'})))
 {
   $box = $mw->DialogBox(-title=>"Fatal Error", -buttons=>["Ok"]);
   $box->Icon(-image=>$icon);
@@ -2949,7 +2946,7 @@ if (! ($dbh = DBI->connect("DBI:mysql:$db_name",$db_username,$db_pass)))
   }
 }
 
-if (! -W $filepath)
+if (! -W $config{'filepath'})
 {
   $box = $mw->DialogBox(-title=>"Fatal Error", -buttons=>["Exit"]);
   $box->Icon(-image=>$icon);
@@ -2957,7 +2954,7 @@ if (! -W $filepath)
   $box->add("Label",-text=>"The MP3 directory that you set is unavailable.  Check\nto make sure the directory is correct, and you have\npermission to access it.")->pack();
   $box->add("Label",-text=>"The preferences menu will now pop up for you to\ncheck or set any configuration options.")->pack();
   $box->add("Label",-text=>"After you set the preferences, Mr. Voice will exit.\nYou will need to restart to test your changes.")->pack();
-  $box->add("Label",-text=>"Current MP3 Directory: $filepath")->pack();
+  $box->add("Label",-text=>"Current MP3 Directory: $config{'filepath'}")->pack();
   $result = $box->Show();
   if ($result)
   {
@@ -2966,14 +2963,14 @@ if (! -W $filepath)
   }
 }
 
-if (! -W $savedir)
+if (! -W $config{'savedir'})
 {
   $box = $mw->DialogBox(-title=>"Warning", -buttons=>["Continue"]);
   $box->Icon(-image=>$icon);
   $box->add("Label",-text=>"Hotkey save directory unavailable")->pack();
   $box->add("Label",-text=>"The hotkey save directory is unset or you do not\nhave permission to write to it.")->pack();
   $box->add("Label",-text=>"While this will not impact the operation of Mr. Voice,\nyou should probably fix it in the File->Preferences menu.")->pack();
-  $box->add("Label",-text=>"Current Hotkey Directory: $savedir")->pack();
+  $box->add("Label",-text=>"Current Hotkey Directory: $config{'savedir'}")->pack();
   $result = $box->Show();
 }
 
@@ -3066,7 +3063,7 @@ if (! $dbh->do($query))
         $query .= "$tmpinfo,";
       }
       $query .= "$tmpfilename,";
-      $length = get_songlength(File::Spec->catfile($filepath,$table_row[5]));
+      $length = get_songlength(File::Spec->catfile($config{'filepath'},$table_row[5]));
       $query .= "'$length',$tmpmodtime)";
       $sth4=$dbh->prepare($query);
       $sth4->execute;
@@ -3087,7 +3084,7 @@ if (! $dbh->do($query))
     $dbh->do("RENAME TABLE mrvoice TO oldmrvoice");
     $dbh->do("RENAME TABLE mrvoice2 TO mrvoice");
     $box->add("Label",-text=>"Renaming tables...SUCCEEDED")->pack();
-    $box->add("Label",-text=>"The database has been updated - song times are now stored in the database itself\nIn the future, if you modify a file in $filepath directly,\nyou will need to run the Update Song Times function from the Songs menu.")->pack();
+    $box->add("Label",-text=>"The database has been updated - song times are now stored in the database itself\nIn the future, if you modify a file in $config{'filepath'} directly,\nyou will need to run the Update Song Times function from the Songs menu.")->pack();
     $box->Show();
   }
   else
@@ -3100,9 +3097,9 @@ if (! $dbh->do($query))
 # We use the following statement to open the MP3 player asynchronously
 # when the Mr. Voice app starts.
 
-if (! -x $mp3player)
+if (! -x $config{'mp3player'})
 {
-  infobox($mw,"Warning - MP3 Player Not Found","Warning - Could not execute your defined MP3 player:\n\n$mp3player\n\nYou may need to select the proper file in the preferences.","warning");
+  infobox($mw,"Warning - MP3 Player Not Found","Warning - Could not execute your defined MP3 player:\n\n$config{'mp3player'}\n\nYou may need to select the proper file in the preferences.","warning");
 }
 else
 {
@@ -3110,7 +3107,7 @@ else
   {
     # Start the MP3 player on a Windows system
     my $object;
-    Win32::Process::Create($object, $mp3player,'',1, NORMAL_PRIORITY_CLASS, ".");
+    Win32::Process::Create($object, $config{'mp3player'},'',1, NORMAL_PRIORITY_CLASS, ".");
     $mp3_pid=$object->GetProcessID();
     sleep(1);
   }
@@ -3121,7 +3118,7 @@ else
     if ($mp3_pid == 0) 
     {
       # We're the child of the fork
-      exec ("$mp3player");
+      exec ("$config{'mp3player'}");
     }
   }
 }
@@ -3501,7 +3498,7 @@ if ($^O eq "MSWin32")
   # It's not changing the relief back after it's done, though.
   $stopbutton->bindtags([$stopbutton,ref($stopbutton),$stopbutton->toplevel,'all']);
   $stopbutton->bind("<Shift-ButtonRelease-1>" => sub {
-      $req = HTTP::Request->new(GET => "http://localhost:4800/fadeoutandstop?p=$httpq_pw");
+      $req = HTTP::Request->new(GET => "http://localhost:4800/fadeoutandstop?p=$config{'httpq_pw'}");
       $res = $agent->request($req);
     });
 }
@@ -3527,9 +3524,9 @@ bind_hotkeys($mw);
 $mw->bind("<Control-Key-p>", [\&play_mp3,"Current"]);
 
 # If the default hotkey file exists, load that up.
-if (-r File::Spec->catfile($savedir, "default.mrv"))
+if (-r File::Spec->catfile($config{'savedir'}, "default.mrv"))
 {
-  open_file ($mw, File::Spec->catfile($savedir, "default.mrv"));
+  open_file ($mw, File::Spec->catfile($config{'savedir'}, "default.mrv"));
 }
 
 $mw->deiconify();
