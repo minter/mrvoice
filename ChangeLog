@@ -1,3 +1,7 @@
+Tue  May 21 2002	H. Wade Minter (minter@lunenburg.org)
+     * Added Control-P as the hotkey to play the currently-selected song.
+       Thanks to Randy in KC and Bill in Portland for the idea.
+
 Thu  May 16 2002	H. Wade Minter (minter@lunenburg.org)
      * Tagged 1.5.2, before starting some big work.
 
@@ -245,4 +249,4 @@ Mon Jan 29 2001		H. Wade Minter (minter@lunenburg.org)
        to get things to resize nicely.
 
 --
-CVS ID: $Id: ChangeLog,v 1.46 2002/05/16 14:03:33 minter Exp $
+CVS ID: $Id: ChangeLog,v 1.47 2002/05/21 19:20:51 minter Exp $
