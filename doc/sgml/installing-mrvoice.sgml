@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: installing-mrvoice.sgml,v 1.2 2001/09/25 16:37:52 minter Exp $
+  CVS ID: $Id: installing-mrvoice.sgml,v 1.3 2001/09/26 15:21:51 minter Exp $
 -->
 
 <chapter><title>Installing Mr. Voice</title>
@@ -14,7 +14,7 @@
         </para>
       </listitem>
       <listitem>
-        <para><ulink url="http://www.perl.com/">Perl</ulink> version 5 (Unix version should be provided with most modern Unix systems, or get the Windows version from <ulink url="http://aspn.activestate.com/ASPN/Downloads/ActivePerl/">ActiveState</ulink>), plus the following perl modules (available from <ulink url="http://www.cpan.org/">CPAN</ulink>:
+        <para><ulink url="http://www.perl.com/">Perl</ulink> version 5 (Unix version should be provided with most modern Unix systems, or get the Windows version from <ulink url="http://aspn.activestate.com/ASPN/Downloads/ActivePerl/">ActiveState</ulink>), plus the following perl modules (available from <ulink url="http://www.cpan.org/">CPAN</ulink> or via ActivePerl's PPM:
           <itemizedlist>
             <listitem>
               <para><ulink url="http://www.cpan.org/modules/by-module/DBI/">DBI</ulink></para>
@@ -52,7 +52,7 @@
     <sect2><title>Unix installation instructions</title>
       <itemizedlist>
         <listitem>
-          <para>Unpack the <filename>mrvoice-x.x.tar.gz</filename> archive.  It will create a <filename>mrvoice-x.x</filename> directory.  The <filename>mrvoice.pl</filename> file is the only one needed to run the program, but there are other files in the archive, such as the <filename>dbinit.sql</filename> database initilization script, documentation, licenses, etc.</para>
+          <para>Unpack the <filename>mrvoice-x.x.tar.gz</filename> archive.  It will create a <filename>mrvoice-x.x</filename> directory.  The <filename>mrvoice.pl</filename> file is the only one needed to run the program (meaning that you can move <filename>mrvoice.pl</filename> to another location after you're done configuring it), but there are other files in the archive, such as the <filename>dbinit.sql</filename> database initilization script, documentation, licenses, etc.</para>
         <listitem>
           <para>Compile and/or install any required software from above (perl modules, etc.).  Set up your database properly and start it.</para>
         </listitem>
@@ -78,9 +78,9 @@ mysql>
           </para>
         </listitem>
         <listitem>
-          <para>Run the following MySQL command from the mrvoice-x.x directory, where <replaceable>DATABASE_USER</replaceable> is the name of a user with administrative access over the database named <replaceable>DATABASE_NAME</replaceable>:</para>
+          <para>Run the following MySQL command from the <filename>mrvoice-x.x</filename> directory, where <replaceable>DATABASE_USER</replaceable> is the name of a user with administrative access over the database named <replaceable>DATABASE_NAME</replaceable>:</para>
           <para><userinput>mysql -u <replaceable>DATABASE_USER</replaceable> -p <replaceable>DATABASE_NAME</replaceable> < dbinit.sql</userinput></para>
-          <para>For other databases (Postgres, etc.), adjust to taste.  dbinit.sql contains SQL commands that create two tables in <replaceable>DATABASE_NAME</replaceable>: mrvoice and categories.</para>
+          <para>For other databases (Postgres, etc.), adjust to taste.  <filename>dbinit.sql</filename> contains SQL commands that create two tables in <replaceable>DATABASE_NAME</replaceable>: mrvoice and categories.</para>
         </listitem>
       </itemizedlist>
     </sect2>
@@ -90,13 +90,13 @@ mysql>
       <sect3><title>Installing and setting up MySQL</title>
         <itemizedlist>
           <listitem>
-            <para>Unzip the MySQL .zip file that you downloaded to a temporary place (such as C:\mysql-temp).  Go to that directory and run the <filename>SETUP.EXE</filename> file.  It will install into <filename>C:\MYSQL</filename> by default - accept that unless you have a reason to put it somewhere else.  Choose the "Typical" installation.</para>
+            <para>Unzip the MySQL .zip file that you downloaded to a temporary place (such as C:\mysql-temp).  Go to that directory and run the <filename>setup.exe</filename> file.  It will install into <filename>C:\mysql</filename> by default - accept that unless you have a reason to put it somewhere else.  Choose the "Typical" installation.</para>
           </listitem>
           <listitem>
-            <para>Set up Windows to run the file <filename>C:\MYSQL\BIN\MYSQLD.EXE</filename> upon startup.  I believe you do this by going under Start->Settings->Taskbar & Start Menu, choosing "Advanced" under "Customize Start Menu", and placing a shortcut to the <filename>MYSQLD.EXE</filename> file under the "StartUp" section.  There may be a better way - feel free to email me and let me know what it is.  Double-click the <filename>MYSQLD.EXE</filename> file to start up the MySQL daemon.</para>
+            <para>Set up Windows to run the file <filename>C:\mysql\bin\mysqld.exe</filename> upon startup.  I believe you do this by going under Start->Settings->Taskbar & Start Menu, choosing "Advanced" under "Customize Start Menu", and placing a shortcut to the <filename>mysqld.exe</filename> file under the "StartUp" section.  There may be a better way - feel free to email me and let me know what it is.  Double-click the <filename>mysqld.exe</filename> file to start up the MySQL daemon.</para>
           </listitem>   
           <listitem>
-            <para>While you're messing with MySQL, it's a good time to set up your superuser password and create the database that you're going to use for Mr. Voice.  To do this, go to <filename>C:\MYSQL\BIN\</filename> and run <filename>MYSQL.EXE</filename>.  It will open a DOS window with a <prompt>MySQL></prompt> prmopt.  At this prompt, enter <userinput>use mysql;</userinput>.</para>
+            <para>While you're messing with MySQL, it's a good time to set up your superuser password and create the database that you're going to use for Mr. Voice.  To do this, go to <filename>C:\mysql\bin\</filename> and run <filename>mysql.exe</filename>.  It will open a DOS window with a <prompt>MySQL></prompt> prompt.  At this prompt, enter <userinput>use mysql;</userinput>.</para>
           </listitem>
           <listitem>
             <para>If that succeeds, run <userinput>update user set Password=password('<replaceable>YOUR_PASSWORD</replaceable>') where User='root';</userinput>.  This will set your superuser up to be username "root" with password <replaceable>YOUR_PASSWORD</replaceable>.  Run the command <userinput>flush privileges;</userinput> to have the changes take effect.</para>
@@ -110,7 +110,7 @@ mysql>
         </itemizedlist>
       </sect3>
       <sect3><title>Installing the Perl modules</title>
-      <para>The next step is to install the needed Perl modules.  Thanks to the great PPM system that ActiveState provides for their ActivePerl distribution, this is a snap. To start PPM, open a Command Prompt/DOS Window.  Type <userinput>ppm</userinput> and hit enter.  You should see "PPM Interactive Shell" and a <prompt>PPM></prompt> prompt. From that prompt, we'll install the modules. <emphasis>NOTE: You must be connected to the internet to download and install these modules</emphasis>.</para>
+      <para>The next step is to install the needed Perl modules.  Thanks to the great PPM system that ActiveState provides for their ActivePerl distribution, this is a snap. To start PPM, open a Command Prompt/DOS Window.  Type <userinput>ppm</userinput> and hit enter.  You should see "PPM Interactive Shell" and a <prompt>PPM></prompt> prompt. From that prompt, we'll install the modules. <note><para>You must be connected to the internet to download and install these modules.</para></note>
         <itemizedlist>
           <listitem>
             <para>Enter <userinput>search DBI</userinput>.  You should see a list of packages returned.  At the <prompt>PPM></prompt> prompt, enter <userinput>install DBI</userinput> to install the DBI module.</para>
@@ -136,14 +136,14 @@ mysql>
         <para>Now we will install the Mr. Voice software itself, and set up its environment.</para>
         <itemizedlist>
           <listitem>
-            <para>Unizp the <filename>mrvoice-current.zip</filename> file to your desired location.  These instructions will assume that you unzip it to <filename>C:\</filename>, creating the <filename>C:\mrvoice-x.x\</filename> directory, where x.x is the version number.</para>
+            <para>Unzip the <filename>mrvoice-current.zip</filename> file to your desired location.  It will create a directory named <filename>mrvoice-x.x</filename> under the location that you choose.  These instructions will assume that you unzip it to <filename>C:\</filename>, creating the <filename>C:\mrvoice-x.x\</filename> directory, where x.x is the version number.</para>
            </listitem>
            <listitem>
-             <para>Open a DOS prompt window, and cd to <filename>C:\MRVOICE-X.X\</filename>.  Run the command: <userinput>C:\MYSQL\BIN\MYSQL -u root -p <replaceable>DATABASE_NAME</replaceable> < dbinit.sql</userinput> where <replaceable>DATABASE_NAME</replaceable> is the name you set up above.  It will prompt you for a password.  Enter the password you set up above.  If it runs the command without errors, then your database is initialized.</para>
+             <para>Open a DOS prompt window, and cd to <filename>C:\mrvoice-x.x\</filename>.  Run the command: <userinput>C:\mysql\bin\mysql -u root -p <replaceable>DATABASE_NAME</replaceable> < dbinit.sql</userinput> where <replaceable>DATABASE_NAME</replaceable> is the name you set up above.  It will prompt you for a password.  Enter the password you set up above.  If it runs the command without errors, then your database is initialized.</para>
            </listitem>
            <listitem>
-             <para>You will need a directory to store your MP3 files, and a directory to store your hotkey save files.  I suggest <filename>C:\MP3\</filename> for the MP3 directory and <filename>C:\MRVOICE-X.X\</filename> for the save files, but you can pick anything.  NOTE! - Mr. Voice doesn't handle path names with spaces very well, so you should make sure that the path to these directories does not contain  spaces.  For example:
-             <para>C:\MRVOICE\MP3s\  <emphasis>[GOOD]</emphasis></para>
+             <para>You will need a directory to store your MP3 files, and a directory to store your hotkey save files.  I suggest <filename>C:\MP3\</filename> for the MP3 directory and <filename>C:\mrvoice-hotkeys\</filename> for the save files, but you can pick anything.  NOTE! - Mr. Voice doesn't handle path names with spaces very well, so you should make sure that the path to these directories does not contain  spaces.  For example:
+             <para>C:\mrvoice\mp3s\  <emphasis>[GOOD]</emphasis></para>
              <para>C:\Program Files\Crazy Stuff\My MP3s\ <emphasis>[BAD]</emphasis></para>
            </listitem>
          </itemizedlist>
