@@ -1,5 +1,5 @@
 <!--
-  CVS ID: $Id: using-mrvoice.sgml,v 1.25 2002/05/02 19:55:32 minter Exp $
+  CVS ID: $Id: using-mrvoice.sgml,v 1.26 2002/05/23 14:32:14 minter Exp $
 -->
 
 <chapter><title>Using Mr. Voice</title>
@@ -118,11 +118,13 @@
         <listitem><para><guilabel>Title</guilabel>: Text in this box will be compared with the "Title" field of the songs.</para></listitem>
         <listitem><para><guilabel>Any Field</guilabel>: Text in this box will be compared to the Title, Artist, and Extra Info fields of each song, and return any song that has a match in any of those fields.  So searching the <guilabel>Any Field</guilabel> box for "eat" will return songs by The Beatles, the song titled "Masterpeace Theatre Theme", or one with the extra info of "Featured".  The only thing that the <guilabel>Any Field</guilabel> does <emphasis>NOT</emphasis> search is the Category - you will need to select that manually.</para></listitem>
       </itemizedlist>
+      <para><note><para>Note!  If you do a search with the default (Any) category and no qualifiers in any of the entry fields, every song in your database will be displayed.  This could take a while, depending on the size of your database and the speed of your computer.  If you try to do this kind of search, a box will pop up asking you to confirm.</para></note></para>
       <para>After you have filled in the information that you would like to search for, you can either press the <keycap>Enter</keycap> key, or press the <guibutton>Do Search</guibutton> button.  The status bar will tell you how many matching entries your search found, and display the results in the Search Results box.</para>
+      <para>If your mouse has a scroll-wheel on it, you can use the wheel to scroll the list of search results up and down.</para>
     </sect2>
     <sect2><title>Playing Songs</title>
       <para>At this point, you have added songs to the database, and you have searched for songs.  Now, with some songs listed in the Search Results box, you're ready to play the songs!</para>
-      <para>To play a song, you can left-click on the song in the Search Results box (the song should become highlighed when you do this), and press the green <guibutton>Play Now</guibutton> button.  You can also double-click the song in the Search Results box, or right-click the song and choose the <guimenuitem>Play Song</guimenuitem> option.  When you do this, your MP3 player should spring to life, and you should hear the song coming out of the speakers.  Congratulations!  It works!</para>
+      <para>To play a song, you can left-click on the song in the Search Results box (the song should become highlighed when you do this), and press the green <guibutton>Play Now</guibutton> button.  While a song is highlighted, you can also press <keycap>Control</keycap> <keycap>P</keycap> to start the song playing.  You can also double-click the song in the Search Results box, or right-click the song and choose the <guimenuitem>Play Song</guimenuitem> option.  When you do this, your MP3 player should spring to life, and you should hear the song coming out of the speakers.  Congratulations!  It works!</para>
       <para>To stop the song, you can either press the red <guibutton>Stop Now</guibutton> button, or press the <keycap>Esc</keycap> key on your keyboard.  Play should then stop.</para>
     </sect2>
     <sect2><title>Exiting Mr. Voice</title>
