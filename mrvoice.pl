@@ -165,9 +165,10 @@ EOL
 # Check to see if we're on Windows or Linux, and set the RC file accordingly.
 if ( "$^O" eq "MSWin32" )
 {
-    $rcfile = ( $userrcfile eq "" ) ? "C:\\mrvoice.cfg" : $userrcfile;
+    $rcfile =
+      ( $userrcfile eq "" ) ? catfile( "C:", "mrvoice.cfg" ) : $userrcfile;
     $logfile = "" if !defined($logfile);
-    $logfile = ( $logfile eq "" ) ? "C:/mrvoice.log" : $logfile;
+    $logfile = ( $logfile eq "" ) ? catfile( "C:", "mrvoice.log" ) : $logfile;
     open( STDOUT, ">$logfile" );
     open( STDERR, ">&STDOUT" );
     print "Using Windows logfile $logfile\n" if $debug;
@@ -3932,7 +3933,7 @@ sub read_rcfile
             print "Performing default configuration\n" if $debug;
             $config{filepath} =
               ( $^O eq "MSWin32" )
-              ? "C:\\mp3"
+              ? catfile( "C:",          "mp3" )
               : catfile( get_homedir(), "mp3" );
             print "Filepath is $config{filepath}\n" if $debug;
             my $string =
@@ -3954,7 +3955,7 @@ sub read_rcfile
 
             $config{savedir} =
               ( $^O eq "MSWin32" )
-              ? "C:\\hotkeys"
+              ? catfile( "C:",          "hotkeys" )
               : catfile( get_homedir(), "hotkeys" );
             print "Savedir is $config{savedir}\n" if $debug;
             $string .= "Creating hotkey directory $config{savedir}...";
@@ -3974,7 +3975,7 @@ sub read_rcfile
 
             $config{db_file} =
               ( $^O eq "MSWin32" )
-              ? "C:\\mrvoice.db"
+              ? catfile( "C:",          "mrvoice.db" )
               : catfile( get_homedir(), "mrvoice.db" );
             print "DB File is $config{db_file}\n" if $debug;
             $string .= "Setting database file $config{db_file}...";
