@@ -1,9 +1,11 @@
-All of the documentation for Mr. Voice now lives in the docs/ subdirectory
+All of the documentation for Mr. Voice now lives in the doc/ subdirectory
 of this distribution.  Check there for the installation and configuration
 guide.
 
 Documentation is currently provided in two forms: a PDF file 
-(docs/pdf/mrvoice.pdf), and HTML (the main file is docs/html/book1.htm).
+(doc/pdf/mrvoice.pdf), and HTML (available in two forms: split into
+multiple pages, with the main page in doc/html/index.htm, and all in
+one page, located at doc/html/mrvoice.html).
 
 The current documentation can always be found at the Mr. Voice website:
 
@@ -15,4 +17,4 @@ to email me at: minter@lunenburg.org
 --Wade Minter
 
 ------
-$Id: README,v 1.16 2001/09/28 00:29:11 minter Exp $
+$Id: README,v 1.17 2002/02/08 15:18:07 minter Exp $
