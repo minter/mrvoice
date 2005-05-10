@@ -6100,11 +6100,6 @@ unless ( $dbh->do("SELECT md5 FROM mrvoice LIMIT 1") )
     print "2.1 schema upgrade complete\n" if $debug;
 }
 
-foreach my $file ( glob( catfile( $config{plugin_dir}, "*.pl" ) ) )
-{
-    require $file;
-}
-
 if ( $config{check_version} == 1 )
 {
     check_version();
