@@ -1,3 +1,12 @@
+Fri  May 20 2005	H. Wade Minter (minter@lunenburg.org)
+     * Merged 919:922 from trunk.
+
+Tue  May 10 2005	H. Wade Minter (minter@lunenburg.org)
+     * Remove the plugin stuff until 2.2.
+
+Tue  Apr  5 2005	H. Wade Minter (minter@lunenburg.org)
+     * Hardcode Tk::DragDrop::Win32Site in the module list.
+
 Fri  Mar 25 2005	H. Wade Minter (minter@lunenburg.org)
      * Merged 896:918 from trunk.
      * Fixed a bug in reporting during the local online comparison.

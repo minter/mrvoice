@@ -93,7 +93,7 @@ our $artist;                    # The "Artist" search entry field
 our $anyfield;                  # The "Any Field" search entry field
 our $cattext;                   # The "Extra Info" search entry field
 our $authenticated = 0;         # Has the user provided the proper password?
-our $xmlrpc_url = 'http://www.lunenburg.org/mrvoice-online/xmlrpc/mrvoice.cgi';
+our $xmlrpc_url = 'http://www.lunenburg.org/mrvoice-online/xmlrpc/';
 ##########
 
 # Allow searches of all music publishers by default.
@@ -201,6 +201,8 @@ if ( "$^O" eq "MSWin32" )
             Win32::FileOp->import();
             require Audio::WMA;
             Audio::WMA->import();
+            require Tk::DragDrop::Win32Site;
+            Tk::DragDrop::Win32Site->import();
         }
     }
     $agent = LWP::UserAgent->new;
@@ -255,7 +257,7 @@ our $altv = "PriceIsRightTheme.mp3";
 
 #####
 
-my $version = "2.0.4";    # Program version
+my $version = "2.0.9";    # Program version
 our $status = "Welcome to Mr. Voice version $version";
 
 sub get_category
@@ -6177,11 +6179,6 @@ unless ( $dbh->do("SELECT md5 FROM mrvoice LIMIT 1") )
     $dbh->do("DROP TABLE categories")                           or die;
     $dbh->do("ALTER TABLE categories_bak RENAME TO categories") or die;
     print "2.1 schema upgrade complete\n" if $debug;
-}
-
-foreach my $file ( glob( catfile( $config{plugin_dir}, "*.pl" ) ) )
-{
-    require $file;
 }
 
 if ( $config{check_version} == 1 )
