@@ -35,7 +35,6 @@ use File::Temp qw/ tempfile tempdir /;
 use Cwd;
 use Getopt::Long;
 use XMLRPC::Lite;
-use MIME::Base64 qw(decode_base64 encode_base64);
 use Digest::MD5 qw(md5_hex);
 use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
 use XML::Simple;
@@ -249,7 +248,7 @@ else
 
 #####
 
-my $version = "2.0.9";    # Program version
+my $version = "2.0.9a";    # Program version
 our $status = "Welcome to Mr. Voice version $version";
 
 sub get_category
@@ -4400,7 +4399,7 @@ sub online_download
     my $temp_dir = tempdir( CLEANUP => 1 );
     open( my $temp_fh, ">", "$temp_dir/$result->{filename}" ) or die;
 
-    my $bindata = decode_base64( $result->{encoded_data} );
+    my $bindata = $result->{encoded_data};
     my $md5     = md5_hex($bindata);
     if ( $result->{md5} ne $md5 )
     {
@@ -4693,8 +4692,6 @@ sub upload_xmlrpc
         }
     );
 
-    my $encoded_file = encode_base64($bindata);
-
     if ( !$check_call->result )
     {
         chomp( my $error = $check_call->faultstring );
@@ -4714,7 +4711,9 @@ sub upload_xmlrpc
             info         => $info->{info},
             filename     => $info->{filename},
             md5sum       => $md5,
-            encoded_file => $encoded_file
+            file => $bindata
+#TEST
+#            encoded_file => $encoded_file
         }
     );
     $mw->Unbusy( -recurse => 1 );
