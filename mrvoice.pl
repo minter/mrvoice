@@ -1633,9 +1633,10 @@ sub bulk_add
             }
             my $db_filename = move_file( $file, $title, $artist );
             print "Moved file to $db_filename\n" if $debug;
-            my $md5 = get_md5( catfile( $config{filepath}, $db_filename ) );
+            my $moved_md5 =
+              get_md5( catfile( $config{filepath}, $db_filename ) );
             $sth->execute( $db_title, $db_artist, $db_cat, $db_filename, $time,
-                $bulkadd_publisher, $md5 )
+                $bulkadd_publisher, $moved_md5 )
               or die "can't execute the query: $DBI::errstr\n";
             print "Executed sth\n" if $debug;
             $sth->finish;
@@ -4216,7 +4217,7 @@ sub search_online
 {
     my $listbox = shift;
     $listbox->delete('all');
-    my ( $term, $category, $person ) = @_;
+    my ( $term, $category, $person, $online_status ) = @_;
     my $xmlrpc;
     unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
     {
@@ -4254,6 +4255,12 @@ sub search_online
         );
 
     }
+
+    $$online_status = sprintf(
+        "Online search returned %d %s",
+        scalar @$result,
+        scalar @$result == 1 ? "entry" : "entries"
+    );
 
 }
 
@@ -4428,8 +4435,9 @@ sub online_search_window
 
     my $onlinebox;
     my $online_search_term;
-    my $category = 'any';
-    my $person   = 'any';
+    my $category      = 'any';
+    my $person        = 'any';
+    my $online_status = 'Mr. Voice Online';
     my $xmlrpc;
     unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
     {
@@ -4573,6 +4581,17 @@ sub online_search_window
             -activebackground => 'tomato3'
         );
 
+        $buttonframe->Label(
+            -textvariable => \$online_status,
+            -relief       => 'sunken'
+          )->pack(
+            -anchor => 'center',
+            -side   => 'right',
+            -expand => 1,
+            -padx   => 5,
+            -fill   => 'x'
+          );
+
         my $addbutton = $buttonframe->Button(
             -text    => "Download/Add",
             -command => sub { online_download($onlinebox) }
@@ -4601,7 +4620,7 @@ sub online_search_window
             -cursor  => 'question_arrow',
             -command => sub {
                 search_online( $onlinebox, $online_search_term, $category,
-                    $person );
+                    $person, \$online_status );
                 $online_search_term = undef;
                 $category           = "any";
                 $catmenu->configure(
@@ -4617,7 +4636,7 @@ sub online_search_window
             "<Key-Return>",
             sub {
                 search_online( $onlinebox, $online_search_term, $category,
-                    $person );
+                    $person, \$online_status );
                 $online_search_term = undef;
                 $category           = "any";
                 $catmenu->configure(
