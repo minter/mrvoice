@@ -1633,8 +1633,9 @@ sub bulk_add
             }
             my $db_filename = move_file( $file, $title, $artist );
             print "Moved file to $db_filename\n" if $debug;
+            my $md5 = get_md5( catfile( $config{filepath}, $db_filename ) );
             $sth->execute( $db_title, $db_artist, $db_cat, $db_filename, $time,
-                $bulkadd_publisher )
+                $bulkadd_publisher, $md5 )
               or die "can't execute the query: $DBI::errstr\n";
             print "Executed sth\n" if $debug;
             $sth->finish;
@@ -4705,15 +4706,13 @@ sub upload_xmlrpc
     my $call = $xmlrpc->call(
         'upload_song',
         {
-            online_key   => $config{online_key},
-            title        => $info->{title},
-            artist       => $info->{artist},
-            info         => $info->{info},
-            filename     => $info->{filename},
-            md5sum       => $md5,
-            file => $bindata
-#TEST
-#            encoded_file => $encoded_file
+            online_key => $config{online_key},
+            title      => $info->{title},
+            artist     => $info->{artist},
+            info       => $info->{info},
+            filename   => $info->{filename},
+            md5sum     => $md5,
+            file       => $bindata
         }
     );
     $mw->Unbusy( -recurse => 1 );
