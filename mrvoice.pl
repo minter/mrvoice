@@ -23,7 +23,7 @@ use File::Basename;
 use File::Copy;
 use File::Spec::Functions;
 use DBI;
-use MPEG::MP3Info;
+use MP3::Info;
 use MP4::Info;
 use Audio::Wav;
 use Date::Manip;
