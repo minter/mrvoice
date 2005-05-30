@@ -4,6 +4,8 @@ Sun  May 29 2005	H. Wade Minter (minter@lunenburg.org)
        Lanny in Dallas.
      * Add new logo to the About box.
      * Use MP3::Info instead of MPEG::MP3Info.
+     * Specify binmode explicitly when dealing with binary data.
+     * Add some extra debugging statements dealing with online file transfer.
 
 Sat  May 21 2005	H. Wade Minter (minter@lunenburg.org)
      * Stop trying to be smarter than XMLRPC::Lite and allow it to handle
