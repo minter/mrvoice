@@ -1928,7 +1928,10 @@ sub move_file
     $newfilename = "$newfilename$extension";
 
     print "Starting file copy\n" if $debug;
-    copy( $oldfilename, catfile( $config{'filepath'}, "$newfilename" ) );
+    copy( $oldfilename, catfile( $config{filepath}, $newfilename ) );
+    print "Move_file shows MD5 of moved file $newfilename is "
+      . md5_hex( catfile( $config{filepath}, $newfilename ) ) . "\n"
+      if $debug;
     print "Copy finished\n" if $debug;
 
     return ($newfilename);
@@ -2172,6 +2175,9 @@ sub add_new_song
 
     my $newfilename =
       move_file( $addsong_filename, $addsong_title, $addsong_artist );
+    print "MD5 of moved file is "
+      . md5_hex( catfile( $config{filepath}, $newfilename ) ) . "\n"
+      if $debug;
 
     $addsong_title = $dbh->quote($addsong_title);
     if ( $addsong_info eq "" )
@@ -3749,6 +3755,7 @@ sub get_md5
     my $filename = shift;
     local $/ = undef;
     open( my $fh, "<", $filename );
+    binmode($fh);
     my $bindata = <$fh>;
     return md5_hex($bindata);
 }
@@ -4302,9 +4309,12 @@ sub online_download
 
     my $temp_dir = tempdir( CLEANUP => 1 );
     open( my $temp_fh, ">", "$temp_dir/$result->{filename}" ) or die;
+    binmode($temp_fh);
 
     my $bindata = $result->{encoded_data};
     my $md5     = md5_hex($bindata);
+    print "MD5 of downloaded data is $md5\n"        if $debug;
+    print "MD5 as given online is $result->{md5}\n" if $debug;
     if ( $result->{md5} ne $md5 )
     {
         infobox(
