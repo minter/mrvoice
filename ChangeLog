@@ -2,10 +2,11 @@ Sun  May 29 2005	H. Wade Minter (minter@lunenburg.org)
      * Fixed a bulk-add bug.  Reported by Rob in Richmond.
      * Add a status bar to the online search window.  Requested by
        Lanny in Dallas.
-     * Add new logo to the About box.
+     * Add new logo to the About box and XPM icon.
      * Use MP3::Info instead of MPEG::MP3Info.
      * Specify binmode explicitly when dealing with binary data.
      * Add some extra debugging statements dealing with online file transfer.
+     * Bump version to 2.0.9b
 
 Sat  May 21 2005	H. Wade Minter (minter@lunenburg.org)
      * Stop trying to be smarter than XMLRPC::Lite and allow it to handle
