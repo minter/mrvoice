@@ -2,7 +2,7 @@ Sun  May 29 2005	H. Wade Minter (minter@lunenburg.org)
      * Fixed a bulk-add bug.  Reported by Rob in Richmond.
      * Add a status bar to the online search window.  Requested by
        Lanny in Dallas.
-     * Add new logo to the About box and XPM icon.
+     * Add new logo to the About box, Windows icon, and XPM icon.
      * Use MP3::Info instead of MPEG::MP3Info.
      * Specify binmode explicitly when dealing with binary data.
      * Add some extra debugging statements dealing with online file transfer.
