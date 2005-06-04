@@ -23,7 +23,7 @@ use File::Basename;
 use File::Copy;
 use File::Spec::Functions;
 use DBI;
-use MPEG::MP3Info;
+use MP3::Info;
 use MP4::Info;
 use Audio::Wav;
 use Date::Manip;
@@ -35,7 +35,6 @@ use File::Temp qw/ tempfile tempdir /;
 use Cwd;
 use Getopt::Long;
 use XMLRPC::Lite;
-use MIME::Base64 qw(decode_base64 encode_base64);
 use Digest::MD5 qw(md5_hex);
 use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
 use XML::Simple;
@@ -257,7 +256,7 @@ our $altv = "PriceIsRightTheme.mp3";
 
 #####
 
-my $version = "2.0.9";    # Program version
+my $version = "2.0.9b";    # Program version
 our $status = "Welcome to Mr. Voice version $version";
 
 sub get_category
@@ -311,241 +310,375 @@ sub icon_data
     # Define 32x32 XPM icon data
     my $icon = <<'end-of-icon-data';
 /* XPM */
-static char * mrvoice_3232_xpm[] = {
-"32 32 21 1",
-" 	c None",
-".	c #FFFFFF",
-"+	c #AAAAAA",
-"@	c #000000",
-"#	c #E3E3E3",
-"$	c #393939",
-"%	c #555555",
-"&	c #727272",
-"*	c #8E8E8E",
-"=	c #C7C7C7",
-"-	c #1D1D1D",
-";	c #FFABAA",
-">	c #FF5755",
-",	c #FF7472",
-"'	c #FF0300",
-")	c #FF201D",
-"!	c #FF3B39",
-"~	c #915A59",
-"{	c #FF8F8E",
-"]	c #FFC8C7",
-"^	c #FFE3E3",
-"................................",
-"+@@@#....$@@%...................",
-"+@@@+....@@@%...................",
-"+@@@&...+@@@%...................",
-"+@@@$...&@@@%.%%*%&.............",
-"#&@@@...%@@$=.@@@@@*............",
-".+@%@+..@%@%..@@@@@%............",
-".+@*@&.=@*@%..+@%*@%............",
-".+@+-$.*@=@%...@+.%%............",
-".+@+%@.%@.@%...@+.**............",
-".+@+*@+-%.@%...@+...............",
-".+@+=@%@*.@%...@+...............",
-".+@+.@@@+.@%...@+...............",
-"=$@$*%@@=%@-*..@+...............",
-"+@@@%*@$+@@@%.+@&....=+#........",
-"+@@@%=@&+@@@%.@@@;>>>@@%...,>>>.",
-"+@@@%.@++@@@%.@@@;'''@@%...)''!.",
-"=%%%*.&.=%%%*.%%%;'''~%+..{'''].",
-".................;''';...^'''>..",
-".................;''';...,'''^..",
-".................;''';..]'''{...",
-".................^''';..!'')....",
-"..................''';.;''';....",
-"..................''';.)''!.....",
-"..................''';,'''].....",
-"..................'''{''',......",
-"..................''')'')^......",
-"..................''''''{.......",
-"..................''''')........",
-"..................''''']........",
-"..................)'''>.........",
-"..................];;;^........."};
+static char *icon3232[] = {
+/* columns rows colors chars-per-pixel */
+"32 32 256 2",
+"   c gray100",
+".  c #FEFEFE",
+"X  c #FDFDFD",
+"o  c gray99",
+"O  c #FBFBFB",
+"+  c gray98",
+"@  c #F9F9F9",
+"#  c #F8F8F8",
+"$  c gray97",
+"%  c #F6F6F6",
+"&  c gray96",
+"*  c #F4F4F4",
+"=  c #F3F3F3",
+"-  c gray95",
+";  c #F1F1F1",
+":  c gray94",
+">  c #EFEFEF",
+",  c #EEEEEE",
+"<  c gray93",
+"1  c #ECECEC",
+"2  c gray92",
+"3  c #EAEAEA",
+"4  c #E9E9E9",
+"5  c gray91",
+"6  c #E7E7E7",
+"7  c #E6E6E6",
+"8  c #E4E4E4",
+"9  c gray89",
+"0  c gray88",
+"q  c #DFDFDF",
+"w  c gray87",
+"e  c #DDDDDD",
+"r  c gainsboro",
+"t  c gray86",
+"y  c gray85",
+"u  c #D7D7D7",
+"i  c gray83",
+"p  c LightGray",
+"a  c #D2D2D2",
+"s  c gray82",
+"d  c #D0D0D0",
+"f  c #CECECE",
+"g  c #CDCDCD",
+"h  c gray80",
+"j  c #CBCBCB",
+"k  c #CACACA",
+"l  c gray79",
+"z  c gray78",
+"x  c #C6C6C6",
+"c  c #C5C5C5",
+"v  c gray77",
+"b  c #C3C3C3",
+"n  c #C1C1C1",
+"m  c gray",
+"M  c #BCBCBC",
+"N  c gray73",
+"B  c gray71",
+"V  c #B2B2B2",
+"C  c gray69",
+"Z  c #AFAFAF",
+"A  c gray68",
+"S  c #ACACAC",
+"D  c gray67",
+"F  c #AAAAAA",
+"G  c gray66",
+"H  c #A7A7A7",
+"J  c gray65",
+"K  c #A5A5A5",
+"L  c #A4A4A4",
+"P  c gray64",
+"I  c gray62",
+"U  c #989898",
+"Y  c #979797",
+"T  c gray59",
+"R  c #959595",
+"E  c gray57",
+"W  c gray56",
+"Q  c #8D8D8D",
+"!  c gray55",
+"~  c gray54",
+"^  c #898989",
+"/  c gray53",
+"(  c #868686",
+")  c #808080",
+"_  c gray50",
+"`  c #7C7C7C",
+"'  c #797979",
+"]  c #767676",
+"[  c #747474",
+"{  c gray45",
+"}  c #6D6D6D",
+"|  c #6C6C6C",
+" . c #6A6A6A",
+".. c DimGray",
+"X. c #676767",
+"o. c #656565",
+"O. c gray39",
+"+. c gray38",
+"@. c #606060",
+"#. c #5F5F5F",
+"$. c #5B5B5B",
+"%. c gray35",
+"&. c gray33",
+"*. c #535353",
+"=. c gray32",
+"-. c #515151",
+";. c #4E4E4E",
+":. c #4C4C4C",
+">. c #434343",
+",. c gray25",
+"<. c #3F3F3F",
+"1. c #3E3E3E",
+"2. c #3C3C3C",
+"3. c gray23",
+"4. c #3A3A3A",
+"5. c #393939",
+"6. c #373737",
+"7. c gray21",
+"8. c #353535",
+"9. c #343434",
+"0. c gray20",
+"q. c #323232",
+"w. c #313131",
+"e. c gray19",
+"r. c gray18",
+"t. c #2D2D2D",
+"y. c #2C2C2C",
+"u. c #2A2A2A",
+"i. c gray16",
+"p. c gray15",
+"a. c #252525",
+"s. c gray14",
+"d. c #232323",
+"f. c #222222",
+"g. c #202020",
+"h. c #1E1E1E",
+"j. c gray10",
+"k. c #191919",
+"l. c gray9",
+"z. c #161616",
+"x. c #151515",
+"c. c #101010",
+"v. c gray6",
+"b. c #0E0E0E",
+"n. c #0C0C0C",
+"m. c gray4",
+"M. c #040404",
+"N. c gray1",
+"B. c #010101",
+"V. c black",
+"C. c black",
+"Z. c black",
+"A. c black",
+"S. c black",
+"D. c black",
+"F. c black",
+"G. c black",
+"H. c black",
+"J. c black",
+"K. c black",
+"L. c black",
+"P. c black",
+"I. c black",
+"U. c black",
+"Y. c black",
+"T. c black",
+"R. c black",
+"E. c black",
+"W. c black",
+"Q. c black",
+"!. c black",
+"~. c black",
+"^. c black",
+"/. c black",
+"(. c black",
+"). c black",
+"_. c black",
+"`. c black",
+"'. c black",
+"]. c black",
+"[. c black",
+"{. c black",
+"}. c black",
+"|. c black",
+" X c black",
+".X c black",
+"XX c black",
+"oX c black",
+"OX c black",
+"+X c black",
+"@X c black",
+"#X c black",
+"$X c black",
+"%X c black",
+"&X c black",
+"*X c black",
+"=X c black",
+"-X c black",
+";X c black",
+":X c black",
+">X c black",
+",X c black",
+"<X c black",
+"1X c black",
+"2X c black",
+"3X c black",
+"4X c black",
+"5X c black",
+"6X c black",
+"7X c black",
+"8X c black",
+"9X c black",
+"0X c black",
+"qX c black",
+"wX c black",
+"eX c black",
+"rX c black",
+"tX c black",
+"yX c black",
+"uX c black",
+"iX c black",
+"pX c black",
+"aX c black",
+"sX c black",
+"dX c black",
+"fX c black",
+"gX c black",
+"hX c black",
+"jX c black",
+"kX c black",
+"lX c black",
+"zX c black",
+"xX c black",
+"cX c black",
+"vX c black",
+"bX c black",
+"nX c black",
+"mX c black",
+"MX c black",
+"NX c black",
+"BX c black",
+"VX c black",
+"CX c black",
+"ZX c black",
+"AX c black",
+"SX c black",
+"DX c black",
+"FX c black",
+"GX c black",
+"HX c black",
+"JX c black",
+"KX c black",
+"LX c black",
+"PX c black",
+"IX c black",
+"UX c black",
+/* pixels */
+"                  c 4.V.V.V.V.4.c                               ",
+"                  a X.y.m.V.V.4.c             . : ;             ",
+"                  - a T a.V.V.3.c             # j g             ",
+"                      w ;.M.V.7.v         o * l _ ' Z r &       ",
+"        + +           t } c.V.r.n         * y Q 5.d.7.( e       ",
+"  * p M J J M i @     6 S *.b.q.b         7 R 4.V.V.V.<.b       ",
+"  y ..6.e.e.6.} 6     # 6 K 0.1.x         e :.V.V.V.V.u.B       ",
+"6 D k.V.V.V.V.v.^ j :     1 W ! 9     ; d U 3.p.8.4.5.o.x       ",
+"C ) n.V.V.V.V.V.c.=.h       ; %       d @.2. .P M c c a ,       ",
+"C R &.4.4.4.4.9.a.=.h     . 7 u k a > i +.-.C O                 ",
+"6 0 g c c c c b m j :     4 { ,.3.O.z . i j 5                   ",
+"                      : f W l.V.V.n.| l                         ",
+"                      f %.g.N.V.V.V.n.-.a                       ",
+"                      z ,.V.V.V.V.B.j.*.h                       ",
+"                      q E 5.V.V.V.z.Q h :                       ",
+"                      * y Y $.>.>.[ 2                           ",
+"                      o * 4 9 0 0 2                             ",
+"                          X 4 0 0 9 3 $ X                       ",
+"                          x ..>.>.#.L 8 #                       ",
+"                          H h.V.V.x./ 8 #                       ",
+"                          A y.V.V.i.P $ X                       ",
+"                          A 0.V.V.9.V                           ",
+"                        X F w.V.V.0.Z                           ",
+"                        X G w.V.V.9.V                           ",
+"                        . G w.V.V.6.N                           ",
+"                        o H w.V.V.5.n                           ",
+"                      . @ L e.V.V.4.v                           ",
+"                      o = I r.V.V.4.x                           ",
+"                      O < U t.V.V.4.c                           ",
+"                      $ q ~ i.V.V.4.c                           ",
+"                      - s ` s.V.V.4.c                           ",
+"                      : j ] f.V.V.4.c                           "
+};
 end-of-icon-data
 
     return ($icon);
 }
 
-sub logo_photo
+sub mrvoice_logo_gif
 {
-    my $logo_photo_data = <<end_of_data;
-R0lGODlhqwGzAMYAAP+bm3h4ePn5+XEAAP+oqOrq6lVVVePj4//IyKR/f0IAAP+5ueYAAMvLy9XV
-1To6Ov7+/v/X19zc3P+Kiv+Dg/9cXGtra66QkNcAAMLCwv9jY7UAAIODg5qamv97e6CgoP80NLu7
-u0lJSfX19aqqqv8rK8YAAP9UVIuLi5SUlLKysv90dP9DQ/8AAM+/v/9sbP8MDJcAAPHx8Ww5Of8i
-Iv8UFP9LS/8bG//h4f87O6gAAGBgYP/x8YUAACgnJ8d1dYhfX/IAABQUFNWfn1cAAP8FBf/p6ak9
-PaVXV44/P8Wvr35PT+jf3/kAANu+vs5dXc0tLU4QEOgjI9vPz+2enpVvby4DA//39/Dv7+3Pz+Z+
-fvW/v9gPD4UVFd9LS5MZGcwcHLghIewyMrAQENyvr4CA/0BA/7+//xAQ/+/v/8/P/9/f/yAg/6+v
-/zAw/5+f/2Bg/4+P/3Bw/1BQ/5GAgF4dHeKvr/+RkexkZPmAgLmfn/gHB9aOjgAAAAAA/////ywA
-AAAAqwGzAAAH/oB/goOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2u
-r7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn
-6Onq6+ztuQ/w8fLxOwICEPiPKPP88B32+CC4G0jwFIQ+CBMqVHhAxgiAjh4snIgwABaH9wQW3MiR
-00GKEzscKIDloUZFH0EqtCBhpIyMHWPKnJRSJUIDDRwcKHkyUQibCnfklFDA5MyjSBUJAJrQB4kQ
-OrHcW4SC6c2nDYhOTcq161KrfVKQyOCgwNZEIsA+QPEB6oER/j27yo351eqOFCoavI1bCIIQtQHE
-6pXBd67hgXWZPuDwIYMEqYokgO3jwwKHsRIIH95cMDFQIYGhmi0sqMNkHzsYO4bMuTU7z0AtoMi7
-N5GF0zsCNH4swLXvdLBtGrisF24iH7h1r+79uzm54CoX72ZtqCZT1Mp5O98eDjpI0B1EMzf0M/n0
-8dzTa/MO0gLesmcJBZhMOfcHFSRUhNjPXwI+LCgYAA8H/gWk3oHGsEfRcCQUV5hE5qUAUgAjdPDX
-QhQ+FB+CHPKi4ETSLVfdhWBh94GEFAXAgUoGkGQSaR3GKMuHC4EnniEN0FefblVRBKFKBBbwUj4y
-FkkLjQoJ/uGeCvDFZRp9JvaoYx9C5NTQhkZmyYoAAVhggAg/2rQDCg3WRsgOVvmgpg8PpPaBlFOi
-QNaVMGpp5ygCFOBACCnMp5hqmaEHAXKfgSmCCAbIRgKcOlqA2Wh3RopKnhJk8MGK1wUQnnaDYEER
-iQgJcagBiQamAopT9nEXbS9J6iopAmBxQAMqPJnkREq+B6kgJOAKKpWI7mBBAGyFYOuUIgBK3avM
-diLACAVUqsJEhC40ZpnGCeKnQj78KoQBwnIgVggNfJAqQiKY2mSz7G4CgQAyRJvjQt1OlGxjDWkE
-QZgIPeAtuIGN5YAEvZ77gGy0ZdvuwpW8C2+01FbblKYh/nBqHbr/WtaYTgVMa7CiDjIsMiX4POsp
-vfxSqS6k8yYpgrfC4qVXSR6nejBxZo6s8yMBjUBtWhOBXBujlBkAc2jwCXAACR1w8CuVQqj59M3Y
-1rnz1YbA5oPR9uJMGARAK/QA10nmloJ4EIwwqwoS9/HAoXD/SnXIWNe9iNYGtO12dlINai/ZCQlh
-NtrQ7imxqKOSGna/llVt9+OI4L14qEibJVmNpB59dpOxViqxD6MKO+xCIjRON+SoC4I3mkHPVlzB
-3IKrOdoPO/A5qblxgAKq6Jqec+qQay3s08mWKcNtC429w+zw/fGurGFunRtb+ZHuu8LAPy68BSk/
-wLfe/oha0LbglffmMBZhtqkxuS33jjP22de9vQG4Vo4ruOLXOHjzzqedvtl5aYn13me1+C1MeAHY
-1kpcB7umAGx8+zMLIQSQvmGFpyzoe4DUEkVAA2qPWtN7GoMagDyxlQqC5ZtgBZVVuFMlkFgJK6AH
-m4XAfYBINZPrQ/g4gMLNSXAQFBSbxlZTuBC8iQMc6ACTiiLDGb4KgSkoYeAo9q/p9fBGQFzhdEaA
-BQk0gGkp6MCjsOREhkGRdwmRzbFCBbAUXJF/qtPictTmgAzgRz8zI2MZ24VAMYqQA1JEyNY09sYf
-xlGIyrKHrBzQgEZy7CF7vFofVdA9DqQsfGQqJHqC/piQm53HZAU4gCh3YpRI6mySgaRMAEQIQE2q
-EJHncdgIZEBLDRHJlCJDYFvWSKVUfis3SuQX+Xy4STlqJyD2yMgtcWlGEOomBBmYGrXAxZgQCDOC
-xYSliJiZOl2SK2VTSxSZMnDNFGZRm5ziZvCc2RgSWgV/MisnMV/ZySGmU5120yVZzPUZgIWnAfLE
-4iHrmUh8rpNe9iHL5WwiPdU4IKBw/AMnGVdQg+aTnQpNWfI42CAJQNSQEjXmsizKMPp8QAKpJJ2A
-JmOBosBkom6z50hJyq6L2aQDDuCly3agUZDsgCi2hKknt0nThdlUJXIqD0hAx9PJCIUoQxKqTNFT
-/tRmHXVC+tFbJxPV0wUFUEj2EClVq/pE+ligAx/IYULC11V7KdExLhUrWflIn+FE8TsiyI1aQbKY
-8GQgPyG4XW6IOteyTiZdu/sOwPZKER8Qi2lMQVtc2FYjCyRzmYX1DZLc58bGcpCx1NIYGinCKpgI
-YqETschLTJtZ12w2pknU6NhkQ78S2YdoE2lLWYY0CEx9qiUubWJrZ/Lam3UgpXkNTG3TdFumiAWu
-CgNtBrIS3OG2prga4+UvNbXc6zQXKECoQgL4QAUqEAAAd6CAVhNyH+rGJwIEWIB8F0CA+tYXABNY
-wQp4kAoj+NcIOAgwDiKAA+vuAruMUcGvBskY/tYxl0dMmcESkPCDH2ghDyuoQA4UYBMUKHEwVMUB
-AEZ8hwlQ4MQe0AALbsAALaSCvuct8QRSvGICGBgXCG7L5GZLJgd7F8JAmcEMkIAEPODhBSq+AYdV
-QqzzGOIO6KWAB/T7Ag3DAAM6+EEqoIzeGa8gyQzwwo1vgeCnBLKNKvAxUKLElDrMIAlH8IIXTrDi
-IFhBTBSL6B8iMIEZV/kEdC5BC0wQgwHoARU4oECfKfDlCqyYARs4wphtUWZLJcmfIVAzQ79rkzrU
-4QthAIMUSnCDIJjgzixakp7vMGVHl6AENIABA3QwACLMIBUI0ACS6QyCElxZBz1AwqRrUekG/pBI
-fapJ6VI5rZIodKELY+ACA/bQBCwvGSTiXCJ6EIBhDd8ABi0IApYHoAAFuCAVAOh1DVrAAAyYANjk
-PvSwZ1Hph65VWGRyp22BbJMo1AHaGGBAE0ytAyKo5FsIg+MV0vuCE5Rg3eLeALkVAARVaKAI4tZB
-DHrQAyKUWwFTmDe96UM1smzLAsOSmbIby2yQOBvgAid4D1BdI0TBEI4LmLGKY90EBhDa41HAgips
-UO0NbHwAE1dAFERObxW8yUtg6gc8xNkgRjbthUmEiqX6tIOoS710jCFBClAAyC/Nwwr/hvnAsdxx
-OgSg6/EIljl5YOIVOBzi4y53AlZBgBZg/sDoPaj1x5fA9BnpyVhdIpXiF4/mrEhgTx0gu2Ba4sVF
-vZ3xi58eVuzIdcb7uwtfGEPA1w5sIlzA8jtQfLic/AcC6DwHNyhCz03QcQXUoRUIuIMWtFDhBPg+
-AecuPCw6ZykUdAnlyE9+k91ygEqR4ANodUsoaXX15FtfRW9tpBGNb/1/f+ELXMBAEEjfcT1s//jD
-SmJp/4ADE7/ABr4Od94VoAThowNeazsR2ZHIfyTurr1EEUp1pAJ4RBRYoCd/FXn713+642EC4wAD
-qH/9932gJm3jl3EdpwS0IoH/pwLQJRD45QHeJnuQ1gPldmuLwAM4gAAs2IItGGCQAGAC/jZgEVCD
-LLgFk3AFRhABLtiDPogA9IVfBcYIKihgPUhgAWYEJJU28hIC+EECUBiFUViAJCEDi9RI1OUQi5QB
-TiiFXqgfCiVKjNSFUngEYRBqFih/8KYEXmRHT4hHu3UPCOB+NhBr7PZz5RZyh3AFK3he6CVji3Zi
-UuYBFAAACMBfioADK0ABd1BijIZk8NcCXJAFjsADQDhif9hnmriJm0hjNcAAiGgIPBABQfiHjQiI
-gpiKHjBiC6CEuPQu8XIAEIiFtEiLA+MiJjNKLmEPXNR8jFSLtTgwI3GAvgiMTwAFUCAFXDB+8rcB
-gecCofR4WAiBuwgBC8doJwACNSB7/n83cRVnCFcAX37oiHngAeaoX+i4Ai+waydgY4pwBSvgASbm
-AetYAXXYBCbwBIyAAzCWiYNojgAZkOeoATlQAxgQBnuIAPfVZSaGYgCpXwGJjhpAZxMQimVUMlwU
-Srq4kaJUhclkD1Z4EUE1SwWgkRw5SiXpECMwS8S4kXggBmIgBTXQBC3QjM9IkiZZkiWRETlHYzzn
-czEAdEJXCPx4X+lFjxqgARWwlEzZlBVwAjbAAiVwAhZpCADwAuaIZE+ZA7IWaYrAA/1YYlOGZErp
-lGZ5AlyJZZJWCFcQllKmjmSZlE2ZlHQplzYAAjfAAq/oMM+ykn75l34JEAHBl4KJ/kx9CZiI+ZHJ
-hJgj8JLqVgQ1GXGFpgR8+ZeFSXfY+HBqOHEXYAjiiF70aI+9RgM1UJo1cAM0UAIgkAMs0JosAAKk
-CQJVSQgLcAJLSWev+YnOKGyIwANGyWhKGZU5kAMgUJzGeZzFSQODVmh7RwhtGWMU8GfC2WuwRgOp
-qZrD6ZrCSQMY52J7OZjgGZ58YSB9IZ7meRLn+QLE+XCQ2QJFx5yCIJ6E4HopBnskSHsed3uFoJBR
-9n7aWG0msAE6MKAbYAKjBwM1cJ2khnFihggI4Jqkto0lSATNKYp+mF+O1ms3UAMwUATtWZMgCqI9
-54weV3+0CQD4ZXdS+W3h1m4m/vCiBip+LYCgN4CasAYD4sYF9jcK6vmYNfmeA1ChidB+0Ql/4CZu
-hVZuwTcIEYCid2B3ICBr7xZ4tUYESNcDMVCgDBAEM1qaMNBzGICDh0AAUYmXkAmU5LakhQCdKkZq
-R9pu7gajcgqjAip4IEcIIpZebbpu7SagHId0A8BxWWoCW0qTRQADX+pzOmAHOxoKL1Cc7Pmjfwef
-ixCCIziiJqgAKMikKDoB76ecbOdxH/dxVpqlo9cCHspu7qaPh0ABUGmmmOpxDtqIIpgDdhgEPieg
-MbBxHNervmqnSuecUbZziTqlwFpupaoDhMqMkTmpWtaon6ABkLqNkmp0QboI/nNYpHYIlKLKBITA
-A132qdVGa6MaBUJ2rlaqrFsqorkaA4iwlHcZe+Naa5v6rWJJkLfqbkdHBPzar/4qqqMqpNn6fr42
-e0k6qgg7AKYqcCDarmsJrZ0wAdPankAqpOCYXlC6jRE3cVWwpiW2ApE4f1GQAN5aCFjwAzFAqDT5
-o4oaA05gCDgQnNoof0nasYbQk8TajAeLsDyLsEJ6BXWXjXz6bkkHBEowlH/ABEqQBD2grit7h8CW
-BBDrCemmoRQLaZSKCDjLAj+Jh0FHCBHwsQ7XlZk6A3qICHwQcKgKmQC6cXxws8EZf2iqAPL2rRSQ
-Bw3HnriKh7YnXr/3t4Cr/gdIKwgLIGU7h3HzNwMlewhkIHoMgKqRaaxT2wlVu6Asa60W+61Bq5kZ
-N3F1+wcLN2MaVgOmFpRKt7iJIAVNcKjgVrFWOZFcC24TqgCoS7itZp93eLBVMLiQcAVSlrdDW3sz
-UACLwAcCd6hnSmgdN7mcAADrGXuXu3GZOwj0SZDyOrv1+gdzSI9c63fkSn+N8AIIyqHcCHiZm2Fo
-yZ1F13H6WQiPaKTu+XeZ2pmVgABTlmSI+721iwhdSq1oSgTMuwnOa7UsS2gDILWHQKQEe6QYcLBq
-CrTYGKWl63HZmwgTYJ2kWb6BZ7FXILOx17lEQHj7ebvQy622dwlPCrzh/mbAFOcIFQBrLIq1A9C+
-AXwJA2y57ommCGyVomufuOqM5SbCg1C4X7Zi3jtxaqoIBECdH8x210oIuSaaEMfC9EsIAPBld5fD
-QEy3lqCIRbytREsE+4sIHvCaP+mMA1DBNTwJlQu9OWzAOwzFdAjGpku77kuPYzvBmvoIBDCcC4qB
-FLqmSimVsouHSQyPVRa7NEtuNDwJC6COQnufGsebjSCCUjmToarGaxwJbXy1cHyxEayx82ex9pth
-RlyCSsrHrWmmBFdrJjoIEwC7Z1x7hoAAu6aN91l7VUwJ0akB8KuqAUoFj5AHvuxrIGyzm1wJCwCp
-LFqTOnyzOhe7s1d7/l9rxZD8n3nXyItApq/5wQZMBEmslGgpr+Nma1YJifFXdBPHu5GAA/WIuy3K
-AAxAAAhQgzM4g//FZwtcurW2y8ksCQgAqXbozMobx39gBJuLd9/7uaCrjo7GnSbsz4swAVBpn/+L
-uhEgs3hXs4bQaIqMpOQmxJSwAJCIyz9KkzBwAzlQAYvIiRPAZaCpYRBNe2n6z/W7ngOduz1g0NVr
-n7G6x/t5y3y6xWOcCB7wqjfAbiSqAIWwAHFbyEn6yoIQsxNpprnrcQwtCXcwyPEXoghaAixQAS8Q
-jwIpiN12yUpNyzZNCQhAnLAJbgQNbA+7Z3QYfwQnqknceuiMo3mn/smJAK8zK7/mTAhbTWez7HG1
-69T2qJk/XdSPkJTj/KGGCgM0AAIsYJtmyZS89m0GS25+vdbY6tY53bJfYMUYysrdWG7fWAgezZ16
-LNGKkNFSPK8hzNpbSc4kqs2Frci0/dmNINt3Sa0DJ8/EzaWsi6jIjaiQiatxaq3lhsygDQltnZxw
-vcICqgODMId4q8gmHAX7S9XZmNSze7aNoNhGys8KIKRGoNH5S26rPQjoa6vLnXfQ7chP7Z7Mrau7
-ut/83d/73avAKtXR7QjT/dYgGnEFKgjXmLHtrXeHYN4Pt75EoM2LQAGDPNOmq6ZRDH9TnKT+fAWA
-Db3oLeCSMAFP/vnRuRp4/7riLM6vPMvOA46tAl3d4magDEC40dy1tVcHMA4AJ27MeffejHAFuwZ7
-ae1xg0sAXC27Rudx5L1nTxncBG26ju0IGWYDuBtxtdezXN7lClDfMd4IxpnTzP247FeOKty55Ubi
-gkAB9ijf6J3VimDLVY3JtDbYg2Dhhk2CS32zP966E7p0lgDir7qNBksEIwu4ir7ogKsETx7mYk7d
-7MqlNfAHKXypqAzUhwBo8XqHgXenj3CVxYyjLFzf4uzT5VzBPm7YrSvYvs0IEfDj6ybhrw7pnzCc
-Bv6jXErZCHCbhLzCdfzogsADgJabR87Uj4DID10EsyvVwD2z/uidua6K5dwZv6UH5pFQm1Fp13k3
-vbY+Crie0+5ZBAkKlSyQA38sv6qdCBFg7hE+obWe3deMyRJXbkl+33NL4lFu1YDs7Xxc0fmapHL+
-7aIQ7tVdk+R+A6oJw1AtlOxuA1hesIIt5IvwpKOO3iJt6bKcqEvNzsVu0oD8spZwB9u53Cyc1wRf
-8JIeood6mjSwoQz8vf7+BwuwnV8aqjNfCEbQaqe81Az9Z6heetqMA+6+bjY5ACJfCR5QpiIeximP
-CmN+8Gub3B46zflZqavMc/JraHyMx9j8vYO73lLc4BQfARCP7nD9nj2Q9JSw9N1s8vD29KcQ9SEK
-oh6aqou8/uaVavAjWmhs/5WGy7XMjp8KkPEbbtcsnNU1f+4DPXsaRwaXUMboLuKTOteTEAFy7wjS
-mut1X/eYeoKM0MbFqnFDQOCMNrrzqvdWvOSe7uSGQABZn/YuugHPKgk6+AeSH6l7K6CWsAAekPnh
-O62d3/kmbMfbzMRn6m5Z1gg8wHDwN/g7bgh6Lt+xKuiF4LzESeYuqqOTMAFX8AcrsJ7CLc8YEKaU
-QAAl4I7ArwiP6qPD36z1/uWNgACv9vJv6m5gUN49bOeey5an3sSAoDNANPNnePgHAAJSclPUAtkU
-xECZh3iJeUjgYfjCWFLz2CIZ1HRDkJn6Z7SQl9PEoyo7/ktba3uLm6u7y9vr+3v7ksMYCml83MRg
-EkOkEIVVi0AzfQMzOsmAcTdrBDDxYkNTxLDRo6BQhxmhUWEDUtMStDygkJAJUJLviNzUUlQDIBa3
-CAtW2Nj2R0M+GsWM/aPBooIHAAQqWry4gACAOytYtIACLKTIkSRLmjyJEpEwYqKOGQuCQdC5C7Z4
-1LjZsInOJkUAqDJC4I6HCiBgKOvRTIESTAsqVGBRwpoyZgpcZJI2raFDGDVK5DhBgeLFigDK3qFA
-FIbPhNMYtiwC40YJFiderMhDIa/eCXz7vvC44UfKwYQLGz6MWOUwUC1dJjOBFB0ucTBgNIYr9wWC
-SzgQ/mikoCFHjSAbqCoohGmChhMsaMBIVq4ZNEwIaty4oRUS5rknNKzwkLev8KE0lOEwRME27rdx
-vdqooMHuiunUq4dusWHA0sTcu3v/Dt4TS5eRYMagVxVXhSCldOrmSgNExBdiKW4ELZpcZGezL72o
-cEIOjjQRE1KoZVIEXJa5BFcN8T0XXXXVvXBCcTp0oUmDC+q2m3w22HBCiCKOaEMJTWRHRH/grchi
-iy7qosEijJEXj37nLJHLFhjsSEkpLcAnX28rUDDBHRNQsMIJIBQRE3rOTJEJDuy4EwpMghABhCo2
-tOfeMZjFlwMLII4Yog0s3MCAIDgagkM//pCnoG1t/uVD50IMkTbIgS/uyWefLeJTglvkPWYaE7p4
-scEGJpjAI08OBhndCy+sVpR+ST2ZyhYAQmWNlYPooQoVO2LQo48ccnXDnHbS4AgG59WDiBiUzNoe
-gwneiusjsEVWhZ++/gosYXfg1umsxs5zjj26ZDFGDM7qkCijDATxEJ2uWbnfOTOoeMkELOQQ1SQY
-lDaIoaqAYUK0jJJqbKnsvcseJcimdwgVi967brv6trtjbOdsF2zAAg+cCwXJYJBuogpvoEMP6D3D
-SxZdDEBxDz08C626DMfg8KXO0CTLmUXAlKgO5zUzyxYmO4txxgu/rLAODV+KCRQrsyyzyzAvLPOr
-/udATHDQQg9tSB4Im+wwxUoPco4CoPbCBBJETE310kpP3XTTUSTAbSZGmYA0xVhHQcsQSVuNdtpK
-Z70mIll8oXbcVmPdNJRE3433r1uQS3fWWevZyxRAROF34X7PoEfXqSB6suF2y5JFEoZPTjk6jyMS
-tceVb/503p5/3uIQSWhuuFUjuZDAEjMYXscMCSihuCw4IOGk4SDPMkUCMxC++eRAxG4IE3oAsXrv
-hUexhOmgL898d1i4AH300rtwucBMTD+9E7o8j3330e8yhffdA998+eafj3766q/Pfvvuvw9//PLP
-T3/99t+Pf/76789///7/D8AACnCABCygAQ+I/sAEKnCBDGygAx8IwQhKcIIUrKAFL4jBDGpwgxzs
-oAc/CMIQ7qINDVxDGc6wBhES7A1qsJ8aznCGMrwhE26Qw0jOEIcy6PAMaUiFGtqgwx2m8BZpAGIZ
-4tDC7rTBD0z0gxnkEIcz+JCEvVhDDIPYBinSIg0wfEMZUlFEHSKxJFa8og5poYYclqENPTzJGd7A
-QxiWRA1MZIMcqCiLHwbxhEPcxQv7mJIXGnEOZnBDE5toBkysgYlaBGMiVZGGN8zhkIeEQxv/cAY4
-oIGSTXTDDGlRhk0e0gxJNMQiOcnEL4ZEDqj0QykRUQYmzuENlzyEGtb4SkzCgQ2t9MMc8IiI/jOg
-MhOhpCQpf3FLM7Qyj8o8JBpUiYg3mGGa1KymDTHxxjKYgZepTAMnc7kLVh7ymtjUZCs9qYpslgEO
-0+RmKlFSyF6i8pGIiAMT0VDLSygTnIaIgyh7yYYhyrOJbOCnIdJgSFSi4ZOGcCclVWlCXzSTk+RE
-xESZ6IY49JGOnXyhQ+V5zGAOExEIbeVCeaGGi440E2/opRlqGUuX/kGPc/hoJf+Q0CbGARgfxWcm
-BlpHfgIVmiUBKifpeYiJziEV9vQDHFKh0lY+0qh+QAMgD1FSeZYSDq1UpT3Z0MhcADQTUWUiIigZ
-Q6rek6GYXOkfstpLg8pCmEBNRUvludRD/sRUrTLl6k1l8Qa2YhOVO8UEVa1q2IESlSQ5pSpS30rJ
-wiKCo0zMpyHKikoSqjWvlxCnPNnQxqZyUpU5NcNVaUHXVgLTEL086yFhyFcmljK1h0SEZwFq2VnY
-NKCGOIMc2JCJNfyzl5Ldayr3KFqgJvKunZzsJYTrxLAiwq+UBG5ijcrZQwwVnrF9LHOb+Eq4+mGx
-l6WqDW3a2ktQVrGGWO9r/3DKQ5JXFsk1w3Cfeon0sva18VWrddvKSVtSdb6qcC8T4XBaTEwSqD79
-g3H9gInGgnSmAW7vf8uLyNMO95CC/QN6l5lf9p5EDk98sHzhCMNcLviQbrjkbf1w4aQ6/vYPF7Xh
-GlZc20tQ95Bs+Oh/N8zIPySXiaudBY7lcFs0XLfC+wXvH4AM1MLStomH2DFBfYwLA7PYDGUAZ39H
-yclPPhgTLz5qG0q5YS0qs49DPvAllyhVTNQYvjimsj4H2mGTSBijsvAmKq8JZ0oWWaVoiOIbHJrI
-i9LTppfwM4u1+OAk1jnIEn4sLRzKQkGH2K2UxDAn4UBIVFp3ymaFLCXdAGlKypWsRmUDMMtchh6u
-waF5HfMl2gAHGe7ZD6ut8xebSkXoctINiMDxR6Wr6EMw+s7ylO5JymppRASak2yEsqVVSk9hO5HG
-PD6EhPF7iGlXtZYOVaWJ/YBCTjpb/hZfbmFjs/sH/cY7x2UO8ltNnEJSQ/gP4m5wQ+WLizRglqLe
-fmg0O+1ghEMVldJ98ByEfU3MltLRTPyuU5ldx4L/1aIDXXdJoC0LKztz4FfFtm2b+EWV9paSiIUl
-JSvK7SbiV984NGYuxN1PStYSyvs2tZ3bbG9DSHiG+jbEg2F+UXDfQg2/BSoVOVnLKafw3EH39HtF
-yuMVExvo4z34IcXrB0CqHMBNbDnHMQpDFCamrAQ2BM+BqvSYI/LkRJb7ga2MBnDWWbrDpSfDJexx
-VdyW2D6v+Nm/ufLmkh2th39n0f+w90v0vYpxGDhw3fvYIUuR6ujGeI433Uo1QJnw/jJu7oOVrlI4
-4J2fE422YdiuCnHz1d9233Z7RWndgTMxpJ7v/CGGTM+oftn1skj6IXCc3Unbu74HbaVkcfryxdtZ
-pWEFPjDWsGteTxmpaTh2wluJbLeW3qShR8SXbThlf+veiQadKBv2uHZU5tkQeP/wpNmqUlTj+pBU
-rLd8c5t6AmZzRsdJQ5Zgs2BMWZRWX6dXzmcIR3YIUAZNFucH6DdSAdheR4ULbJQJ3YdKJ8RJfTRp
-mydvVndPmeB/8rRYQ/ZJGwZNKdhNCyd+hFFWgbdhcAB0OsRJF7Z+F0eAA4UGCNZ7TtUG9QZNstdY
-cVcL+uaAhiB7skRhhyRZsJcG/uf2RY8XVXBQhB+IC2yABuvGdqTGBnHwBrv2gzMYVdH2hPJEehrX
-RENUZ//FeWUnhENYaodRVgdoYGw0bN/HeCbIcs83h5QEB400iJTEUBSHSgdIX2pFeoo4Sml2CPXG
-BgNHQo93iBx2C6LlSX10BhI4b1RlXZwnZxqoSJykfE42WdV1CBQoZmpViMV2SHOQYoRRhUGEXrmm
-Q2xVZj20Y4h1bpxVVm4wB3GQTw6XfbsnRWvYSoCUjEpYC8pHTSHohnX1e7E1aiPFjItoC2nwdr30
-Rcn4aWeIUbtYipQEb8rWbR9GXjDYh34oS+JoBqmGcofBhHGmjqOUeExUWFQ3/kQ1mAoPRkviaFXe
-SFVt+AcpyIiysFv5qFOtSFXZdY+qtY85ZpBGhZCykImIt5G8Ro5dJ4MAlwk7NkMU6AcZ6WGxRYIc
-BnYsN3WjtEdndBIdaXtRKIX5yFlUp0oASUyqBl88l3f0R1XPx29dtQtftnuTyIoH9Y1NBEyQKE/k
-9Hh/IHJNuEVNKWqmdFgNKJKsZnCZwIlM6ZKYsI2ttFSR9pMmlUSDiBI0SU9lVkr25G9Up2S1V3Uu
-V3a2BGWNdJHyRHvwpVC5RQtPCE0GVkqHGGNPZl5Yp3B92Ut/KXixFXSZCE0P1nZRNX+U1UgvRpRC
-CVDNaFx1OVN7yZW9tJC9/uCWx7eUzQdMnDdDPDlYTSSRYXYJE1l3mGBTbTcL9cZWG0ZOHihPg8Zg
-qzWV0pdZt/CJsSVY69eGlqkKURV4SXkI/eV61qZRdulUtDWbiIiXvRR4vpCa4bZiMLdaa+BF7NRY
-xAabtdmVhvBdnfkHJilzqYB3gkkLZfVKVnZhotdL0AiDz2RZxRmf8gSNeSSOzlRkLVl2r+ScIdlE
-gadM0rVgZidtWRlunIQGWdSeA/qQ3clyXHaavgBDOcROmGVpayAHGboLIypwDJcKtOVsd1WgM7Vn
-haYKFqebCFhHOMhPZZR26gVlBSqfGSWYAkqjGAqftXBofhlrqnBupnUJ0g2aCWnUWPapTbGZpJj0
-UYJVbj0Eo5ggo5iwV2jAZW0QooPBRWdgREU2EiRWTdNkUCYURPQ5o4fgW9NUjPY5U/ZVR3qaR2vk
-p7SwBjvGBvPXXl60izw0C3TlBiXmcXdqBnmKTDlUTXOwRrWQBnFASE+0brFUpoEKX5rac5kgR7hJ
-fHqFe2AqS30kpzKJCarHUmt0pir0XLNqGDBkqwEHqnizqx3YZ6lgppjKVR2GUN9Jq8eKQcaKrMvK
-rM3qrM8KrdEqrdNKrdVqrdeKrdmqre8TCAA7
-end_of_data
 
-    return ($logo_photo_data);
-}
+    # FILENAME: /Users/minter/Desktop/mrvoice-logo.gif
+    # THIS FUNCTION RETURNS A BASE64 ENCODED
+    # REPRESENTATION OF THE ABOVE FILE.
+    # SUITABLE FOR USE BY THE -data PROPERTY.
+    # OF A Perl/Tk PHOTO.
+    my $binary_data = <<EOD;
+R0lGODlh2wBaAMQAAG9v/5GRka6urv/NzU5O//n3+i0t/+rq//+Ojuvr63BwcP+xsdvb/0tKSv9w
+cNra2sfHxw8P/8nJ//9OTiwdHbm5/5iY//8tLaio/9wKCoiI///n5/8AAAAA/wAAAP///yH5BAAA
+AAAALAAAAADbAFoAAAX/4CeOZGmeaKqubOu+RQA9b23feK7vfK8rniCloZAlfMikcslstgqUoHQq
+cFqv2Kz2I5h6IduweExONbzSY3nNbjMfaA/FTa/bbQF0wxUI3P+AYVBeCi1wHg00gYuMNWopEF5+
+LGdSCgWNmZolDxSTZlQseV4UYJuni11BVSkJU4qtcUEKj6i2Jw99KTF9fQK/AhAzfF8qox6YKpWy
+FKy3VxsDAwvUCNbX1NIDySq5DVFykLJSeysFy1IUtSZncyqq44imz0jTCA4TFxz7/P3+/BcmOECw
+YIMIb+C8pDgmyxmKBOimUOBmIlK5hwn1BFhHL8cABBP+iRxJct+EeB44/4qIiEbliE7xLp5QUCgF
+ED0CKHbEsQGkvpJAg+7LiAZWCaJeZJqAF6/miQQOS0SaoiDnTh4DHAjdKhRpKBOu4n06IUDBN5Rj
+XQyioGDe1Rw9f3KdSzKDWLIojapIACGA2ThRRbV9y6MAArqIS9odp1TETWY6oAY468Et4SwL5Cbe
+7C8ehQsDSrCkmuSB5Q+TowzZeJnHhpCcY/vzKmSfA4MiUJ4uPZqC3tYvFsi+gG2BtMOIF8sCGHoq
+ZCcwx7kEngL51gsOFmjlh+AESG3StGv+pzyOvwUM0ThdMugudRfWS2IvOEI4v9AmHDhAMWB8v3gZ
++DOaFIEhkV4cjb13gv99QHVnwgb94FaCfrts9w+AncWjUxKPMabgChv4J5KDJvx0AQoUiqDdAiQU
+ANts4wT4n4dOdCjLbh+OYCFQ+50A2wQjUJTiB9tdIOEAItHmgYz7lIdGWko4F4dvORSQwAOm/cYI
+hFv1+MEG3GznJX4iCKQjdySI5KRE/SiZkiPTnXCgHKyp1VcDlFmCSnw8jhBNffuw+KWgZXpp3ZFq
+jkNBm4quANVfScnAwgNm4RlAgSgUIMCAUkDJyItBASmCYX7ugxs1JJgpwmETkPkBqDNOGWsc60nF
+6RQNYLpDAgq4SeAKDwjgVx8QbKiFiCOJWmaaHOjoKnEjENTijhku12T/PLtBcCuCxuJQgI15oUAp
+bQ3gaAWyIin7wYkjXMDuq8+SeM8I/ZWkJD9rpiMnSopqeYKVD3AEga9o4LJtEImEAat8JICmo5cc
+xBstB8kUgC4HSsqoZK0fHOzZOt9WSkFGUYHLrzskMMWvB7ouQS3D7crrIIQSr8oBoQwmKouM8ZS8
+MkpKhdVQkB7rUcKc/LacBJLXpTomfsK5evPE775aV4z7aEgC0j9PMZbQcZgCUdeEpEy2F0ojcbE/
+qb5bAG5aSU0ocmQyrXMcAeaLMAlgK4qnr4/0XUzHZ3s9guBkq4MZV6lSbEJIck/MgZcfMIjANLAp
+yoHeHozFtRxWjaDt/zhOIS4FDZ8nRYQvAjxiMiKtF0Ap6Vq8PFKYEZtgapBT27z7xK6GpLmSjxTQ
+VLcqp5OM6UEkwHw6ku41tFS0xYmExULhTqIIXEpIs+STl6DuB4fRtiiNIiSvpzHTPx+DZ2mLMOd6
+j3LqKRMhBiXhYZRXbmoBH4kb+BxnMwlZLWPjGMvrUKYMWongeYSTRQOsRwKvCMMvBEPEFl4DlP1x
+oGpE2sd4yBQfB9lnAsmwD+c455YBxU995TiELIwnwW49pXDjsCET+OQPbtiHIgv7nWH8sYGcBUQu
+nDPfUWb4hCkdJB7M8xcKpITDV4hhAEHkQDRAcp8PfARdE8hHuoDCOf/akeA5LfDKE8dBRX3VQH2J
+I0LryJAZoYhRNkApXFQk+AKvYEKGaPCNdGqQOgQVoVh0MMza8CiUwq2DNn2MwxqnREMHtiAB7zvZ
+IRuxgCwysitka0z1LunEDwCSFB+IyXQ0dQaoMMYItojLJ+dygaIFAUoDut/REDTJQEaQdBBQQwH6
+0iFTKkqH6eMYHYrogEXGZj4GeZ0sfsM16yXAKzU5pUQ+0MazuUOVmRJAFJR5h57gw5lACUh2DIia
+rjHwJf1qYNh6icoPZJBG0qQTN4bZq/WdAoALuEcY8+EuEbproAMpiA7haEl2iGVDDxgQyrTpxm52
+rRwWJUWeDJcjG2T/FA2Y+qgcqjKDsriHm42SXxU94BRbxgFKyMzR87xgQ5d6hhsZZWA+TzpTlMSv
+oyX4WYIOd0+fkiCnJWBoz4660p8CdQQZ1KUIRLqytDD0naa0qWWoeqOn1sBjUhRdUdWzlJSaYFwr
+Uxz1zjZBr75gp+EwxFg7hRc0ZqovfqFJLwQQ1kyeTKpuNcGBRjYySxEycTjiGlbZsymvDCF0gXXB
+lbAUU8kGwFeeYN+UhtoE2QljBpWNrBjuNDIhNCB6KujLL2aASdG69rWwja1sZ+sEBlSAAbR9LQMk
+oAQGACACHeiABXKbCQAQwAAGiEAENFCl5HaAANcDQHCnO9z3HMAC/wAwLm53UoDpThcAOTjAd31w
+AAN4N7jVhUEFMGCBCiyCAd7l7U4kMF3gPje809VAASxAAA1s9wYE8K4BNFCBA7yAAQSwbwcM8IEC
+GNcA4E1kfK+Cgemad8H4RW+Ag8tgHCg4wjbYsHcPIN7ggtgNCv5vIA7AABIbS7oLhnEEMixc70bA
+wDe4sHBvUOLgRoAAAJAAfE0sAQuouAwpLkMBWjwCBmjguBgYgY5PPIINA3m6OLbBkDsggQsbwL0l
+IDELNFBf+aJAzCTYsgGSIQERTxfMbEiyBTSQ3QJIAAMS4MZuj5yC7AL5AxLQQHV9a98fu7fCJhbB
+lm98ggsDwALTNf8zCYxLAOiS4ACY2LKBmUyCCiTYxwDgMwlEHAE4jwADn+5ABACAY/oGl7kiIPN5
+O3DkArCYyb497ppFcIAHI5fVvTbucCsAgCh/gAFzxoCKFWxgBes4Ahj47XgZEG0CGLsE9jXAhsFr
+AQV71wIHsK+lIZ1oE3T31RWYbpQBgFxG11fRqdb2dO0852I32M31FfWoSA3n8s56wbh19Y5FAOP6
+fvnJEcBtwcEr6/uKIN3nZfV0j/vqXkfcwOcOroFt7O3zzljED1Yuqz/Q8Q4U2+PercCFZ/yBDSf8
+BAKvdH5bPu+MM5gBJZ/uBxZO8/ra2Ib+9jGYdaxqAQP6uxUo8JP/1U3wN/ccwwWHM6Jt3ONv4zu4
+0K06put7gKmXWsQMvvrEP0B0E0/ZwF3mcMMZUAD7UnkE5J41dHX8gR6H/d8+3nl+BV5qW3f71SoI
+uqqpbWH3Wjy4GID4iD+geDDHfbgKnvHKSRBoDGgg21W3sI+V3XBwe9fW7546eAt+d7zf+NkASPp4
+m/xmdSte0pPGO4Mnb3ecg5q9Ln86diMdewyrwPYmdrmKYUwAxeed8bw/+quHbF/gnxjZxs12xhdM
+4AsD2blY33IHlmzhD8Sd4d0H+6OjLn0RTB32F1a5iWHc4Ub72AJpVzXZ895ja/v4v4guvXA33H4R
+uJrlKuB11lcC/xBnAFMHYRF2frz2XRX2Y+iVfAj2bwZQfyOQcxEAYQLXAcqHYQ3HXKT3dFl2YX/n
+e8gXXOgXXMTGYSKYKeImAiIWdDc3cbIGgN7HYbrHfiXwfytwAKRmZSWQf3EHa+aXfPP3XNIFYRxm
+gw2mYxDmZRQoAs72aHn2cO+meAzWgXqHdUW4fRWIgtk2Aj12YgLXdR7XLYoXYSKGAV+oeATwfSTW
+ZlqYhg0nacSXAoTmXdl1f6NmYkFIAnE3YO7Ff+bVXxHnf2NXhBO4eluYXp72AV5XglBHXVl4X0yY
+eCIGfJYmAlMmAV33hZn3diPQcMa2cB+mYASQgXL3dMpWaODmZP8zZwJt1nHgxXetWHCWJ4lwd17Q
+NYPApQFTh4KKZmHsVWhbBmJxt2CfxmC/6IhjZ4uTOHd4h2GH6H85p2ryRXT69nTyFXcU53OJJnZx
+yHQFN2u7ZgLhZmPpBY731Xmddl5RZnwdUAEZGAHcAI4Jp4gFUHY2eIw1GI7AyHP6KHQZl4kPV3IR
+kI7dlwLYdVw4ZoUVAFw/Jnp1F5Amp4pNR47Z6IYtInYTOInp5YJcV3fn1WIXCGTX1mDSVnQ+JnAn
+xoMeN1yypm2MBwCCxlvsxYnmpwE1SXIchgFeZnjKBWEmcIeqRgAqZlsSgJM10Gb+NSrbhWy3BYb8
+BWRtZgDg1nKDF/hlI+BphQYAyARh+oZq2aZfFwltJlABdHZtkTcq5lB3NGkBeBaUQgiGltdeOLZb
+WXYDX9hgeckCS5aNZdCXu8AAgGkDLNaXLnZgmFYYZJCQxPWYOGB3kDmZWjaNlHmZKhBzmLmZKcCG
+nPmZJcCNoDmaH9BwBEmamGlcqSeYqPkeIQAAOw==
+EOD
+    return ($binary_data);
+}    # END mrvoice_logo_gif...
 
 sub soundicon_gif
 {
@@ -1648,8 +1781,10 @@ sub bulk_add
             }
             my $db_filename = move_file( $file, $title, $artist );
             print "Moved file to $db_filename\n" if $debug;
+            my $moved_md5 =
+              get_md5( catfile( $config{filepath}, $db_filename ) );
             $sth->execute( $db_title, $db_artist, $db_cat, $db_filename, $time,
-                $bulkadd_publisher )
+                $bulkadd_publisher, $moved_md5 )
               or die "can't execute the query: $DBI::errstr\n";
             print "Executed sth\n" if $debug;
             $sth->finish;
@@ -2045,7 +2180,10 @@ sub move_file
     $newfilename = "$newfilename$extension";
 
     print "Starting file copy\n" if $debug;
-    copy( $oldfilename, catfile( $config{'filepath'}, "$newfilename" ) );
+    copy( $oldfilename, catfile( $config{filepath}, $newfilename ) );
+    print "Move_file shows MD5 of moved file $newfilename is "
+      . md5_hex( catfile( $config{filepath}, $newfilename ) ) . "\n"
+      if $debug;
     print "Copy finished\n" if $debug;
 
     return ($newfilename);
@@ -2289,6 +2427,9 @@ sub add_new_song
 
     my $newfilename =
       move_file( $addsong_filename, $addsong_title, $addsong_artist );
+    print "MD5 of moved file is "
+      . md5_hex( catfile( $config{filepath}, $newfilename ) ) . "\n"
+      if $debug;
 
     $addsong_title = $dbh->quote($addsong_title);
     if ( $addsong_info eq "" )
@@ -3004,7 +3145,7 @@ sub show_about
         -buttons    => ["OK"],
         -background => 'white'
     );
-    my $logo_photo = $mw->Photo( -data => logo_photo() );
+    my $logo_photo = $mw->Photo( -data => mrvoice_logo_gif() );
     $box->Icon( -image => $icon );
     $box->add(
         "Label",
@@ -3928,6 +4069,7 @@ sub get_md5
     my $filename = shift;
     local $/ = undef;
     open( my $fh, "<", $filename );
+    binmode($fh);
     my $bindata = <$fh>;
     return md5_hex($bindata);
 }
@@ -4292,7 +4434,7 @@ sub search_online
 {
     my $listbox = shift;
     $listbox->delete('all');
-    my ( $term, $category, $person ) = @_;
+    my ( $term, $category, $person, $online_status ) = @_;
     my $xmlrpc;
     unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
     {
@@ -4330,6 +4472,12 @@ sub search_online
         );
 
     }
+
+    $$online_status = sprintf(
+        "Online search returned %d %s",
+        scalar @$result,
+        scalar @$result == 1 ? "entry" : "entries"
+    );
 
 }
 
@@ -4475,9 +4623,12 @@ sub online_download
 
     my $temp_dir = tempdir( CLEANUP => 1 );
     open( my $temp_fh, ">", "$temp_dir/$result->{filename}" ) or die;
+    binmode($temp_fh);
 
-    my $bindata = decode_base64( $result->{encoded_data} );
+    my $bindata = $result->{encoded_data};
     my $md5     = md5_hex($bindata);
+    print "MD5 of downloaded data is $md5\n"        if $debug;
+    print "MD5 as given online is $result->{md5}\n" if $debug;
     if ( $result->{md5} ne $md5 )
     {
         infobox(
@@ -4504,8 +4655,9 @@ sub online_search_window
 
     my $onlinebox;
     my $online_search_term;
-    my $category = 'any';
-    my $person   = 'any';
+    my $category      = 'any';
+    my $person        = 'any';
+    my $online_status = 'Mr. Voice Online';
     my $xmlrpc;
     unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
     {
@@ -4649,6 +4801,17 @@ sub online_search_window
             -activebackground => 'tomato3'
         );
 
+        $buttonframe->Label(
+            -textvariable => \$online_status,
+            -relief       => 'sunken'
+          )->pack(
+            -anchor => 'center',
+            -side   => 'right',
+            -expand => 1,
+            -padx   => 5,
+            -fill   => 'x'
+          );
+
         my $addbutton = $buttonframe->Button(
             -text    => "Download/Add",
             -command => sub { online_download($onlinebox) }
@@ -4677,7 +4840,7 @@ sub online_search_window
             -cursor  => 'question_arrow',
             -command => sub {
                 search_online( $onlinebox, $online_search_term, $category,
-                    $person );
+                    $person, \$online_status );
                 $online_search_term = undef;
                 $category           = "any";
                 $catmenu->configure(
@@ -4693,7 +4856,7 @@ sub online_search_window
             "<Key-Return>",
             sub {
                 search_online( $onlinebox, $online_search_term, $category,
-                    $person );
+                    $person, \$online_status );
                 $online_search_term = undef;
                 $category           = "any";
                 $catmenu->configure(
@@ -4769,8 +4932,6 @@ sub upload_xmlrpc
         }
     );
 
-    my $encoded_file = encode_base64($bindata);
-
     if ( !$check_call->result )
     {
         chomp( my $error = $check_call->faultstring );
@@ -4784,13 +4945,13 @@ sub upload_xmlrpc
     my $call = $xmlrpc->call(
         'upload_song',
         {
-            online_key   => $config{online_key},
-            title        => $info->{title},
-            artist       => $info->{artist},
-            info         => $info->{info},
-            filename     => $info->{filename},
-            md5sum       => $md5,
-            encoded_file => $encoded_file
+            online_key => $config{online_key},
+            title      => $info->{title},
+            artist     => $info->{artist},
+            info       => $info->{info},
+            filename   => $info->{filename},
+            md5sum     => $md5,
+            file       => $bindata
         }
     );
     $mw->Unbusy( -recurse => 1 );

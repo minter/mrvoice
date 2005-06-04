@@ -9,7 +9,7 @@ use CPAN;
 # Cribbed from http://netfactory.dk/technology/perl/misc/
 
 my @mods =
-  qw(DBI DBD::SQLite MPEG::MP3Info MP4::Info Audio::Wav Date::Manip Time::Local Time::HiRes Ogg::Vorbis::Header::PurePerl Tk Tk::ProgressBar::Mac Getopt::Long Cwd File::Temp XMLRPC::Lite Digest::MD5 MIME::Base64 Archive::Zip XML::Simple);
+  qw(DBI DBD::SQLite MP3::Info MP4::Info Audio::Wav Date::Manip Time::Local Time::HiRes Ogg::Vorbis::Header::PurePerl Tk Tk::ProgressBar::Mac Getopt::Long Cwd File::Temp XMLRPC::Lite Digest::MD5 Archive::Zip XML::Simple);
 
 push(
     @mods,
