@@ -257,6 +257,7 @@ our $altv = "PriceIsRightTheme.mp3";
 #####
 
 my $version = "2.0.9b";    # Program version
+$version .= "CWX";
 our $status = "Welcome to Mr. Voice version $version";
 
 sub get_category
