@@ -1,3 +1,6 @@
+Tue  Jul  5 2005	H. Wade Minter (minter@lunenburg.org)
+     * Begin pointing to mrvoice.net URL.
+
 Sun  May 29 2005	H. Wade Minter (minter@lunenburg.org)
      * Fixed a bulk-add bug.  Reported by Rob in Richmond.
      * Add a status bar to the online search window.  Requested by
