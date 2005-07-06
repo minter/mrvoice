@@ -92,7 +92,7 @@ our $artist;                    # The "Artist" search entry field
 our $anyfield;                  # The "Any Field" search entry field
 our $cattext;                   # The "Extra Info" search entry field
 our $authenticated = 0;         # Has the user provided the proper password?
-our $xmlrpc_url = 'http://www.lunenburg.org/mrvoice-online/xmlrpc/';
+our $xmlrpc_url = 'http://www.mrvoice.net/online/xmlrpc/';
 ##########
 
 # Allow searches of all music publishers by default.
@@ -3125,7 +3125,7 @@ sub show_about
     my $rev = '$LastChangedRevision$';
     $rev =~ s/.*: (\d+).*/$1/;
     my $string =
-      "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@lunenburg.org>\n\nURL: http://www.lunenburg.org/mrvoice/\n\n(c)2001-2005, Released under the GNU General Public License.\n\n\nTechnical information below:";
+      "Mr. Voice Version $version (Revision: $rev)\n\nBy H. Wade Minter <minter\@mrvoice.net>\n\nURL: http://www.mrvoice.net/\n\n(c)2001-2005, Released under the GNU General Public License.\n\n\nTechnical information below:";
     my $box = $mw->DialogBox(
         -title      => "About Mr. Voice",
         -buttons    => ["OK"],
