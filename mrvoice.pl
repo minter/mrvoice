@@ -5157,12 +5157,15 @@ sub Tank_Drop
     print "Dropping onto the holding tank\n" if $debug;
     my $dnd_source = shift;
     my $parent     = $dnd_source->parent;
-    my (@indices)  = $parent->info('selection');
+    my %current;
+    %current = map { $_ => 1 } return_all_indices($tankbox);
+    my (@indices) = $parent->info('selection');
     foreach my $index (@indices)
     {
         print "Dropping index $index\n" if $debug;
         my $text = $parent->itemCget( $index, 0, '-text' );
         my $id = $parent->info( 'data', $index );
+        next if $current{$id};
         $tankbox->add( $id, -data => $id, -text => $text );
         my $info = get_info_from_id($id);
         if ( !-e catfile( $config{'filepath'}, $info->{filename} ) )
