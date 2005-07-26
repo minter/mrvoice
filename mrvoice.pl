@@ -3240,7 +3240,6 @@ sub return_all_indices
         push( @indexes, $data );
         $curr_entry = $hlist->info( "next", $curr_entry );
     }
-    print "Returning @indexes\n";
     return @indexes;
 }
 
