@@ -13,7 +13,7 @@
       <itemizedlist>
         <listitem> <para>An MP3 player.  <ulink url="http://www.winamp.com/">WinAmp</ulink> version 5 is recommended.  If you plan on playing Windows Media Audio (WMA) files, you will need at least WinAmp Version 5, Full install (not "Lite")</para></listitem>
         <listitem><para>The <ulink url="http://www.kostaa.com/winamp/index.html">httpQ plugin</ulink> for WinAmp.  <emphasis>Optional, but recommended, since it allows you to fade-stop songs.</emphasis></para></listitem>
-        <listitem><para>The <ulink url="http://www.lunenburg.org/mrvoice/files/">Ogg Vorbis plugin</ulink> for WinAmp.  <emphasis>Optional, but required if you want to play .ogg files.</emphasis></para></listitem>
+        <listitem><para>The <ulink url="http://www.mrvoice.net/files/">Ogg Vorbis plugin</ulink> for WinAmp.  <emphasis>Optional, but required if you want to play .ogg files.</emphasis></para></listitem>
         <listitem><para>The <ulink url="http://www.rarewares.org/mp4.html">AAC plugin</ulink> for WinAmp.  <emphasis>Optional, but required if you want to use AAC/MP4 files</emphasis></para></listitem>
       </itemizedlist>
       </para>
