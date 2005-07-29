@@ -1,3 +1,9 @@
+Fri  Jul 29 2005	H. Wade Minter (minter@lunenburg.org)
+     * Add debugging to get_md5 subroutine.
+     * Remove dbh quoting in bulk_add, since using placeholders in the 
+       statement handle takes care of that anyway.
+     * Fix a bug in getting the MD5 for the bulk-added file.
+
 Mon  Jul 25 2005	H. Wade Minter (minter@lunenburg.org)
      * Bump version to 2.0.9c (final beta?)
 
