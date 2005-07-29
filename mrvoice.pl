@@ -256,7 +256,7 @@ our $altv = "PriceIsRightTheme.mp3";
 
 #####
 
-my $version = "2.0.9b";    # Program version
+my $version = "2.0.9c";    # Program version
 $version .= "CWX";
 our $status = "Welcome to Mr. Voice version $version";
 
@@ -1769,26 +1769,18 @@ sub bulk_add
             # Valid title, all we need
             my $time = get_songlength($file);
             print "Got time $time\n" if $debug;
-            my $md5 = get_md5( catfile( $config{filepath}, $file ) );
-            my $db_title = $dbh->quote($title);
-            my $db_artist;
-            if ( ($artist) && ( $artist !~ /^\s*$/ ) )
-            {
-                $db_artist = $dbh->quote($artist);
-            }
-            else
-            {
-                $db_artist = "NULL";
-            }
+            my $md5 = get_md5($file);
+            $artist = "NULL" unless $artist;
             my $db_filename = move_file( $file, $title, $artist );
             print "Moved file to $db_filename\n" if $debug;
             my $moved_md5 =
               get_md5( catfile( $config{filepath}, $db_filename ) );
-            $sth->execute( $db_title, $db_artist, $db_cat, $db_filename, $time,
+            $sth->execute( $title, $artist, $db_cat, $db_filename, $time,
                 $bulkadd_publisher, $moved_md5 )
               or die "can't execute the query: $DBI::errstr\n";
             print "Executed sth\n" if $debug;
             $sth->finish;
+
             if ( $^O eq "MSWin32" )
             {
                 push( @accepted, basename( Win32::GetLongPathName($file) ) );
@@ -3307,7 +3299,6 @@ sub return_all_indices
         push( @indexes, $data );
         $curr_entry = $hlist->info( "next", $curr_entry );
     }
-    print "Returning @indexes\n";
     return @indexes;
 }
 
@@ -4067,12 +4058,16 @@ sub play_mp3
 
 sub get_md5
 {
+    print "Getting MD5sum\n" if $debug;
     my $filename = shift;
+    print "Checking MD5 for file $filename\n" if $debug;
     local $/ = undef;
-    open( my $fh, "<", $filename );
+    open( my $fh, "<", $filename ) or die "Couldn't open $filename";
     binmode($fh);
     my $bindata = <$fh>;
-    return md5_hex($bindata);
+    my $md5     = md5_hex($bindata);
+    print "Returning MD5 $md5\n" if $debug;
+    return $md5;
 }
 
 sub get_songlength
@@ -5234,12 +5229,15 @@ sub Tank_Drop
     print "Dropping onto the holding tank\n" if $debug;
     my $dnd_source = shift;
     my $parent     = $dnd_source->parent;
-    my (@indices)  = $parent->info('selection');
+    my %current;
+    %current = map { $_ => 1 } return_all_indices($tankbox);
+    my (@indices) = $parent->info('selection');
     foreach my $index (@indices)
     {
         print "Dropping index $index\n" if $debug;
         my $text = $parent->itemCget( $index, 0, '-text' );
         my $id = $parent->info( 'data', $index );
+        next if $current{$id};
         $tankbox->add( $id, -data => $id, -text => $text );
         my $info = get_info_from_id($id);
         if ( !-e catfile( $config{'filepath'}, $info->{filename} ) )

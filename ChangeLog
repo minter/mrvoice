@@ -1,3 +1,20 @@
+Fri  Jul 29 2005	H. Wade Minter (minter@lunenburg.org)
+     * Add debugging to get_md5 subroutine.
+     * Remove dbh quoting in bulk_add, since using placeholders in the 
+       statement handle takes care of that anyway.
+     * Fix a bug in getting the MD5 for the bulk-added file.
+     * Merge into CWX branch 936:944
+
+Mon  Jul 25 2005	H. Wade Minter (minter@lunenburg.org)
+     * Bump version to 2.0.9c (final beta?)
+
+Sun  Jul 24 2005	H. Wade Minter (minter@lunenburg.org)
+     * Fix a bug that would cause a crash if you tried to drop a song into
+       the holding tank that already existed there.  Thanks to Lanny in Dallas.
+
+Tue  Jul  5 2005	H. Wade Minter (minter@lunenburg.org)
+     * Begin pointing to mrvoice.net URL.
+
 Sun  Jun  5 2005	H. Wade Minter (minter@lunenburg.org)
      * Re-add the CWX version tag - it got lost at some point.
 
