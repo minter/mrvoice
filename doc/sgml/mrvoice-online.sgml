@@ -3,7 +3,24 @@
 -->
 
 <chapter><title>Mr. Voice Online</title>
+  <sect1><title>What Is Mr. Voice Online?</title>
+    <para>Mr. Voice Online is an attempt to improve the selection of audio available for improv shows, as well as to build a community among people running sound for improv clubs.  The first attempt at Mr. Voice Online was a small subsection of the Mr. Voice website, where people could upload or download files.  It suffered from lack of use.  My theory was that it may be cumbersome to lug files around, have to re-enter the song information, and upload songs through a website.</para>
+    <para>For Mr. Voice 2.1, I've integrated the online functionality into the Mr. Voice application itself.  If you have an internet connection on your Mr. Voice system, you can now upload, download, and search songs in the online database directly from Mr. Voice itself.  We shall see if this proves easier to use.</para>
+    <para>To get started with Mr. Voice online, you will need a key.  I am not intending this project to turn into a large-scale filesharing community, so I am restricting use to people involved in improv clubs or other legitimate environments.  Getting a key, if you meet those conditions, is simple.  Send an email to minter@mrvoice.net with your name, the name of your group, and your website.  I'll send you back a key string that looks something like "i8bXtjCl+m2jL45BsiOia7".  Put that string in the Online Options section of your Preferences, check the "Enable online functionality" button, and you're set.</para>
+  </sect1>
 
-<para>Stub</para>
+  <sect1><title>Using Mr. Voice Online</title>
+    <para>If you enable online functionality, you will see a new menu option - <menuchoice> <guimenu>Advanced Search</guimenu> <guimenuitem>Search Mr. Voice Online</guimenuitem> </menuchoice>.  Selecting that will bring up the Mr. Voice Online window, as seen below.</para>
+    <para>As you can see, it's a scaled-down version of the normal Mr. Voice window.  You can search for text in any field (title, artist, extra info), or narrow your search down by category or by the person who uploaded the song (in case you have a particular person's contributions you want to browse).  There are also currently a couple of options in the <guimenu>Predefined Searches</guimenu> menu.  You can show all songs on Mr. Voice Online that do not exist on your system (useful for finding things to download), or you can search all songs on your system that do not exist on Mr. Voice Online (useful for uploading).</para>
+    <sect2><title>Downloading Songs</title>
+      <para>Once you have performed a search, and have some songs in the Mr. Voice Online window, you can download them.  Currently downloads are limited to one at a time - multi-song downloads will be added in a future version.  You will notice that the button that reads <guibutton>Play Now</guibutton> in the normal Mr. Voice window is now blue and reads <guibutton>Download/Add</guibutton>.  Double-clicking a song in the Mr. Voice Online window, or clicking the <guibutton>Download/Add</guibutton> button, will download the song in the background (which could take some time, depending on the size of the file and the speed of your internet connection).</para>
+      <para>Once the song is downloaded, the standard Add New Song window will be displayed, loaded up with information about the downloaded song.  You can preview the song here, to see if you want it.  If you click <guibutton>Ok</guibutton> (be sure to select a category), the song will be added to your local system.  If you click <guibutton>Cancel</guibutton>, nothing happens.</para>
+    </sect2>
+    <sect2><title>Uploading Songs</title>
+      <para>You upload songs from the normal Mr. Voice window.  When you have a song listed in the main window, you can right-click on it to see a menu.  On this menu will be an option named Upload to <guimenuitem>Mr. Voice Online</guimenuitem>.  Song uploads are currently limited to one-at-a-time - multi-song uploads are planned for a future release.</para>
+      <para>Choosing that menu item will immediately attempt to upload the song to Mr. Voice online.  It will check to be sure that file does not already exist, then start the upload (which could take a while, depending on the size of the file and the speed of your internet connection).  Once the file is uploaded, the status bar will update with the new online song ID of the song, plus the time it took to upload.</para>
+      <note><para>Note that when you perform the <menuchoice> <guimenu>Predefined Searches</guimenu> <guimenuitem>Show Local Songs That Are Not Online</guimenuitem> </menuchoice> search, the local songs will show up in the main Mr. Voice window, not the Mr. Voice online window.  This is because you have to do uploads from the main window.</para></note>
+    </sect2>
+  </sect1>
 
 </chapter>
