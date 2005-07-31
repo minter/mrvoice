@@ -15,7 +15,7 @@ my $db_name = "mrvoice";
 my $db_user = "mrvoice";
 my $db_pass = "mrvoice";
 
-my $upload_path = "/usr/www/lunenburg.org/htdocs/mrvoice-online/mp3";
+my $upload_path = "/usr/www/mrvoice.net/htdocs/online/mp3";
 
 sub check_version
 {
@@ -42,7 +42,7 @@ sub check_version
         return {
             needupgrade => 1,
             message     =>
-              "The latest version of Mr. Voice for $os is $versions{$os}.  You can upgrade from http://www.lunenburg.org/mrvoice/"
+              "The latest version of Mr. Voice for $os is $versions{$os}.  You can upgrade from http://www.mrvoice.net/"
         };
     }
     else
@@ -122,7 +122,7 @@ sub upload_song
 
     $ENV{PATH} = "/bin:/usr/bin";
     my $time =
-      `/usr/www/lunenburg.org/htdocs/mrvoice-online/get-time.pl $upload_path/$filename`;
+      `/usr/www/mrvoice.net/htdocs/online/get-time.pl $upload_path/$filename`;
 
     $sth->execute( $args->{title}, $args->{artist}, $args->{info}, $filename,
         $time, $keyinfo->{id}, $args->{md5sum}, $args->{publisher} )
@@ -328,7 +328,7 @@ sub check_key
     else
     {
         die
-          "ERROR: Online Key not valid.  Email Wade at minter\@lunenburg.org to get a key.\n";
+          "ERROR: Online Key not valid.  Email Wade at minter\@mrvoice.net to get a key.\n";
     }
 }
 
