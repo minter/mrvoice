@@ -43,7 +43,7 @@ use subs
   qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_items advancedmenu_items helpmenu_items/;
 
 #########
-# AUTHOR: H. Wade Minter <minter@lunenburg.org>
+# AUTHOR: H. Wade Minter <minter@mrvoice.net>
 # TITLE: mrvoice.pl
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
