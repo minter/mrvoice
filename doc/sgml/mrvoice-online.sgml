@@ -10,16 +10,15 @@
   </sect1>
 
   <sect1><title>Using Mr. Voice Online</title>
-    <para>If you enable online functionality, you will see a new menu option - <menuchoice> <guimenu>Advanced Search</guimenu> <guimenuitem>Search Mr. Voice Online</guimenuitem> </menuchoice>.  Selecting that will bring up the Mr. Voice Online window, as seen below.
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="../images/mrvoice-online.png" format="png">
-        </imageobject>
-        <textobject>
-          <phrase>Mr. Voice Online window.</phrase>
-        </textobject>
-      </mediaobject>
-    </para>
+    <para>If you enable online functionality, you will see a new menu option - <menuchoice> <guimenu>Advanced Search</guimenu> <guimenuitem>Search Mr. Voice Online</guimenuitem> </menuchoice>.  Selecting that will bring up the Mr. Voice Online window, as seen below.</para>
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="../images/mrvoice-online.png" format="png">
+      </imageobject>
+      <textobject>
+        <phrase>Mr. Voice Online window.</phrase>
+      </textobject>
+    </mediaobject>
     <para>As you can see, it's a scaled-down version of the normal Mr. Voice window.  You can search for text in any field (title, artist, extra info), or narrow your search down by category or by the person who uploaded the song (in case you have a particular person's contributions you want to browse).  There are also currently a couple of options in the <guimenu>Predefined Searches</guimenu> menu.  You can show all songs on Mr. Voice Online that do not exist on your system (useful for finding things to download), or you can search all songs on your system that do not exist on Mr. Voice Online (useful for uploading).</para>
     <sect2><title>Downloading Songs</title>
       <para>Once you have performed a search, and have some songs in the Mr. Voice Online window, you can download them.  Currently downloads are limited to one at a time - multi-song downloads will be added in a future version.  You will notice that the button that reads <guibutton>Play Now</guibutton> in the normal Mr. Voice window is now blue and reads <guibutton>Download/Add</guibutton>.  Double-clicking a song in the Mr. Voice Online window, or clicking the <guibutton>Download/Add</guibutton> button, will download the song in the background (which could take some time, depending on the size of the file and the speed of your internet connection).</para>
