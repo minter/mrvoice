@@ -20,38 +20,68 @@
   </para>
   <sect1><title>Configuration Options and Variables</title>
     <para>The options that you can set in the <menuchoice> <guimenu>File</guimenu> <guimenuitem>Preferences</guimenuitem> </menuchoice> menu are listed below.  After the name of each option, the actual variable name is given in parenthesis, in case you need to edit the configuration files manually (Manual configuration is detailed in section 2.1.1).</para>
-    <itemizedlist>
-      <listitem>
-        <para><varname>Database Filename (db_file)</varname> - The file on your hard drive that contains the Mr. Voice SQLite database (<filename>C:\mrvoice.db</filename> by default on Windows, <filename>~/mrvoice.db</filename> by default on Unix)</para>
-      </listitem>
-      <listitem>
-        <para><varname>MP3 Player (mp3player)</varname> - The path to your MP3 player.  Likely options are <filename>/usr/bin/xmms</filename> for Unix systems, and <filename>C:\Program Files\WinAmp\WinAmp.exe</filename> for Windows systems.</para>
-      </listitem>
-      <listitem>
-        <para><varname>MP3 Directory (filepath)</varname> - The path information that will be prepended to the filename retrieved from the database or, in other words, the directory where you store your MP3 files.  Used to find the actual MP3 files on the local system.  The user who is running Mr. Voice must have read/write permission into this directory.</para>
-      </listitem>
-      <listitem>
-        <para><varname>Hotkey Directory (savepath)</varname> - This will be the default directory that hotkey save files will go into.  The user running the program as must have read/write permission into that directory. Recommended to be different than the Mr. Voice install directory.</para>
-      </listitem>
-      <listitem>
-        <para><varname>Number of Dynamic Documents To Show (savefile_max)</varname> - The number of "most recently accessed hotkey files" to keep available under the <guimenu>File</guimenu> menu.  Defaults to 4.</para>
-      </listitem>
-      <listitem>
-        <para><varname>httpQ Password (httpq_pw)</varname> - The password used to connect to the httpQ plugin for WinAmp.  Only useful under Windows if you're using the httpQ plugin.  Otherwise it's ignored.</para>
-      </listitem>
-      <listitem>
-        <para><varname>Search ASCAP songs (search_ascap)</varname> - Enables searches of songs that have ASCAP set as the publisher field.  Only needed if you are using song publishers in your database.</para>
-      </listitem>
-      <listitem>
-        <para><varname>Search BMI songs (search_bmi)</varname> - Enables searches of songs that have BMI set as the publisher field.  Only needed if you are using song publishers in your database.</para>
-      </listitem>
-      <listitem>
-        <para><varname>Show Song Publisher (show_publisher)</varname> - Enables the display of the song publisher in the search results.  Only needed if you are using song publishers in your database.</para>
-      </listitem>
-      <listitem>
-        <para><varname>Search Other songs (search_other)</varname> - Enables searches of songs that have "Other" set as the publisher field.  Only needed if you are using song publishers in your database.</para>
-      </listitem>
-    </itemizedlist>
+    <sect2><title>Database Options</title>
+      <itemizedlist>
+        <listitem>
+          <para><varname>Database Filename (db_file)</varname> - The file on your hard drive that contains the Mr. Voice SQLite database (<filename>C:\mrvoice.db</filename> by default on Windows, <filename>~/mrvoice.db</filename> by default on Unix)</para>
+        </listitem>
+      </itemizedlist>
+    </sect2>
+    <sect2><title>File Paths</title>
+      <itemizedlist>
+        <listitem>
+          <para><varname>MP3 Directory (filepath)</varname> - The path information that will be prepended to the filename retrieved from the database or, in other words, the directory where you store your MP3 files.  Used to find the actual MP3 files on the local system.  The user who is running Mr. Voice must have read/write permission into this directory.</para>
+        </listitem>
+        <listitem>
+          <para><varname>Hotkey Directory (savepath)</varname> - This will be the default directory that hotkey save files will go into.  The user running the program as must have read/write permission into that directory. Recommended to be different than the Mr. Voice install directory.</para>
+        </listitem>
+      </itemizedlist>
+    </sect2>
+    <sect2><title>Search Options</title>
+      <itemizedlist>
+        <listitem>
+          <para><varname>Search ASCAP songs (search_ascap)</varname> - Enables searches of songs that have ASCAP set as the publisher field.  Only needed if you are using song publishers in your database.</para>
+        </listitem>
+        <listitem>
+          <para><varname>Search BMI songs (search_bmi)</varname> - Enables searches of songs that have BMI set as the publisher field.  Only needed if you are using song publishers in your database.</para>
+        </listitem>
+        <listitem>
+          <para><varname>Show Song Publisher (show_publisher)</varname> - Enables the display of the song publisher in the search results.  Only needed if you are using song publishers in your database.</para>
+        </listitem>
+        <listitem>
+          <para><varname>Search Other songs (search_other)</varname> - Enables searches of songs that have "Other" set as the publisher field.  Only needed if you are using song publishers in your database.</para>
+        </listitem>
+      </itemizedlist>
+    </sect2>
+    <sect2><title>Online Options</title>
+      <itemizedlist>
+        <listitem>
+          <para><varname>Enable Online Functionality (enable_online)</varname> - Enable this option if you want to use any of the online functionality (such as version checks or Mr. Voice Online).  If this is not enabled, you will not get the menu items that offer online functionality.  Obviously, enabling this without an internet connection on your Mr. Voice computer is a bit silly.</para>
+        </listitem>
+        <listitem>
+          <para><varname>Check For New Versions (check_version)</varname> - If enabled, will check the Mr. Voice website once a week and alert you if a new version of Mr. Voice is available.</para>
+        </listitem>
+        <listitem>
+          <para><varname>Mr. Voice Online key (online_key)</varname> - When you register for Mr. Voice online, you will be given a key password.  Enter that here, or your Mr. Voice online functionality will fail.  For information on how to get a key, see the Mr. Voice Online section in this manual.</para>
+        </listitem>
+      </itemizedlist>
+    </sect2>
+    <sect2><title>Other</title>
+      <itemizedlist>
+        <listitem>
+          <para><varname>MP3 Player (mp3player)</varname> - The path to your MP3 player.  Likely options are <filename>/usr/bin/xmms</filename> for Unix systems, and <filename>C:\Program Files\WinAmp\WinAmp.exe</filename> for Windows systems.  This option is not used on Mac OS X, as it uses AppleScript to launch the Audion MP3 player.</para>
+        </listitem>
+        <listitem>
+          <para><varname>Number of Dynamic Documents To Show (savefile_max)</varname> - The number of "most recently accessed hotkey files" to keep available under the <guimenu>File</guimenu> menu.  Defaults to 4.</para>
+        </listitem>
+        <listitem>
+          <para><varname>httpQ Password (httpq_pw)</varname> - The password used to connect to the httpQ plugin for WinAmp.  Only useful under Windows if you're using the httpQ plugin.  Otherwise it's ignored.</para>
+        </listitem>
+        <listitem>
+          <para><varname>Write Access Password (write_password)</varname> - If this option is set, any attempt to perform an action that will modify the Mr. Voice system (adding a song, deleting a song, renaming a category, etc) will prompt for the password (once per session).  No password, no changes.  Useful if you have people running Mr. Voice that you don't trust not to break things.</para>
+        </listitem>
+      </itemizedlist>
+    </sect2>
     <sect2><title>Manual Configuration</title>
       <para>To troubleshoot, fine-tune changes, or skip the GUI alltogether, you can manually set up the configuration file.  The configuration file consists of lines in the following format:</para>
       <para><computeroutput>variable_name::value</computeroutput></para>
@@ -69,7 +99,7 @@ search_other::1
 show_publisher::0
         </screen>
       </para>
-      <para>The Windows <filename>C:\MRVOICE.CFG</filename> file will look similar, but with Windows pathnames instead of Unix ones.</para>
+      <para>The Windows <filename>C:\MRVOICE.CFG</filename> file will look similar, but with Windows pathnames instead of Unix ones.  The Mac config file (named mrvoice.cfg in your home folder) will look similar to the Unix one.</para>
     </sect2>
   </sect1>
 </chapter>
