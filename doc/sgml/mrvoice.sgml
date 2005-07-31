@@ -14,7 +14,7 @@
   <title>Mr. Voice 2.1 Installation and Reference Manual</title>
   <mediaobject>
     <imageobject>
-      <imagedata fileref="../images/mrvoice-logo.png" format="png">
+      <imagedata align="center" fileref="../images/mrvoice-logo.png" format="png">
     </imageobject>
   </mediaobject>
   <author>
