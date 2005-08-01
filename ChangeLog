@@ -1,3 +1,8 @@
+Mon  Aug  1 2005	H. Wade Minter (minter@lunenburg.org)
+     * Fix bugs where a Bundle wouldn't have all the required information.
+     * Improve the Holding Tank bundle export code, so that it will write a
+       unique filename, instead of overwriting an existing bundle file.
+
 Fri  Jul 29 2005	H. Wade Minter (minter@lunenburg.org)
      * Add debugging to get_md5 subroutine.
      * Remove dbh quoting in bulk_add, since using placeholders in the 
