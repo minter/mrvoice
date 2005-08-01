@@ -78,7 +78,11 @@
           <para><varname>httpQ Password (httpq_pw)</varname> - The password used to connect to the httpQ plugin for WinAmp.  Only useful under Windows if you're using the httpQ plugin.  Otherwise it's ignored.</para>
         </listitem>
         <listitem>
-          <para><varname>Write Access Password (write_password)</varname> - If this option is set, any attempt to perform an action that will modify the Mr. Voice system (adding a song, deleting a song, renaming a category, etc) will prompt for the password (once per session).  No password, no changes.  Useful if you have people running Mr. Voice that you don't trust not to break things.</para>
+          <para><varname>Write Access Password (write_password)</varname> - If this option is set, any attempt to perform an action that will modify the Mr. Voice system (adding a song, deleting a song, renaming a category, etc) will prompt for the password (once per session).  
+         <mediaobject>
+           <imageobject><imagedata fileref="../images/enter-password.png" format="png"></imageobject>
+         </mediaobject>
+         No password, no changes.  Useful if you have people running Mr. Voice that you don't trust not to break things.</para>
         </listitem>
       </itemizedlist>
     </sect2>
