@@ -248,7 +248,7 @@ else
 
 #####
 
-my $version = "2.0.9c";    # Program version
+my $version = "2.1";    # Program version
 our $status = "Welcome to Mr. Voice version $version";
 
 sub get_category
