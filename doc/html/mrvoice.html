@@ -1,0 +1,2973 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Mr. Voice 2.1 Installation and Reference Manual</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"></HEAD
+><BODY
+CLASS="BOOK"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="BOOK"
+><A
+NAME="AEN1"
+></A
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="TITLE"
+><A
+NAME="AEN2"
+>Mr. Voice 2.1 Installation and Reference Manual</A
+></H1
+><H3
+CLASS="AUTHOR"
+><A
+NAME="AEN7"
+></A
+>H. Wade Minter</H3
+><DIV
+CLASS="AFFILIATION"
+><DIV
+CLASS="ADDRESS"
+><P
+CLASS="ADDRESS"
+><CODE
+CLASS="EMAIL"
+>&#60;<A
+HREF="mailto:minter@mrvoice.net"
+>minter@mrvoice.net</A
+>&#62;</CODE
+></P
+></DIV
+></DIV
+><P
+CLASS="COPYRIGHT"
+>Copyright &copy; 2000-2005 H. Wade Minter</P
+><HR></DIV
+><HR><H1
+><A
+NAME="AEN16"
+></A
+>Acknowledgements</H1
+><P
+>Thanks to my wife, Holly, for encouragement and editorial help.</P
+><P
+>Thanks to all of the voices at <A
+HREF="http://www.comedyworx.com/"
+TARGET="_top"
+>ComedyWorx-Raleigh</A
+>, including (but not limited to) Jack Spencer, Larry Howard, Sam Adams, Bobby Rathbone, Ross White, Leo DiNapoli, Jason Matthews, and Bryan Cronk, as well as users in other cities, such as Kasey Christie, Randy Tennison, Bill Cernansky, Eric Wood, and Randy Tayler for testing and feedback.</P
+><P
+>Thanks to the ownership and players of <A
+HREF="http://www.comedyworx.com/"
+TARGET="_top"
+>ComedyWorx</A
+> for giving me such a fun place to be a goofball for nearly five years.</P
+><P
+>Thanks to the authors and publishers, and contributors of the following books and newsgroups, without which none of this would have gotten done:
+    <P
+></P
+><UL
+><LI
+><P
+><I
+CLASS="CITETITLE"
+>Learning Perl, 2nd Edition</I
+>, by Randal Schwartz and Tom Christiansen, published by O'Reilly and Associates.</P
+></LI
+><LI
+><P
+><I
+CLASS="CITETITLE"
+>Programming Perl, 2nd Edition</I
+>, by Larry Wall, Randal Schwartz and Tom Christiansen, published by O'Reilly and Associates.</P
+></LI
+><LI
+><P
+><I
+CLASS="CITETITLE"
+>Learning Perl/TK</I
+>, by Nancy Walsh, published by O'Reilly and Associates.</P
+></LI
+><LI
+><P
+><I
+CLASS="CITETITLE"
+>Matering Perl/TK</I
+>, by Steven Liddie and Nancy Walsh, published by O'Reilly and Associates.</P
+></LI
+><LI
+><P
+><I
+CLASS="CITETITLE"
+>Programming the Perl DBI</I
+>, by Alligator Descartes &#38; Tim Bunce, published by O'Reilly and Associates.</P
+></LI
+><LI
+><P
+>The newsgroup comp.lang.perl.tk</P
+></LI
+></UL
+>
+  </P
+><P
+>The following groups who have been willing to actually run this software!
+    <P
+></P
+><UL
+><LI
+><P
+><A
+HREF="http://www.spocomedy.com/"
+TARGET="_top"
+>SpoComedy</A
+> (Spokane, WA)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.comedysportz.com/portland/"
+TARGET="_top"
+>ComedySportz</A
+> (Portland, OR)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.comedycity.cc/"
+TARGET="_top"
+>ComedyCity</A
+> (Kansas City, MO)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.comedysportzla.pair.com/"
+TARGET="_top"
+>ComedySportz</A
+> (Los Angeles, CA)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.comedysportzutah.com/"
+TARGET="_top"
+>ComedySportz</A
+> (Provo, UT)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.comedysportzdfw.com/"
+TARGET="_top"
+>ComedySportz</A
+> (Dallas/Ft. Worth, TX)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.comedysportzchicago.com/"
+TARGET="_top"
+>ComedySportz</A
+> (Chicago, IL)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.idiotboxers.com/"
+TARGET="_top"
+>The Idiot Box</A
+> (Greensboro, NC)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.comedysportztc.com/"
+TARGET="_top"
+>ComedySportz</A
+> (Minneapolis, MN)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.comedysportzrichmond.com/"
+TARGET="_top"
+>ComedySportz</A
+> (Richmond, VA)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.comedysportzmilwaukee.com/"
+TARGET="_top"
+>ComedySportz</A
+> (Milwaukee, WI)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cszdc.com/"
+TARGET="_top"
+>ComedySportz</A
+> (Washington, DC)</P
+></LI
+></UL
+>
+  </P
+><P
+>Thanks to <A
+HREF="http://pobox.com/~dereklane/"
+TARGET="_top"
+>Derek Lane</A
+> of the <A
+HREF="http://raleigh.pm.org/"
+TARGET="_top"
+>Raleigh Perl Mongers</A
+> for suggesting the move to SQLite as a database backend.</P
+><P
+>And thanks to the Open Source and Free Software movements, letting people write software that doesn't suck!</P
+><P
+>Mr. Voice is dedicated to the memory of Andy Sepelak (4/4/78 - 3/11/02), a fine improviser and a good man.  He will be missed.</P
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN85"
+>Foreword</A
+></DT
+><DT
+><A
+HREF="#AEN92"
+>What's New</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN95"
+>What's new in Version 2.1?</A
+></DT
+><DT
+><A
+HREF="#AEN119"
+>What's new in Version 2.0?</A
+></DT
+><DT
+><A
+HREF="#AEN156"
+>What's new in Version 1.10.6?</A
+></DT
+><DT
+><A
+HREF="#AEN162"
+>What's new in Version 1.10.4?</A
+></DT
+><DT
+><A
+HREF="#AEN168"
+>What's new in Version 1.10.2?</A
+></DT
+><DT
+><A
+HREF="#AEN176"
+>What's new in Version 1.10?</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN211"
+>Installing Mr. Voice</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN213"
+>Required Components</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN216"
+>Microsoft Windows</A
+></DT
+><DT
+><A
+HREF="#AEN237"
+>Unix/Linux/BSD</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN283"
+>Installation Steps</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN286"
+>Upgrading to Mr. Voice 2.0</A
+></DT
+><DT
+><A
+HREF="#AEN301"
+>Unix Installation Instructions</A
+></DT
+><DT
+><A
+HREF="#AEN313"
+>Windows Installation Instructions</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+><A
+HREF="#AEN353"
+>Configuring Mr. Voice</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN369"
+>Configuration Options and Variables</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN375"
+>Database Options</A
+></DT
+><DT
+><A
+HREF="#AEN383"
+>File Paths</A
+></DT
+><DT
+><A
+HREF="#AEN392"
+>Search Options</A
+></DT
+><DT
+><A
+HREF="#AEN407"
+>Online Options</A
+></DT
+><DT
+><A
+HREF="#AEN419"
+>Other</A
+></DT
+><DT
+><A
+HREF="#AEN440"
+>Manual Configuration</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+><A
+HREF="#AEN449"
+>Using Mr. Voice</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN459"
+>Adding, Deleting, and Editing Songs and Categories</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN462"
+>Categories</A
+></DT
+><DT
+><A
+HREF="#AEN498"
+>Songs</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN622"
+>Searching and Playing Songs</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN625"
+>Searching The Database</A
+></DT
+><DT
+><A
+HREF="#AEN660"
+>Playing Songs</A
+></DT
+><DT
+><A
+HREF="#AEN680"
+>Exiting Mr. Voice</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN689"
+>Hotkeys</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN692"
+>Configuring Hotkeys</A
+></DT
+><DT
+><A
+HREF="#AEN730"
+>Using Hotkeys</A
+></DT
+><DT
+><A
+HREF="#AEN733"
+>Saving and Loading Hotkeys</A
+></DT
+><DT
+><A
+HREF="#AEN767"
+>The Holding Tank</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+><A
+HREF="#AEN804"
+>Mr. Voice Online</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN806"
+>What Is Mr. Voice Online?</A
+></DT
+><DT
+><A
+HREF="#AEN811"
+>Using Mr. Voice Online</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN824"
+>Downloading Songs</A
+></DT
+><DT
+><A
+HREF="#AEN833"
+>Uploading Songs</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+><A
+HREF="#AEN843"
+>Troubleshooting and FAQs</A
+></DT
+><DT
+><A
+HREF="#AEN896"
+>Known Bugs and Issues</A
+></DT
+><DT
+><A
+HREF="#AEN900"
+>Contributing, Contacting, and Bug Reporting</A
+></DT
+><DT
+><A
+HREF="#AEN910"
+>Software License</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="PREFACE"
+><HR><H1
+><A
+NAME="AEN85"
+></A
+>Foreword</H1
+><P
+>Mr. Voice was written with a very specific purpose in mind - to be the GUI frontend for an MP3 database I designed for the ComedyWorx Improv comedy group (formerly the Great American Comedy Company, formerly ComedySportz) in Raleigh, NC.</P
+><P
+>The Voices there over the ten years prior to my joining the club had worked out a very nice system of tapes and CDs that they used during ComedySportz shows.  However, I ran into some issues: It was hard to have a variety of music available at a moment's notice, and there were problems with tapes not getting rewound.  Being a computer geek, I wanted to use MP3s, but I couldn't find anything on the net written with my kind of situation in mind.  So, armed with some books and Red Hat Linux 6.2 on my laptop, I got to work in the winter of 2000.</P
+><P
+>Because I wrote Mr. Voice in Perl/TK, it had the ability to go cross-platform, even though I was writing it for Linux.  That led to me getting my first work on the Windows version of Perl.</P
+><P
+>Eventually, something useful began to take shape, and I put the first versions into production at ComedyWorx in early 2001.  And it seems to, by and large, be working pretty well.</P
+><P
+>And so it goes.  Because this was written for such a specific purpose, I have my doubts whether anyone else will find it useful.  But it's out there, and if you're taking the time to read this, I hope you'll get something out of it!</P
+></DIV
+><DIV
+CLASS="PREFACE"
+><HR><H1
+><A
+NAME="AEN92"
+></A
+>What's New</H1
+><P
+>A quick reference to what's changed between versions.</P
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="AEN95"
+>What's new in Version 2.1?</A
+></H2
+><P
+>      <P
+></P
+><UL
+><LI
+><P
+>First attempt at an integrated Mr. Voice Online system, with an XML-RPC backend.  See the Mr. Voice Online section in the manual for details.</P
+></LI
+><LI
+><P
+>Add "bundles" - a way to put songs into the holding tank, then export them in a .zip file that can then be imported into someone else's Mr. Voice, keeping intact all information about the song.</P
+></LI
+><LI
+><P
+>Add an option to perform an online check to see if a new version of Mr. Voice is available, once a week.  Controlled in the Preferences menu, and you need an internet connection (of course) for it to work.</P
+></LI
+><LI
+><P
+>Add a feature where if Windows or Linux users drag-and-drop a song file (or files) from the desktop onto the main search box, the add-new-song feature will be launched on those files.</P
+></LI
+><LI
+><P
+>Add the ability, through an option in the Preferences, to password-protect functions in Mr. Voice that would modify the database.  Useful if you have people running sound who might have . . . descructive tendancies.</P
+></LI
+><LI
+><P
+>Several changes to make MacOS X more usable.  The OS X release is packaged in an experimental "application bundle" much like "real" OS X applications.  It also uses the free Audion audio player, instead of XMMS under X11.</P
+></LI
+><LI
+><P
+>New hotkey menu item to clear the Holding Tank in one stroke.</P
+></LI
+><LI
+><P
+>Minor database schema update (tracking MD5 checksums for song files in the database).  The application should update your database automatically.</P
+></LI
+><LI
+><P
+>Improve debug logging</P
+></LI
+><LI
+><P
+>New Mr. Voice logo and website.</P
+></LI
+></UL
+>
+    </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="AEN119"
+>What's new in Version 2.0?</A
+></H2
+><P
+>      <P
+></P
+><UL
+><LI
+><P
+>The MySQL database has been eliminated.  Mr. Voice now runs an embedded database, SQLite.  This means that you do not need to install, run, or configure MySQL in order to use Mr. Voice from the 2.0 release forward.</P
+><P
+>Why the change?  Several reasons.
+            <P
+></P
+><UL
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>Complexity</I
+>: Mr. Voice uses a very simple database backend - only two tables, and no complex queries.  Running an entire relational database engine to manage those two tables was overkill, bbut it was the best solution I had when I started the project.  SQLite looks like a much simpler solution, while still being able to do what the software needs.</P
+></LI
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>Ease of Installation</I
+>: Over the years, MySQL was the biggest cause of problems for users.  Getting the database installed, the processes running, and the usernames and passwords straight were indeed a pain.  SQLite has one configuration option - the path to a single file.  That's it.</P
+></LI
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>Resources</I
+>: MySQL was a fairly heavyweight installation - several gigs of disk space, as well as needing to run an extra process to handle the database.  On older or smaller systems, that could be a strain.  SQLite doesn't need any extra processes running, and on my 1300-song database, it takes up 125Kb of disk space.</P
+></LI
+></UL
+>
+          </P
+><P
+>From my observation, it looks like SQLite will be a solid, reliable database engine.  I certainly welcome feedback from users as to how well it works for them.</P
+><P
+>See Section 1.2.1 ("Upgrading to Mr. Voice 2.0") for details on how to upgrade a Mr. Voice 0.x or 1.x (MySQL) installation to a Mr. Voice 2.x (SQLite) setup.</P
+></LI
+><LI
+><P
+>There are two options that you can pass to the Mr. Voice executable.  <SAMP
+CLASS="COMPUTEROUTPUT"
+>--config CONFIGFILENAME</SAMP
+> allows you to specify an alternate configuration file, useful if you can't write to the C: drive in Windows or if you want to run two different databases off of the same Mr. Voice installation.  <SAMP
+CLASS="COMPUTEROUTPUT"
+>--logfile</SAMP
+> allows you to specify a logfile that will capture information generated by the Mr. Voice executable, which can be useful for debugging.  You can specify a logfile name or, if you just do <SAMP
+CLASS="COMPUTEROUTPUT"
+>--logfile</SAMP
+>, it will be sent to <TT
+CLASS="FILENAME"
+>C:\MRVOICE.LOG</TT
+> or <TT
+CLASS="FILENAME"
+>~/mrvoice.log</TT
+>.</P
+></LI
+><LI
+><P
+>"Invalid" songs (songs where there is an entry in the database, but no corresponding file on disk) now show up in red in the search box, instead of being hidden.  This should solve problems where you were unable to delete a category because there were still songs in it, but a search of the category revealed nothing.</P
+></LI
+><LI
+><P
+>AAC (Advanced Audio Codec) files, also known as .mp4 or .m4a files, are now supported (playing them requires the proper plugin for your audio player of choice).  Encrypted songs purchased from the iTunes Music Store (.m4p) apparently do not work.</P
+></LI
+><LI
+><P
+>Mr. Voice itself will offer to perform a default configuration the first time it's run on a new system.  The defaults should be good enough for most people, but you always have the option of doing things manually.  This replaces the old <TT
+CLASS="FILENAME"
+>quicksetup.pl</TT
+> utility, which has been removed.</P
+></LI
+><LI
+><P
+>The look-and-feel of the main search box and the holding tank have changed, hopefully for the better.  One visible change is that the song ID number is no longer displayed at the beginning of each line.</P
+></LI
+><LI
+><P
+>Mr. Voice now compiles under "use strict" in Perl.  Ha!  And they said it couldn't be done . . .</P
+></LI
+></UL
+>
+     </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="AEN156"
+>What's new in Version 1.10.6?</A
+></H2
+><P
+>      <P
+></P
+><UL
+><LI
+><P
+>Support for Windows Media Audio (WMA) files under Windows.  Suggested by kprobbins.</P
+></LI
+></UL
+>
+    </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="AEN162"
+>What's new in Version 1.10.4?</A
+></H2
+><P
+>      <P
+></P
+><UL
+><LI
+><P
+>Fixed major issues with Drag-And-Drop that appeared when moving from the Tk-804.026 beta series to the final release.</P
+></LI
+></UL
+>
+    </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="AEN168"
+>What's new in Version 1.10.2?</A
+></H2
+><P
+>      <P
+></P
+><UL
+><LI
+><P
+>Fixed a bug where, after doing a search, the main listbox got the focus instead of the search box you just typed into.</P
+></LI
+><LI
+><P
+>Updated to the final Tk-804 production release, Tk-804.026</P
+></LI
+></UL
+>
+    </P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="AEN176"
+>What's new in Version 1.10?</A
+></H2
+><P
+>      <P
+></P
+><UL
+><LI
+><P
+>You can <B
+CLASS="KEYCAP"
+>Control</B
+>-click in the main listbox to select multiple files, then drag all of those files at once into the Holding Tank.</P
+></LI
+><LI
+><P
+>The structure of the Edit/Delete Category boxes has changed to make them fit on the screen a bit better.</P
+></LI
+><LI
+><P
+>You can drag songs from either the main listbox or the Holding Tank onto a hotkey.</P
+></LI
+><LI
+><P
+>Clicking inside a lisbox (such as the main box or the Holding Tank), or performing a search, will allow you to use the up and down arrow keys to move around in that listbox.</P
+></LI
+><LI
+><P
+>The Holding Tank features a blue Launch Playlist button that will put the contents of the Holding Tank into a Winamp/XMMS playlist and start playing them.</P
+></LI
+><LI
+><P
+>You can now save and load the contents of the Holding Tank, just like you can with the Hotkeys, from options in the <B
+CLASS="GUIMENU"
+>File</B
+> menu.</P
+></LI
+><LI
+><P
+>The former standalone "orphans.pl" script, which searched your file directory for audio files that were no longer referenced by any database entry, has now been included in the main program.  Look for it under <B
+CLASS="GUIMENU"
+>Advanced Search</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Find orphaned files</B
+>.</P
+></LI
+><LI
+><P
+>If music licensing is a concern, you can now assign a Publisher to each song in the database, and restrict searches based on allowed publishers.  The options to restrict the searches are in the <B
+CLASS="GUIMENU"
+>File</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Preferences</B
+> menu.</P
+></LI
+><LI
+><P
+>Most category buttons now update to show which category you've selected.</P
+></LI
+><LI
+><P
+>The "dropdown" feature of the main search fields (Artist, Title, etc.) have been removed.</P
+></LI
+><LI
+><P
+>MySQL 4.x and Winamp 5.x are now the preferred environments under Windows, replacing MySQL 3.x and Winamp 2.x.</P
+></LI
+></UL
+>
+    </P
+></DIV
+></DIV
+><DIV
+CLASS="CHAPTER"
+><HR><H1
+><A
+NAME="AEN211"
+></A
+>Installing Mr. Voice</H1
+><DIV
+CLASS="SECT1"
+><H2
+CLASS="SECT1"
+><A
+NAME="AEN213"
+>Required Components</A
+></H2
+><P
+>      Mr. Voice currently runs under Unix-like operating systems (Linux/*BSD/etc) and Microsoft operating systems (Windows 95 or higher).
+    </P
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN216"
+>Microsoft Windows</A
+></H3
+><P
+>The following components are required to run Mr. Voice under Windows 95 or higher.
+      <P
+></P
+><UL
+><LI
+><P
+>An MP3 player.  <A
+HREF="http://www.winamp.com/"
+TARGET="_top"
+>WinAmp</A
+> version 5 is recommended.  If you plan on playing Windows Media Audio (WMA) files, you will need at least WinAmp Version 5, Full install (not "Lite")</P
+></LI
+><LI
+><P
+>The <A
+HREF="http://www.kostaa.com/winamp/index.html"
+TARGET="_top"
+>httpQ plugin</A
+> for WinAmp.  <I
+CLASS="EMPHASIS"
+>Optional, but recommended, since it allows you to fade-stop songs.</I
+></P
+></LI
+><LI
+><P
+>The <A
+HREF="http://www.mrvoice.net/files/"
+TARGET="_top"
+>Ogg Vorbis plugin</A
+> for WinAmp.  <I
+CLASS="EMPHASIS"
+>Optional, but required if you want to play .ogg files.</I
+></P
+></LI
+><LI
+><P
+>The <A
+HREF="http://www.rarewares.org/mp4.html"
+TARGET="_top"
+>AAC plugin</A
+> for WinAmp.  <I
+CLASS="EMPHASIS"
+>Optional, but required if you want to use AAC/MP4 files</I
+></P
+></LI
+></UL
+>
+      </P
+><P
+>If, for some reason, you do not want to run the prebuilt <TT
+CLASS="FILENAME"
+>mrvoice.exe</TT
+> file, and want to install all of the Perl modules that Mr. Voice requires by hand, follow the Unix/Linux instructions below and either build the modules by hand, or install the appropriate ActiveState PPM packages.  But I doubt many Windows users will want to do that.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN237"
+>Unix/Linux/BSD</A
+></H3
+><P
+>The following components are required to run Mr. Voice under Unix systems.
+      <P
+></P
+><UL
+><LI
+><P
+><A
+HREF="http://www.perl.com/"
+TARGET="_top"
+>Perl</A
+> version 5.8 (Should be provided with most modern Unix systems), plus the following perl modules (most available from <A
+HREF="http://www.cpan.org/"
+TARGET="_top"
+>CPAN</A
+>):
+            <P
+></P
+><UL
+><LI
+><P
+><A
+HREF="http://www.cpan.org/modules/by-module/Audio/"
+TARGET="_top"
+>Audio::Wav</A
+></P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cpan.org/modules/by-module/Date/"
+TARGET="_top"
+>Date::Manip</A
+></P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cpan.org/modules/by-module/DBD/"
+TARGET="_top"
+>DBD </A
+> driver for your database (DBD::SQLite 1.0 and higher supported)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cpan.org/modules/by-module/DBI/"
+TARGET="_top"
+>DBI</A
+></P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cpan.org/modules/by-module/MPEG/"
+TARGET="_top"
+>MPEG::MP3-Info</A
+></P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cpan.org/modules/by-module/MP4/"
+TARGET="_top"
+>MP4::Info</A
+></P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cpan.org/modules/by-module/Ogg/"
+TARGET="_top"
+>Ogg::Vorbis::Header::PurePerl</A
+></P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cpan.org/modules/by-module/Time/"
+TARGET="_top"
+>Time::HiRes</A
+></P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cpan.org/modules/by-module/Tk/"
+TARGET="_top"
+>Tk</A
+> version 804.x (Version 800.x is unsupported as of Mr. Voice version 1.10)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cpan.org/modules/by-module/Tk/"
+TARGET="_top"
+>Tk::ProgressBar::Mac</A
+></P
+></LI
+></UL
+>
+          </P
+></LI
+><LI
+><P
+>An MP3 player.  <A
+HREF="http://www.xmms.org/"
+TARGET="_top"
+>xmms</A
+> is recommended.</P
+></LI
+><LI
+><P
+><A
+HREF="http://faac.sourceforge.net/"
+TARGET="_top"
+>AAC plugin for XMMS</A
+>.  <I
+CLASS="EMPHASIS"
+>Optional, but needed if you want to use AAC/MP4/M4A files.</I
+></P
+></LI
+></UL
+>
+    </P
+></DIV
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="AEN283"
+>Installation Steps</A
+></H2
+><P
+>This will help you get Mr. Voice up and running on either a Unix or Windows system.</P
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN286"
+>Upgrading to Mr. Voice 2.0</A
+></H3
+><P
+>If you are installing Mr. Voice on a new machine, one which does not contain an existing Mr. Voice 0.x or 1.x installation, skip these steps and go straight to the installation section.</P
+><P
+>Mr. Voice 2.0 involves a migration from the old database backend (MySQL) used in Mr. Voice 1.10.6 and before, to a new database backend (SQLite).  In order to migrate your data from the old database to the new one, you need to run the migration utility.</P
+><P
+>Windows users should double-click on the <TT
+CLASS="FILENAME"
+>upgrade20.exe</TT
+> file.  It will open up a DOS box.  Follow the instructions on-screen and, if there are no errors, it will create the new Mr. Voice database file and update your configuration to point to it.  If there are errors, your MySQL database will not be modified, so you can always use 1.10.6 or lower as usual while I'm working on the problem.</P
+><P
+>Unix users should run the <TT
+CLASS="FILENAME"
+>tools/upgrade20.pl</TT
+> script, and it will do the same as in the Windows instructions.</P
+><P
+>Once you are comfortable that the upgrade worked properly and that you're set up in Mr. Voice 2.0, you can delete your old MySQL installation to save disk space and system resources.</P
+><P
+>Windows users can disable the MySQL service, while keeping the software installed, by right-clicking on the stoplight in the system tray and choosing <B
+CLASS="GUIMENU"
+>WinNT</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Stop Service</B
+>.  This will leave your old data alone, but the MySQL service will not be running and using system resources.  To completely remove MySQL from your system, go to Add/Remove Programs, choose MySQL, and hit "Remove".  Then, you can delete the <TT
+CLASS="FILENAME"
+>C:\mysql</TT
+> directory.  Once that is done, MySQL is gone, along with your old database.</P
+><P
+>For Unix users, you may want to go into the MySQL command shell and "drop database mrvoice", and/or uninstall MySQL from your system completely (if it was only being used for Mr. Voice, of course)</P
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN301"
+>Unix Installation Instructions</A
+></H3
+><P
+></P
+><UL
+><LI
+><P
+>Unpack the <TT
+CLASS="FILENAME"
+>mrvoice-x.x.tar.gz</TT
+> archive.  It will create a <TT
+CLASS="FILENAME"
+>mrvoice-x.x</TT
+> directory.  The <TT
+CLASS="FILENAME"
+>mrvoice.pl</TT
+> file is the only one needed to run the program (meaning that you can move <TT
+CLASS="FILENAME"
+>mrvoice.pl</TT
+> to another location after you're done configuring it), but there are other files in the archive, such as documentation, licenses, etc.</P
+></LI
+><LI
+><P
+>Compile and/or install any required software from above (perl modules, etc.).  I will skip the software setup, assuming that if you're trying to run this on a Unix system, you're geeky enough to install the required stuff by yourself.  ;-)  If you run into issues, feel free to email me or check the software's website. </P
+></LI
+></UL
+><P
+>At this point, all of the software should be set up and ready for configuration!</P
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN313"
+>Windows Installation Instructions</A
+></H3
+><P
+>First, download WinAmp and install it the normal way, by double-clicking the installer icon and using the defaults provided.</P
+><P
+>If you're using the httpQ plugin for WinAmp, download its zip file and install it.  Then, do the following steps:
+        <P
+></P
+><UL
+><LI
+><P
+>Start WinAmp by itself, right-click on the "OAIDV" bar on the left of the window, choose Options-&#62;Preferences.</P
+></LI
+><LI
+><P
+>Go down to Plugins-&#62;General Purpose.  You should see the httpQ plugin listed.  Highlight that, and hit "configure".</P
+></LI
+><LI
+><P
+>Under the General tab, put in a password (your choosing), leave the port at 4800, and check the box to start the service automatically.  Hit the Apply button, then the x at the top-right.  Close the preferences, and exit from WinAmp.  <I
+CLASS="EMPHASIS"
+>Remember the password you just set up - you will need it later.</I
+></P
+></LI
+></UL
+>
+      </P
+><P
+>Any other WinAmp plugins (OGG, AAC, etc.) should be installed in the default way following the instructions provided with the package.</P
+><DIV
+CLASS="SECT3"
+><HR><H4
+CLASS="SECT3"
+><A
+NAME="AEN326"
+>Installing the Mr. Voice software on Windows</A
+></H4
+><P
+>Unzip the <TT
+CLASS="FILENAME"
+>mrvoice-current.zip</TT
+> file to your desired location.  It will create a directory named <TT
+CLASS="FILENAME"
+>mrvoice-x.x</TT
+> under the location that you choose.  These instructions will assume that you unzip it to <TT
+CLASS="FILENAME"
+>C:\</TT
+>, creating the <TT
+CLASS="FILENAME"
+>C:\mrvoice-x.x\</TT
+> directory, where x.x is the version number.</P
+><P
+>The first time you run Mr. Voice on a particular computer, you will need to set up the configuration.   With later releases, you can just unzip the new version, and skip these remaining steps.</P
+><P
+>You will need a directory to store your MP3 files, and a directory to store your hotkey save files.  I suggest <TT
+CLASS="FILENAME"
+>C:\MP3\</TT
+> for the MP3 directory and <TT
+CLASS="FILENAME"
+>C:\hotkeys\</TT
+> for the save files, but you can pick anything.  Go ahead and create the directories now.</P
+><P
+>Finally, to actually run the software, double-click on the file <TT
+CLASS="FILENAME"
+>mrvoice.exe</TT
+>.  The program should start up!  The first time you run the program (or, more specifically, if it can't find its configuration file), you will be given the option of creating a default configuration, or going into the preferences to set the values manually.  The default should be good enough for most people.  It sets up the following values, creating directories where needed:
+          <P
+></P
+><UL
+><LI
+><P
+>MP3 Directory: <TT
+CLASS="FILENAME"
+>C:\MP3</TT
+></P
+></LI
+><LI
+><P
+>Hotkey Directory: <TT
+CLASS="FILENAME"
+>C:\HOTKEYS</TT
+></P
+></LI
+><LI
+><P
+>MP3 Player: <TT
+CLASS="FILENAME"
+>C:\Program Files\Winamp\Winamp.exe</TT
+></P
+></LI
+><LI
+><P
+>Database File: <TT
+CLASS="FILENAME"
+>C:\MRVOICE.DB</TT
+></P
+></LI
+></UL
+>
+        </P
+><P
+>After doing the initial setup, Mr. Voice will exit.  Restart it, and it will initialize your database and run the program.</P
+></DIV
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="CHAPTER"
+><HR><H1
+><A
+NAME="AEN353"
+></A
+>Configuring Mr. Voice</H1
+><P
+>This section will take you through configuring the Mr. Voice software.  Mr. Voice is configured via an external configuration file - this provides the most flexibility in keeping your configuration sane from one version to the next.  On Unix, the default config file is named <TT
+CLASS="FILENAME"
+>.mrvoicerc</TT
+>, and lives in your home directory.  On Windows, the default filename is <TT
+CLASS="FILENAME"
+>C:\mrvoice.cfg</TT
+>.</P
+><P
+>To provide an alternate configuration file (for example, if you would like to run two separate databases off of the same computer), you can pass the Mr. Voice program the "--config" flag.  So on Windows, if you wanted to use an alternate config file, you would run "<SAMP
+CLASS="COMPUTEROUTPUT"
+>MRVOICE.EXE --config C:\MRVOICE-ALTERNATE.CFG</SAMP
+>", or on Unix "<SAMP
+CLASS="COMPUTEROUTPUT"
+>./mrvoice.pl --config /path/to/new/configfile</SAMP
+>".</P
+><P
+>If you start Mr. Voice without a configuration file, or if there is an error in your configuration, Mr. Voice will pop up a window asking if you want to create a default or manual configuration.  If you choose default, it will set up a fairly standard installation for you.  If you choose manual, you will be taken to the preferences window, allowing you to enter and edit the configuration information.  Changes are then written out to the appropriate configuration file.  The configuration options are detailed below.
+    <DIV
+CLASS="FIGURE"
+><A
+NAME="AEN362"
+></A
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/preferences.png"></P
+></DIV
+><P
+><B
+>Figure 1. The Preferences window</B
+></P
+></DIV
+>
+  </P
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="AEN369"
+>Configuration Options and Variables</A
+></H2
+><P
+>The options that you can set in the <B
+CLASS="GUIMENU"
+>File</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Preferences</B
+> menu are listed below.  After the name of each option, the actual variable name is given in parenthesis, in case you need to edit the configuration files manually (Manual configuration is detailed in section 2.1.1).</P
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN375"
+>Database Options</A
+></H3
+><P
+></P
+><UL
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Database Filename (db_file)</VAR
+> - The file on your hard drive that contains the Mr. Voice SQLite database (<TT
+CLASS="FILENAME"
+>C:\mrvoice.db</TT
+> by default on Windows, <TT
+CLASS="FILENAME"
+>~/mrvoice.db</TT
+> by default on Unix)</P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN383"
+>File Paths</A
+></H3
+><P
+></P
+><UL
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>MP3 Directory (filepath)</VAR
+> - The path information that will be prepended to the filename retrieved from the database or, in other words, the directory where you store your MP3 files.  Used to find the actual MP3 files on the local system.  The user who is running Mr. Voice must have read/write permission into this directory.</P
+></LI
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Hotkey Directory (savepath)</VAR
+> - This will be the default directory that hotkey save files will go into.  The user running the program as must have read/write permission into that directory. Recommended to be different than the Mr. Voice install directory.</P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN392"
+>Search Options</A
+></H3
+><P
+></P
+><UL
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Search ASCAP songs (search_ascap)</VAR
+> - Enables searches of songs that have ASCAP set as the publisher field.  Only needed if you are using song publishers in your database.</P
+></LI
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Search BMI songs (search_bmi)</VAR
+> - Enables searches of songs that have BMI set as the publisher field.  Only needed if you are using song publishers in your database.</P
+></LI
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Show Song Publisher (show_publisher)</VAR
+> - Enables the display of the song publisher in the search results.  Only needed if you are using song publishers in your database.</P
+></LI
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Search Other songs (search_other)</VAR
+> - Enables searches of songs that have "Other" set as the publisher field.  Only needed if you are using song publishers in your database.</P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN407"
+>Online Options</A
+></H3
+><P
+></P
+><UL
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Enable Online Functionality (enable_online)</VAR
+> - Enable this option if you want to use any of the online functionality (such as version checks or Mr. Voice Online).  If this is not enabled, you will not get the menu items that offer online functionality.  Obviously, enabling this without an internet connection on your Mr. Voice computer is a bit silly.</P
+></LI
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Check For New Versions (check_version)</VAR
+> - If enabled, will check the Mr. Voice website once a week and alert you if a new version of Mr. Voice is available.</P
+></LI
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Mr. Voice Online key (online_key)</VAR
+> - When you register for Mr. Voice online, you will be given a key password.  Enter that here, or your Mr. Voice online functionality will fail.  For information on how to get a key, see the Mr. Voice Online section in this manual.</P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN419"
+>Other</A
+></H3
+><P
+></P
+><UL
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>MP3 Player (mp3player)</VAR
+> - The path to your MP3 player.  Likely options are <TT
+CLASS="FILENAME"
+>/usr/bin/xmms</TT
+> for Unix systems, and <TT
+CLASS="FILENAME"
+>C:\Program Files\WinAmp\WinAmp.exe</TT
+> for Windows systems.  This option is not used on Mac OS X, as it uses AppleScript to launch the Audion MP3 player.</P
+></LI
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Number of Dynamic Documents To Show (savefile_max)</VAR
+> - The number of "most recently accessed hotkey files" to keep available under the <B
+CLASS="GUIMENU"
+>File</B
+> menu.  Defaults to 4.</P
+></LI
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>httpQ Password (httpq_pw)</VAR
+> - The password used to connect to the httpQ plugin for WinAmp.  Only useful under Windows if you're using the httpQ plugin.  Otherwise it's ignored.</P
+></LI
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Write Access Password (write_password)</VAR
+> - If this option is set, any attempt to perform an action that will modify the Mr. Voice system (adding a song, deleting a song, renaming a category, etc) will prompt for the password (once per session).  
+         <DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/enter-password.png"></P
+></DIV
+>
+         No password, no changes.  Useful if you have people running Mr. Voice that you don't trust not to break things.</P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN440"
+>Manual Configuration</A
+></H3
+><P
+>To troubleshoot, fine-tune changes, or skip the GUI alltogether, you can manually set up the configuration file.  The configuration file consists of lines in the following format:</P
+><P
+><SAMP
+CLASS="COMPUTEROUTPUT"
+>variable_name::value</SAMP
+></P
+><P
+>Where variable_name is the name in parenthesis in the configuration listing above, followed by two colons, followed by the value you want to set the variable to.  A sample file on Unix would look like this:
+        <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="SCREEN"
+>db_file::/home/mrvoice/mrvoice.db
+filepath::/mp3/
+savedir::/tmp/
+mp3player::/usr/bin/xmms
+savefile_max::4
+httpq_pw::mypass
+search_ascap::1
+search_bmi::1
+search_other::1
+show_publisher::0
+        </PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+><P
+>The Windows <TT
+CLASS="FILENAME"
+>C:\MRVOICE.CFG</TT
+> file will look similar, but with Windows pathnames instead of Unix ones.  The Mac config file (named mrvoice.cfg in your home folder) will look similar to the Unix one.</P
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="CHAPTER"
+><HR><H1
+><A
+NAME="AEN449"
+></A
+>Using Mr. Voice</H1
+><P
+>Now that you have Mr. Voice and other required software set up and configured, it's time to actually use it.  First you have to populate the database with songs.  Then you can do useful things with them.  Look at the following screenshot of the main Mr. Voice window to familiarize yourself with the layout. 
+    <DIV
+CLASS="FIGURE"
+><A
+NAME="AEN452"
+></A
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/mainwindow.png"></P
+></DIV
+><P
+><B
+>Figure 1. The Main window</B
+></P
+></DIV
+> 
+  </P
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="AEN459"
+>Adding, Deleting, and Editing Songs and Categories</A
+></H2
+><P
+>Mr. Voice lets you set up categories, then put your songs into those categories for later use.  So we'll address the categories first.</P
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN462"
+>Categories</A
+></H3
+><P
+>Category options are very simple.  You can either add a category, edit its long (descriptive) name, or delete a category.  All options can be found under the <B
+CLASS="GUIMENU"
+>Categories</B
+> menu on the main display.</P
+><P
+>To add a new category, choose <B
+CLASS="GUIMENU"
+>Categories</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Add Category</B
+>.  You will then have a box pop up where you can enter two items: The <TT
+CLASS="GUILABEL"
+><B
+>Category Code</B
+></TT
+> and the <TT
+CLASS="GUILABEL"
+><B
+>Category Description</B
+></TT
+>.  
+        <DIV
+CLASS="FIGURE"
+><A
+NAME="AEN473"
+></A
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/addcat.png"></P
+></DIV
+><P
+><B
+>Figure 2. The Add Category window</B
+></P
+></DIV
+>
+      The Category Code is a short (4-5 letters max.) identifier for the category, whereas the Category Description is the longer name that you'll normally see.  However, make the Category Code something useful, because it will be displayed next to the Choose Category button on the main window.  For example, if you want a category called "Joe's Fly Tunes", you could use "JOE" for the Category Code and "Joe's Fly Tunes" for the category description.  </P
+><P
+>To delete a category, choose <B
+CLASS="GUIMENU"
+>Categories</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Delete Category</B
+>.  A box will pop up listing all of your defined categories.  You can choose the button next to the category that you would like to delete, then press <B
+CLASS="GUIBUTTON"
+>Ok</B
+> to delete the category. 
+        <DIV
+CLASS="FIGURE"
+><A
+NAME="AEN485"
+></A
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/delcat.png"></P
+></DIV
+><P
+><B
+>Figure 3. The Delete Category window</B
+></P
+></DIV
+></P
+><DIV
+CLASS="IMPORTANT"
+><P
+></P
+><TABLE
+CLASS="IMPORTANT"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./stylesheet-images/important.gif"
+HSPACE="5"
+ALT="Important"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>You cannot delete a category if it still has songs in it.  Delete/edit all songs out of the category before trying to delete it.</P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>Finally, you can edit a category, by choosing the <B
+CLASS="GUIMENU"
+>Categories</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Edit Category</B
+> menu.  Once there, you can edit the long name, but not the short code, of the category.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN498"
+>Songs</A
+></H3
+><P
+>Songs are the audio data that you're trying to play.  You can use any sort of audio data that your audio player can handle, but Mr. Voice can figure out things like playing time for MP3, WAV, Ogg Vorbis, AAC, and WMA files.  If you're not trying to store, categorize, and play audio data, then you're probably using the wrong program!  This manual will refer to the audio data that you are storing as "songs", even though they can, of course, be any kind of audio.  To manipulate songs in the database, there are three main actions: adding songs, deleting songs, and editing songs.</P
+><P
+>To insert a new song into the database, choose <B
+CLASS="GUIMENU"
+>Songs</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Add New Song</B
+>.  A box will pop up for the needed information: 
+        <DIV
+CLASS="FIGURE"
+><A
+NAME="AEN505"
+></A
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/addsong.png"></P
+></DIV
+><P
+><B
+>Figure 4. The Add Song window</B
+></P
+></DIV
+></P
+><P
+></P
+><UL
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>Song Title</B
+></TT
+>: This is where you put the title of the song that you are adding.</P
+></LI
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>Artist</B
+></TT
+>: The artist responsible for the song.  This is an <I
+CLASS="EMPHASIS"
+>optional</I
+> item.</P
+></LI
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>Category</B
+></TT
+>:  Pressing the <TT
+CLASS="GUILABEL"
+><B
+>Choose Category</B
+></TT
+> button beside this entry will give you a list of the categories that you currently have defined.  You must choose one of these categories to place the song into.</P
+></LI
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>Category Extra Info</B
+></TT
+>: Kind of a "hodgepodge" entry, this information can be whatever you want.  At ComedyWorx, we use it as a modifier for the category.  So if the category is "Game", the Extra Info is the name of the game.  If the category is for Player Intros, the Extra Info will tell us whether it's specifically for a referee, dimwit, or whatnot.  So, basically it's just free-form for whatever you need, and is an <I
+CLASS="EMPHASIS"
+>optional</I
+> field.</P
+></LI
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>Publisher</B
+></TT
+>: This field is for the publisher of the song.  Current values are ASCAP, BMI, or Other.  The default value is Other, which should be fine for people who don't want to bother with publisher information.  But if you're using Mr. Voice in an organization that needs this information, here's where you can put it.</P
+></LI
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>File To Add</B
+></TT
+>:  This is where you give Mr. Voice the path to the actual audio file that you want to add.  Clicking the <B
+CLASS="GUIBUTTON"
+>Select File</B
+> button will bring up a familiar "file chooser" box.  The screenshot below is from a Linux system - Windows users will see the familiar Windows file chooser box.
+        <DIV
+CLASS="FIGURE"
+><A
+NAME="AEN535"
+></A
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/addsong-files.png"></P
+></DIV
+><P
+><B
+>Figure 5. The Add Song File Selection window</B
+></P
+></DIV
+>
+	Use this to go to the location of your file, left-click on the name of the file, then click <B
+CLASS="GUIBUTTON"
+>Open</B
+>.  The name of the file should now be listed in the <TT
+CLASS="GUILABEL"
+><B
+>File To Add</B
+></TT
+> box.  If the file you are adding is an MP3, OGG, AAC, or WMA with valid tag information, it will automatically fill in the Title and Artist fields with that information.</P
+></LI
+><LI
+><P
+><B
+CLASS="GUIBUTTON"
+>Preview Song</B
+>: Once you have selected a file, you can press this button to hear the song.  Useful for making sure you have the song you want before you add it.</P
+></LI
+></UL
+><P
+>You can now press the <B
+CLASS="GUIBUTTON"
+>Ok</B
+> button to add the song.  If all goes well, you should see a message that the file was added to the database.  If not, Mr. Voice should tell you what went wrong, and let you go back and fix the entry.</P
+><DIV
+CLASS="NOTE"
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./stylesheet-images/note.gif"
+HSPACE="5"
+ALT="Note"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>Mr. Voice actually makes a copy of the file that you select, renames it to a standard form, and places the new copy in the location given by the <VAR
+CLASS="VARNAME"
+>$filepath</VAR
+> variable that you defined in the setup.  Your original audio file is <I
+CLASS="EMPHASIS"
+>not</I
+> used after the copy is made, so you can feel free to delete it.</P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>It can be tedious to add songs one at a time if you have many files to add.  New in version 1.8 is the <B
+CLASS="GUIMENU"
+>Songs</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Bulk-Add Songs Into Category</B
+> menu option.  Upon choosing this, you will be prompted for a category and a directory.  Select the category, and a directory that contains the set of MP3, OGG, AAC, or WMA files that you would like to add to that category.  Mr. Voice will then use the title and artist tags stored in the files to automatically add those files into your selected category.  If you need to add Extra Info or modify any other fields, you will need to do that after the fact, but this should be a good way to add lots of data at once.  You can also specify a publisher here, useful when adding a whole CD's worth of songs with the same publisher.</P
+><P
+>There are two other ways to add songs.  The first is that you can select song files on your desktop or file explorer, and drop them onto the main search box of Mr. Voice.  When you do that, the Add New Song function will be launched on those files.  Finally, you can choose the <B
+CLASS="GUIMENU"
+>Songs</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Add Songs From Bundle</B
+> menu item.  That will allow you to import a Mr. Voice "bundle" ZIP file.  All songs in the bundle will be added, along with all information about the file, and any needed categories will be automatically created.</P
+><P
+>To delete a song, you must have at least one displayed and selected in the main search results box.  Searching is covered later, but if you hit the <B
+CLASS="GUIBUTTON"
+>Do Search</B
+> button, it should show you all of the songs in your database.</P
+><P
+>Once you have some songs displayed, left-click once on the name of the song that you want to delete, or select several songs by pressing <B
+CLASS="KEYCAP"
+>Control</B
+> or <B
+CLASS="KEYCAP"
+>Shift</B
+> while selecting, then choose <B
+CLASS="GUIMENU"
+>Songs</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Delete Currently Selected Song</B
+>.  You can also right-click on the name of the song or songs and choose the <B
+CLASS="GUIMENUITEM"
+>Delete Song</B
+> option.  A box will pop up asking you to confirm the deletion, and also presenting a checkbox labeled <TT
+CLASS="GUILABEL"
+><B
+>Delete File On Disk</B
+></TT
+>.   
+        <DIV
+CLASS="FIGURE"
+><A
+NAME="AEN571"
+></A
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/delsong.png"></P
+></DIV
+><P
+><B
+>Figure 6. The Delete Song window</B
+></P
+></DIV
+>
+      If you do not select this, the song or songs will be removed from the database, but the actual audio file on disk, located at <VAR
+CLASS="VARNAME"
+>$filepath</VAR
+>, will remain.  If you do select this option, the song or songs will be removed from the database AND the audio file on disk will be deleted.</P
+><DIV
+CLASS="NOTE"
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./stylesheet-images/note.gif"
+HSPACE="5"
+ALT="Note"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>If you do not have a song selected in the main display box and choose <B
+CLASS="GUIMENU"
+>Songs</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Delete Currently Selected Song</B
+> or <B
+CLASS="GUIMENU"
+>Songs</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Edit Currently Selected Song</B
+>, then nothing will happen.  This is normal.  If you are trying to edit or delete a song and don't get the repective boxes showing up on-screen, make sure that you have a song highlighted.</P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>Finally, if you want to edit a song in the database, left-click a song in the main display window, and choose <B
+CLASS="GUIMENU"
+>Songs</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Edit Currently Selected Song</B
+>.  You can also right-click on a song and choose the <B
+CLASS="GUIMENUITEM"
+>Edit Song</B
+> option.  A box will pop up that is similar to the one for <B
+CLASS="GUIMENU"
+>Songs</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Add New Song</B
+>, except without the file selector option.  You can make any needed changes to the song, then press <B
+CLASS="GUIBUTTON"
+>Ok</B
+> to commit them.</P
+><DIV
+CLASS="NOTE"
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./stylesheet-images/note.gif"
+HSPACE="5"
+ALT="Note"></TD
+><TH
+ALIGN="LEFT"
+VALIGN="CENTER"
+><B
+>Shortcut!</B
+></TH
+></TR
+><TR
+><TD
+>&nbsp;</TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>You can also right-click a song in the main display box to bring up a shortcut menu.  From this menu, you can choose to edit or delete the selected song.</P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>If you have multiple songs selected and choose to edit, you will only be able to edit the Extra Info, Category, or Artist fields, not the Title.</P
+><P
+>There is a menu choice named <B
+CLASS="GUIMENU"
+>Songs</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Update Song Times/MD5s</B
+>.  This will re-index all your song files, updating their play times and the MD5 sum (used in Mr. Voice online to see if two songs are the same).  While in theory this information should be set when the song is added and never change, you may want to run it every once in a while to make sure the information is correct.  If you edit a file in your MP3 directory manually, or replace a file in the MP3 directory directly with a new one, you will need to run this procedure.  This process could take a while, depending on the speed of your computer, so you may not want to run it in the middle of a show.</P
+><DIV
+CLASS="SECT3"
+><HR><H4
+CLASS="SECT3"
+><A
+NAME="AEN604"
+>Orphaned Files</A
+></H4
+><P
+>Orphaned files are audio files in your MP3 directory that are not referenced by any entries in the Mr. Voice database.  They normally result from deleting a song from the database without deleting the file on disk.  Since nothing in the database knows about them, they are unneeded and just take up space.</P
+><P
+>In previous versions of Mr. Voice, a separate program named <TT
+CLASS="FILENAME"
+>orphans.pl</TT
+> was provided to weed out these old files.  However, with Mr. Voice 1.10, the orphan checker is integrated into the main program.  You can find it under <B
+CLASS="GUIMENU"
+>Advanced Search</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Find orphaned files</B
+>.  When you choose that menu item, Mr. Voice will scan your MP3 directory and compare it with your database, and if it finds any orphaned files, display them for you.
+          <DIV
+CLASS="FIGURE"
+><A
+NAME="AEN612"
+></A
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/orphans.png"></P
+></DIV
+><P
+><B
+>Figure 7. Orphaned Files Report</B
+></P
+></DIV
+>
+        </P
+><P
+>When the Orphaned File report is displayed, you have a couple of choices.  If you just want to read the report without taking action, you can close the window and no changes will be made.  You can also select one or more files from the report to delete.  To do so, Control-click on a filename to add it to the selection group.  Or, hit the <B
+CLASS="GUIBUTTON"
+>Select All</B
+> button to select all entries, and Control-click to deselect any you do not want to delete.  Then press the <B
+CLASS="GUIBUTTON"
+>Delete Selected</B
+> button to remove all selected files from your computer.</P
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="AEN622"
+>Searching and Playing Songs</A
+></H2
+><P
+>Now that you've learned how to put songs into the database, it's time to do something with them.  The following section will show you the basics of searching and playing the songs in your database</P
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN625"
+>Searching The Database</A
+></H3
+><P
+>The search fields of the main Mr. Voice window contain the items that you can search for.  You can use any combination of the fields to search, with the exception of the <TT
+CLASS="GUILABEL"
+><B
+>OR any field contains</B
+></TT
+> field, which overrides everything except the category.  For the fields where you can type in text, there is an arrow icon to the right of the text entry box.  If you click that arrow, a menu will pop up listing all the things you have searched for in that category.  You can use this menu to quickly re-select something that you have already searched for. Let's look at the fields in detail:</P
+><P
+></P
+><UL
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>Choose Category</B
+></TT
+>: This allows you to set the category to search within.  You can either choose a specific category, or the <B
+CLASS="GUIMENUITEM"
+>Any Category</B
+> option, which will search all defined categories.  The short name of the currently selected category will be displayed beside the menu. </P
+></LI
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>Extra info</B
+></TT
+>: Text placed in this box will be compared with the "Extra Info" field of each song.  This, like each of the text entry fields, is a case-insensitive substring match, meaning that if you search for "eat", it will match the words "Eat", "Beatles", "EATING", etc.</P
+></LI
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>Artist</B
+></TT
+>: Text in this box will be compared with the "Artist" field of the songs.</P
+></LI
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>Title</B
+></TT
+>: Text in this box will be compared with the "Title" field of the songs.</P
+></LI
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>Any Field</B
+></TT
+>: Text in this box will be compared to the Title, Artist, and Extra Info fields of each song, and return any song that has a match in any of those fields.  So searching the <TT
+CLASS="GUILABEL"
+><B
+>Any Field</B
+></TT
+> box for "eat" will return songs by The Beatles, the song titled "Masterpeace Theatre Theme", or one with the extra info of "Featured".  The only thing that the <TT
+CLASS="GUILABEL"
+><B
+>Any Field</B
+></TT
+> does <I
+CLASS="EMPHASIS"
+>NOT</I
+> search is the Category - you will need to select that manually.</P
+></LI
+></UL
+><P
+>After you have filled in the information that you would like to search for, you can either press the <B
+CLASS="KEYCAP"
+>Enter</B
+> key, or press the <B
+CLASS="GUIBUTTON"
+>Do Search</B
+> button.  The status bar will tell you how many matching entries your search found, and display the results in the Search Results box.  If you have any songs in your database where there is no matching audio file on disk, they will show up in red as "invalid" files.  If you try to play these songs, nothing will happen (as there's no actual file to play!).  Invalid songs should either be deleted, or the expected file should be moved into place.  If all of your songs show up as invalid, that's a good sign that you have your MP3 Directory set incorrectly in the preferences.</P
+><P
+>If you have chosen in the <B
+CLASS="GUIMENU"
+>File</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Preferences</B
+> menu to restrict searches based on the Publisher, that will affect your search results - only searches from your select publisher group will end up displayed.</P
+><P
+>If your mouse has a scroll-wheel on it, you can use the wheel to scroll the list of search results up and down.</P
+><P
+>There is also an <B
+CLASS="GUIMENU"
+>Advanced Search</B
+> menu.  On that menu, you can choose to have Mr. Voice show you all the song that have changed during the current day, or over the past 7, 14, or 30 days.  You can also search for songs that were added or changed over an arbitrary date range via the <B
+CLASS="GUIMENUITEM"
+>Advanced Date Search</B
+> menu.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN660"
+>Playing Songs</A
+></H3
+><P
+>At this point, you have added songs to the database, and you have searched for songs.  Now, with some songs listed in the Search Results box, you're ready to play the songs!</P
+><P
+>To play a song, you can left-click on the song in the Search Results box (the song should become highlighed when you do this), and press the green <B
+CLASS="GUIBUTTON"
+>Play Now</B
+> button.  While a song is highlighted, you can also press <B
+CLASS="KEYCAP"
+>Control</B
+>+<B
+CLASS="KEYCAP"
+>P</B
+> to start the song playing.  You can also double-click the song in the Search Results box, or right-click the song and choose the <B
+CLASS="GUIMENUITEM"
+>Play Song</B
+> option.  When you do this, your audio player should spring to life, and you should hear the song coming out of the speakers.  Congratulations!  It works!</P
+><P
+>To stop the song, you can either press the red <B
+CLASS="GUIBUTTON"
+>Stop Now</B
+> button, or press the <B
+CLASS="KEYCAP"
+>Esc</B
+> key on your keyboard.  Play should then stop.</P
+><P
+>Windows users who have installed the httpQ plugin (and entered its password under the <B
+CLASS="GUIMENU"
+>File</B
+>+<B
+CLASS="GUIMENU"
+>Preferences</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Other</B
+> menu) have an additional option.  Pressing the <B
+CLASS="KEYCAP"
+>Shift</B
+> key while either clicking on the <B
+CLASS="GUIBUTTON"
+>Stop Now</B
+> button or pressing the <B
+CLASS="KEYCAP"
+>Escape</B
+> key will cause the song to fade out before stopping, over a period of a couple of seconds.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN680"
+>Exiting Mr. Voice</A
+></H3
+><P
+>To exit Mr. Voice, choose <B
+CLASS="GUIMENU"
+>File</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Exit</B
+>, or press <B
+CLASS="KEYCAP"
+>Control</B
+>+<B
+CLASS="KEYCAP"
+>X</B
+>.  Mr. Voice will prompt you to confirm that you want to exit, and if you do, the program will exit and your audio player will close.</P
+></DIV
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="AEN689"
+>Hotkeys</A
+></H2
+><P
+>Hotkeys are a convenient way of having songs at the ready when you need them.  They can be used for common situations, events where you need a range of songs ready with little notice, and so forth.  You can also save hotkeys to files for later use.</P
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN692"
+>Configuring Hotkeys</A
+></H3
+><P
+>To set up a hotkey, you must first search for a song and have it displayed in the search results box.  The available keys are the function keys <B
+CLASS="KEYCAP"
+>F1</B
+> through <B
+CLASS="KEYCAP"
+>F12</B
+>.  You can bind a song to more than one hotkey if you choose.  To assign a song to a hotkey, open the Show Hotkeys window, left-click on a song within the Search Results box, and drag it over to the name of a hotkey (<B
+CLASS="KEYCAP"
+>F1</B
+> through <B
+CLASS="KEYCAP"
+>F12</B
+>), and drop it on the name.  The song you dragged will then be assigned to the hotkey that you dropped it on.</P
+><P
+>You can also drags songs from the Holding Tank onto a hotkey, just like you can from the main search box.</P
+><P
+>To see which hotkeys you currently have defined, choose <B
+CLASS="GUIMENU"
+>Hotkeys</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Show Hotkeys</B
+> from the main menu.  You can also press <B
+CLASS="KEYCAP"
+>Control</B
+>+<B
+CLASS="KEYCAP"
+>H</B
+>. That will bring up a menu showing each of the 12 hotkeys, and beside the key name, the filename of the song that is bound to the key.  If you leave this window up, you can see it change as you add or remove hotkeys.</P
+><DIV
+CLASS="FIGURE"
+><A
+NAME="AEN707"
+></A
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/hotkeys.png"></P
+></DIV
+><P
+><B
+>Figure 8. The Hotkey window</B
+></P
+></DIV
+><P
+>To remove hotkeys, you have two choices: Remove keys individually, or remove them all in one fell swoop.  To remove all hotkeys, choose <B
+CLASS="GUIMENU"
+>Hotkeys</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Clear All Hotkeys</B
+> from the main menubar.  This will do exactly what it implies - reset all hotkeys back to empty.  You can also, from the <B
+CLASS="GUIMENU"
+>Hotkeys</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Show Hotkeys</B
+> menu, press the buttons beside any key listing, and choose the <B
+CLASS="GUIBUTTON"
+>Clear Selected</B
+> button to clear out just the keys that you select, while leaving the others alone.</P
+><P
+>If you clear all hotkeys, the <B
+CLASS="GUIMENU"
+>Hotkeys</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Restore Hotkeys</B
+> option becomes available.  It allows you to return your hotkeys to the state they were in immediately prior to the clearing.  This exists in case you accidentally clear hotkeys that you don't mean to.  Note that the Restore Hotkeys feature currently only works for the Clear All Hotkeys and Open Hotkey File (discussed below) options.</P
+><P
+>You can also lock the hotkeys by choosing the <B
+CLASS="GUIMENU"
+>Hotkeys</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Lock Hotkeys</B
+> option.  When hotkeys are locked, a checkmark appears beside the menu item, and you will not be able to add or clear any hotkeys until you deselect the lock option.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN730"
+>Using Hotkeys</A
+></H3
+><P
+>To use hotkeys once you have defined them, simply make sure that a Mr. Voice window is selected, and press the hotkey for the song that you want.  The song should immediately begin playing.
+      </P
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN733"
+>Saving and Loading Hotkeys</A
+></H3
+><P
+>To make the use of hotkeys more convenient, you can save groups of hotkeys to a file for later retrieval.  To use this feature, first assign songs to hotkeys like you want.  Then, choose <B
+CLASS="GUIMENU"
+>File</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Save Hotkeys To A File</B
+>, or press <B
+CLASS="KEYCAP"
+>Control</B
+>+<B
+CLASS="KEYCAP"
+>S</B
+>.  A box will pop up where you can select the filename to save the hotkeys under.  The file by default will be saved in the directory that you defined in the <VAR
+CLASS="VARNAME"
+>$savedir</VAR
+> variable during configuration. Simply enter the filename that you want in the box labeled <TT
+CLASS="GUILABEL"
+><B
+>Filename</B
+></TT
+>, and press the <B
+CLASS="GUIBUTTON"
+>Save File</B
+> button.  The filename will have the extension ".mrv" appended to it, and get written to disk.
+        <DIV
+CLASS="NOTE"
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./stylesheet-images/note.gif"
+HSPACE="5"
+ALT="Note"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>If you save a hotkey file with the name <TT
+CLASS="FILENAME"
+>default.mrv</TT
+>, that hotkey file will be automatically loaded every time you start Mr. Voice.</P
+></TD
+></TR
+></TABLE
+></DIV
+>
+      </P
+><P
+>To load a saved hotkey file, simply choose <B
+CLASS="GUIMENU"
+>File</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Open Hotkey File</B
+>, or press <B
+CLASS="KEYCAP"
+>Control</B
+>+<B
+CLASS="KEYCAP"
+>O</B
+>.  The file box will pop up, and you can choose the name of the hotkey file that you want to load.  Choosing the filename and pressing the <B
+CLASS="GUIBUTTON"
+>Open File</B
+> button will load the hotkeys defined in the file, and will overwrite <I
+CLASS="EMPHASIS"
+>all</I
+> hotkeys that you currently have defined.  If you do this and want your old hotkeys back, choose <B
+CLASS="GUIMENU"
+>Hotkeys</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Restore Hotkeys</B
+>.  When you load a saved hotkeys file, the Hotkeys window will display (if it is not up already).</P
+><P
+>The most recent hotkey files that you have accessed via a save or open will be listed on the <B
+CLASS="GUIMENU"
+>File</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Recent Files</B
+> menu.  These filenames can be selected directly for one-click access that recently-used hotkey files.  To adjust the number of files that are displayed, use the <B
+CLASS="GUIMENU"
+>File</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Preferences</B
+> menu.  Four is the default.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN767"
+>The Holding Tank</A
+></H3
+><P
+>Somewhere in a netherworld between the search box and hotkeys exists the Holding Tank.  The Holding Tank can be accessed via the <B
+CLASS="GUIMENU"
+>Hotkeys</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Show Holding Tank</B
+> menu choice or by pressing <B
+CLASS="KEYCAP"
+>Control</B
+>+<B
+CLASS="KEYCAP"
+>T</B
+>.  You can drag songs to it, like with the Hotkeys window.  Unlike the Hotkeys window, though, you can have an unlimited number of songs in there at any time, but you can't get one-button access to playing those songs.  New in Mr. Voice 1.10, you can save and load the contents of Holding Tanks to a file, just like hotkeys.  Find those options under the <B
+CLASS="GUIMENU"
+>File</B
+> menu.  You can also export the contents of the Holding Tank as a "bundle" - a special zip file that can be imported in another copy of Mr. Voice, while retaining all the information about the songs.
+      <DIV
+CLASS="FIGURE"
+><A
+NAME="AEN778"
+></A
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/holdingtank.png"></P
+></DIV
+><P
+><B
+>Figure 9. The Holding Tank window</B
+></P
+></DIV
+> 
+      </P
+><P
+>You populate the Holding Tank by dragging and dropping songs from the search results box onto it.  The items in the Holding Tank will appear in the order you add them.  To reorder the songs within the Holding Tank, highlight the song you want to move and press the <B
+CLASS="GUIBUTTON"
+>Up Arrow</B
+> or <B
+CLASS="GUIBUTTON"
+>Down Arrow</B
+> buttons to move it up and down in the list.</P
+><P
+>To play a song from the Holding Tank, you can either double-click the song in the Holding Tank window, or single-click the song and press the <B
+CLASS="GUIBUTTON"
+>Play</B
+> button.</P
+><P
+>You can use the up or down arrow buttons on either side of the Holding Tank to reorder the songs.  That can come in handy when you press the blue <B
+CLASS="GUIBUTTON"
+>Launch Playlist</B
+> button, which will launch a playlist in WinAmp or XMMS of all the songs in your Holding Tank, in the order they are displayed.</P
+><P
+>To remove a song from the holding tank, click on the name of the song, then press the <B
+CLASS="GUIBUTTON"
+>Clear Selected</B
+> button.  You can press the <B
+CLASS="KEYCAP"
+>Control</B
+> key while clicking to select more than one song, then use the <B
+CLASS="GUIBUTTON"
+>Clear Selected</B
+> button to clear all selected songs.  Or, for a quicker way to clear all songs from the Holding Tank, use the <B
+CLASS="GUIMENU"
+>Hotkeys</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Flush the Holding Tank</B
+> menu selection to wipe it with one fell swoop.</P
+><P
+>The Holding Tank allows you to easily move songs between installations of Mr. Voice, via a new feature called bundles.  To create a bundle, move songs into the holding tank.  Then, when you're finished, choose the <B
+CLASS="GUIMENU"
+>Hotkeys</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Export Holding Tank As Bundle</B
+> option.  That will write a .zip file to your root directory (see the status line of the Mr. Voice window for the specific path).  That zip file contains the MP3 files for the songs you expored, plus a special XML file that contains the information for the songs (title, artist, extra info, category, etc).</P
+><P
+>You can then transfer that .zip file to another system, and import it into that installation of Mr. Voice.  The songs will be copied into its database, with the song information from the original.</P
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="CHAPTER"
+><HR><H1
+><A
+NAME="AEN804"
+></A
+>Mr. Voice Online</H1
+><DIV
+CLASS="SECT1"
+><H2
+CLASS="SECT1"
+><A
+NAME="AEN806"
+>What Is Mr. Voice Online?</A
+></H2
+><P
+>Mr. Voice Online is an attempt to improve the selection of audio available for improv shows, as well as to build a community among people running sound for improv clubs.  The first attempt at Mr. Voice Online was a small subsection of the Mr. Voice website, where people could upload or download files.  It suffered from lack of use.  My theory was that it may be cumbersome to lug files around, have to re-enter the song information, and upload songs through a website.</P
+><P
+>For Mr. Voice 2.1, I've integrated the online functionality into the Mr. Voice application itself.  If you have an internet connection on your Mr. Voice system, you can now upload, download, and search songs in the online database directly from Mr. Voice itself.  We shall see if this proves easier to use.</P
+><P
+>To get started with Mr. Voice online, you will need a key.  I am not intending this project to turn into a large-scale filesharing community, so I am restricting use to people involved in improv clubs or other legitimate environments.  Getting a key, if you meet those conditions, is simple.  Send an email to minter@mrvoice.net with your name, the name of your group, and your website.  I'll send you back a key string that looks something like "i8bXtjCl+m2jL45BsiOia7".  Put that string in the Online Options section of your Preferences, check the "Enable online functionality" button, and you're set.</P
+></DIV
+><DIV
+CLASS="SECT1"
+><HR><H2
+CLASS="SECT1"
+><A
+NAME="AEN811"
+>Using Mr. Voice Online</A
+></H2
+><P
+>If you enable online functionality, you will see a new menu option - <B
+CLASS="GUIMENU"
+>Advanced Search</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Search Mr. Voice Online</B
+>.  Selecting that will bring up the Mr. Voice Online window, as seen below.</P
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/mrvoice-online.png"></P
+></DIV
+><P
+>As you can see, it's a scaled-down version of the normal Mr. Voice window.  You can search for text in any field (title, artist, extra info), or narrow your search down by category or by the person who uploaded the song (in case you have a particular person's contributions you want to browse).  There are also currently a couple of options in the <B
+CLASS="GUIMENU"
+>Predefined Searches</B
+> menu.  You can show all songs on Mr. Voice Online that do not exist on your system (useful for finding things to download), or you can search all songs on your system that do not exist on Mr. Voice Online (useful for uploading).</P
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN824"
+>Downloading Songs</A
+></H3
+><P
+>Once you have performed a search, and have some songs in the Mr. Voice Online window, you can download them.  Currently downloads are limited to one at a time - multi-song downloads will be added in a future version.  You will notice that the button that reads <B
+CLASS="GUIBUTTON"
+>Play Now</B
+> in the normal Mr. Voice window is now blue and reads <B
+CLASS="GUIBUTTON"
+>Download/Add</B
+>.  Double-clicking a song in the Mr. Voice Online window, or clicking the <B
+CLASS="GUIBUTTON"
+>Download/Add</B
+> button, will download the song in the background (which could take some time, depending on the size of the file and the speed of your internet connection).</P
+><P
+>Once the song is downloaded, the standard Add New Song window will be displayed, loaded up with information about the downloaded song.  You can preview the song here, to see if you want it.  If you click <B
+CLASS="GUIBUTTON"
+>Ok</B
+> (be sure to select a category), the song will be added to your local system.  If you click <B
+CLASS="GUIBUTTON"
+>Cancel</B
+>, nothing happens.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><HR><H3
+CLASS="SECT2"
+><A
+NAME="AEN833"
+>Uploading Songs</A
+></H3
+><P
+>You upload songs from the normal Mr. Voice window.  When you have a song listed in the main window, you can right-click on it to see a menu.  On this menu will be an option named Upload to <B
+CLASS="GUIMENUITEM"
+>Mr. Voice Online</B
+>.  Song uploads are currently limited to one-at-a-time - multi-song uploads are planned for a future release.</P
+><P
+>Choosing that menu item will immediately attempt to upload the song to Mr. Voice online.  It will check to be sure that file does not already exist, then start the upload (which could take a while, depending on the size of the file and the speed of your internet connection).  Once the file is uploaded, the status bar will update with the new online song ID of the song, plus the time it took to upload.</P
+><DIV
+CLASS="NOTE"
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./stylesheet-images/note.gif"
+HSPACE="5"
+ALT="Note"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>Note that when you perform the <B
+CLASS="GUIMENU"
+>Predefined Searches</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Show Local Songs That Are Not Online</B
+> search, the local songs will show up in the main Mr. Voice window, not the Mr. Voice online window.  This is because you have to do uploads from the main window.</P
+></TD
+></TR
+></TABLE
+></DIV
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="CHAPTER"
+><HR><H1
+><A
+NAME="AEN843"
+></A
+>Troubleshooting and FAQs</H1
+><P
+>This section will eventually contain answers to frequently asked questions, troubleshooting ideas, and helpful tips.</P
+><P
+></P
+><UL
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>I double-click the Mr. Voice icon under Windows, and the program doesn't come up.  What's wrong?</I
+></P
+><P
+>To diagnose a problem like this, Mr. Voice sends debugging output to a file.  That file is <TT
+CLASS="FILENAME"
+>C:/mrvoice.log</TT
+> under Windows or <TT
+CLASS="FILENAME"
+>~/mrvoice.log</TT
+> under Unix.  You can use that file to figure out what's going wrong, or send it to me so I can debug the problem.</P
+></LI
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>When I try to fade-stop a song, I get a "pop" of volume at the end.  How do I fix that?</I
+></P
+><P
+>Randy in KC has written up steps that he used to solve this problem.  He recommends doing the following.  Right mouse click on Winamp.  Choose Options-&#62;Preferences-&#62;Plug Ins-&#62;Output.  Highlight DirectSound Output v 2.2.10.  Click Configure.  Choose Fading Tab.  Select "Old Style Fade on pause".  Hit Apply.</P
+></LI
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>Now that I've got all this stuff in my database, how do I back it up?</I
+></P
+><P
+>There are two things that need to be taken into account when you do backups: The MP3 files themselves, and the information in the database.</P
+><P
+><I
+CLASS="EMPHASIS"
+>BACKING UP THE MP3 FILES</I
+></P
+><P
+>This is both the easiest and hardest part of the equation.  It's the easiest because backing up the MP3 files involves only copying them to another place, so that you are covered in case something happens to the files themselves (disk crash, accidental deletion, etc.)</P
+><P
+>It's the hardest, though, because you're generally talking about a gigabyte-plus of data, which limits your transfer options.  Some suggestions for MP3 file backups include:
+        <P
+></P
+><UL
+><LI
+><P
+>A second hard drive in your computer.  Will protect against a drive crash, OS crash, or accidental deletion, but will not protect against on-site disasters (physical damage to the computer, fire, locusts, etc.)</P
+></LI
+><LI
+><P
+>Burning files to CD/DVD.  Easy off-site storage, but requires the purchase of a burner if you don't already have one.</P
+></LI
+><LI
+><P
+>Copying files to another computer over a network.  This is what I do - I have a network card (~$15) in the voice computer, and use an ethernet cable to copy the files over to my laptop.  Transfer time is fast.  You can also use things like a USB link cable to transfer files between computers.</P
+></LI
+><LI
+><P
+>Copying the files onto several thousand floppy disks.  Time-consuming and not recommended.  ;-)</P
+></LI
+></UL
+>
+        </P
+><P
+><I
+CLASS="EMPHASIS"
+>BACKING UP THE DATABASE</I
+></P
+><P
+>Backing up the files themselves is good, but there's another step involved.  You need to back up the information in your database, so that all of your meta-data (categories, extra info, etc.) isn't lost.  The database actually drives the Mr. Voice program, too, so if you lose the database data, Mr. Voice will be pretty useless.</P
+><P
+>Beginning with Mr. Voice version 1.7, you can use the <B
+CLASS="GUIMENU"
+>File</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Backup Database To A File</B
+> menu choice to export the contents of your database to a file.  You can then copy that file to a safe place.  Also, beginning with version 2.0, you can back up the SQLite .db file itself to a safe place.  Just copy the .db file to another computer, and you've got the same database that the original one had!  Check the <B
+CLASS="GUIMENU"
+>File</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Preferences</B
+> menu for the location of the file.</P
+><P
+><I
+CLASS="EMPHASIS"
+>OTHER THINGS TO BACKUP</I
+></P
+><P
+>You may also want to back up your saved hotkey files from the directory listed in the <B
+CLASS="GUIMENU"
+>File</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Preferences</B
+> menu, as well as <TT
+CLASS="FILENAME"
+>C:\mrvoice.cfg</TT
+> on Windows or <TT
+CLASS="FILENAME"
+>~/.mrvoicerc</TT
+> on Unix.  Backing up all of this data should allow you to completely restore your system in the event that something goes wrong.</P
+><P
+><I
+CLASS="EMPHASIS"
+>WHEN TO BACKUP?</I
+></P
+><P
+>In the event of a system failure, you will lose all of the changes to your system between the last time you backed up, and the time of the failure.  So keep that in mind when you decide how often to back up.  For some, backups every month or two might work, for others, weekly or more frequent.</P
+></LI
+></UL
+><P
+>If you have questions or tips that you think should be addressed here, email them to me.</P
+></DIV
+><DIV
+CLASS="APPENDIX"
+><HR><H1
+><A
+NAME="AEN896"
+></A
+>Known Bugs and Issues</H1
+><P
+>Check the <A
+HREF="http://www.mrvoice.net/bugzilla/"
+TARGET="_top"
+>Mr. Voice Bugzilla</A
+> database for outstanding issues.</P
+></DIV
+><DIV
+CLASS="APPENDIX"
+><HR><H1
+><A
+NAME="AEN900"
+></A
+>Contributing, Contacting, and Bug Reporting</H1
+><P
+>If you like this program, and know of a way to make it better, feel free to modify it.  This software is released under the GNU General Public License, so read the COPYING file or visit <A
+HREF="http://www.gnu.org/"
+TARGET="_top"
+>the GNU project</A
+> for information on license conditions.</P
+><P
+>If you make a cool modification to this program, feel free to send a diff to me, and I'll incorporate it into the main body of the program.</P
+><P
+>Considering I'm probably the only person using this program, if you even USE this software, feel free to send me an email and let me know that you've found it useful.  Otherwise, I'm just talking to myself.  :-)</P
+><P
+>Feel free to report any bugs, feature requests, etc. to me via the <A
+HREF="http://www.mrvoice.net/bugzilla/"
+TARGET="_top"
+>Mr. Voice Bugzilla</A
+>.  As this is a specific-purpose project, there's no guarantee that I'll do it, but I'm glad to listen to any suggestions.  Check the TODO file to see stuff I'm currently working on.</P
+><P
+>The software's new home on the web is <A
+HREF="http://www.mrvoice.net/"
+TARGET="_top"
+>http://www.mrvoice.net/</A
+> - check there for any news and developments.</P
+></DIV
+><DIV
+CLASS="APPENDIX"
+><HR><H1
+><A
+NAME="AEN910"
+></A
+>Software License</H1
+><P
+>This software is released under the terms of the GNU General Public License.  The preamble of the license is listed below.  Please see the file named <TT
+CLASS="FILENAME"
+>COPYING</TT
+> included in the Mr. Voice package for the full license, or view it online at <A
+HREF="http://www.gnu.org/licenses/gpl.html"
+TARGET="_top"
+>http://www.gnu.org/licenses/gpl.html</A
+>.</P
+><P
+CLASS="LITERALLAYOUT"
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GNU&nbsp;GENERAL&nbsp;PUBLIC&nbsp;LICENSE<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Version&nbsp;2,&nbsp;June&nbsp;1991<br>
+<br>
+&nbsp;Copyright&nbsp;(C)&nbsp;1989,&nbsp;1991&nbsp;Free&nbsp;Software&nbsp;Foundation,&nbsp;Inc.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;59&nbsp;Temple&nbsp;Place,&nbsp;Suite&nbsp;330,&nbsp;Boston,&nbsp;MA&nbsp;&nbsp;02111-1307&nbsp;&nbsp;USA<br>
+&nbsp;Everyone&nbsp;is&nbsp;permitted&nbsp;to&nbsp;copy&nbsp;and&nbsp;distribute&nbsp;verbatim&nbsp;copies<br>
+&nbsp;of&nbsp;this&nbsp;license&nbsp;document,&nbsp;but&nbsp;changing&nbsp;it&nbsp;is&nbsp;not&nbsp;allowed.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Preamble<br>
+<br>
+&nbsp;&nbsp;The&nbsp;licenses&nbsp;for&nbsp;most&nbsp;software&nbsp;are&nbsp;designed&nbsp;to&nbsp;take&nbsp;away&nbsp;your<br>
+freedom&nbsp;to&nbsp;share&nbsp;and&nbsp;change&nbsp;it.&nbsp;&nbsp;By&nbsp;contrast,&nbsp;the&nbsp;GNU&nbsp;General&nbsp;Public<br>
+License&nbsp;is&nbsp;intended&nbsp;to&nbsp;guarantee&nbsp;your&nbsp;freedom&nbsp;to&nbsp;share&nbsp;and&nbsp;change&nbsp;free<br>
+software--to&nbsp;make&nbsp;sure&nbsp;the&nbsp;software&nbsp;is&nbsp;free&nbsp;for&nbsp;all&nbsp;its&nbsp;users.&nbsp;&nbsp;This<br>
+General&nbsp;Public&nbsp;License&nbsp;applies&nbsp;to&nbsp;most&nbsp;of&nbsp;the&nbsp;Free&nbsp;Software<br>
+Foundation's&nbsp;software&nbsp;and&nbsp;to&nbsp;any&nbsp;other&nbsp;program&nbsp;whose&nbsp;authors&nbsp;commit&nbsp;to<br>
+using&nbsp;it.&nbsp;&nbsp;(Some&nbsp;other&nbsp;Free&nbsp;Software&nbsp;Foundation&nbsp;software&nbsp;is&nbsp;covered&nbsp;by<br>
+the&nbsp;GNU&nbsp;Library&nbsp;General&nbsp;Public&nbsp;License&nbsp;instead.)&nbsp;&nbsp;You&nbsp;can&nbsp;apply&nbsp;it&nbsp;to<br>
+your&nbsp;programs,&nbsp;too.<br>
+<br>
+&nbsp;&nbsp;When&nbsp;we&nbsp;speak&nbsp;of&nbsp;free&nbsp;software,&nbsp;we&nbsp;are&nbsp;referring&nbsp;to&nbsp;freedom,&nbsp;not<br>
+price.&nbsp;&nbsp;Our&nbsp;General&nbsp;Public&nbsp;Licenses&nbsp;are&nbsp;designed&nbsp;to&nbsp;make&nbsp;sure&nbsp;that&nbsp;you<br>
+have&nbsp;the&nbsp;freedom&nbsp;to&nbsp;distribute&nbsp;copies&nbsp;of&nbsp;free&nbsp;software&nbsp;(and&nbsp;charge&nbsp;for<br>
+this&nbsp;service&nbsp;if&nbsp;you&nbsp;wish),&nbsp;that&nbsp;you&nbsp;receive&nbsp;source&nbsp;code&nbsp;or&nbsp;can&nbsp;get&nbsp;it<br>
+if&nbsp;you&nbsp;want&nbsp;it,&nbsp;that&nbsp;you&nbsp;can&nbsp;change&nbsp;the&nbsp;software&nbsp;or&nbsp;use&nbsp;pieces&nbsp;of&nbsp;it<br>
+in&nbsp;new&nbsp;free&nbsp;programs;&nbsp;and&nbsp;that&nbsp;you&nbsp;know&nbsp;you&nbsp;can&nbsp;do&nbsp;these&nbsp;things.<br>
+<br>
+&nbsp;&nbsp;To&nbsp;protect&nbsp;your&nbsp;rights,&nbsp;we&nbsp;need&nbsp;to&nbsp;make&nbsp;restrictions&nbsp;that&nbsp;forbid<br>
+anyone&nbsp;to&nbsp;deny&nbsp;you&nbsp;these&nbsp;rights&nbsp;or&nbsp;to&nbsp;ask&nbsp;you&nbsp;to&nbsp;surrender&nbsp;the&nbsp;rights.<br>
+These&nbsp;restrictions&nbsp;translate&nbsp;to&nbsp;certain&nbsp;responsibilities&nbsp;for&nbsp;you&nbsp;if&nbsp;you<br>
+distribute&nbsp;copies&nbsp;of&nbsp;the&nbsp;software,&nbsp;or&nbsp;if&nbsp;you&nbsp;modify&nbsp;it.<br>
+<br>
+&nbsp;&nbsp;For&nbsp;example,&nbsp;if&nbsp;you&nbsp;distribute&nbsp;copies&nbsp;of&nbsp;such&nbsp;a&nbsp;program,&nbsp;whether<br>
+gratis&nbsp;or&nbsp;for&nbsp;a&nbsp;fee,&nbsp;you&nbsp;must&nbsp;give&nbsp;the&nbsp;recipients&nbsp;all&nbsp;the&nbsp;rights&nbsp;that<br>
+you&nbsp;have.&nbsp;&nbsp;You&nbsp;must&nbsp;make&nbsp;sure&nbsp;that&nbsp;they,&nbsp;too,&nbsp;receive&nbsp;or&nbsp;can&nbsp;get&nbsp;the<br>
+source&nbsp;code.&nbsp;&nbsp;And&nbsp;you&nbsp;must&nbsp;show&nbsp;them&nbsp;these&nbsp;terms&nbsp;so&nbsp;they&nbsp;know&nbsp;their<br>
+rights.<br>
+<br>
+&nbsp;&nbsp;We&nbsp;protect&nbsp;your&nbsp;rights&nbsp;with&nbsp;two&nbsp;steps:&nbsp;(1)&nbsp;copyright&nbsp;the&nbsp;software,&nbsp;and<br>
+(2)&nbsp;offer&nbsp;you&nbsp;this&nbsp;license&nbsp;which&nbsp;gives&nbsp;you&nbsp;legal&nbsp;permission&nbsp;to&nbsp;copy,<br>
+distribute&nbsp;and/or&nbsp;modify&nbsp;the&nbsp;software.<br>
+<br>
+&nbsp;&nbsp;Also,&nbsp;for&nbsp;each&nbsp;author's&nbsp;protection&nbsp;and&nbsp;ours,&nbsp;we&nbsp;want&nbsp;to&nbsp;make&nbsp;certain<br>
+that&nbsp;everyone&nbsp;understands&nbsp;that&nbsp;there&nbsp;is&nbsp;no&nbsp;warranty&nbsp;for&nbsp;this&nbsp;free<br>
+software.&nbsp;&nbsp;If&nbsp;the&nbsp;software&nbsp;is&nbsp;modified&nbsp;by&nbsp;someone&nbsp;else&nbsp;and&nbsp;passed&nbsp;on,&nbsp;we<br>
+want&nbsp;its&nbsp;recipients&nbsp;to&nbsp;know&nbsp;that&nbsp;what&nbsp;they&nbsp;have&nbsp;is&nbsp;not&nbsp;the&nbsp;original,&nbsp;so<br>
+that&nbsp;any&nbsp;problems&nbsp;introduced&nbsp;by&nbsp;others&nbsp;will&nbsp;not&nbsp;reflect&nbsp;on&nbsp;the&nbsp;original<br>
+authors'&nbsp;reputations.<br>
+<br>
+&nbsp;&nbsp;Finally,&nbsp;any&nbsp;free&nbsp;program&nbsp;is&nbsp;threatened&nbsp;constantly&nbsp;by&nbsp;software<br>
+patents.&nbsp;&nbsp;We&nbsp;wish&nbsp;to&nbsp;avoid&nbsp;the&nbsp;danger&nbsp;that&nbsp;redistributors&nbsp;of&nbsp;a&nbsp;free<br>
+program&nbsp;will&nbsp;individually&nbsp;obtain&nbsp;patent&nbsp;licenses,&nbsp;in&nbsp;effect&nbsp;making&nbsp;the<br>
+program&nbsp;proprietary.&nbsp;&nbsp;To&nbsp;prevent&nbsp;this,&nbsp;we&nbsp;have&nbsp;made&nbsp;it&nbsp;clear&nbsp;that&nbsp;any<br>
+patent&nbsp;must&nbsp;be&nbsp;licensed&nbsp;for&nbsp;everyone's&nbsp;free&nbsp;use&nbsp;or&nbsp;not&nbsp;licensed&nbsp;at&nbsp;all.<br>
+<br>
+&nbsp;&nbsp;The&nbsp;precise&nbsp;terms&nbsp;and&nbsp;conditions&nbsp;for&nbsp;copying,&nbsp;distribution&nbsp;and<br>
+modification&nbsp;follow.<br>
+&nbsp;&nbsp;</P
+></DIV
+></DIV
+></BODY
+></HTML
+>

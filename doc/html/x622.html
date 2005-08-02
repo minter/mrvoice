@@ -1,0 +1,329 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Searching and Playing Songs</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Mr. Voice 2.1 Installation and Reference Manual"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Using Mr. Voice"
+HREF="c449.html"><LINK
+REL="PREVIOUS"
+TITLE="Using Mr. Voice"
+HREF="c449.html"><LINK
+REL="NEXT"
+TITLE="Hotkeys"
+HREF="x689.html"></HEAD
+><BODY
+CLASS="SECT1"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Mr. Voice 2.1 Installation and Reference Manual</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="c449.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Using Mr. Voice</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="x689.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="AEN622"
+>Searching and Playing Songs</A
+></H1
+><P
+>Now that you've learned how to put songs into the database, it's time to do something with them.  The following section will show you the basics of searching and playing the songs in your database</P
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN625"
+>Searching The Database</A
+></H2
+><P
+>The search fields of the main Mr. Voice window contain the items that you can search for.  You can use any combination of the fields to search, with the exception of the <TT
+CLASS="GUILABEL"
+><B
+>OR any field contains</B
+></TT
+> field, which overrides everything except the category.  For the fields where you can type in text, there is an arrow icon to the right of the text entry box.  If you click that arrow, a menu will pop up listing all the things you have searched for in that category.  You can use this menu to quickly re-select something that you have already searched for. Let's look at the fields in detail:</P
+><P
+></P
+><UL
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>Choose Category</B
+></TT
+>: This allows you to set the category to search within.  You can either choose a specific category, or the <B
+CLASS="GUIMENUITEM"
+>Any Category</B
+> option, which will search all defined categories.  The short name of the currently selected category will be displayed beside the menu. </P
+></LI
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>Extra info</B
+></TT
+>: Text placed in this box will be compared with the "Extra Info" field of each song.  This, like each of the text entry fields, is a case-insensitive substring match, meaning that if you search for "eat", it will match the words "Eat", "Beatles", "EATING", etc.</P
+></LI
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>Artist</B
+></TT
+>: Text in this box will be compared with the "Artist" field of the songs.</P
+></LI
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>Title</B
+></TT
+>: Text in this box will be compared with the "Title" field of the songs.</P
+></LI
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>Any Field</B
+></TT
+>: Text in this box will be compared to the Title, Artist, and Extra Info fields of each song, and return any song that has a match in any of those fields.  So searching the <TT
+CLASS="GUILABEL"
+><B
+>Any Field</B
+></TT
+> box for "eat" will return songs by The Beatles, the song titled "Masterpeace Theatre Theme", or one with the extra info of "Featured".  The only thing that the <TT
+CLASS="GUILABEL"
+><B
+>Any Field</B
+></TT
+> does <I
+CLASS="EMPHASIS"
+>NOT</I
+> search is the Category - you will need to select that manually.</P
+></LI
+></UL
+><P
+>After you have filled in the information that you would like to search for, you can either press the <B
+CLASS="KEYCAP"
+>Enter</B
+> key, or press the <B
+CLASS="GUIBUTTON"
+>Do Search</B
+> button.  The status bar will tell you how many matching entries your search found, and display the results in the Search Results box.  If you have any songs in your database where there is no matching audio file on disk, they will show up in red as "invalid" files.  If you try to play these songs, nothing will happen (as there's no actual file to play!).  Invalid songs should either be deleted, or the expected file should be moved into place.  If all of your songs show up as invalid, that's a good sign that you have your MP3 Directory set incorrectly in the preferences.</P
+><P
+>If you have chosen in the <B
+CLASS="GUIMENU"
+>File</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Preferences</B
+> menu to restrict searches based on the Publisher, that will affect your search results - only searches from your select publisher group will end up displayed.</P
+><P
+>If your mouse has a scroll-wheel on it, you can use the wheel to scroll the list of search results up and down.</P
+><P
+>There is also an <B
+CLASS="GUIMENU"
+>Advanced Search</B
+> menu.  On that menu, you can choose to have Mr. Voice show you all the song that have changed during the current day, or over the past 7, 14, or 30 days.  You can also search for songs that were added or changed over an arbitrary date range via the <B
+CLASS="GUIMENUITEM"
+>Advanced Date Search</B
+> menu.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN660"
+>Playing Songs</A
+></H2
+><P
+>At this point, you have added songs to the database, and you have searched for songs.  Now, with some songs listed in the Search Results box, you're ready to play the songs!</P
+><P
+>To play a song, you can left-click on the song in the Search Results box (the song should become highlighed when you do this), and press the green <B
+CLASS="GUIBUTTON"
+>Play Now</B
+> button.  While a song is highlighted, you can also press <B
+CLASS="KEYCAP"
+>Control</B
+>+<B
+CLASS="KEYCAP"
+>P</B
+> to start the song playing.  You can also double-click the song in the Search Results box, or right-click the song and choose the <B
+CLASS="GUIMENUITEM"
+>Play Song</B
+> option.  When you do this, your audio player should spring to life, and you should hear the song coming out of the speakers.  Congratulations!  It works!</P
+><P
+>To stop the song, you can either press the red <B
+CLASS="GUIBUTTON"
+>Stop Now</B
+> button, or press the <B
+CLASS="KEYCAP"
+>Esc</B
+> key on your keyboard.  Play should then stop.</P
+><P
+>Windows users who have installed the httpQ plugin (and entered its password under the <B
+CLASS="GUIMENU"
+>File</B
+>+<B
+CLASS="GUIMENU"
+>Preferences</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Other</B
+> menu) have an additional option.  Pressing the <B
+CLASS="KEYCAP"
+>Shift</B
+> key while either clicking on the <B
+CLASS="GUIBUTTON"
+>Stop Now</B
+> button or pressing the <B
+CLASS="KEYCAP"
+>Escape</B
+> key will cause the song to fade out before stopping, over a period of a couple of seconds.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN680"
+>Exiting Mr. Voice</A
+></H2
+><P
+>To exit Mr. Voice, choose <B
+CLASS="GUIMENU"
+>File</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Exit</B
+>, or press <B
+CLASS="KEYCAP"
+>Control</B
+>+<B
+CLASS="KEYCAP"
+>X</B
+>.  Mr. Voice will prompt you to confirm that you want to exit, and if you do, the program will exit and your audio player will close.</P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="c449.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="x689.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Using Mr. Voice</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="c449.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Hotkeys</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

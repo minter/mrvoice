@@ -1,0 +1,255 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Troubleshooting and FAQs</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Mr. Voice 2.1 Installation and Reference Manual"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Using Mr. Voice Online"
+HREF="x811.html"><LINK
+REL="NEXT"
+TITLE="Known Bugs and Issues"
+HREF="a896.html"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Mr. Voice 2.1 Installation and Reference Manual</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="x811.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="a896.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="AEN843"
+></A
+>Troubleshooting and FAQs</H1
+><P
+>This section will eventually contain answers to frequently asked questions, troubleshooting ideas, and helpful tips.</P
+><P
+></P
+><UL
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>I double-click the Mr. Voice icon under Windows, and the program doesn't come up.  What's wrong?</I
+></P
+><P
+>To diagnose a problem like this, Mr. Voice sends debugging output to a file.  That file is <TT
+CLASS="FILENAME"
+>C:/mrvoice.log</TT
+> under Windows or <TT
+CLASS="FILENAME"
+>~/mrvoice.log</TT
+> under Unix.  You can use that file to figure out what's going wrong, or send it to me so I can debug the problem.</P
+></LI
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>When I try to fade-stop a song, I get a "pop" of volume at the end.  How do I fix that?</I
+></P
+><P
+>Randy in KC has written up steps that he used to solve this problem.  He recommends doing the following.  Right mouse click on Winamp.  Choose Options-&#62;Preferences-&#62;Plug Ins-&#62;Output.  Highlight DirectSound Output v 2.2.10.  Click Configure.  Choose Fading Tab.  Select "Old Style Fade on pause".  Hit Apply.</P
+></LI
+><LI
+><P
+><I
+CLASS="EMPHASIS"
+>Now that I've got all this stuff in my database, how do I back it up?</I
+></P
+><P
+>There are two things that need to be taken into account when you do backups: The MP3 files themselves, and the information in the database.</P
+><P
+><I
+CLASS="EMPHASIS"
+>BACKING UP THE MP3 FILES</I
+></P
+><P
+>This is both the easiest and hardest part of the equation.  It's the easiest because backing up the MP3 files involves only copying them to another place, so that you are covered in case something happens to the files themselves (disk crash, accidental deletion, etc.)</P
+><P
+>It's the hardest, though, because you're generally talking about a gigabyte-plus of data, which limits your transfer options.  Some suggestions for MP3 file backups include:
+        <P
+></P
+><UL
+><LI
+><P
+>A second hard drive in your computer.  Will protect against a drive crash, OS crash, or accidental deletion, but will not protect against on-site disasters (physical damage to the computer, fire, locusts, etc.)</P
+></LI
+><LI
+><P
+>Burning files to CD/DVD.  Easy off-site storage, but requires the purchase of a burner if you don't already have one.</P
+></LI
+><LI
+><P
+>Copying files to another computer over a network.  This is what I do - I have a network card (~$15) in the voice computer, and use an ethernet cable to copy the files over to my laptop.  Transfer time is fast.  You can also use things like a USB link cable to transfer files between computers.</P
+></LI
+><LI
+><P
+>Copying the files onto several thousand floppy disks.  Time-consuming and not recommended.  ;-)</P
+></LI
+></UL
+>
+        </P
+><P
+><I
+CLASS="EMPHASIS"
+>BACKING UP THE DATABASE</I
+></P
+><P
+>Backing up the files themselves is good, but there's another step involved.  You need to back up the information in your database, so that all of your meta-data (categories, extra info, etc.) isn't lost.  The database actually drives the Mr. Voice program, too, so if you lose the database data, Mr. Voice will be pretty useless.</P
+><P
+>Beginning with Mr. Voice version 1.7, you can use the <B
+CLASS="GUIMENU"
+>File</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Backup Database To A File</B
+> menu choice to export the contents of your database to a file.  You can then copy that file to a safe place.  Also, beginning with version 2.0, you can back up the SQLite .db file itself to a safe place.  Just copy the .db file to another computer, and you've got the same database that the original one had!  Check the <B
+CLASS="GUIMENU"
+>File</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Preferences</B
+> menu for the location of the file.</P
+><P
+><I
+CLASS="EMPHASIS"
+>OTHER THINGS TO BACKUP</I
+></P
+><P
+>You may also want to back up your saved hotkey files from the directory listed in the <B
+CLASS="GUIMENU"
+>File</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Preferences</B
+> menu, as well as <TT
+CLASS="FILENAME"
+>C:\mrvoice.cfg</TT
+> on Windows or <TT
+CLASS="FILENAME"
+>~/.mrvoicerc</TT
+> on Unix.  Backing up all of this data should allow you to completely restore your system in the event that something goes wrong.</P
+><P
+><I
+CLASS="EMPHASIS"
+>WHEN TO BACKUP?</I
+></P
+><P
+>In the event of a system failure, you will lose all of the changes to your system between the last time you backed up, and the time of the failure.  So keep that in mind when you decide how often to back up.  For some, backups every month or two might work, for others, weekly or more frequent.</P
+></LI
+></UL
+><P
+>If you have questions or tips that you think should be addressed here, email them to me.</P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="x811.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="a896.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Using Mr. Voice Online</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Known Bugs and Issues</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

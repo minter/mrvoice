@@ -1,0 +1,673 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Using Mr. Voice</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Mr. Voice 2.1 Installation and Reference Manual"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Configuring Mr. Voice"
+HREF="c353.html"><LINK
+REL="NEXT"
+TITLE="Searching and Playing Songs"
+HREF="x622.html"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Mr. Voice 2.1 Installation and Reference Manual</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="c353.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="x622.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="AEN449"
+></A
+>Using Mr. Voice</H1
+><P
+>Now that you have Mr. Voice and other required software set up and configured, it's time to actually use it.  First you have to populate the database with songs.  Then you can do useful things with them.  Look at the following screenshot of the main Mr. Voice window to familiarize yourself with the layout. 
+    <DIV
+CLASS="FIGURE"
+><A
+NAME="AEN452"
+></A
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/mainwindow.png"></P
+></DIV
+><P
+><B
+>Figure 1. The Main window</B
+></P
+></DIV
+> 
+  </P
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="AEN459"
+>Adding, Deleting, and Editing Songs and Categories</A
+></H1
+><P
+>Mr. Voice lets you set up categories, then put your songs into those categories for later use.  So we'll address the categories first.</P
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN462"
+>Categories</A
+></H2
+><P
+>Category options are very simple.  You can either add a category, edit its long (descriptive) name, or delete a category.  All options can be found under the <B
+CLASS="GUIMENU"
+>Categories</B
+> menu on the main display.</P
+><P
+>To add a new category, choose <B
+CLASS="GUIMENU"
+>Categories</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Add Category</B
+>.  You will then have a box pop up where you can enter two items: The <TT
+CLASS="GUILABEL"
+><B
+>Category Code</B
+></TT
+> and the <TT
+CLASS="GUILABEL"
+><B
+>Category Description</B
+></TT
+>.  
+        <DIV
+CLASS="FIGURE"
+><A
+NAME="AEN473"
+></A
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/addcat.png"></P
+></DIV
+><P
+><B
+>Figure 2. The Add Category window</B
+></P
+></DIV
+>
+      The Category Code is a short (4-5 letters max.) identifier for the category, whereas the Category Description is the longer name that you'll normally see.  However, make the Category Code something useful, because it will be displayed next to the Choose Category button on the main window.  For example, if you want a category called "Joe's Fly Tunes", you could use "JOE" for the Category Code and "Joe's Fly Tunes" for the category description.  </P
+><P
+>To delete a category, choose <B
+CLASS="GUIMENU"
+>Categories</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Delete Category</B
+>.  A box will pop up listing all of your defined categories.  You can choose the button next to the category that you would like to delete, then press <B
+CLASS="GUIBUTTON"
+>Ok</B
+> to delete the category. 
+        <DIV
+CLASS="FIGURE"
+><A
+NAME="AEN485"
+></A
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/delcat.png"></P
+></DIV
+><P
+><B
+>Figure 3. The Delete Category window</B
+></P
+></DIV
+></P
+><DIV
+CLASS="IMPORTANT"
+><P
+></P
+><TABLE
+CLASS="IMPORTANT"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./stylesheet-images/important.gif"
+HSPACE="5"
+ALT="Important"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>You cannot delete a category if it still has songs in it.  Delete/edit all songs out of the category before trying to delete it.</P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>Finally, you can edit a category, by choosing the <B
+CLASS="GUIMENU"
+>Categories</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Edit Category</B
+> menu.  Once there, you can edit the long name, but not the short code, of the category.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN498"
+>Songs</A
+></H2
+><P
+>Songs are the audio data that you're trying to play.  You can use any sort of audio data that your audio player can handle, but Mr. Voice can figure out things like playing time for MP3, WAV, Ogg Vorbis, AAC, and WMA files.  If you're not trying to store, categorize, and play audio data, then you're probably using the wrong program!  This manual will refer to the audio data that you are storing as "songs", even though they can, of course, be any kind of audio.  To manipulate songs in the database, there are three main actions: adding songs, deleting songs, and editing songs.</P
+><P
+>To insert a new song into the database, choose <B
+CLASS="GUIMENU"
+>Songs</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Add New Song</B
+>.  A box will pop up for the needed information: 
+        <DIV
+CLASS="FIGURE"
+><A
+NAME="AEN505"
+></A
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/addsong.png"></P
+></DIV
+><P
+><B
+>Figure 4. The Add Song window</B
+></P
+></DIV
+></P
+><P
+></P
+><UL
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>Song Title</B
+></TT
+>: This is where you put the title of the song that you are adding.</P
+></LI
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>Artist</B
+></TT
+>: The artist responsible for the song.  This is an <I
+CLASS="EMPHASIS"
+>optional</I
+> item.</P
+></LI
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>Category</B
+></TT
+>:  Pressing the <TT
+CLASS="GUILABEL"
+><B
+>Choose Category</B
+></TT
+> button beside this entry will give you a list of the categories that you currently have defined.  You must choose one of these categories to place the song into.</P
+></LI
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>Category Extra Info</B
+></TT
+>: Kind of a "hodgepodge" entry, this information can be whatever you want.  At ComedyWorx, we use it as a modifier for the category.  So if the category is "Game", the Extra Info is the name of the game.  If the category is for Player Intros, the Extra Info will tell us whether it's specifically for a referee, dimwit, or whatnot.  So, basically it's just free-form for whatever you need, and is an <I
+CLASS="EMPHASIS"
+>optional</I
+> field.</P
+></LI
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>Publisher</B
+></TT
+>: This field is for the publisher of the song.  Current values are ASCAP, BMI, or Other.  The default value is Other, which should be fine for people who don't want to bother with publisher information.  But if you're using Mr. Voice in an organization that needs this information, here's where you can put it.</P
+></LI
+><LI
+><P
+><TT
+CLASS="GUILABEL"
+><B
+>File To Add</B
+></TT
+>:  This is where you give Mr. Voice the path to the actual audio file that you want to add.  Clicking the <B
+CLASS="GUIBUTTON"
+>Select File</B
+> button will bring up a familiar "file chooser" box.  The screenshot below is from a Linux system - Windows users will see the familiar Windows file chooser box.
+        <DIV
+CLASS="FIGURE"
+><A
+NAME="AEN535"
+></A
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/addsong-files.png"></P
+></DIV
+><P
+><B
+>Figure 5. The Add Song File Selection window</B
+></P
+></DIV
+>
+	Use this to go to the location of your file, left-click on the name of the file, then click <B
+CLASS="GUIBUTTON"
+>Open</B
+>.  The name of the file should now be listed in the <TT
+CLASS="GUILABEL"
+><B
+>File To Add</B
+></TT
+> box.  If the file you are adding is an MP3, OGG, AAC, or WMA with valid tag information, it will automatically fill in the Title and Artist fields with that information.</P
+></LI
+><LI
+><P
+><B
+CLASS="GUIBUTTON"
+>Preview Song</B
+>: Once you have selected a file, you can press this button to hear the song.  Useful for making sure you have the song you want before you add it.</P
+></LI
+></UL
+><P
+>You can now press the <B
+CLASS="GUIBUTTON"
+>Ok</B
+> button to add the song.  If all goes well, you should see a message that the file was added to the database.  If not, Mr. Voice should tell you what went wrong, and let you go back and fix the entry.</P
+><DIV
+CLASS="NOTE"
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./stylesheet-images/note.gif"
+HSPACE="5"
+ALT="Note"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>Mr. Voice actually makes a copy of the file that you select, renames it to a standard form, and places the new copy in the location given by the <VAR
+CLASS="VARNAME"
+>$filepath</VAR
+> variable that you defined in the setup.  Your original audio file is <I
+CLASS="EMPHASIS"
+>not</I
+> used after the copy is made, so you can feel free to delete it.</P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>It can be tedious to add songs one at a time if you have many files to add.  New in version 1.8 is the <B
+CLASS="GUIMENU"
+>Songs</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Bulk-Add Songs Into Category</B
+> menu option.  Upon choosing this, you will be prompted for a category and a directory.  Select the category, and a directory that contains the set of MP3, OGG, AAC, or WMA files that you would like to add to that category.  Mr. Voice will then use the title and artist tags stored in the files to automatically add those files into your selected category.  If you need to add Extra Info or modify any other fields, you will need to do that after the fact, but this should be a good way to add lots of data at once.  You can also specify a publisher here, useful when adding a whole CD's worth of songs with the same publisher.</P
+><P
+>There are two other ways to add songs.  The first is that you can select song files on your desktop or file explorer, and drop them onto the main search box of Mr. Voice.  When you do that, the Add New Song function will be launched on those files.  Finally, you can choose the <B
+CLASS="GUIMENU"
+>Songs</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Add Songs From Bundle</B
+> menu item.  That will allow you to import a Mr. Voice "bundle" ZIP file.  All songs in the bundle will be added, along with all information about the file, and any needed categories will be automatically created.</P
+><P
+>To delete a song, you must have at least one displayed and selected in the main search results box.  Searching is covered later, but if you hit the <B
+CLASS="GUIBUTTON"
+>Do Search</B
+> button, it should show you all of the songs in your database.</P
+><P
+>Once you have some songs displayed, left-click once on the name of the song that you want to delete, or select several songs by pressing <B
+CLASS="KEYCAP"
+>Control</B
+> or <B
+CLASS="KEYCAP"
+>Shift</B
+> while selecting, then choose <B
+CLASS="GUIMENU"
+>Songs</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Delete Currently Selected Song</B
+>.  You can also right-click on the name of the song or songs and choose the <B
+CLASS="GUIMENUITEM"
+>Delete Song</B
+> option.  A box will pop up asking you to confirm the deletion, and also presenting a checkbox labeled <TT
+CLASS="GUILABEL"
+><B
+>Delete File On Disk</B
+></TT
+>.   
+        <DIV
+CLASS="FIGURE"
+><A
+NAME="AEN571"
+></A
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/delsong.png"></P
+></DIV
+><P
+><B
+>Figure 6. The Delete Song window</B
+></P
+></DIV
+>
+      If you do not select this, the song or songs will be removed from the database, but the actual audio file on disk, located at <VAR
+CLASS="VARNAME"
+>$filepath</VAR
+>, will remain.  If you do select this option, the song or songs will be removed from the database AND the audio file on disk will be deleted.</P
+><DIV
+CLASS="NOTE"
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./stylesheet-images/note.gif"
+HSPACE="5"
+ALT="Note"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>If you do not have a song selected in the main display box and choose <B
+CLASS="GUIMENU"
+>Songs</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Delete Currently Selected Song</B
+> or <B
+CLASS="GUIMENU"
+>Songs</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Edit Currently Selected Song</B
+>, then nothing will happen.  This is normal.  If you are trying to edit or delete a song and don't get the repective boxes showing up on-screen, make sure that you have a song highlighted.</P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>Finally, if you want to edit a song in the database, left-click a song in the main display window, and choose <B
+CLASS="GUIMENU"
+>Songs</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Edit Currently Selected Song</B
+>.  You can also right-click on a song and choose the <B
+CLASS="GUIMENUITEM"
+>Edit Song</B
+> option.  A box will pop up that is similar to the one for <B
+CLASS="GUIMENU"
+>Songs</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Add New Song</B
+>, except without the file selector option.  You can make any needed changes to the song, then press <B
+CLASS="GUIBUTTON"
+>Ok</B
+> to commit them.</P
+><DIV
+CLASS="NOTE"
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./stylesheet-images/note.gif"
+HSPACE="5"
+ALT="Note"></TD
+><TH
+ALIGN="LEFT"
+VALIGN="CENTER"
+><B
+>Shortcut!</B
+></TH
+></TR
+><TR
+><TD
+>&nbsp;</TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>You can also right-click a song in the main display box to bring up a shortcut menu.  From this menu, you can choose to edit or delete the selected song.</P
+></TD
+></TR
+></TABLE
+></DIV
+><P
+>If you have multiple songs selected and choose to edit, you will only be able to edit the Extra Info, Category, or Artist fields, not the Title.</P
+><P
+>There is a menu choice named <B
+CLASS="GUIMENU"
+>Songs</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Update Song Times/MD5s</B
+>.  This will re-index all your song files, updating their play times and the MD5 sum (used in Mr. Voice online to see if two songs are the same).  While in theory this information should be set when the song is added and never change, you may want to run it every once in a while to make sure the information is correct.  If you edit a file in your MP3 directory manually, or replace a file in the MP3 directory directly with a new one, you will need to run this procedure.  This process could take a while, depending on the speed of your computer, so you may not want to run it in the middle of a show.</P
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN604"
+>Orphaned Files</A
+></H3
+><P
+>Orphaned files are audio files in your MP3 directory that are not referenced by any entries in the Mr. Voice database.  They normally result from deleting a song from the database without deleting the file on disk.  Since nothing in the database knows about them, they are unneeded and just take up space.</P
+><P
+>In previous versions of Mr. Voice, a separate program named <TT
+CLASS="FILENAME"
+>orphans.pl</TT
+> was provided to weed out these old files.  However, with Mr. Voice 1.10, the orphan checker is integrated into the main program.  You can find it under <B
+CLASS="GUIMENU"
+>Advanced Search</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Find orphaned files</B
+>.  When you choose that menu item, Mr. Voice will scan your MP3 directory and compare it with your database, and if it finds any orphaned files, display them for you.
+          <DIV
+CLASS="FIGURE"
+><A
+NAME="AEN612"
+></A
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/orphans.png"></P
+></DIV
+><P
+><B
+>Figure 7. Orphaned Files Report</B
+></P
+></DIV
+>
+        </P
+><P
+>When the Orphaned File report is displayed, you have a couple of choices.  If you just want to read the report without taking action, you can close the window and no changes will be made.  You can also select one or more files from the report to delete.  To do so, Control-click on a filename to add it to the selection group.  Or, hit the <B
+CLASS="GUIBUTTON"
+>Select All</B
+> button to select all entries, and Control-click to deselect any you do not want to delete.  Then press the <B
+CLASS="GUIBUTTON"
+>Delete Selected</B
+> button to remove all selected files from your computer.</P
+></DIV
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="c353.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="x622.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Configuring Mr. Voice</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Searching and Playing Songs</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

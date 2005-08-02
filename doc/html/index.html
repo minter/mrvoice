@@ -1,0 +1,581 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Mr. Voice 2.1 Installation and Reference Manual</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="NEXT"
+TITLE="Foreword"
+HREF="f85.html"></HEAD
+><BODY
+CLASS="BOOK"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="BOOK"
+><A
+NAME="AEN1"
+></A
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="TITLE"
+><A
+NAME="AEN2"
+>Mr. Voice 2.1 Installation and Reference Manual</A
+></H1
+><H3
+CLASS="AUTHOR"
+><A
+NAME="AEN7"
+></A
+>H. Wade Minter</H3
+><DIV
+CLASS="AFFILIATION"
+><DIV
+CLASS="ADDRESS"
+><P
+CLASS="ADDRESS"
+><CODE
+CLASS="EMAIL"
+>&#60;<A
+HREF="mailto:minter@mrvoice.net"
+>minter@mrvoice.net</A
+>&#62;</CODE
+></P
+></DIV
+></DIV
+><P
+CLASS="COPYRIGHT"
+>Copyright &copy; 2000-2005 H. Wade Minter</P
+><HR></DIV
+><H1
+><A
+NAME="AEN16"
+></A
+>Acknowledgements</H1
+><P
+>Thanks to my wife, Holly, for encouragement and editorial help.</P
+><P
+>Thanks to all of the voices at <A
+HREF="http://www.comedyworx.com/"
+TARGET="_top"
+>ComedyWorx-Raleigh</A
+>, including (but not limited to) Jack Spencer, Larry Howard, Sam Adams, Bobby Rathbone, Ross White, Leo DiNapoli, Jason Matthews, and Bryan Cronk, as well as users in other cities, such as Kasey Christie, Randy Tennison, Bill Cernansky, Eric Wood, and Randy Tayler for testing and feedback.</P
+><P
+>Thanks to the ownership and players of <A
+HREF="http://www.comedyworx.com/"
+TARGET="_top"
+>ComedyWorx</A
+> for giving me such a fun place to be a goofball for nearly five years.</P
+><P
+>Thanks to the authors and publishers, and contributors of the following books and newsgroups, without which none of this would have gotten done:
+    <P
+></P
+><UL
+><LI
+><P
+><I
+CLASS="CITETITLE"
+>Learning Perl, 2nd Edition</I
+>, by Randal Schwartz and Tom Christiansen, published by O'Reilly and Associates.</P
+></LI
+><LI
+><P
+><I
+CLASS="CITETITLE"
+>Programming Perl, 2nd Edition</I
+>, by Larry Wall, Randal Schwartz and Tom Christiansen, published by O'Reilly and Associates.</P
+></LI
+><LI
+><P
+><I
+CLASS="CITETITLE"
+>Learning Perl/TK</I
+>, by Nancy Walsh, published by O'Reilly and Associates.</P
+></LI
+><LI
+><P
+><I
+CLASS="CITETITLE"
+>Matering Perl/TK</I
+>, by Steven Liddie and Nancy Walsh, published by O'Reilly and Associates.</P
+></LI
+><LI
+><P
+><I
+CLASS="CITETITLE"
+>Programming the Perl DBI</I
+>, by Alligator Descartes &#38; Tim Bunce, published by O'Reilly and Associates.</P
+></LI
+><LI
+><P
+>The newsgroup comp.lang.perl.tk</P
+></LI
+></UL
+>
+  </P
+><P
+>The following groups who have been willing to actually run this software!
+    <P
+></P
+><UL
+><LI
+><P
+><A
+HREF="http://www.spocomedy.com/"
+TARGET="_top"
+>SpoComedy</A
+> (Spokane, WA)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.comedysportz.com/portland/"
+TARGET="_top"
+>ComedySportz</A
+> (Portland, OR)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.comedycity.cc/"
+TARGET="_top"
+>ComedyCity</A
+> (Kansas City, MO)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.comedysportzla.pair.com/"
+TARGET="_top"
+>ComedySportz</A
+> (Los Angeles, CA)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.comedysportzutah.com/"
+TARGET="_top"
+>ComedySportz</A
+> (Provo, UT)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.comedysportzdfw.com/"
+TARGET="_top"
+>ComedySportz</A
+> (Dallas/Ft. Worth, TX)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.comedysportzchicago.com/"
+TARGET="_top"
+>ComedySportz</A
+> (Chicago, IL)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.idiotboxers.com/"
+TARGET="_top"
+>The Idiot Box</A
+> (Greensboro, NC)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.comedysportztc.com/"
+TARGET="_top"
+>ComedySportz</A
+> (Minneapolis, MN)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.comedysportzrichmond.com/"
+TARGET="_top"
+>ComedySportz</A
+> (Richmond, VA)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.comedysportzmilwaukee.com/"
+TARGET="_top"
+>ComedySportz</A
+> (Milwaukee, WI)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cszdc.com/"
+TARGET="_top"
+>ComedySportz</A
+> (Washington, DC)</P
+></LI
+></UL
+>
+  </P
+><P
+>Thanks to <A
+HREF="http://pobox.com/~dereklane/"
+TARGET="_top"
+>Derek Lane</A
+> of the <A
+HREF="http://raleigh.pm.org/"
+TARGET="_top"
+>Raleigh Perl Mongers</A
+> for suggesting the move to SQLite as a database backend.</P
+><P
+>And thanks to the Open Source and Free Software movements, letting people write software that doesn't suck!</P
+><P
+>Mr. Voice is dedicated to the memory of Andy Sepelak (4/4/78 - 3/11/02), a fine improviser and a good man.  He will be missed.</P
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="f85.html"
+>Foreword</A
+></DT
+><DT
+><A
+HREF="f92.html"
+>What's New</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="f92.html#AEN95"
+>What's new in Version 2.1?</A
+></DT
+><DT
+><A
+HREF="x119.html"
+>What's new in Version 2.0?</A
+></DT
+><DT
+><A
+HREF="x156.html"
+>What's new in Version 1.10.6?</A
+></DT
+><DT
+><A
+HREF="x162.html"
+>What's new in Version 1.10.4?</A
+></DT
+><DT
+><A
+HREF="x168.html"
+>What's new in Version 1.10.2?</A
+></DT
+><DT
+><A
+HREF="x176.html"
+>What's new in Version 1.10?</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="c211.html"
+>Installing Mr. Voice</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="c211.html#AEN213"
+>Required Components</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="c211.html#AEN216"
+>Microsoft Windows</A
+></DT
+><DT
+><A
+HREF="c211.html#AEN237"
+>Unix/Linux/BSD</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="x283.html"
+>Installation Steps</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="x283.html#AEN286"
+>Upgrading to Mr. Voice 2.0</A
+></DT
+><DT
+><A
+HREF="x283.html#AEN301"
+>Unix Installation Instructions</A
+></DT
+><DT
+><A
+HREF="x283.html#AEN313"
+>Windows Installation Instructions</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+><A
+HREF="c353.html"
+>Configuring Mr. Voice</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="c353.html#AEN369"
+>Configuration Options and Variables</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="c353.html#AEN375"
+>Database Options</A
+></DT
+><DT
+><A
+HREF="c353.html#AEN383"
+>File Paths</A
+></DT
+><DT
+><A
+HREF="c353.html#AEN392"
+>Search Options</A
+></DT
+><DT
+><A
+HREF="c353.html#AEN407"
+>Online Options</A
+></DT
+><DT
+><A
+HREF="c353.html#AEN419"
+>Other</A
+></DT
+><DT
+><A
+HREF="c353.html#AEN440"
+>Manual Configuration</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+><A
+HREF="c449.html"
+>Using Mr. Voice</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="c449.html#AEN459"
+>Adding, Deleting, and Editing Songs and Categories</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="c449.html#AEN462"
+>Categories</A
+></DT
+><DT
+><A
+HREF="c449.html#AEN498"
+>Songs</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="x622.html"
+>Searching and Playing Songs</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="x622.html#AEN625"
+>Searching The Database</A
+></DT
+><DT
+><A
+HREF="x622.html#AEN660"
+>Playing Songs</A
+></DT
+><DT
+><A
+HREF="x622.html#AEN680"
+>Exiting Mr. Voice</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="x689.html"
+>Hotkeys</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="x689.html#AEN692"
+>Configuring Hotkeys</A
+></DT
+><DT
+><A
+HREF="x689.html#AEN730"
+>Using Hotkeys</A
+></DT
+><DT
+><A
+HREF="x689.html#AEN733"
+>Saving and Loading Hotkeys</A
+></DT
+><DT
+><A
+HREF="x689.html#AEN767"
+>The Holding Tank</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+><A
+HREF="c804.html"
+>Mr. Voice Online</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="c804.html#AEN806"
+>What Is Mr. Voice Online?</A
+></DT
+><DT
+><A
+HREF="x811.html"
+>Using Mr. Voice Online</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="x811.html#AEN824"
+>Downloading Songs</A
+></DT
+><DT
+><A
+HREF="x811.html#AEN833"
+>Uploading Songs</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+><A
+HREF="c843.html"
+>Troubleshooting and FAQs</A
+></DT
+><DT
+><A
+HREF="a896.html"
+>Known Bugs and Issues</A
+></DT
+><DT
+><A
+HREF="a900.html"
+>Contributing, Contacting, and Bug Reporting</A
+></DT
+><DT
+><A
+HREF="a910.html"
+>Software License</A
+></DT
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="f85.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Foreword</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

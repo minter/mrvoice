@@ -1,0 +1,345 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Installing Mr. Voice</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Mr. Voice 2.1 Installation and Reference Manual"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="What's new in Version 1.10?"
+HREF="x176.html"><LINK
+REL="NEXT"
+TITLE="Installation Steps"
+HREF="x283.html"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Mr. Voice 2.1 Installation and Reference Manual</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="x176.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="x283.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="AEN211"
+></A
+>Installing Mr. Voice</H1
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="AEN213"
+>Required Components</A
+></H1
+><P
+>      Mr. Voice currently runs under Unix-like operating systems (Linux/*BSD/etc) and Microsoft operating systems (Windows 95 or higher).
+    </P
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN216"
+>Microsoft Windows</A
+></H2
+><P
+>The following components are required to run Mr. Voice under Windows 95 or higher.
+      <P
+></P
+><UL
+><LI
+><P
+>An MP3 player.  <A
+HREF="http://www.winamp.com/"
+TARGET="_top"
+>WinAmp</A
+> version 5 is recommended.  If you plan on playing Windows Media Audio (WMA) files, you will need at least WinAmp Version 5, Full install (not "Lite")</P
+></LI
+><LI
+><P
+>The <A
+HREF="http://www.kostaa.com/winamp/index.html"
+TARGET="_top"
+>httpQ plugin</A
+> for WinAmp.  <I
+CLASS="EMPHASIS"
+>Optional, but recommended, since it allows you to fade-stop songs.</I
+></P
+></LI
+><LI
+><P
+>The <A
+HREF="http://www.mrvoice.net/files/"
+TARGET="_top"
+>Ogg Vorbis plugin</A
+> for WinAmp.  <I
+CLASS="EMPHASIS"
+>Optional, but required if you want to play .ogg files.</I
+></P
+></LI
+><LI
+><P
+>The <A
+HREF="http://www.rarewares.org/mp4.html"
+TARGET="_top"
+>AAC plugin</A
+> for WinAmp.  <I
+CLASS="EMPHASIS"
+>Optional, but required if you want to use AAC/MP4 files</I
+></P
+></LI
+></UL
+>
+      </P
+><P
+>If, for some reason, you do not want to run the prebuilt <TT
+CLASS="FILENAME"
+>mrvoice.exe</TT
+> file, and want to install all of the Perl modules that Mr. Voice requires by hand, follow the Unix/Linux instructions below and either build the modules by hand, or install the appropriate ActiveState PPM packages.  But I doubt many Windows users will want to do that.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN237"
+>Unix/Linux/BSD</A
+></H2
+><P
+>The following components are required to run Mr. Voice under Unix systems.
+      <P
+></P
+><UL
+><LI
+><P
+><A
+HREF="http://www.perl.com/"
+TARGET="_top"
+>Perl</A
+> version 5.8 (Should be provided with most modern Unix systems), plus the following perl modules (most available from <A
+HREF="http://www.cpan.org/"
+TARGET="_top"
+>CPAN</A
+>):
+            <P
+></P
+><UL
+><LI
+><P
+><A
+HREF="http://www.cpan.org/modules/by-module/Audio/"
+TARGET="_top"
+>Audio::Wav</A
+></P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cpan.org/modules/by-module/Date/"
+TARGET="_top"
+>Date::Manip</A
+></P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cpan.org/modules/by-module/DBD/"
+TARGET="_top"
+>DBD </A
+> driver for your database (DBD::SQLite 1.0 and higher supported)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cpan.org/modules/by-module/DBI/"
+TARGET="_top"
+>DBI</A
+></P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cpan.org/modules/by-module/MPEG/"
+TARGET="_top"
+>MPEG::MP3-Info</A
+></P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cpan.org/modules/by-module/MP4/"
+TARGET="_top"
+>MP4::Info</A
+></P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cpan.org/modules/by-module/Ogg/"
+TARGET="_top"
+>Ogg::Vorbis::Header::PurePerl</A
+></P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cpan.org/modules/by-module/Time/"
+TARGET="_top"
+>Time::HiRes</A
+></P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cpan.org/modules/by-module/Tk/"
+TARGET="_top"
+>Tk</A
+> version 804.x (Version 800.x is unsupported as of Mr. Voice version 1.10)</P
+></LI
+><LI
+><P
+><A
+HREF="http://www.cpan.org/modules/by-module/Tk/"
+TARGET="_top"
+>Tk::ProgressBar::Mac</A
+></P
+></LI
+></UL
+>
+          </P
+></LI
+><LI
+><P
+>An MP3 player.  <A
+HREF="http://www.xmms.org/"
+TARGET="_top"
+>xmms</A
+> is recommended.</P
+></LI
+><LI
+><P
+><A
+HREF="http://faac.sourceforge.net/"
+TARGET="_top"
+>AAC plugin for XMMS</A
+>.  <I
+CLASS="EMPHASIS"
+>Optional, but needed if you want to use AAC/MP4/M4A files.</I
+></P
+></LI
+></UL
+>
+    </P
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="x176.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="x283.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>What's new in Version 1.10?</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Installation Steps</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>
