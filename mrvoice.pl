@@ -43,7 +43,7 @@ use subs
   qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_items advancedmenu_items helpmenu_items/;
 
 #########
-# AUTHOR: H. Wade Minter <minter@lunenburg.org>
+# AUTHOR: H. Wade Minter <minter@mrvoice.net>
 # TITLE: mrvoice.pl
 # DESCRIPTION: A Perl/TK frontend for an MP3 database.  Written for
 #              ComedyWorx, Raleigh, NC.
@@ -256,7 +256,7 @@ our $altv = "PriceIsRightTheme.mp3";
 
 #####
 
-my $version = "2.0.9c";    # Program version
+my $version = "2.1";    # Program version
 $version .= "CWX";
 our $status = "Welcome to Mr. Voice version $version";
 
@@ -3409,7 +3409,8 @@ sub import_bundle
             next if check_md5( $song_ref->{md5} );
             if ( !-r catfile( $config{filepath}, $song_ref->{filename} ) )
             {
-                print "Moving $song_ref->{filename} to $config{filepath}\n";
+                print "Moving $song_ref->{filename} to $config{filepath}\n"
+                  if $debug;
                 copy( $song_ref->{filename},
                     catfile( $config{filepath}, $song_ref->{filename} ) )
                   or die "Couldn't copy $song_ref->{filename}";
@@ -3475,6 +3476,19 @@ sub export_tank_bundle
     $zip->addString( $xml, "mrvoice.xml" );
 
     my $outfile = catfile( get_homedir(), "bundle-$timestring.zip" );
+
+    if ( -r $outfile )
+    {
+        my $subletter = "a";
+        while (
+            -r catfile( get_homedir(), "bundle-${timestring}${subletter}.zip" )
+          )
+        {
+            $subletter++;
+        }
+        $outfile =
+          catfile( get_homedir(), "bundle-${timestring}${subletter}.zip" );
+    }
 
     $zip->writeToFileNamed($outfile);
     chdir($olddir);
@@ -3880,6 +3894,8 @@ sub get_info_from_id
     $info{title}    = $result_hashref->{title};
     $info{artist}   = $result_hashref->{artist};
     $info{category} = $result_hashref->{category};
+    $info{md5}      = $result_hashref->{md5};
+    $info{time}     = $result_hashref->{time};
     if ( $info{artist} )
     {
         $info{fulltitle} = "\"$info{title}\" by $info{artist}";
