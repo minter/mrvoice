@@ -1,3 +1,8 @@
+Sun  Aug  7 2005	H. Wade Minter (minter@lunenburg.org)
+     * Fix a bug where searching for a string with an apostrophe in it would
+       cause an error.
+     * Refactor database calls to either use placeholders or $dbh->quote()
+
 Mon  Aug  1 2005	H. Wade Minter (minter@lunenburg.org)
      * Fix bugs where a Bundle wouldn't have all the required information.
      * Improve the Holding Tank bundle export code, so that it will write a

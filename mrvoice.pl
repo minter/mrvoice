@@ -253,8 +253,10 @@ our $status = "Welcome to Mr. Voice version $version";
 
 sub get_category
 {
-    my $code = shift;
-    my $sth  = $dbh->prepare("SELECT * FROM categories WHERE code='$code'");
+    my $code  = shift;
+    my $query =
+      sprintf( "SELECT * FROM categories WHERE code = %s", $dbh->quote($code) );
+    my $sth = $dbh->prepare($query);
     $sth->execute;
     my $result = $sth->fetchrow_hashref;
     return $result->{description};
@@ -815,7 +817,9 @@ sub check_version
 sub check_md5
 {
     my $md5 = shift or return;
-    my $sth = $dbh->prepare("SELECT * FROM mrvoice WHERE md5='$md5'");
+    my $query =
+      sprintf( "SELECT * FROM mrvoice WHERE md5 = %s", $dbh->quote($md5) );
+    my $sth = $dbh->prepare($query);
     $sth->execute;
 
     if ( my $row = $sth->fetchrow_hashref )
@@ -911,7 +915,9 @@ sub open_tank
                 print "Read song id $id from tankfile\n" if $debug;
                 next unless ( validate_id($id) );
                 my $query =
-                  "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.time from mrvoice,categories where mrvoice.category=categories.code AND mrvoice.id=$id";
+                  sprintf(
+                    "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.time from mrvoice,categories where mrvoice.category=categories.code AND mrvoice.id = %s",
+                    $id );
                 print "Running selectrow_hashref query $query\n" if $debug;
                 my $tank_ref = $dbh->selectrow_hashref($query);
                 print "Query run\n" if $debug;
@@ -1882,8 +1888,11 @@ sub add_category
 
             # Check to see if there's a duplicate of either entry
 
-            my $checkquery =
-              "SELECT * FROM categories WHERE (code='$addcat_code' OR description=$addcat_desc)";
+            my $checkquery = sprintf(
+                "SELECT * FROM categories WHERE (code = %s OR description = %s)",
+                $dbh->quote($addcat_code),
+                $dbh->quote($addcat_desc)
+            );
             if ( get_rows($checkquery) > 0 )
             {
                 print "Got a duplicate from query $checkquery\n" if $debug;
@@ -1895,8 +1904,11 @@ sub add_category
             }
             else
             {
-                my $query =
-                  "INSERT INTO categories VALUES ('$addcat_code',$addcat_desc)";
+                my $query = sprintf(
+                    "INSERT INTO categories VALUES (%s,%s)",
+                    $dbh->quote($addcat_code),
+                    $dbh->quote($addcat_desc)
+                );
                 my $insert_sth = $dbh->prepare($query);
                 print "Preparing insert query $query\n" if $debug;
                 if ( !$insert_sth->execute )
@@ -2083,7 +2095,8 @@ sub delete_category
         my ( $del_cat, $del_desc ) =
           split( / - /, $deletebox->get( $deletebox->curselection() ) );
         print "Deleting category $del_cat, description $del_desc\n" if $debug;
-        $query = "SELECT * FROM mrvoice WHERE category='$del_cat'";
+        $query = sprintf( "SELECT * FROM mrvoice WHERE category = %s",
+            $dbh->quote($del_cat) );
         if ( get_rows($query) > 0 )
         {
             print "No rows match with query $query\n" if $debug;
@@ -2094,7 +2107,8 @@ sub delete_category
         }
         else
         {
-            $query = "DELETE FROM categories WHERE code='$del_cat'";
+            $query = sprintf( "DELETE FROM categories WHERE code = %s",
+                $dbh->quote($del_cat) );
             my $delete_sth = $dbh->prepare($query);
             print
               "There are rows with that category, so delete with query $query\n"
@@ -2428,8 +2442,13 @@ sub add_new_song
     }
     my $time  = get_songlength($addsong_filename);
     my $md5   = get_md5($addsong_filename);
-    my $query =
-      "INSERT INTO mrvoice VALUES (NULL,$addsong_title,$addsong_artist,'$addsong_cat',$addsong_info,'$newfilename','$time',(SELECT strftime('%s','now')),'$addsong_publisher', '$md5')";
+    my $query = sprintf(
+        "INSERT INTO mrvoice VALUES (NULL, %s, %s, %s, %s, %s, %s, (SELECT strftime('%s','now')), %s, %s)",
+        $dbh->quote($addsong_title),     $dbh->quote($addsong_artist),
+        $dbh->quote($addsong_cat),       $dbh->quote($addsong_info),
+        $dbh->quote($newfilename),       $dbh->quote($time),
+        $dbh->quote($addsong_publisher), $dbh->quote($md5)
+    );
     print "Using INSERT query -->$query<--\n" if $debug;
     if ( $dbh->do($query) )
     {
@@ -2774,7 +2793,9 @@ sub edit_song
         my $id = $mainbox->info( 'data', $selected[0] );
         print "Got song ID $id\n" if $debug;
         my $query =
-          "SELECT title,artist,category,info,publisher from mrvoice where id=$id";
+          sprintf(
+            "SELECT title,artist,category,info,publisher from mrvoice where id = %s",
+            $dbh->quote($id) );
         my (
             $edit_title, $edit_artist, $edit_category,
             $edit_info,  $edit_publisher
@@ -2850,8 +2871,12 @@ sub edit_song
             $edit_title  = $dbh->quote($edit_title);
             $edit_info   = $dbh->quote($edit_info);
 
-            my $query =
-              "UPDATE mrvoice SET artist=$edit_artist, title=$edit_title, info=$edit_info, category='$edit_category',modtime=(SELECT strftime('%s','now')) WHERE id=$id";
+            my $query = sprintf(
+                "UPDATE mrvoice SET artist = %s, title = %s, info = %s, category = %s, modtime=(SELECT strftime('%s','now')) WHERE id=%s",
+                $dbh->quote($edit_artist), $dbh->quote($edit_title),
+                $dbh->quote($edit_info),   $dbh->quote($edit_category),
+                $dbh->quote($id)
+            );
             print "Using update query $query\n" if $debug;
             if ( $dbh->do($query) )
             {
@@ -2990,7 +3015,8 @@ sub edit_song
 
             foreach my $songid (@songids)
             {
-                my $query = "UPDATE mrvoice SET $string WHERE id=$songid";
+                my $query = sprintf( "UPDATE mrvoice SET $string WHERE id = %s",
+                    $dbh->quote($songid) );
                 print "Running UPDATE query -->$query<-- ..." if $debug;
                 $dbh->do($query);
                 print "Error code: $dbh->errstr\n" if $debug;
@@ -3071,7 +3097,9 @@ sub delete_song
                 my $filename;
                 if ( $delete_file_cb == 1 )
                 {
-                    my $filequery = "SELECT filename FROM mrvoice WHERE id=$id";
+                    my $filequery =
+                      sprintf( "SELECT filename FROM mrvoice WHERE id = %s",
+                        $dbh->quote($id) );
                     ($filename) = $dbh->selectrow_array($filequery);
                 }
                 print "Executing query -->$query<-- for song id $id\n"
@@ -3328,12 +3356,9 @@ sub import_bundle
         unless ( get_category( $cat_ref->{code} ) )
         {
             print "Adding category $cat_ref->{code}, $cat_ref->{description}\n";
-            my $sth =
-              $dbh->prepare(
-                "INSERT INTO categories VALUES ('$cat_ref->{code}', '$cat_ref->{description}'"
-              )
+            my $sth = $dbh->prepare("INSERT INTO categories VALUES (?, ?)")
               or die;
-            $sth->execute or die;
+            $sth->execute( $cat_ref->{code}, $cat_ref->{description} ) or die;
         }
 
         my $imported = 0;
@@ -3821,7 +3846,8 @@ sub get_info_from_id
     my $id = shift;
     print "Got song ID $id\n" if $debug;
     my %info;
-    my $query          = "SELECT * FROM mrvoice WHERE id=$id";
+    my $query =
+      sprintf( "SELECT * FROM mrvoice WHERE id = %s", $dbh->quote($id) );
     my $result_hashref = $dbh->selectrow_hashref($query);
     $info{filename} = $result_hashref->{filename};
     $info{title}    = $result_hashref->{title};
@@ -3853,7 +3879,8 @@ sub validate_id
     print "Validating ID\n" if $debug;
     my $id = shift;
     print "Got ID $id\n" if $debug;
-    my $query   = "SELECT * FROM mrvoice WHERE id=$id";
+    my $query =
+      sprintf( "SELECT * FROM mrvoice WHERE id = %s", $dbh->quote($id) );
     my $numrows = get_rows($query);
     print "Got result $numrows\n" if $debug;
     return $numrows == 1 ? 1 : 0;
@@ -4162,28 +4189,40 @@ sub do_search
     $mainbox->delete('all');
     my $query =
       "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.filename,mrvoice.time,mrvoice.publisher FROM mrvoice,categories WHERE mrvoice.category=categories.code ";
-    $query = $query . "AND publisher != 'ASCAP' "
+    $query .= "AND publisher != 'ASCAP' "
       if ( $config{'search_ascap'} == 0 );
-    $query = $query . "AND publisher != 'BMI' "
+    $query .= "AND publisher != 'BMI' "
       if ( $config{'search_bmi'} == 0 );
-    $query = $query . "AND publisher != 'OTHER' "
+    $query .= "AND publisher != 'OTHER' "
       if ( $config{'search_other'} == 0 );
-    $query = $query . "AND modtime >= '$datestring' "
+    $query .= sprintf( "AND modtime >= %s ", $dbh->quote($datestring) )
       if ( $modifier eq "timespan" );
-    $query = $query . "AND modtime >= '$startdate' AND modtime <= '$enddate' "
+    $query .= sprintf(
+        "AND modtime >= %s AND modtime <= %s ",
+        $dbh->quote($startdate),
+        $dbh->quote($enddate)
+      )
       if ( $modifier eq "range" );
-    $query = $query . "AND category='$category' " if ( $category ne "Any" );
+    $query .= sprintf( "AND category = %s ", $dbh->quote($category) )
+      if ( $category ne "Any" );
 
     if ($anyfield)
     {
-        $query = $query
-          . "AND ( info LIKE '%$anyfield%' OR title LIKE '%$anyfield%' OR artist LIKE '%$anyfield%') ";
+        $query .= sprintf(
+            "AND ( info LIKE %s OR title LIKE %s OR artist LIKE %s ) ",
+            $dbh->quote("%$anyfield%"),
+            $dbh->quote("%$anyfield%"),
+            $dbh->quote("%$anyfield%")
+        );
     }
     else
     {
-        $query = $query . "AND info LIKE '%$cattext%' "  if ($cattext);
-        $query = $query . "AND title LIKE '%$title%' "   if ($title);
-        $query = $query . "AND artist LIKE '%$artist%' " if ($artist);
+        $query .= sprintf( "AND info LIKE %s ", $dbh->quote("%$cattext%") )
+          if ($cattext);
+        $query .= sprintf( "AND title LIKE %s ", $dbh->quote("%$title%") )
+          if ($title);
+        $query .= sprintf( "AND artist LIKE %s ", $dbh->quote("%$artist%") )
+          if ($artist);
     }
     $query = $query . "ORDER BY category,info,title";
     my $starttime = gettimeofday();
@@ -4268,7 +4307,8 @@ sub return_longcat
 {
     print "Returning the long name of a category\n" if $debug;
     my $category = shift;
-    my $query    = "SELECT description FROM categories WHERE code='$category'";
+    my $query = sprintf( "SELECT description FROM categories WHERE code = %s",
+        $dbh->quote($category) );
     print "Running query $query\n" if $debug;
     my $longcat_ref = $dbh->selectrow_hashref($query);
     print "Returning $longcat_ref->{description}\n" if $debug;
@@ -5684,7 +5724,8 @@ sub orphans
     {
         print "Checking file $file\n" if $debug;
         $file = basename($file);
-        my $query = "SELECT * FROM mrvoice WHERE filename='$file'";
+        my $query = sprintf( "SELECT * FROM mrvoice WHERE filename = %s",
+            $dbh->quote($file) );
         if ( get_rows($query) == 0 )
         {
             push( @orphans, $file );
