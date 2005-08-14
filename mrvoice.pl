@@ -785,14 +785,22 @@ sub check_version
         return;
     }
 
-    my $search_call = $xmlrpc->call(
-        'check_version',
-        {
-            os      => $^O,
-            version => $version
-        }
-      )
-      or die "Couldn't call search_call";
+    my $search_call;
+    eval {
+        $search_call = $xmlrpc->call(
+            'check_version',
+            {
+                os      => $^O,
+                version => $version
+            }
+        );
+    };
+
+    if ($@)
+    {
+        $status = $@;
+        return;
+    }
 
     my $result = $search_call->result;
     if ( !$result )
