@@ -6324,7 +6324,7 @@ unless ( $dbh->do("SELECT md5 FROM mrvoice LIMIT 1") )
     print "2.1 schema upgrade complete\n" if $debug;
 }
 
-if ( $config{check_version} == 1 )
+if ( ( $config{check_version} == 1 ) && ( $config{enable_online} ) )
 {
     check_version();
 }
