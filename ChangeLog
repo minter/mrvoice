@@ -1,3 +1,8 @@
+Tue  Aug 30 2005	H. Wade Minter (minter@lunenburg.org)
+     * Fix a bug where adding a new song file with no ID3 information would
+       blank out title and artist that you put in.  Now the manual title and
+       artist are only overwritten when there is valid ID3 data in the file.
+
 Fri  Aug 26 2005	H. Wade Minter (minter@lunenburg.org)
      * Only do the online version check if online functionality is enabled.
 
