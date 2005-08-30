@@ -2344,8 +2344,12 @@ sub add_new_song
                     -initialdir => ( $^O eq "MSWin32" ) ? "C:/" : get_homedir(),
                     -filetypes  => $mp3types
                 );
-                ( $addsong_title, $addsong_artist ) =
+                my ( $id3_title, $id3_artist ) =
                   get_title_artist($addsong_filename);
+                $addsong_title = $id3_title
+                  if ( $id3_title && ( $id3_title !~ /^\s+$/ ) );
+                $addsong_artist = $id3_artist
+                  if ( $id3_artist && ( $id3_artist !~ /^\s+$/ ) );
             }
         )->pack( -side => 'right' );
         $selectfile_button->configure( -state => 'disabled' )
