@@ -1,0 +1,422 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Configuring Mr. Voice</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"><LINK
+REL="HOME"
+TITLE="Mr. Voice 2.1.2 Installation and Reference Manual"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Installation Steps"
+HREF="x299.html"><LINK
+REL="NEXT"
+TITLE="Using Mr. Voice"
+HREF="c465.html"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Mr. Voice 2.1.2 Installation and Reference Manual</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="x299.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="c465.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="AEN369"
+></A
+>Configuring Mr. Voice</H1
+><P
+>This section will take you through configuring the Mr. Voice software.  Mr. Voice is configured via an external configuration file - this provides the most flexibility in keeping your configuration sane from one version to the next.  On Unix, the default config file is named <TT
+CLASS="FILENAME"
+>.mrvoicerc</TT
+>, and lives in your home directory.  On Windows, the default filename is <TT
+CLASS="FILENAME"
+>C:\mrvoice.cfg</TT
+>.</P
+><P
+>To provide an alternate configuration file (for example, if you would like to run two separate databases off of the same computer), you can pass the Mr. Voice program the "--config" flag.  So on Windows, if you wanted to use an alternate config file, you would run "<SAMP
+CLASS="COMPUTEROUTPUT"
+>MRVOICE.EXE --config C:\MRVOICE-ALTERNATE.CFG</SAMP
+>", or on Unix "<SAMP
+CLASS="COMPUTEROUTPUT"
+>./mrvoice.pl --config /path/to/new/configfile</SAMP
+>".</P
+><P
+>If you start Mr. Voice without a configuration file, or if there is an error in your configuration, Mr. Voice will pop up a window asking if you want to create a default or manual configuration.  If you choose default, it will set up a fairly standard installation for you.  If you choose manual, you will be taken to the preferences window, allowing you to enter and edit the configuration information.  Changes are then written out to the appropriate configuration file.  The configuration options are detailed below.
+    <DIV
+CLASS="FIGURE"
+><A
+NAME="AEN378"
+></A
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/preferences.png"></P
+></DIV
+><P
+><B
+>Figure 1. The Preferences window</B
+></P
+></DIV
+>
+  </P
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="AEN385"
+>Configuration Options and Variables</A
+></H1
+><P
+>The options that you can set in the <B
+CLASS="GUIMENU"
+>File</B
+>-&gt;<B
+CLASS="GUIMENUITEM"
+>Preferences</B
+> menu are listed below.  After the name of each option, the actual variable name is given in parenthesis, in case you need to edit the configuration files manually (Manual configuration is detailed in section 2.1.1).</P
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN391"
+>Database Options</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Database Filename (db_file)</VAR
+> - The file on your hard drive that contains the Mr. Voice SQLite database (<TT
+CLASS="FILENAME"
+>C:\mrvoice.db</TT
+> by default on Windows, <TT
+CLASS="FILENAME"
+>~/mrvoice.db</TT
+> by default on Unix)</P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN399"
+>File Paths</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>MP3 Directory (filepath)</VAR
+> - The path information that will be prepended to the filename retrieved from the database or, in other words, the directory where you store your MP3 files.  Used to find the actual MP3 files on the local system.  The user who is running Mr. Voice must have read/write permission into this directory.</P
+></LI
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Hotkey Directory (savepath)</VAR
+> - This will be the default directory that hotkey save files will go into.  The user running the program as must have read/write permission into that directory. Recommended to be different than the Mr. Voice install directory.</P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN408"
+>Search Options</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Search ASCAP songs (search_ascap)</VAR
+> - Enables searches of songs that have ASCAP set as the publisher field.  Only needed if you are using song publishers in your database.</P
+></LI
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Search BMI songs (search_bmi)</VAR
+> - Enables searches of songs that have BMI set as the publisher field.  Only needed if you are using song publishers in your database.</P
+></LI
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Show Song Publisher (show_publisher)</VAR
+> - Enables the display of the song publisher in the search results.  Only needed if you are using song publishers in your database.</P
+></LI
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Search Other songs (search_other)</VAR
+> - Enables searches of songs that have "Other" set as the publisher field.  Only needed if you are using song publishers in your database.</P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN423"
+>Online Options</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Enable Online Functionality (enable_online)</VAR
+> - Enable this option if you want to use any of the online functionality (such as version checks or Mr. Voice Online).  If this is not enabled, you will not get the menu items that offer online functionality.  Obviously, enabling this without an internet connection on your Mr. Voice computer is a bit silly.</P
+></LI
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Check For New Versions (check_version)</VAR
+> - If enabled, will check the Mr. Voice website once a week and alert you if a new version of Mr. Voice is available.</P
+></LI
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Mr. Voice Online key (online_key)</VAR
+> - When you register for Mr. Voice online, you will be given a key password.  Enter that here, or your Mr. Voice online functionality will fail.  For information on how to get a key, see the Mr. Voice Online section in this manual.</P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN435"
+>Other</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>MP3 Player (mp3player)</VAR
+> - The path to your MP3 player.  Likely options are <TT
+CLASS="FILENAME"
+>/usr/bin/xmms</TT
+> for Unix systems, and <TT
+CLASS="FILENAME"
+>C:\Program Files\WinAmp\WinAmp.exe</TT
+> for Windows systems.  This option is not used on Mac OS X, as it uses AppleScript to launch the Audion MP3 player.</P
+></LI
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Number of Dynamic Documents To Show (savefile_max)</VAR
+> - The number of "most recently accessed hotkey files" to keep available under the <B
+CLASS="GUIMENU"
+>File</B
+> menu.  Defaults to 4.</P
+></LI
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>httpQ Password (httpq_pw)</VAR
+> - The password used to connect to the httpQ plugin for WinAmp.  Only useful under Windows if you're using the httpQ plugin.  Otherwise it's ignored.</P
+></LI
+><LI
+><P
+><VAR
+CLASS="VARNAME"
+>Write Access Password (write_password)</VAR
+> - If this option is set, any attempt to perform an action that will modify the Mr. Voice system (adding a song, deleting a song, renaming a category, etc) will prompt for the password (once per session).  
+         <DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/enter-password.png"></P
+></DIV
+>
+         No password, no changes.  Useful if you have people running Mr. Voice that you don't trust not to break things.</P
+></LI
+></UL
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN456"
+>Manual Configuration</A
+></H2
+><P
+>To troubleshoot, fine-tune changes, or skip the GUI alltogether, you can manually set up the configuration file.  The configuration file consists of lines in the following format:</P
+><P
+><SAMP
+CLASS="COMPUTEROUTPUT"
+>variable_name::value</SAMP
+></P
+><P
+>Where variable_name is the name in parenthesis in the configuration listing above, followed by two colons, followed by the value you want to set the variable to.  A sample file on Unix would look like this:
+        <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="SCREEN"
+>db_file::/home/mrvoice/mrvoice.db
+filepath::/mp3/
+savedir::/tmp/
+mp3player::/usr/bin/xmms
+savefile_max::4
+httpq_pw::mypass
+search_ascap::1
+search_bmi::1
+search_other::1
+show_publisher::0
+        </PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+><P
+>The Windows <TT
+CLASS="FILENAME"
+>C:\MRVOICE.CFG</TT
+> file will look similar, but with Windows pathnames instead of Unix ones.  The Mac config file (named mrvoice.cfg in your home folder) will look similar to the Unix one.</P
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="x299.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="c465.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Installation Steps</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Using Mr. Voice</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>
