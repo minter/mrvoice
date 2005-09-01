@@ -2881,10 +2881,6 @@ sub edit_song
         print "Showed\n" if $debug;
         if ( $result eq "Edit" )
         {
-            $edit_artist = $dbh->quote($edit_artist);
-            $edit_title  = $dbh->quote($edit_title);
-            $edit_info   = $dbh->quote($edit_info);
-
             my $query = sprintf(
                 "UPDATE mrvoice SET artist = %s, title = %s, info = %s, category = %s, modtime=(SELECT strftime('%%s','now')) WHERE id=%s",
                 $dbh->quote($edit_artist), $dbh->quote($edit_title),
