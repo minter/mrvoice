@@ -1,5 +1,7 @@
 Wed  Aug 31 2005	H. Wade Minter (minter@lunenburg.org)
      * Tagged 2.1.1 (bugfix release)
+     * Fixed a sprintf bug in song adds (needed to escape a %).  Reported 
+       by Lanny in Dallas.
 
 Tue  Aug 30 2005	H. Wade Minter (minter@lunenburg.org)
      * Fix a bug where adding a new song file with no ID3 information would

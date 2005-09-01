@@ -2455,7 +2455,7 @@ sub add_new_song
     my $time  = get_songlength($addsong_filename);
     my $md5   = get_md5($addsong_filename);
     my $query = sprintf(
-        "INSERT INTO mrvoice VALUES (NULL, %s, %s, %s, %s, %s, %s, (SELECT strftime('%s','now')), %s, %s)",
+        "INSERT INTO mrvoice VALUES (NULL, %s, %s, %s, %s, %s, %s, (SELECT strftime('%%s','now')), %s, %s)",
         $dbh->quote($addsong_title),     $dbh->quote($addsong_artist),
         $dbh->quote($addsong_cat),       $dbh->quote($addsong_info),
         $dbh->quote($newfilename),       $dbh->quote($time),
@@ -2884,7 +2884,7 @@ sub edit_song
             $edit_info   = $dbh->quote($edit_info);
 
             my $query = sprintf(
-                "UPDATE mrvoice SET artist = %s, title = %s, info = %s, category = %s, modtime=(SELECT strftime('%s','now')) WHERE id=%s",
+                "UPDATE mrvoice SET artist = %s, title = %s, info = %s, category = %s, modtime=(SELECT strftime('%%s','now')) WHERE id=%s",
                 $dbh->quote($edit_artist), $dbh->quote($edit_title),
                 $dbh->quote($edit_info),   $dbh->quote($edit_category),
                 $dbh->quote($id)
