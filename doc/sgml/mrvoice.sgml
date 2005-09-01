@@ -11,7 +11,7 @@
 <book status="draft">
 
 <bookinfo>
-  <title>Mr. Voice 2.1.1 Installation and Reference Manual</title>
+  <title>Mr. Voice 2.1.2 Installation and Reference Manual</title>
   <mediaobject>
     <imageobject>
       <imagedata align="center" fileref="../images/mrvoice-logo.png" format="png">
@@ -73,6 +73,13 @@
 <preface>
   <title>What's New</title>
   <para>A quick reference to what's changed between versions.</para>
+  <sect1><title>What's new in Version 2.1.2?</title>
+    <para>
+      <itemizedlist>
+        <listitem><para>Fixed a couple of bugs that rendered song additions broken to the point of being unusable.  Reported by Lanny in Dallas.</para></listitem>
+      </itemizedlist>
+    </para>
+  </sect1>
   <sect1><title>What's new in Version 2.1.1?</title>
     <para>
       <itemizedlist>
