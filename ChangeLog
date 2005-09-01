@@ -1,3 +1,7 @@
+Thu  Sep  1 2005	H. Wade Minter (minter@lunenburg.org)
+     * Fixed another bug where empty artists/info was showing up as the
+       string "NULL".
+
 Wed  Aug 31 2005	H. Wade Minter (minter@lunenburg.org)
      * Tagged 2.1.1 (bugfix release)
      * Fixed a sprintf bug in song adds (needed to escape a %).  Reported 

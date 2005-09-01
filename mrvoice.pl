@@ -2435,25 +2435,11 @@ sub add_new_song
       . md5_hex( catfile( $config{filepath}, $newfilename ) ) . "\n"
       if $debug;
 
-    $addsong_title = $dbh->quote($addsong_title);
-    if ( $addsong_info eq "" )
-    {
-        $addsong_info = "NULL";
-    }
-    else
-    {
-        $addsong_info = $dbh->quote($addsong_info);
-    }
-    if ( $addsong_artist eq "" )
-    {
-        $addsong_artist = "NULL";
-    }
-    else
-    {
-        $addsong_artist = $dbh->quote($addsong_artist);
-    }
-    my $time  = get_songlength($addsong_filename);
-    my $md5   = get_md5($addsong_filename);
+    my $time = get_songlength($addsong_filename);
+    my $md5  = get_md5($addsong_filename);
+    print
+      "Using values title: $addsong_title, artist: $addsong_artist, category: $addsong_cat, info: $addsong_info, new filename: $newfilename, time: $time, publisher: $addsong_publisher, md5: $md5\n"
+      if $debug;
     my $query = sprintf(
         "INSERT INTO mrvoice VALUES (NULL, %s, %s, %s, %s, %s, %s, (SELECT strftime('%%s','now')), %s, %s)",
         $dbh->quote($addsong_title),     $dbh->quote($addsong_artist),
@@ -2462,6 +2448,7 @@ sub add_new_song
         $dbh->quote($addsong_publisher), $dbh->quote($md5)
     );
     print "Using INSERT query -->$query<--\n" if $debug;
+
     if ( $dbh->do($query) )
     {
         print "dbh->do successful\n" if $debug;
