@@ -10,6 +10,16 @@ use DBI;
 use Digest::MD5 qw(md5_hex);
 use File::Spec::Functions;
 use File::Basename;
+use Log::Agent;
+require Log::Agent::Driver::File;
+
+my $driver = Log::Agent::Driver::File->make(
+    -prefix   => "mrvoice",
+    -stampfmt => "syslog",
+    -showpid  => 1,
+    -file     => "/usr/www/mrvoice.net/htdocs/online/log.txt"
+);
+logconfig( -driver => $driver );
 
 my $db_name = "mrvoice";
 my $db_user = "mrvoice";
@@ -37,6 +47,7 @@ sub check_version
     }
 
     my $os = $args->{os};
+    logsay "Reporting version $args->{version}, current version $versions{$os}";
     if ( $versions{$os} gt $args->{version} )
     {
         return {
@@ -128,13 +139,15 @@ sub upload_song
         $time, $keyinfo->{id}, $args->{md5sum}, $args->{publisher} )
       or die "ERROR: Could not execute query: " . $dbh->errstr;
 
+    logsay
+      "Uploaded song '$args->{title}' by '$args->{artist}' as filename $filename";
+
     return $dbh->{'mysql_insertid'};
 
 }
 
 sub search_songs
 {
-    open( my $fh, ">", "/tmp/xmlrpc.log" ) or die;
     my $class = shift;
     my $args  = shift;
 
@@ -146,6 +159,7 @@ sub search_songs
     check_key( $args->{online_key}, $dbh );
 
     my $search_key = $args->{search_term};
+    logsay "Running a search for string '$args->{search_term}'";
 
     my $query =
       "SELECT mrvoice.id,categories.description,mrvoice.info,mrvoice.artist,mrvoice.title,mrvoice.filename,mrvoice.time,mrvoice.publisher,mrvoice.md5 FROM mrvoice,categories WHERE mrvoice.category=categories.code ";
@@ -158,8 +172,6 @@ sub search_songs
     $query .= "AND mrvoice.category = '$args->{category}' "
       if ( $args->{category} && $args->{category} ne "any" );
     $query .= "ORDER BY category,info,title";
-
-    print $fh "QUERY IS $query\n";
 
     my $sth = $dbh->prepare($query) or die "ERROR: Could not prepare query\n";
     $sth->execute or die "Couldn't execute query\n";
@@ -175,7 +187,6 @@ sub search_songs
         $string = $string . " $row_hashref->{time}";
         $string = $string . " ($row_hashref->{publisher})"
           if ( $args->{show_publisher} == 1 );
-        print $fh "Got id $row_hashref->{id} and string $string\n";
 
         push(
             @results,
@@ -187,7 +198,6 @@ sub search_songs
         );
     }
 
-    print $fh "Results are @results\n";
     return \@results;
 
 }
@@ -202,6 +212,7 @@ sub download_song
 
     check_key( $args->{online_key}, $dbh );
 
+    logsay "Attempting to download song ID $args->{song_id}";
     my $query = "SELECT * FROM mrvoice WHERE id=$args->{song_id}";
     my $sth = $dbh->prepare($query) or die "Could not prepare query\n";
     $sth->execute
@@ -223,6 +234,8 @@ sub download_song
     }
 
     $ref->{encoded_data} = $bindata;
+
+    logsay "Sending binary data for '$ref->{title}'";
 
     return $ref;
 }
@@ -319,14 +332,17 @@ sub check_key
     die "ERROR: Must have an authorization key to search\n"
       unless $key;
 
+    logsay "Checking key $key";
     my $sth = $dbh->prepare("SELECT * FROM online_keys WHERE key_id = '$key'");
     $sth->execute;
     if ( my $row = $sth->fetchrow_hashref )
     {
+        logsay "Valid key for $row->{name} at $row->{club}";
         return $row;
     }
     else
     {
+        logsay "Invalid key";
         die
           "ERROR: Online Key not valid.  Email Wade at minter\@mrvoice.net to get a key.\n";
     }
