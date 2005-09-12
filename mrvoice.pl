@@ -129,6 +129,9 @@ our $mp3types = [
     [ 'All Files', '*' ],
 ];
 
+our $zipfiletypes =
+  [ [ 'ZIP Files', '.zip' ], [ 'All Files', '*' ], ];
+
 if ( $^O eq "MSWin32" )
 {
     push @{ $mp3types->[0][1] }, ( "*.wma", "*.WMA" );
@@ -3293,8 +3296,8 @@ sub import_bundle
         -command => sub {
             $filename = $box1->getOpenFile(
                 -title      => 'Choose the bundle file to add',
-                -filetypes  => [ [ 'Zip Files', '.zip' ] ],
-                -initialdir => ( $^O eq "MSWin32" ) ? "C:\\" : get_homedir()
+                -initialdir => ( $^O eq "MSWin32" ) ? "C:\\" : get_homedir(),
+                -filetypes  => $zipfiletypes,
             );
         }
     )->pack( -side => 'left' );
