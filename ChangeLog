@@ -1,3 +1,7 @@
+Mon  Sep 12 2005	H. Wade Minter (minter@lunenburg.org)
+     * Fixed a bug where the file browser would not pop up on Windows when
+       going to add a bundle.  Reported by Lanny in Dallas.
+
 Thu  Sep  1 2005	H. Wade Minter (minter@lunenburg.org)
      * Fixed another bug where empty artists/info was showing up as the
        string "NULL".
