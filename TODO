@@ -4,6 +4,7 @@ Things I'm currently working on:
 * Allow users to specify the filename in a Bundle export.
 * Multi-file upload and download in Mr. Voice Online.
 * More predefined searched in Mr. Voice Online.
+* Use Smart::Comments for debugging
 * General code cleanup and pretty-fication.
 
 --
