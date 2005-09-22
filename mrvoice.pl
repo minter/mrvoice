@@ -129,8 +129,7 @@ our $mp3types = [
     [ 'All Files', '*' ],
 ];
 
-our $zipfiletypes =
-  [ [ 'ZIP Files', '.zip' ], [ 'All Files', '*' ], ];
+our $zipfiletypes = [ [ 'ZIP Files', '.zip' ], [ 'All Files', '*' ], ];
 
 if ( $^O eq "MSWin32" )
 {
@@ -1206,6 +1205,35 @@ sub save_file
     {
         $status = "File save cancelled.";
     }
+}
+
+sub export_songlist
+{
+    print "Exporting song list to text file\n" if $debug;
+    my $filename = catfile( get_homedir(), "mrvoice.txt" );
+    open( my $db_fh, ">", $filename )
+      or ( $status = "Couldn't open $filename" && return );
+    my $sth =
+      $dbh->prepare(
+        "SELECT * FROM mrvoice,categories WHERE mrvoice.category = categories.code ORDER BY mrvoice.category,mrvoice.info,mrvoice.title,mrvoice.artist"
+      );
+    $sth->execute;
+    while ( my $row = $sth->fetchrow_hashref )
+    {
+        my $string = "$row->{id}:($row->{description}";
+        $string .= $row->{info} ? " - $row->{info}) - " : ") - ";
+
+        $string .=
+          $row->{artist}
+          ? "\"$row->{title}\" by $row->{artist}"
+          : "\"$row->{title}\"";
+
+        $string .= " $row->{time}\n";
+
+        print $db_fh "$string";
+
+    }
+    $status = "Exported song list to $filename";
 }
 
 sub dump_database
@@ -5610,6 +5638,9 @@ sub filemenu_items
             'command',
             'Import Database Backup File',
             -command => \&import_database
+        ],
+        [
+            'command', 'Export Song List to Text', -command => \&export_songlist
         ],
         '',
         [ 'command', 'Preferences',  -command => \&edit_preferences ],

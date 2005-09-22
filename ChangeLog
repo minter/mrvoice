@@ -1,3 +1,7 @@
+Thu  Sep 22 2005	H. Wade Minter (minter@lunenburg.org)
+     * Add a File menu option to export the song list to a text file.
+       Suggested by Ted in Chapel Hill.
+
 Mon  Sep 12 2005	H. Wade Minter (minter@lunenburg.org)
      * Fixed a bug where the file browser would not pop up on Windows when
        going to add a bundle.  Reported by Lanny in Dallas.
