@@ -38,6 +38,7 @@ use XMLRPC::Lite;
 use Digest::MD5 qw(md5_hex);
 use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
 use XML::Simple;
+use Spreadsheet::WriteExcel::Simple;
 
 use subs
   qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_items advancedmenu_items helpmenu_items/;
@@ -1209,10 +1210,51 @@ sub save_file
 
 sub export_songlist
 {
+    my $format = "txt";
     print "Exporting song list to text file\n" if $debug;
-    my $filename = catfile( get_homedir(), "mrvoice.txt" );
-    open( my $db_fh, ">", $filename )
-      or ( $status = "Couldn't open $filename" && return );
+    my $filename = catfile( get_homedir(), "mrvoice" );
+    my $exportbox = $mw->DialogBox(
+        -title   => "Choose song export format",
+        -buttons => [ "Continue", "Cancel" ]
+    );
+    $exportbox->Icon( -image => $icon );
+    my $exportbox_frame = $exportbox->add("Frame")->pack( -fill => 'x' );
+
+    $exportbox_frame->Label( -text => "Choose the format to export to:" )
+      ->pack( -side => 'top' );
+    $exportbox_frame->Radiobutton(
+        -text     => 'ASCII Text',
+        -variable => \$format,
+        -value    => 'txt'
+    )->pack( -side => 'top' );
+    $exportbox_frame->Radiobutton(
+        -text     => 'Microsoft Excel',
+        -variable => \$format,
+        -value    => 'xls'
+    )->pack( -side => 'top' );
+
+    my $response = $exportbox->Show;
+
+    if ( $response eq "Cancel" )
+    {
+        $status = "Export Cancelled";
+        return;
+    }
+
+    my $ss;
+    my $db_fh;
+    if ( $format eq "txt" )
+    {
+        open( $db_fh, ">", "$filename.$format" )
+          or ( $status = "Couldn't open $filename.$format" && return );
+    }
+    else
+    {
+        $ss = Spreadsheet::WriteExcel::Simple->new;
+        my @headings = qw/Id Category Info Title Artist Time/;
+        $ss->write_bold_row( \@headings );
+    }
+
     my $sth =
       $dbh->prepare(
         "SELECT * FROM mrvoice,categories WHERE mrvoice.category = categories.code ORDER BY mrvoice.category,mrvoice.info,mrvoice.title,mrvoice.artist"
@@ -1220,20 +1262,34 @@ sub export_songlist
     $sth->execute;
     while ( my $row = $sth->fetchrow_hashref )
     {
-        my $string = "$row->{id}:($row->{description}";
-        $string .= $row->{info} ? " - $row->{info}) - " : ") - ";
+        if ( $format eq "txt" )
+        {
+            my $string = "$row->{id}:($row->{description}";
+            $string .= $row->{info} ? " - $row->{info}) - " : ") - ";
 
-        $string .=
-          $row->{artist}
-          ? "\"$row->{title}\" by $row->{artist}"
-          : "\"$row->{title}\"";
+            $string .=
+              $row->{artist}
+              ? "\"$row->{title}\" by $row->{artist}"
+              : "\"$row->{title}\"";
 
-        $string .= " $row->{time}\n";
+            $string .= " $row->{time}\n";
 
-        print $db_fh "$string";
+            print $db_fh "$string";
+        }
+        else
+        {
+            $ss->write_row(
+                [
+                    $row->{id},    $row->{description}, $row->{info},
+                    $row->{title}, $row->{artist},      $row->{time}
+                ]
+            );
+        }
 
     }
-    $status = "Exported song list to $filename";
+    $ss->save("$filename.$format") if ( $format eq "xls" );
+
+    $status = "Exported song list to $filename.$format";
 }
 
 sub dump_database
@@ -5639,9 +5695,7 @@ sub filemenu_items
             'Import Database Backup File',
             -command => \&import_database
         ],
-        [
-            'command', 'Export Song List to Text', -command => \&export_songlist
-        ],
+        [ 'command', 'Export Song List', -command => \&export_songlist ],
         '',
         [ 'command', 'Preferences',  -command => \&edit_preferences ],
         [ 'cascade', 'Recent Files', -tearoff => 0 ],
