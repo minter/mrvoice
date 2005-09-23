@@ -1251,7 +1251,7 @@ sub export_songlist
     else
     {
         $ss = Spreadsheet::WriteExcel::Simple->new;
-        my @headings = qw/Id Category Info Title Artist Time/;
+        my @headings = qw/Id Category Info Title Artist Time Filename/;
         $ss->write_bold_row( \@headings );
     }
 
@@ -1272,7 +1272,7 @@ sub export_songlist
               ? "\"$row->{title}\" by $row->{artist}"
               : "\"$row->{title}\"";
 
-            $string .= " $row->{time}\n";
+            $string .= " $row->{time} ($row->{filename})\n";
 
             print $db_fh "$string";
         }
@@ -1280,8 +1280,10 @@ sub export_songlist
         {
             $ss->write_row(
                 [
-                    $row->{id},    $row->{description}, $row->{info},
-                    $row->{title}, $row->{artist},      $row->{time}
+                    $row->{id},     $row->{description},
+                    $row->{info},   $row->{title},
+                    $row->{artist}, $row->{time},
+                    $row->{filename}
                 ]
             );
         }
