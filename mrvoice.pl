@@ -2882,15 +2882,15 @@ sub edit_song
         print "Got song ID $id\n" if $debug;
         my $query =
           sprintf(
-            "SELECT title,artist,category,info,publisher from mrvoice where id = %s",
+            "SELECT title,artist,category,info,publisher,filename from mrvoice where id = %s",
             $dbh->quote($id) );
         my (
-            $edit_title, $edit_artist, $edit_category,
-            $edit_info,  $edit_publisher
+            $edit_title, $edit_artist,    $edit_category,
+            $edit_info,  $edit_publisher, $edit_filename
           )
           = $dbh->selectrow_array($query);
         print
-          "Got the following information about the song.  title: $edit_title, artist: $edit_artist, category: $edit_category, info: $edit_info, publisher: $edit_publisher\n"
+          "Got the following information about the song.  title: $edit_title, artist: $edit_artist, category: $edit_category, info: $edit_info, publisher: $edit_publisher, filename: $edit_filename\n"
           if $debug;
 
         my $box = $mw->DialogBox(
@@ -2903,6 +2903,9 @@ sub edit_song
             -text =>
               "You may use this form to modify information about a song that is already in the database\n"
         )->pack();
+        my $frame0 = $box->add("Frame")->pack( -fill => 'x' );
+        $frame0->Label( -text => "Filename" )->pack( -side     => 'left' );
+        $frame0->Label( -text => $edit_filename )->pack( -side => 'right' );
         my $frame1 = $box->add("Frame")->pack( -fill => 'x' );
         $frame1->Label( -text => "Song Title" )->pack( -side => 'left' );
         $frame1->Entry(

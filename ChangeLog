@@ -1,3 +1,7 @@
+Sat  Sep 24 2005	H. Wade Minter (minter@lunenburg.org)
+     * Display the filename in the "Edit Song" menu.  Suggested by Bill
+       in Portland.
+
 Thu  Sep 22 2005	H. Wade Minter (minter@lunenburg.org)
      * Add a File menu option to export the song list to a file.
        Suggested by Ted in Chapel Hill.
