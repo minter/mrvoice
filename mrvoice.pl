@@ -825,6 +825,69 @@ sub check_version
 
 }
 
+sub startcheck_player
+{
+    print "Starting MP3 Player\n" if $debug;
+    if ( ( !-x $config{mp3player} ) && ( $^O ne "darwin" ) )
+    {
+        print "Could not execute MP3 player $config{mp3player}\n" if $debug;
+        infobox(
+            $mw,
+            "Warning - MP3 Player Not Found",
+            "Warning - Could not execute your defined MP3 player:\n\n$config{mp3player}\n\nYou may need to select the proper file in the preferences.",
+            "warning"
+        );
+    }
+    else
+    {
+        if ( "$^O" eq "MSWin32" )
+        {
+
+            # Start the MP3 player on a Windows system
+            my $object;
+            print "Creating Win32::Process for $config{mp3player}\n"
+              if $debug;
+            Win32::Process::Create( $object, $config{mp3player}, '', 1,
+                NORMAL_PRIORITY_CLASS(), "." );
+            $mp3_pid = $object->GetProcessID();
+            print "Got Win32::Process id $mp3_pid\n" if $debug;
+            sleep(1);
+        }
+        elsif ( $^O eq "darwin" )
+        {
+            return
+              if (
+                RunAppleScript(
+                    qq(tell application "System Events" to (creator type of processes) contains "Audn")
+                ) eq "true"
+              );
+            print "Starting AppleScript\n" if $debug;
+            RunAppleScript(qq( tell application "Audion 3" to activate))
+              or infobox(
+                $mw,
+                "Audion Error",
+                "AppleScript could not find Audion.  You will probably want to download the app and put it in the Applications folder.  Otherwise you will not be able to, in a word, 'play' any music"
+              );
+            print "Finished AppleScript\n" if $debug;
+        }
+        else
+        {
+
+            # Start the MP3 player on a Unix system using fork/exec
+            print "Forking to exec $config{mp3player}\n" if $debug;
+            $mp3_pid = fork();
+            print "Got PID $mp3_pid\n" if $debug;
+            if ( $mp3_pid == 0 )
+            {
+
+                # We're the child of the fork
+                exec("$config{mp3player}");
+            }
+        }
+    }
+
+}
+
 sub check_md5
 {
     my $md5 = shift or return;
@@ -872,7 +935,7 @@ sub bind_hotkeys
             sub {
                 my $req =
                   HTTP::Request->new( GET =>
-                      "http://localhost:4800/fadeoutandstop?p=$config{'httpq_pw'}"
+                      "http://localhost:4800/fadeoutandstop?p=$config{httpq_pw}"
                   );
                 $agent->request($req);
                 $status = "Playing Fade-Stopped";
@@ -887,7 +950,7 @@ sub open_tank
 
     # Opens a saved holding tank file, overwriting the current contents
     # UGLY HACK
-    my $initialdir = $config{'savedir'};
+    my $initialdir = $config{savedir};
     if ( $^O eq "MSWin32" )
     {
         $initialdir =~ s#/#\\#;
@@ -975,7 +1038,7 @@ sub save_tank
     }
 
     # UGLY HACK
-    my $initialdir = $config{'savedir'};
+    my $initialdir = $config{savedir};
     if ( $^O eq "MSWin32" )
     {
         $initialdir =~ s#/#\\#;
@@ -1063,7 +1126,7 @@ sub open_file
     print "Got selectedfile $selectedfile\n" if $debug;
 
     # UGLY HACK
-    my $initialdir = $config{'savedir'};
+    my $initialdir = $config{savedir};
     if ( $^O eq "MSWin32" )
     {
         $initialdir =~ s#/#\\#;
@@ -1146,7 +1209,7 @@ sub save_file
     # Finally, we add this file to our dynamic documents menu.
 
     # UGLY HACK
-    my $initialdir = $config{'savedir'};
+    my $initialdir = $config{savedir};
     if ( $^O eq "MSWin32" )
     {
         $initialdir =~ s#/#\\#;
@@ -1392,7 +1455,7 @@ sub dump_database
             infobox(
                 $mw,
                 "Database Dumped",
-                "The contents of your database have been dumped to the file: $dumpfile\n\nNote: In order to have a full backup, you must also back up the files from the directory: $config{'filepath'} as well as $rcfile and, optionally, the hotkeys from $config{'savedir'}"
+                "The contents of your database have been dumped to the file: $dumpfile\n\nNote: In order to have a full backup, you must also back up the files from the directory: $config{filepath} as well as $rcfile and, optionally, the hotkeys from $config{savedir}"
             );
             $status = "Database dumped to $dumpfile";
         }
@@ -2248,15 +2311,14 @@ sub move_file
     $extension = lc($extension);
     print "Using extension $extension\n" if $debug;
 
-    if ( -e catfile( $config{'filepath'}, "$newfilename$extension" ) )
+    if ( -e catfile( $config{filepath}, "$newfilename$extension" ) )
     {
         print "The file $newfilename$extension already exists\n" if $debug;
         my $i = 0;
         while ( 1 == 1 )
         {
             print "Using extension $i\n" if $debug;
-            if ( !-e catfile( $config{'filepath'}, "$newfilename-$i$extension" )
-              )
+            if ( !-e catfile( $config{filepath}, "$newfilename-$i$extension" ) )
             {
                 $newfilename = "$newfilename-$i";
                 print "Found an unused filename at $newfilename\n" if $debug;
@@ -2496,14 +2558,14 @@ sub add_new_song
                 infobox( $mw, "File Error",
                     "You must provide the title for the song." );
             }
-            elsif ( !-w $config{'filepath'} )
+            elsif ( !-w $config{filepath} )
             {
                 print "The filepath ($config{filepath}) was not writable\n"
                   if $debug;
                 infobox(
                     $mw,
                     "File Error",
-                    "Could not write file to directory $config{'filepath'}\nPlease check the permissions"
+                    "Could not write file to directory $config{filepath}\nPlease check the permissions"
                 );
             }
             else
@@ -2677,7 +2739,7 @@ sub edit_preferences
             {
                 $filepath = Win32::GetShortPathName($filepath)
                   if ( $^O eq "MSWin32" );
-                $config{'filepath'} = $filepath;
+                $config{filepath} = $filepath;
             }
         }
     )->pack( -side => 'right' );
@@ -2685,7 +2747,7 @@ sub edit_preferences
     $mp3dir_frame->Entry(
         -background   => 'white',
         -width        => 30,
-        -textvariable => \$config{'filepath'}
+        -textvariable => \$config{filepath}
     )->pack( -side => 'right' );
 
     my $hotkeydir_frame = $filepath_page->Frame()->pack( -fill => 'x' );
@@ -2703,14 +2765,14 @@ sub edit_preferences
             {
                 $savedir = Win32::GetShortPathName($savedir)
                   if ( $^O eq "MSWin32" );
-                $config{'savedir'} = $savedir;
+                $config{savedir} = $savedir;
             }
         }
     )->pack( -side => 'right' );
     $hotkeydir_frame->Entry(
         -background   => 'white',
         -width        => 30,
-        -textvariable => \$config{'savedir'}
+        -textvariable => \$config{savedir}
     )->pack( -side => 'right' );
 
     my $display_page =
@@ -2762,7 +2824,7 @@ sub edit_preferences
     my $mp3button = $mp3frame->Button(
         -text    => "Choose",
         -command => sub {
-            $config{'mp3player'} = $mw->getOpenFile(
+            $config{mp3player} = $mw->getOpenFile(
                 -title      => 'Select MP3 player executable',
                 -initialdir => ( $^O eq "MSWin32" ) ? "C:/" : get_homedir()
             );
@@ -2772,7 +2834,7 @@ sub edit_preferences
     my $mp3entry = $mp3frame->Entry(
         -background   => 'white',
         -width        => 30,
-        -textvariable => \$config{'mp3player'}
+        -textvariable => \$config{mp3player}
     )->pack( -side => 'right' );
     $mp3entry->configure( -state => 'disabled' ) if ( $^O eq "darwin" );
 
@@ -2817,10 +2879,10 @@ sub edit_preferences
 
     if ( $result eq "Ok" )
     {
-        if (   ( !$config{'db_file'} )
-            || ( !$config{'filepath'} )
-            || ( !$config{'savedir'} )
-            || ( !$config{'mp3player'} ) )
+        if (   ( !$config{db_file} )
+            || ( !$config{filepath} )
+            || ( !$config{savedir} )
+            || ( !$config{mp3player} ) )
         {
             print
               "All fields not filled in: db_file is $config{db_file}, filepath is $config{filepath}, savedir is $config{savedir}, mp3player is $config{mp3player}\n"
@@ -3196,7 +3258,7 @@ sub delete_song
                 print "STH finished with error code: $sth->errstr\n" if $debug;
                 if ( $delete_file_cb == 1 )
                 {
-                    my $file = catfile( $config{'filepath'}, $filename );
+                    my $file = catfile( $config{filepath}, $filename );
                     print "Deleting file $file\n" if $debug;
                     if ( -e $file )
                     {
@@ -3570,7 +3632,7 @@ sub launch_tank_playlist
     }
     else
     {
-        system("$config{'mp3player'} $filename");
+        system("$config{mp3player} $filename");
     }
 }
 
@@ -3739,7 +3801,7 @@ sub move_tank
     print "Re-adding $targettext in the proper location\n" if $debug;
 
     my $info = get_info_from_id($target);
-    if ( !-e catfile( $config{'filepath'}, $info->{filename} ) )
+    if ( !-e catfile( $config{filepath}, $info->{filename} ) )
     {
         print "This item is inavlid, so turn it red\n" if $debug;
         my $style = $tankbox->ItemStyle(
@@ -3897,9 +3959,8 @@ sub update_time
         $count++;
         my ( $id, $filename, $time, $md5 ) = @$table_row;
         next if ( !-r catfile( $config{filepath}, $filename ) );
-        my $newtime =
-          get_songlength( catfile( $config{'filepath'}, $filename ) );
-        my $newmd5 = get_md5( catfile( $config{filepath}, $filename ) );
+        my $newtime = get_songlength( catfile( $config{filepath}, $filename ) );
+        my $newmd5  = get_md5( catfile( $config{filepath},        $filename ) );
         if ( ( $newtime ne $time ) || ( $newmd5 ne $md5 ) )
         {
             print
@@ -3975,6 +4036,7 @@ sub validate_id
 
 sub stop_mp3
 {
+    startcheck_player();
     print "Stopping MP3\n" if $debug;
 
     my $widget = shift;
@@ -3989,7 +4051,7 @@ sub stop_mp3
     }
     else
     {
-        system("$config{'mp3player'} --stop");
+        system("$config{mp3player} --stop");
     }
     $status = "Playing Stopped";
 
@@ -4001,6 +4063,7 @@ sub stop_mp3
 sub play_mp3
 {
 
+    startcheck_player();
     print "Playing MP3\n" if $debug;
     my ( $statustitle, $statusartist, $filename );
     my $songstatusstring;
@@ -4050,7 +4113,7 @@ sub play_mp3
             $filename     = $id_ref->{filename};
             $statustitle  = $id_ref->{title};
             $statusartist = $id_ref->{artist};
-            if ( !-e catfile( $config{'filepath'}, $id_ref->{filename} ) )
+            if ( !-e catfile( $config{filepath}, $id_ref->{filename} ) )
             {
                 $status =
                   "Cannot play invalid entry - no file on disk to play!";
@@ -4070,7 +4133,7 @@ sub play_mp3
         }
         else
         {
-            system("$config{'mp3player'} $filename");
+            system("$config{mp3player} $filename");
         }
     }
     elsif ($filename)
@@ -4094,7 +4157,7 @@ sub play_mp3
         }
         print "Playing file $filename\n" if $debug;
         $status = "Playing $songstatusstring";
-        my $file = catfile( $config{'filepath'}, $filename );
+        my $file = catfile( $config{filepath}, $filename );
         if ( $^O eq "darwin" )
         {
             RunAppleScript(
@@ -4104,7 +4167,7 @@ sub play_mp3
         }
         else
         {
-            system("$config{'mp3player'} $file");
+            system("$config{mp3player} $file");
         }
     }
 }
@@ -4350,7 +4413,7 @@ sub do_search
         );
         $numrows++;
 
-        if ( !-e catfile( $config{'filepath'}, $row_hashref->{filename} ) )
+        if ( !-e catfile( $config{filepath}, $row_hashref->{filename} ) )
         {
             print "$row_hashref->{id} is invalid, turning it red\n" if $debug;
             my $style = $mainbox->ItemStyle(
@@ -5228,13 +5291,13 @@ sub read_rcfile
     }
     if ( $^O eq "MSWin32" )
     {
-        $config{'filepath'}  = Win32::GetShortPathName( $config{'filepath'} );
-        $config{'savedir'}   = Win32::GetShortPathName( $config{'savedir'} );
-        $config{'mp3player'} = Win32::GetShortPathName( $config{'mp3player'} );
+        $config{filepath}  = Win32::GetShortPathName( $config{filepath} );
+        $config{savedir}   = Win32::GetShortPathName( $config{savedir} );
+        $config{mp3player} = Win32::GetShortPathName( $config{mp3player} );
     }
     else
     {
-        $config{'savedir'} =~ s#(.*)/$#$1#;
+        $config{savedir} =~ s#(.*)/$#$1#;
     }
 
 }
@@ -5306,7 +5369,7 @@ sub Tank_Drop
         next if $current{$id};
         $tankbox->add( $id, -data => $id, -text => $text );
         my $info = get_info_from_id($id);
-        if ( !-e catfile( $config{'filepath'}, $info->{filename} ) )
+        if ( !-e catfile( $config{filepath}, $info->{filename} ) )
         {
             my $style = $tankbox->ItemStyle(
                 'text',
@@ -5513,9 +5576,9 @@ if ( !( $dbh = DBI->connect( "dbi:SQLite:dbname=$config{db_file}", "", "" ) ) )
 }
 
 print "Checking if filepath is writable\n" if $debug;
-if ( !-W $config{'filepath'} )
+if ( !-W $config{filepath} )
 {
-    print "Could not write to MP3 directory $config{'filepath'}\n" if $debug;
+    print "Could not write to MP3 directory $config{filepath}\n" if $debug;
     my $box = $mw->DialogBox( -title => "Fatal Error", -buttons => ["Exit"] );
     $box->Icon( -image => $icon );
     $box->add( "Label", -text => "MP3 Directory unavailable" )->pack();
@@ -5531,7 +5594,7 @@ if ( !-W $config{'filepath'} )
         -text =>
           "After you set the preferences, Mr. Voice will exit. You will need to restart to test your changes."
     )->pack();
-    $box->add( "Label", -text => "Current MP3 Directory: $config{'filepath'}" )
+    $box->add( "Label", -text => "Current MP3 Directory: $config{filepath}" )
       ->pack();
     print "Showing 'could not write to MP3 directory' box\n" if $debug;
     my $result = $box->Show();
@@ -5550,7 +5613,7 @@ if ( !-W $config{'filepath'} )
 }
 
 print "Checking if savedir is writable\n" if $debug;
-if ( !-W $config{'savedir'} )
+if ( !-W $config{savedir} )
 {
     print "Could not write to hotkey directory $config{savedir}\n" if $debug;
     my $box = $mw->DialogBox( -title => "Warning", -buttons => ["Continue"] );
@@ -5564,8 +5627,8 @@ if ( !-W $config{'savedir'} )
         -text =>
           "While this will not impact the operation of Mr. Voice, you should probably fix it in the File->Preferences menu."
     )->pack();
-    $box->add( "Label",
-        -text => "Current Hotkey Directory: $config{'savedir'}" )->pack();
+    $box->add( "Label", -text => "Current Hotkey Directory: $config{savedir}" )
+      ->pack();
     print "Showing 'could not write to hotkey directory' box\n" if $debug;
     my $result = $box->Show();
     print "Showed 'could not write to hotkey directory' box\n" if $debug;
@@ -5574,57 +5637,7 @@ if ( !-W $config{'savedir'} )
 # We use the following statement to open the MP3 player asynchronously
 # when the Mr. Voice app starts.
 
-print "Starting MP3 Player\n" if $debug;
-if ( ( !-x $config{'mp3player'} ) && ( $^O ne "darwin" ) )
-{
-    print "Could not execute MP3 player $config{'mp3player'}\n" if $debug;
-    infobox(
-        $mw,
-        "Warning - MP3 Player Not Found",
-        "Warning - Could not execute your defined MP3 player:\n\n$config{'mp3player'}\n\nYou may need to select the proper file in the preferences.",
-        "warning"
-    );
-}
-else
-{
-    if ( "$^O" eq "MSWin32" )
-    {
-
-        # Start the MP3 player on a Windows system
-        my $object;
-        print "Creating Win32::Process for $config{'mp3player'}\n" if $debug;
-        Win32::Process::Create( $object, $config{'mp3player'}, '', 1,
-            NORMAL_PRIORITY_CLASS(), "." );
-        $mp3_pid = $object->GetProcessID();
-        print "Got Win32::Process id $mp3_pid\n" if $debug;
-        sleep(1);
-    }
-    elsif ( $^O eq "darwin" )
-    {
-        print "Starting AppleScript\n" if $debug;
-        RunAppleScript(qq( tell application "Audion 3" to activate))
-          or infobox(
-            $mw,
-            "Audion Error",
-            "AppleScript could not find Audion.  You will probably want to download the app and put it in the Applications folder.  Otherwise you will not be able to, in a word, 'play' any music"
-          );
-        print "Finished AppleScript\n" if $debug;
-    }
-    else
-    {
-
-        # Start the MP3 player on a Unix system using fork/exec
-        print "Forking to exec $config{'mp3player'}\n" if $debug;
-        $mp3_pid = fork();
-        print "Got PID $mp3_pid\n" if $debug;
-        if ( $mp3_pid == 0 )
-        {
-
-            # We're the child of the fork
-            exec("$config{'mp3player'}");
-        }
-    }
-}
+startcheck_player();
 
 # Menu bar
 # Using the new-style menubars from "Mastering Perl/Tk"
@@ -6373,10 +6386,10 @@ $mw->bind( "<Control-Key-p>", [ \&play_mp3, "Current" ] );
 print "Bound hotkeys\n" if $debug;
 
 # If the default hotkey file exists, load that up.
-if ( -r catfile( $config{'savedir'}, "default.mrv" ) )
+if ( -r catfile( $config{savedir}, "default.mrv" ) )
 {
     print "Loading default hotkey file default.mrv\n" if $debug;
-    open_file( $mw, catfile( $config{'savedir'}, "default.mrv" ) );
+    open_file( $mw, catfile( $config{savedir}, "default.mrv" ) );
     print "Loaded default hotkey file default.mrv\n" if $debug;
 }
 

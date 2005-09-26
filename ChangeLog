@@ -1,3 +1,10 @@
+Sun  Sep 24 2005	H. Wade Minter (minter@lunenburg.org)
+     * Remove spurious quoting in hashes when possible.
+     * Move the MP3 Player start code into a new subroutine, so that it will
+       be easier to verify that the player is running before starting to play.
+       Suggested by Kareem in Austin.
+     * Have the Mac code perform said MP3 Player checks.
+
 Sat  Sep 24 2005	H. Wade Minter (minter@lunenburg.org)
      * Display the filename in the "Edit Song" menu.  Suggested by Bill
        in Portland.
