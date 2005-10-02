@@ -2041,7 +2041,6 @@ sub add_category
         print "Got an Ok from addcategory box\n" if $debug;
         if ( ($addcat_code) && ($addcat_desc) )
         {
-            $addcat_desc = $dbh->quote($addcat_desc);
             $addcat_code =~ tr/a-z/A-Z/;
             print "Got addcat_desc $addcat_desc and addcat_code $addcat_code\n"
               if $debug;
@@ -2179,8 +2178,11 @@ sub edit_category
 
         if ( $editchoice ne "Cancel" )
         {
-            $query =
-              "UPDATE categories SET description='$new_desc' WHERE code='$code'";
+            $query = sprintf(
+                "UPDATE categories SET description=%s WHERE code=%s",
+                $dbh->quote($new_desc),
+                $dbh->quote($code)
+            );
             $sth = $dbh->prepare($query);
             print "Preparing edit query $query\n" if $debug;
             if ( !$sth->execute )
