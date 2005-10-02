@@ -1,3 +1,7 @@
+Sat  Oct  1 2005	H. Wade Minter (minter@lunenburg.org)
+     * Fix bug with double-quoting of $addcat_desc in category addition.
+     * Standardize quoting in edit_category function.
+
 Sun  Sep 24 2005	H. Wade Minter (minter@lunenburg.org)
      * Remove spurious quoting in hashes when possible.
      * Move the MP3 Player start code into a new subroutine, so that it will
