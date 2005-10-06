@@ -3160,7 +3160,7 @@ sub edit_song
             push( @querystring, $edit_info )      if $edit_info;
             push( @querystring, $edit_publisher ) if $edit_publisher;
             push( @querystring, $edit_category )  if $edit_category;
-            push( @querystring, "modtime=(SELECT strftime('%s','now'))" );
+            push( @querystring, "modtime=(SELECT strftime('%%s','now'))" );
 
             $string = join( ", ", @querystring );
 
