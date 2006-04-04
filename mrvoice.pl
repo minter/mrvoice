@@ -93,7 +93,6 @@ our $artist;                    # The "Artist" search entry field
 our $anyfield;                  # The "Any Field" search entry field
 our $cattext;                   # The "Extra Info" search entry field
 our $authenticated = 0;         # Has the user provided the proper password?
-our $xmlrpc_url = 'http://www.mrvoice.net/online/xmlrpc/';
 ##########
 
 # Allow searches of all music publishers by default.
@@ -782,22 +781,14 @@ sub check_version
 {
     return if ( $config{last_update_check} > ( time() - 604800 ) );
     my $xmlrpc;
-    unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
+    unless ( $xmlrpc = XMLRPC::Lite->proxy( $config{xmlrpc_url} ) )
     {
         $status = "Could not initialize XMLRPC";
         return;
     }
 
     my $search_call;
-    eval {
-        $search_call = $xmlrpc->call(
-            'check_version',
-            {
-                os      => $^O,
-                version => $version
-            }
-        );
-    };
+    eval { $search_call = $xmlrpc->call( 'check_version', $^O, $version ); };
 
     if ($@)
     {
@@ -814,7 +805,7 @@ sub check_version
         return;
     }
 
-    if ( $result->{needupgrade} == 1 )
+    if ( $result->{needsupgrade} )
     {
         infobox( $mw, "A Newer Version of Mr. Voice is Available",
             $result->{message} );
@@ -4563,22 +4554,15 @@ sub search_online
     $listbox->delete('all');
     my ( $term, $category, $person, $online_status ) = @_;
     my $xmlrpc;
-    unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
+    unless ( $xmlrpc = XMLRPC::Lite->proxy( $config{xmlrpc_url} ) )
     {
         $status = "Could not initialize XMLRPC";
         return;
     }
 
-    my $search_call = $xmlrpc->call(
-        'search_songs',
-        {
-            online_key     => $config{online_key},
-            search_term    => $term,
-            category       => $category,
-            person         => $person,
-            show_publisher => $config{show_publisher},
-        }
-    );
+    my $search_call =
+      $xmlrpc->call( 'search_songs', $config{online_key}, $term, $category,
+        $person, $config{show_publisher} );
 
     my $result = $search_call->result;
 
@@ -4629,15 +4613,14 @@ sub compare_online
         $local_md5{ $row->{md5} } = $row;
     }
 
-    unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
+    unless ( $xmlrpc = XMLRPC::Lite->proxy( $config{xmlrpc_url} ) )
     {
         $status = "Could not initialize XMLRPC";
         return;
     }
 
     $onlinewin->Busy( -recurse => 1 );
-    my $md5_call =
-      $xmlrpc->call( 'search_songs', { online_key => $config{online_key}, } );
+    my $md5_call = $xmlrpc->call( 'search_songs', $config{online_key} );
 
     my $result = $md5_call->result;
 
@@ -4688,6 +4671,7 @@ sub compare_online
     }
     elsif ( $arg eq "show_remote" )
     {
+        my $remote_count;
         foreach my $remote (
             sort { $remote_md5{$a}->{string} cmp $remote_md5{$b}->{string} }
             keys %remote_md5
@@ -4695,6 +4679,7 @@ sub compare_online
         {
             unless ( exists $local_md5{$remote} )
             {
+                $remote_count++;
                 $box->add(
                     $remote_md5{$remote}->{id},
                     -data => $remote_md5{$remote}->{id},
@@ -4702,6 +4687,7 @@ sub compare_online
                 );
             }
         }
+        $status = "Search returned $remote_count online songs";
     }
     $onlinewin->Unbusy( -recurse => 1 );
 
@@ -4721,7 +4707,7 @@ sub online_download
     my $index = $selection[0];
     my $id    = $listbox->info( 'data', $index );
 
-    unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
+    unless ( $xmlrpc = XMLRPC::Lite->proxy( $config{xmlrpc_url} ) )
     {
         $status = "Could not initialize XMLRPC";
         return;
@@ -4729,14 +4715,8 @@ sub online_download
 
     my $toplevel = $listbox->toplevel;
     $toplevel->Busy();
-    my $download_call = $xmlrpc->call(
-        'download_song',
-        {
-            online_key => $config{online_key},
-            song_id    => $id,
-        }
-    );
-
+    my $download_call =
+      $xmlrpc->call( 'download_song', $config{online_key}, $id );
     my $result = $download_call->result;
     $toplevel->Unbusy();
 
@@ -4782,11 +4762,11 @@ sub online_search_window
 
     my $onlinebox;
     my $online_search_term;
-    my $category      = 'any';
-    my $person        = 'any';
+    my $category      = 0;
+    my $person        = 0;
     my $online_status = 'Mr. Voice Online';
     my $xmlrpc;
-    unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
+    unless ( $xmlrpc = XMLRPC::Lite->proxy( $config{xmlrpc_url} ) )
     {
         $status = "Could not initialize XMLRPC";
         return;
@@ -4834,12 +4814,11 @@ sub online_search_window
         )->pack( -side => 'left' );
 
         my $category_call =
-          $xmlrpc->call( 'get_categories',
-            { online_key => $config{online_key}, } );
+          $xmlrpc->call( 'get_categories', $config{online_key} );
 
-        my $cat_hashref = $category_call->result;
+        my $cat_arrayref = $category_call->result;
 
-        if ( !$cat_hashref )
+        if ( !$cat_arrayref )
         {
             chomp( my $error = $category_call->faultstring );
             infobox( $mw, "XMLRPC search error", $error );
@@ -4847,24 +4826,19 @@ sub online_search_window
             return;
         }
 
-        foreach my $key (
-            sort {
-                $cat_hashref->{$a}{description}
-                  cmp $cat_hashref->{$b}{description}
-            } keys %$cat_hashref
-          )
+        foreach my $cat (@$cat_arrayref)
         {
             $catmenu->radiobutton(
-                -label    => $cat_hashref->{$key}{description},
-                -value    => $key,
+                -label    => $cat->{description},
+                -value    => $cat->{id},
                 -variable => \$category,
                 -command  => sub {
-                    $catmenu->configure(
-                        -text => $cat_hashref->{$category}{description} );
+                    $catmenu->configure( -text => $cat->{description} );
                 },
             );
+            $catmenu->configure( -text => $cat->{description} )
+              if $cat->{id} == $category;
         }
-        $catmenu->configure( -text => $cat_hashref->{$category}{description} );
 
         my $personframe =
           $onlinewin->Frame()->pack( -fill => 'x', -side => 'top' );
@@ -4878,12 +4852,11 @@ sub online_search_window
             -indicatoron => 1
         )->pack( -side => 'left' );
 
-        my $person_call =
-          $xmlrpc->call( 'get_people', { online_key => $config{online_key}, } );
+        my $person_call = $xmlrpc->call( 'get_people', $config{online_key} );
 
-        my $person_hashref = $person_call->result;
+        my $person_arrayref = $person_call->result;
 
-        if ( !$person_hashref )
+        if ( !$person_arrayref )
         {
             chomp( my $error = $person_call->faultstring );
             infobox( $mw, "XMLRPC search error", $error );
@@ -4891,22 +4864,19 @@ sub online_search_window
             return;
         }
 
-        foreach my $key (
-            sort { $person_hashref->{$a}{name} cmp $person_hashref->{$b}{name} }
-            keys %$person_hashref
-          )
+        foreach my $user (@$person_arrayref)
         {
             $personmenu->radiobutton(
-                -label    => $person_hashref->{$key}{name},
-                -value    => $key,
+                -label    => $user->{name},
+                -value    => $user->{id},
                 -variable => \$person,
                 -command  => sub {
-                    $personmenu->configure(
-                        -text => $person_hashref->{$person}{name} );
+                    $personmenu->configure( -text => $user->{name} );
                 },
             );
+            $personmenu->configure( -text => $user->{name} )
+              if $user->{id} == $person;
         }
-        $personmenu->configure( -text => $person_hashref->{$person}{name} );
 
         my $searchframe =
           $onlinewin->Frame()->pack( -fill => 'x', -side => 'top' );
@@ -4969,12 +4939,20 @@ sub online_search_window
                 search_online( $onlinebox, $online_search_term, $category,
                     $person, \$online_status );
                 $online_search_term = undef;
-                $category           = "any";
-                $catmenu->configure(
-                    -text => $cat_hashref->{$category}{description} );
-                $person = "any";
-                $personmenu->configure(
-                    -text => $person_hashref->{$person}{name} );
+                $category           = 0;
+
+                foreach my $cat (@$cat_arrayref)
+                {
+                    $catmenu->configure( -text => $cat->{description} )
+                      if $cat->{id} == $category;
+                }
+                $person = 0;
+
+                foreach my $peep (@$person_arrayref)
+                {
+                    $personmenu->configure( -text => $peep->{name} )
+                      if $peep->{id} == $person;
+                }
             }
         )->pack( -side => 'top' );
         $onlinebox->bind( "<Double-Button-1>",
@@ -4986,11 +4964,13 @@ sub online_search_window
                     $person, \$online_status );
                 $online_search_term = undef;
                 $category           = "any";
-                $catmenu->configure(
-                    -text => $cat_hashref->{$category}{description} );
+
+         #                $catmenu->configure(
+         #                    -text => $cat_hashref->{$category}{description} );
                 $person = "any";
-                $personmenu->configure(
-                    -text => $person_hashref->{$person}{name} );
+
+               #                $personmenu->configure(
+               #                    -text => $person_hashref->{$person}{name} );
             }
         );
 
@@ -5022,7 +5002,7 @@ sub upload_xmlrpc
     my $id    = $mainbox->info( 'data', $index );
     my $info  = get_info_from_id($id);
 
-    unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
+    unless ( $xmlrpc = XMLRPC::Lite->proxy( $config{xmlrpc_url} ) )
     {
         $status = "Could not initialize XMLRPC";
         return;
@@ -5046,18 +5026,9 @@ sub upload_xmlrpc
 
     my $md5 = md5_hex($bindata);
 
-    my $check_call = $xmlrpc->call(
-        'check_upload',
-        {
-            online_key => $config{online_key},
-            title      => $info->{title},
-            artist     => $info->{artist},
-            info       => $info->{info},
-            filename   => $info->{filename},
-            md5sum     => $md5,
-            publisher  => $info->{publisher},
-        }
-    );
+    my $check_call =
+      $xmlrpc->call( 'check_upload', $config{online_key}, $info->{title},
+        $info->{filename}, $md5 );
 
     if ( !$check_call->result )
     {
@@ -5069,18 +5040,9 @@ sub upload_xmlrpc
 
     my $starttime = time();
     $mw->Busy( -recurse => 1 );
-    my $call = $xmlrpc->call(
-        'upload_song',
-        {
-            online_key => $config{online_key},
-            title      => $info->{title},
-            artist     => $info->{artist},
-            info       => $info->{info},
-            filename   => $info->{filename},
-            md5sum     => $md5,
-            file       => $bindata
-        }
-    );
+    my $call =
+      $xmlrpc->call( 'upload_song', $config{online_key}, $info->{title},
+        $info->{artist}, $info->{info}, $info->{filename}, $md5, $bindata );
     $mw->Unbusy( -recurse => 1 );
     my $endtime = time();
     my $elapsed = $endtime - $starttime;
@@ -5350,9 +5312,10 @@ sub Hotkey_Drop
     print "Got ID $id\n" if $debug;
     my $filename = get_info_from_id($id)->{filename};
     my $title    = get_info_from_id($id)->{fulltitle};
+    my $time     = get_info_from_id($id)->{time};
     $fkeys{$fkey_var}->{id}       = $id;
     $fkeys{$fkey_var}->{filename} = $filename;
-    $fkeys{$fkey_var}->{title}    = $title;
+    $fkeys{$fkey_var}->{title}    = "$title $time";
 }
 
 sub Tank_Drop
