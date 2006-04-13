@@ -3497,7 +3497,7 @@ sub import_bundle
     {
         unless ( get_category( $cat_ref->{code} ) )
         {
-            print "Adding category $cat_ref->{code}, $cat_ref->{description}\n";
+            print "Adding category $cat_ref->{code}, $cat_ref->{description}\n" if $debug;
             my $sth = $dbh->prepare("INSERT INTO categories VALUES (?, ?)")
               or die;
             $sth->execute( $cat_ref->{code}, $cat_ref->{description} ) or die;
