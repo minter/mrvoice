@@ -1,3 +1,11 @@
+Thu  Apr 13 2006	H. Wade Minter (minter@lunenburg.org)
+     * Fix debug statement that was displaying all the time.
+
+Tue  Apr  4 2006	H. Wade Minter (minter@lunenburg.org)
+     * Get the XML-RPC URL from the config file.
+     * Move XML-RPC code to use the new Rails interface.
+     * Display song time next to the hotkey (Ted Hobgood)
+
 Thu  Oct  6 2005	H. Wade Minter (minter@lunenburg.org)
      * Fixed a sprintf/%s bug in edit_songs.
 
