@@ -1,6 +1,7 @@
 Mon  Apr 17 2006	H. Wade Minter (minter@lunenburg.org)
      * Add Preferences UI for setting the XML-RPC URL.
      * Set default XML-RPC URL if one does not exist.
+     * Use the unbracketed time in the database - do brackets in the display.
 
 Thu  Apr 13 2006	H. Wade Minter (minter@lunenburg.org)
      * Fix debug statement that was displaying all the time.
