@@ -11,7 +11,7 @@
 <book status="draft">
 
 <bookinfo>
-  <title>Mr. Voice 2.1.2 Installation and Reference Manual</title>
+  <title>Mr. Voice 2.2 Installation and Reference Manual</title>
   <mediaobject>
     <imageobject>
       <imagedata align="center" fileref="../images/mrvoice-logo.png" format="png">
@@ -28,8 +28,6 @@
 
 <dedication><title>Acknowledgements</title>
   <para>Thanks to my wife, Holly, for encouragement and editorial help.</para>
-  <para>Thanks to all of the voices at <ulink url="http://www.comedyworx.com/">ComedyWorx-Raleigh</ulink>, including (but not limited to) Jack Spencer, Larry Howard, Sam Adams, Bobby Rathbone, Ross White, Leo DiNapoli, Jason Matthews, and Bryan Cronk, as well as users in other cities, such as Kasey Christie, Randy Tennison, Bill Cernansky, Eric Wood, and Randy Tayler for testing and feedback.</para>
-  <para>Thanks to the ownership and players of <ulink url="http://www.comedyworx.com/">ComedyWorx</ulink> for giving me such a fun place to be a goofball for nearly five years.</para>
   <para>Thanks to the authors and publishers, and contributors of the following books and newsgroups, without which none of this would have gotten done:
     <itemizedlist>
       <listitem><para><citetitle pubwork="book">Learning Perl, 2nd Edition</citetitle>, by Randal Schwartz and Tom Christiansen, published by O'Reilly and Associates.</para></listitem>
@@ -40,22 +38,7 @@
       <listitem><para>The newsgroup comp.lang.perl.tk</para></listitem>
     </itemizedlist>
   </para>
-  <para>The following groups who have been willing to actually run this software!
-    <itemizedlist>
-      <listitem><para><ulink url="http://www.spocomedy.com/">SpoComedy</ulink> (Spokane, WA)</para></listitem>
-      <listitem><para><ulink url="http://www.comedysportz.com/portland/">ComedySportz</ulink> (Portland, OR)</para></listitem>
-      <listitem><para><ulink url="http://www.comedycity.cc/">ComedyCity</ulink> (Kansas City, MO)</para></listitem>
-      <listitem><para><ulink url="http://www.comedysportzla.pair.com/">ComedySportz</ulink> (Los Angeles, CA)</para></listitem>
-      <listitem><para><ulink url="http://www.comedysportzutah.com/">ComedySportz</ulink> (Provo, UT)</para></listitem>
-      <listitem><para><ulink url="http://www.comedysportzdfw.com/">ComedySportz</ulink> (Dallas/Ft. Worth, TX)</para></listitem>
-      <listitem><para><ulink url="http://www.comedysportzchicago.com/">ComedySportz</ulink> (Chicago, IL)</para></listitem>
-      <listitem><para><ulink url="http://www.idiotboxers.com/">The Idiot Box</ulink> (Greensboro, NC)</para></listitem>
-      <listitem><para><ulink url="http://www.comedysportztc.com/">ComedySportz</ulink> (Minneapolis, MN)</para></listitem>
-      <listitem><para><ulink url="http://www.comedysportzrichmond.com/">ComedySportz</ulink> (Richmond, VA)</para></listitem>
-      <listitem><para><ulink url="http://www.comedysportzmilwaukee.com/">ComedySportz</ulink> (Milwaukee, WI)</para></listitem>
-      <listitem><para><ulink url="http://www.cszdc.com/">ComedySportz</ulink> (Washington, DC)</para></listitem>
-    </itemizedlist>
-  </para>
+  <para>The improv groups who have been willing to actually run this software!  See the list at the <ulink url="http://www.mrvoice.net/users/">Mr. Voice Website</ulink></para>
   <para>Thanks to <ulink url="http://pobox.com/~dereklane/">Derek Lane</ulink> of the <ulink url="http://raleigh.pm.org/">Raleigh Perl Mongers</ulink> for suggesting the move to SQLite as a database backend.</para>
   <para>And thanks to the Open Source and Free Software movements, letting people write software that doesn't suck!</para>
   <para>Mr. Voice is dedicated to the memory of Andy Sepelak (4/4/78 - 3/11/02), a fine improviser and a good man.  He will be missed.</para>
@@ -73,6 +56,19 @@
 <preface>
   <title>What's New</title>
   <para>A quick reference to what's changed between versions.</para>
+  <sect1><title>What's new in Version 2.2?</title>
+    <para>
+      <itemizedlist>
+        <listitem><para>A <ulink url="http://www.mrvoice.net/">revamped website</ulink>, featuring a much more functional song-sharing area.</para></listitem>
+        <listitem><para>Better Mr. Voice Online integration with the new online database.</para></listitem>
+        <listitem><para>A new option under the Online Preferences to edit the XML-RPC URL that is used (in case I need to change it again).  It was hardcoded into the program before.</para></listitem>
+        <listitem><para>Fixed bugs that were causing strange quote marks to appear in song and category names.</para></listitem>
+        <listitem><para>Display the song filename in the "Edit Song" menu.  Suggested by Bill in Portland.</para></listitem>
+        <listitem><para>Display the time of a song next to the hotkey listing.  Suggested by Ted in Chapel Hill.</para></listitem>
+        <listitem><para>Added an option under the File menu to export the song list from your Mr. Voice database as either a text file or Microsoft Excel spreadsheet.  Suggested by Ted in Chapel Hill.</para></listitem>
+      </itemizedlist>
+    </para>
+  </sect1>
   <sect1><title>What's new in Version 2.1.2?</title>
     <para>
       <itemizedlist>
@@ -129,45 +125,6 @@
        </itemizedlist>
      </para>
    </sect1>
-  <sect1><title>What's new in Version 1.10.6?</title>
-    <para>
-      <itemizedlist>
-        <listitem><para>Support for Windows Media Audio (WMA) files under Windows.  Suggested by kprobbins.</para></listitem>
-       </itemizedlist>
-    </para>
-  </sect1>
-  <sect1><title>What's new in Version 1.10.4?</title>
-    <para>
-      <itemizedlist>
-        <listitem><para>Fixed major issues with Drag-And-Drop that appeared when moving from the Tk-804.026 beta series to the final release.</para></listitem>
-       </itemizedlist>
-    </para>
-  </sect1>
-  <sect1><title>What's new in Version 1.10.2?</title>
-    <para>
-      <itemizedlist>
-        <listitem><para>Fixed a bug where, after doing a search, the main listbox got the focus instead of the search box you just typed into.</para></listitem>
-        <listitem><para>Updated to the final Tk-804 production release, Tk-804.026</para></listitem>
-       </itemizedlist>
-    </para>
-  </sect1>
-  <sect1><title>What's new in Version 1.10?</title>
-    <para>
-      <itemizedlist>
-        <listitem><para>You can <keycap>Control</keycap>-click in the main listbox to select multiple files, then drag all of those files at once into the Holding Tank.</para></listitem>
-        <listitem><para>The structure of the Edit/Delete Category boxes has changed to make them fit on the screen a bit better.</para></listitem>
-        <listitem><para>You can drag songs from either the main listbox or the Holding Tank onto a hotkey.</para></listitem>
-        <listitem><para>Clicking inside a lisbox (such as the main box or the Holding Tank), or performing a search, will allow you to use the up and down arrow keys to move around in that listbox.</para></listitem>
-        <listitem><para>The Holding Tank features a blue Launch Playlist button that will put the contents of the Holding Tank into a Winamp/XMMS playlist and start playing them.</para></listitem>
-        <listitem><para>You can now save and load the contents of the Holding Tank, just like you can with the Hotkeys, from options in the <menuchoice> <guimenu>File</guimenu></menuchoice> menu.</para></listitem>
-        <listitem><para>The former standalone "orphans.pl" script, which searched your file directory for audio files that were no longer referenced by any database entry, has now been included in the main program.  Look for it under <menuchoice> <guimenu>Advanced Search</guimenu> <guimenuitem>Find orphaned files</guimenuitem></menuchoice>.</para></listitem>
-        <listitem><para>If music licensing is a concern, you can now assign a Publisher to each song in the database, and restrict searches based on allowed publishers.  The options to restrict the searches are in the <menuchoice> <guimenu>File</guimenu> <guimenuitem>Preferences</guimenuitem> </menuchoice> menu.</para></listitem>
-        <listitem><para>Most category buttons now update to show which category you've selected.</para></listitem>
-        <listitem><para>The "dropdown" feature of the main search fields (Artist, Title, etc.) have been removed.</para></listitem>
-        <listitem><para>MySQL 4.x and Winamp 5.x are now the preferred environments under Windows, replacing MySQL 3.x and Winamp 2.x.</para></listitem>
-      </itemizedlist>
-    </para>
-  </sect1>
 </preface>
 
 &chapter1
@@ -187,9 +144,8 @@
 <appendix><title>Contributing, Contacting, and Bug Reporting</title>
   <para>If you like this program, and know of a way to make it better, feel free to modify it.  This software is released under the GNU General Public License, so read the COPYING file or visit <ulink url="http://www.gnu.org/">the GNU project</ulink> for information on license conditions.</para>
   <para>If you make a cool modification to this program, feel free to send a diff to me, and I'll incorporate it into the main body of the program.</para>
-  <para>Considering I'm probably the only person using this program, if you even USE this software, feel free to send me an email and let me know that you've found it useful.  Otherwise, I'm just talking to myself.  :-)</para>
   <para>Feel free to report any bugs, feature requests, etc. to me via the <ulink url="http://www.mrvoice.net/bugzilla/">Mr. Voice Bugzilla</ulink>.  As this is a specific-purpose project, there's no guarantee that I'll do it, but I'm glad to listen to any suggestions.  Check the TODO file to see stuff I'm currently working on.</para>
-  <para>The software's new home on the web is <ulink url="http://www.mrvoice.net/">http://www.mrvoice.net/</ulink> - check there for any news and developments.</para>
+  <para>The software's home on the web is <ulink url="http://www.mrvoice.net/">http://www.mrvoice.net/</ulink> - check there for any news and developments.</para>
 </appendix>
 
 <appendix><title>Software License</title>
