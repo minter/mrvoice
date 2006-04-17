@@ -992,7 +992,7 @@ sub open_tank
                 $string = $string . ") - \"$tank_ref->{title}\"";
                 $string = $string . " by $tank_ref->{artist}"
                   if ( $tank_ref->{artist} );
-                $string = $string . " $tank_ref->{time}";
+                $string = $string . " [$tank_ref->{time}]";
                 print "Built string $string, adding to tankbox\n" if $debug;
 
                 $tankbox->add( $id, -data => $id, -text => $string );
@@ -1326,7 +1326,7 @@ sub export_songlist
               ? "\"$row->{title}\" by $row->{artist}"
               : "\"$row->{title}\"";
 
-            $string .= " $row->{time} ($row->{filename})\n";
+            $string .= " [$row->{time}] ($row->{filename})\n";
 
             print $db_fh "$string";
         }
@@ -4209,7 +4209,7 @@ sub get_songlength
         $minute = "0$minute" if ( $minute < 10 );
         my $second = $info->{SS};
         $second = "0$second" if ( $second < 10 );
-        $time = "[$minute:$second]";
+        $time = "$minute:$second";
         print "Got time $time\n" if $debug;
     }
     elsif ( $file =~ /\.wav$/i )
@@ -4228,11 +4228,11 @@ sub get_songlength
             $minute = "0$minute" if ( $minute < 10 );
             my $second = $audio_seconds % 60;
             $second = "0$second" if ( $second < 10 );
-            $time = "[$minute:$second]";
+            $time = "$minute:$second";
         }
         else
         {
-            $time = "[??:??]";
+            $time = "??:??";
         }
         print "Time is $time\n" if $debug;
     }
@@ -4249,7 +4249,7 @@ sub get_songlength
         $minute = "0$minute" if ( $minute < 10 );
         my $second = $audio_seconds % 60;
         $second = "0$second" if ( $second < 10 );
-        $time = "[$minute:$second]";
+        $time = "$minute:$second";
         print "Time is $time\n" if $debug;
     }
     elsif ( ( $file =~ /\.wma$/i ) && ( $^O eq "MSWin32" ) )
@@ -4265,7 +4265,7 @@ sub get_songlength
         $minute = "0$minute" if ( $minute < 10 );
         my $second = $audio_seconds % 60;
         $second = "0$second" if ( $second < 10 );
-        $time = "[$minute:$second]";
+        $time = "$minute:$second";
         print "Time is $time\n" if $debug;
     }
     elsif ( ( $file =~ /\.m4a/i ) || ( $file =~ /\.mp4/i ) )
@@ -4275,7 +4275,7 @@ sub get_songlength
 
         # AAC/MP4 File
         my $info = get_mp4info($file);
-        $time = "[$info->{TIME}]";
+        $time = "$info->{TIME}";
         print "Time is $time\n" if $debug;
     }
     elsif ( ( $file =~ /\.m3u$/i ) || ( $file =~ /\.pls$/i ) )
@@ -4284,7 +4284,7 @@ sub get_songlength
         print "It's a playlist\n" if $debug;
 
         #It's a playlist
-        $time = "[PLAYLIST]";
+        $time = "PLAYLIST";
     }
     else
     {
@@ -4292,7 +4292,7 @@ sub get_songlength
         print "It's a nonsupported file type\n" if $debug;
 
         # Unsupported file type
-        $time = "[??:??]";
+        $time = "??:??";
     }
     return ($time);
 }
@@ -4404,7 +4404,7 @@ sub do_search
         $string = $string . ") - \"$row_hashref->{title}\"";
         $string = $string . " by $row_hashref->{artist}"
           if ( $row_hashref->{artist} );
-        $string = $string . " $row_hashref->{time}";
+        $string = $string . " [$row_hashref->{time}]";
         $string = $string . " ($row_hashref->{publisher})"
           if ( $config{'show_publisher'} == 1 );
         print "Adding ID $row_hashref->{id} and string $string\n" if $debug;
@@ -4663,7 +4663,7 @@ sub compare_online
                 $string = $string . ") - \"$row_hashref->{title}\"";
                 $string = $string . " by $row_hashref->{artist}"
                   if ( $row_hashref->{artist} );
-                $string = $string . " $row_hashref->{time}";
+                $string = $string . " [$row_hashref->{time}]";
                 $string = $string . " ($row_hashref->{publisher})"
                   if ( $config{'show_publisher'} == 1 );
                 print "Adding ID $row_hashref->{id} and string $string\n"
@@ -6397,6 +6397,22 @@ unless ( $dbh->do("SELECT md5 FROM mrvoice LIMIT 1") )
     $dbh->do("DROP TABLE categories")                           or die;
     $dbh->do("ALTER TABLE categories_bak RENAME TO categories") or die;
     print "2.1 schema upgrade complete\n" if $debug;
+}
+
+# Check for 2.2 upgrade
+my $sth22 = $dbh->prepare("SELECT id,time FROM mrvoice ORDER BY id ASC") or die;
+$sth22->execute;
+my $rows = $sth22->fetchall_arrayref( {} );
+if ( $rows->[0]{time} =~ /^\[/ )
+{
+    foreach my $timerow (@$rows)
+    {
+        if ( $timerow->{time} =~ /^\[(.*)\]$/ )
+        {
+            my $sth = $dbh->prepare("UPDATE mrvoice SET time=? WHERE id=?");
+            $sth->execute( $1, $timerow->{id} );
+        }
+    }
 }
 
 if ( ( $config{check_version} == 1 ) && ( $config{enable_online} ) )
