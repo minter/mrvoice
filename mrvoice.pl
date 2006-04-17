@@ -2811,6 +2811,14 @@ sub edit_preferences
         -width        => 30,
         -textvariable => \$config{'online_key'}
     )->pack( -side => 'right' );
+    my $urlframe = $online_page->Frame()->pack( -fill => 'x' );
+    $urlframe->Label( -text => "Mr. Voice Online URL" )
+      ->pack( -side => 'left' );
+    my $urlentry = $urlframe->Entry(
+        -background   => 'white',
+        -width        => 30,
+        -textvariable => \$config{'xmlrpc_url'}
+    )->pack( -side => 'right' );
 
     my $mp3frame = $other_page->Frame()->pack( -fill => 'x' );
     $mp3frame->Label( -text => "MP3 Player" )->pack( -side => 'left' );
@@ -3497,7 +3505,8 @@ sub import_bundle
     {
         unless ( get_category( $cat_ref->{code} ) )
         {
-            print "Adding category $cat_ref->{code}, $cat_ref->{description}\n" if $debug;
+            print "Adding category $cat_ref->{code}, $cat_ref->{description}\n"
+              if $debug;
             my $sth = $dbh->prepare("INSERT INTO categories VALUES (?, ?)")
               or die;
             $sth->execute( $cat_ref->{code}, $cat_ref->{description} ) or die;
