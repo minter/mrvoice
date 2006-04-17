@@ -1,5 +1,6 @@
 Mon  Apr 17 2006	H. Wade Minter (minter@lunenburg.org)
      * Add Preferences UI for setting the XML-RPC URL.
+     * Set default XML-RPC URL if one does not exist.
 
 Thu  Apr 13 2006	H. Wade Minter (minter@lunenburg.org)
      * Fix debug statement that was displaying all the time.

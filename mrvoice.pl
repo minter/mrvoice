@@ -5158,7 +5158,8 @@ sub read_rcfile
         else
         {
             print "Performing default configuration\n" if $debug;
-            $config{filepath} =
+            $config{xmlrpc_url} = "http://www.mrvoice.net/backend/api";
+            $config{filepath}   =
               ( $^O eq "MSWin32" )
               ? catfile( "C:",          "mp3" )
               : catfile( get_homedir(), "mp3" );
@@ -5428,6 +5429,13 @@ $mw->Icon( -image => $icon );
 
 print "Reading rcfile\n" if $debug;
 read_rcfile();
+
+# XMLRPC URL new in 2.2
+unless ( $config{'xmlrpc_url'} )
+{
+    $config{'xmlrpc_url'} = "http://www.mrvoice.net/backend/api";
+    save_config( \%config );
+}
 print "Read rcfile\n" if $debug;
 
 print "Checking if db_file is set\n" if $debug;
