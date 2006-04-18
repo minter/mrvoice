@@ -19,6 +19,7 @@ use Tk::ProgressBar::Mac;
 use Tk::DirTree;
 use Tk::ItemStyle;
 use Tk::ErrorDialog;
+use Tk::JPEG;
 use File::Basename;
 use File::Copy;
 use File::Spec::Functions;
@@ -697,6 +698,69 @@ Wx84QPCgrl27fwDp/aPSgt+/Bi4IHiwYQ+ELFSuGAAA7
 EOD
     return ($binary_data);
 }    # END soundicon_gif...
+
+sub egg_data {
+	# THIS FUNCTION RETURNS A BASE64 ENCODED
+	# REPRESENTATION OF THE ABOVE FILE.
+	# SUITABLE FOR USE BY THE -data PROPERTY.
+	# OF A Perl/Tk PHOTO.
+	my $binary_data = <<EOD;
+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
+EOD
+	return($binary_data);
+	} # END 
+
 
 # This function is redefined due to evilness that keeps the focus on
 # the dragged token.  Thanks to Slaven Rezic <slaven.rezic@berlin.de>
@@ -3301,12 +3365,19 @@ sub show_about
         -buttons    => ["OK"],
         -background => 'white'
     );
-    my $logo_photo = $mw->Photo( -data => mrvoice_logo_gif() );
+    my $logo_photo = $mw->Photo( -data => mrvoice_logo_gif(), -height => 133 );
+    my $egg_photo = $mw->Photo(-data => egg_data(), -format => 'jpeg', -height => 133 );
     $box->Icon( -image => $icon );
     $box->add(
-        "Label",
+        "Checkbutton",
         -image      => $logo_photo,
-        -background => 'white'
+        -selectimage => $egg_photo,
+        -indicatoron => 0,
+        -height => "133px",
+        -background => 'white',
+        -activebackground => 'white',
+        -selectcolor => 'white',
+        -justify => 'center'
     )->pack();
     $box->add(
         "Label",
