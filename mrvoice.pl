@@ -699,12 +699,14 @@ EOD
     return ($binary_data);
 }    # END soundicon_gif...
 
-sub egg_data {
-	# THIS FUNCTION RETURNS A BASE64 ENCODED
-	# REPRESENTATION OF THE ABOVE FILE.
-	# SUITABLE FOR USE BY THE -data PROPERTY.
-	# OF A Perl/Tk PHOTO.
-	my $binary_data = <<EOD;
+sub egg_data
+{
+
+    # THIS FUNCTION RETURNS A BASE64 ENCODED
+    # REPRESENTATION OF THE ABOVE FILE.
+    # SUITABLE FOR USE BY THE -data PROPERTY.
+    # OF A Perl/Tk PHOTO.
+    my $binary_data = <<EOD;
 /9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAsICAoIBwsKCQoNDAsNERwSEQ8PESIZGhQcKSQrKigk
 JyctMkA3LTA9MCcnOEw5PUNFSElIKzZPVU5GVEBHSEX/wAALCACFAGQBAREA/8QAHwAAAQUBAQEB
 AQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1Fh
@@ -758,9 +760,8 @@ ONerMegro/Ek0Oi6fH4XsXVzC/m6jOv/AC2uP7g/2U6fXtkVzFOxmkIwRXTeCwNSvLrw9Pza6nCz
 Z7xSxqXRx+RBHGQa5kjBoFTW87wyAKeGOCK0tzD+L9BVC6ndnMWcKBz71X7UY611tgo8MeDP+Eit
 MPqV9MbOGVh/x6rg7mX/AGiBjPGPzzyH459z3or/2Q==
 EOD
-	return($binary_data);
-	} # END 
-
+    return ($binary_data);
+}    # END
 
 # This function is redefined due to evilness that keeps the focus on
 # the dragged token.  Thanks to Slaven Rezic <slaven.rezic@berlin.de>
@@ -3366,18 +3367,19 @@ sub show_about
         -background => 'white'
     );
     my $logo_photo = $mw->Photo( -data => mrvoice_logo_gif(), -height => 133 );
-    my $egg_photo = $mw->Photo(-data => egg_data(), -format => 'jpeg', -height => 133 );
+    my $egg_photo =
+      $mw->Photo( -data => egg_data(), -format => 'jpeg', -height => 133 );
     $box->Icon( -image => $icon );
     $box->add(
         "Checkbutton",
-        -image      => $logo_photo,
-        -selectimage => $egg_photo,
-        -indicatoron => 0,
-        -height => "133px",
-        -background => 'white',
+        -image            => $logo_photo,
+        -selectimage      => $egg_photo,
+        -indicatoron      => 0,
+        -height           => "133px",
+        -background       => 'white',
         -activebackground => 'white',
-        -selectcolor => 'white',
-        -justify => 'center'
+        -selectcolor      => 'white',
+        -justify          => 'center'
     )->pack();
     $box->add(
         "Label",
