@@ -5325,7 +5325,7 @@ sub Hotkey_Drop
     my $time     = get_info_from_id($id)->{time};
     $fkeys{$fkey_var}->{id}       = $id;
     $fkeys{$fkey_var}->{filename} = $filename;
-    $fkeys{$fkey_var}->{title}    = "$title $time";
+    $fkeys{$fkey_var}->{title}    = "$title [$time]";
 }
 
 sub Tank_Drop
