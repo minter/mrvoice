@@ -19,6 +19,7 @@ use Tk::ProgressBar::Mac;
 use Tk::DirTree;
 use Tk::ItemStyle;
 use Tk::ErrorDialog;
+use Tk::JPEG;
 use File::Basename;
 use File::Copy;
 use File::Spec::Functions;
@@ -38,6 +39,7 @@ use XMLRPC::Lite;
 use Digest::MD5 qw(md5_hex);
 use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
 use XML::Simple;
+use Spreadsheet::WriteExcel::Simple;
 
 use subs
   qw/filemenu_items hotkeysmenu_items categoriesmenu_items songsmenu_items advancedmenu_items helpmenu_items/;
@@ -92,7 +94,6 @@ our $artist;                    # The "Artist" search entry field
 our $anyfield;                  # The "Any Field" search entry field
 our $cattext;                   # The "Extra Info" search entry field
 our $authenticated = 0;         # Has the user provided the proper password?
-our $xmlrpc_url = 'http://www.mrvoice.net/online/xmlrpc/';
 ##########
 
 # Allow searches of all music publishers by default.
@@ -128,6 +129,8 @@ our $mp3types = [
     [ 'Playlists',    [ '*.m3u', '*.M3U', '*.pls', '*.PLS' ] ],
     [ 'All Files', '*' ],
 ];
+
+our $zipfiletypes = [ [ 'ZIP Files', '.zip' ], [ 'All Files', '*' ], ];
 
 if ( $^O eq "MSWin32" )
 {
@@ -256,7 +259,7 @@ our $altv = "PriceIsRightTheme.mp3";
 
 #####
 
-my $version = "2.1.2";    # Program version
+my $version = "2.2";    # Program version
 $version .= "CWX";
 our $status = "Welcome to Mr. Voice version $version";
 
@@ -705,6 +708,70 @@ EOD
     return ($binary_data);
 }    # END soundicon_gif...
 
+sub egg_data
+{
+
+    # THIS FUNCTION RETURNS A BASE64 ENCODED
+    # REPRESENTATION OF THE ABOVE FILE.
+    # SUITABLE FOR USE BY THE -data PROPERTY.
+    # OF A Perl/Tk PHOTO.
+    my $binary_data = <<EOD;
+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
+EOD
+    return ($binary_data);
+}    # END
+
 # This function is redefined due to evilness that keeps the focus on
 # the dragged token.  Thanks to Slaven Rezic <slaven.rezic@berlin.de>
 # The extra brackets are suggested by the debugging code
@@ -788,22 +855,14 @@ sub check_version
 {
     return if ( $config{last_update_check} > ( time() - 604800 ) );
     my $xmlrpc;
-    unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
+    unless ( $xmlrpc = XMLRPC::Lite->proxy( $config{xmlrpc_url} ) )
     {
         $status = "Could not initialize XMLRPC";
         return;
     }
 
     my $search_call;
-    eval {
-        $search_call = $xmlrpc->call(
-            'check_version',
-            {
-                os      => $^O,
-                version => $version
-            }
-        );
-    };
+    eval { $search_call = $xmlrpc->call( 'check_version', $^O, $version ); };
 
     if ($@)
     {
@@ -820,7 +879,7 @@ sub check_version
         return;
     }
 
-    if ( $result->{needupgrade} == 1 )
+    if ( $result->{needsupgrade} )
     {
         infobox( $mw, "A Newer Version of Mr. Voice is Available",
             $result->{message} );
@@ -828,6 +887,69 @@ sub check_version
 
     $config{last_update_check} = time();
     save_config( \%config );
+
+}
+
+sub startcheck_player
+{
+    print "Starting MP3 Player\n" if $debug;
+    if ( ( !-x $config{mp3player} ) && ( $^O ne "darwin" ) )
+    {
+        print "Could not execute MP3 player $config{mp3player}\n" if $debug;
+        infobox(
+            $mw,
+            "Warning - MP3 Player Not Found",
+            "Warning - Could not execute your defined MP3 player:\n\n$config{mp3player}\n\nYou may need to select the proper file in the preferences.",
+            "warning"
+        );
+    }
+    else
+    {
+        if ( "$^O" eq "MSWin32" )
+        {
+
+            # Start the MP3 player on a Windows system
+            my $object;
+            print "Creating Win32::Process for $config{mp3player}\n"
+              if $debug;
+            Win32::Process::Create( $object, $config{mp3player}, '', 1,
+                NORMAL_PRIORITY_CLASS(), "." );
+            $mp3_pid = $object->GetProcessID();
+            print "Got Win32::Process id $mp3_pid\n" if $debug;
+            sleep(1);
+        }
+        elsif ( $^O eq "darwin" )
+        {
+            return
+              if (
+                RunAppleScript(
+                    qq(tell application "System Events" to (creator type of processes) contains "Audn")
+                ) eq "true"
+              );
+            print "Starting AppleScript\n" if $debug;
+            RunAppleScript(qq( tell application "Audion 3" to activate))
+              or infobox(
+                $mw,
+                "Audion Error",
+                "AppleScript could not find Audion.  You will probably want to download the app and put it in the Applications folder.  Otherwise you will not be able to, in a word, 'play' any music"
+              );
+            print "Finished AppleScript\n" if $debug;
+        }
+        else
+        {
+
+            # Start the MP3 player on a Unix system using fork/exec
+            print "Forking to exec $config{mp3player}\n" if $debug;
+            $mp3_pid = fork();
+            print "Got PID $mp3_pid\n" if $debug;
+            if ( $mp3_pid == 0 )
+            {
+
+                # We're the child of the fork
+                exec("$config{mp3player}");
+            }
+        }
+    }
 
 }
 
@@ -884,7 +1006,7 @@ sub bind_hotkeys
             sub {
                 my $req =
                   HTTP::Request->new( GET =>
-                      "http://localhost:4800/fadeoutandstop?p=$config{'httpq_pw'}"
+                      "http://localhost:4800/fadeoutandstop?p=$config{httpq_pw}"
                   );
                 $agent->request($req);
                 $status = "Playing Fade-Stopped";
@@ -899,7 +1021,7 @@ sub open_tank
 
     # Opens a saved holding tank file, overwriting the current contents
     # UGLY HACK
-    my $initialdir = $config{'savedir'};
+    my $initialdir = $config{savedir};
     if ( $^O eq "MSWin32" )
     {
         $initialdir =~ s#/#\\#;
@@ -950,7 +1072,7 @@ sub open_tank
                 $string = $string . ") - \"$tank_ref->{title}\"";
                 $string = $string . " by $tank_ref->{artist}"
                   if ( $tank_ref->{artist} );
-                $string = $string . " $tank_ref->{time}";
+                $string = $string . " [$tank_ref->{time}]";
                 print "Built string $string, adding to tankbox\n" if $debug;
 
                 $tankbox->add( $id, -data => $id, -text => $string );
@@ -987,7 +1109,7 @@ sub save_tank
     }
 
     # UGLY HACK
-    my $initialdir = $config{'savedir'};
+    my $initialdir = $config{savedir};
     if ( $^O eq "MSWin32" )
     {
         $initialdir =~ s#/#\\#;
@@ -1075,7 +1197,7 @@ sub open_file
     print "Got selectedfile $selectedfile\n" if $debug;
 
     # UGLY HACK
-    my $initialdir = $config{'savedir'};
+    my $initialdir = $config{savedir};
     if ( $^O eq "MSWin32" )
     {
         $initialdir =~ s#/#\\#;
@@ -1158,7 +1280,7 @@ sub save_file
     # Finally, we add this file to our dynamic documents menu.
 
     # UGLY HACK
-    my $initialdir = $config{'savedir'};
+    my $initialdir = $config{savedir};
     if ( $^O eq "MSWin32" )
     {
         $initialdir =~ s#/#\\#;
@@ -1218,6 +1340,92 @@ sub save_file
     {
         $status = "File save cancelled.";
     }
+}
+
+sub export_songlist
+{
+    my $format = "txt";
+    print "Exporting song list to text file\n" if $debug;
+    my $filename = catfile( get_homedir(), "mrvoice" );
+    my $exportbox = $mw->DialogBox(
+        -title   => "Choose song export format",
+        -buttons => [ "Continue", "Cancel" ]
+    );
+    $exportbox->Icon( -image => $icon );
+    my $exportbox_frame = $exportbox->add("Frame")->pack( -fill => 'x' );
+
+    $exportbox_frame->Label( -text => "Choose the format to export to:" )
+      ->pack( -side => 'top' );
+    $exportbox_frame->Radiobutton(
+        -text     => 'ASCII Text',
+        -variable => \$format,
+        -value    => 'txt'
+    )->pack( -side => 'top' );
+    $exportbox_frame->Radiobutton(
+        -text     => 'Microsoft Excel',
+        -variable => \$format,
+        -value    => 'xls'
+    )->pack( -side => 'top' );
+
+    my $response = $exportbox->Show;
+
+    if ( $response eq "Cancel" )
+    {
+        $status = "Export Cancelled";
+        return;
+    }
+
+    my $ss;
+    my $db_fh;
+    if ( $format eq "txt" )
+    {
+        open( $db_fh, ">", "$filename.$format" )
+          or ( $status = "Couldn't open $filename.$format" && return );
+    }
+    else
+    {
+        $ss = Spreadsheet::WriteExcel::Simple->new;
+        my @headings = qw/Id Category Info Title Artist Time Filename/;
+        $ss->write_bold_row( \@headings );
+    }
+
+    my $sth =
+      $dbh->prepare(
+        "SELECT * FROM mrvoice,categories WHERE mrvoice.category = categories.code ORDER BY mrvoice.category,mrvoice.info,mrvoice.title,mrvoice.artist"
+      );
+    $sth->execute;
+    while ( my $row = $sth->fetchrow_hashref )
+    {
+        if ( $format eq "txt" )
+        {
+            my $string = "$row->{id}:($row->{description}";
+            $string .= $row->{info} ? " - $row->{info}) - " : ") - ";
+
+            $string .=
+              $row->{artist}
+              ? "\"$row->{title}\" by $row->{artist}"
+              : "\"$row->{title}\"";
+
+            $string .= " [$row->{time}] ($row->{filename})\n";
+
+            print $db_fh "$string";
+        }
+        else
+        {
+            $ss->write_row(
+                [
+                    $row->{id},     $row->{description},
+                    $row->{info},   $row->{title},
+                    $row->{artist}, $row->{time},
+                    $row->{filename}
+                ]
+            );
+        }
+
+    }
+    $ss->save("$filename.$format") if ( $format eq "xls" );
+
+    $status = "Exported song list to $filename.$format";
 }
 
 sub dump_database
@@ -1318,7 +1526,7 @@ sub dump_database
             infobox(
                 $mw,
                 "Database Dumped",
-                "The contents of your database have been dumped to the file: $dumpfile\n\nNote: In order to have a full backup, you must also back up the files from the directory: $config{'filepath'} as well as $rcfile and, optionally, the hotkeys from $config{'savedir'}"
+                "The contents of your database have been dumped to the file: $dumpfile\n\nNote: In order to have a full backup, you must also back up the files from the directory: $config{filepath} as well as $rcfile and, optionally, the hotkeys from $config{savedir}"
             );
             $status = "Database dumped to $dumpfile";
         }
@@ -1904,7 +2112,6 @@ sub add_category
         print "Got an Ok from addcategory box\n" if $debug;
         if ( ($addcat_code) && ($addcat_desc) )
         {
-            $addcat_desc = $dbh->quote($addcat_desc);
             $addcat_code =~ tr/a-z/A-Z/;
             print "Got addcat_desc $addcat_desc and addcat_code $addcat_code\n"
               if $debug;
@@ -2042,8 +2249,11 @@ sub edit_category
 
         if ( $editchoice ne "Cancel" )
         {
-            $query =
-              "UPDATE categories SET description='$new_desc' WHERE code='$code'";
+            $query = sprintf(
+                "UPDATE categories SET description=%s WHERE code=%s",
+                $dbh->quote($new_desc),
+                $dbh->quote($code)
+            );
             $sth = $dbh->prepare($query);
             print "Preparing edit query $query\n" if $debug;
             if ( !$sth->execute )
@@ -2174,15 +2384,14 @@ sub move_file
     $extension = lc($extension);
     print "Using extension $extension\n" if $debug;
 
-    if ( -e catfile( $config{'filepath'}, "$newfilename$extension" ) )
+    if ( -e catfile( $config{filepath}, "$newfilename$extension" ) )
     {
         print "The file $newfilename$extension already exists\n" if $debug;
         my $i = 0;
         while ( 1 == 1 )
         {
             print "Using extension $i\n" if $debug;
-            if ( !-e catfile( $config{'filepath'}, "$newfilename-$i$extension" )
-              )
+            if ( !-e catfile( $config{filepath}, "$newfilename-$i$extension" ) )
             {
                 $newfilename = "$newfilename-$i";
                 print "Found an unused filename at $newfilename\n" if $debug;
@@ -2422,14 +2631,14 @@ sub add_new_song
                 infobox( $mw, "File Error",
                     "You must provide the title for the song." );
             }
-            elsif ( !-w $config{'filepath'} )
+            elsif ( !-w $config{filepath} )
             {
                 print "The filepath ($config{filepath}) was not writable\n"
                   if $debug;
                 infobox(
                     $mw,
                     "File Error",
-                    "Could not write file to directory $config{'filepath'}\nPlease check the permissions"
+                    "Could not write file to directory $config{filepath}\nPlease check the permissions"
                 );
             }
             else
@@ -2603,7 +2812,7 @@ sub edit_preferences
             {
                 $filepath = Win32::GetShortPathName($filepath)
                   if ( $^O eq "MSWin32" );
-                $config{'filepath'} = $filepath;
+                $config{filepath} = $filepath;
             }
         }
     )->pack( -side => 'right' );
@@ -2611,7 +2820,7 @@ sub edit_preferences
     $mp3dir_frame->Entry(
         -background   => 'white',
         -width        => 30,
-        -textvariable => \$config{'filepath'}
+        -textvariable => \$config{filepath}
     )->pack( -side => 'right' );
 
     my $hotkeydir_frame = $filepath_page->Frame()->pack( -fill => 'x' );
@@ -2629,14 +2838,14 @@ sub edit_preferences
             {
                 $savedir = Win32::GetShortPathName($savedir)
                   if ( $^O eq "MSWin32" );
-                $config{'savedir'} = $savedir;
+                $config{savedir} = $savedir;
             }
         }
     )->pack( -side => 'right' );
     $hotkeydir_frame->Entry(
         -background   => 'white',
         -width        => 30,
-        -textvariable => \$config{'savedir'}
+        -textvariable => \$config{savedir}
     )->pack( -side => 'right' );
 
     my $display_page =
@@ -2682,13 +2891,21 @@ sub edit_preferences
         -width        => 30,
         -textvariable => \$config{'online_key'}
     )->pack( -side => 'right' );
+    my $urlframe = $online_page->Frame()->pack( -fill => 'x' );
+    $urlframe->Label( -text => "Mr. Voice Online URL" )
+      ->pack( -side => 'left' );
+    my $urlentry = $urlframe->Entry(
+        -background   => 'white',
+        -width        => 30,
+        -textvariable => \$config{'xmlrpc_url'}
+    )->pack( -side => 'right' );
 
     my $mp3frame = $other_page->Frame()->pack( -fill => 'x' );
     $mp3frame->Label( -text => "MP3 Player" )->pack( -side => 'left' );
     my $mp3button = $mp3frame->Button(
         -text    => "Choose",
         -command => sub {
-            $config{'mp3player'} = $mw->getOpenFile(
+            $config{mp3player} = $mw->getOpenFile(
                 -title      => 'Select MP3 player executable',
                 -initialdir => ( $^O eq "MSWin32" ) ? "C:/" : get_homedir()
             );
@@ -2698,7 +2915,7 @@ sub edit_preferences
     my $mp3entry = $mp3frame->Entry(
         -background   => 'white',
         -width        => 30,
-        -textvariable => \$config{'mp3player'}
+        -textvariable => \$config{mp3player}
     )->pack( -side => 'right' );
     $mp3entry->configure( -state => 'disabled' ) if ( $^O eq "darwin" );
 
@@ -2743,10 +2960,10 @@ sub edit_preferences
 
     if ( $result eq "Ok" )
     {
-        if (   ( !$config{'db_file'} )
-            || ( !$config{'filepath'} )
-            || ( !$config{'savedir'} )
-            || ( !$config{'mp3player'} ) )
+        if (   ( !$config{db_file} )
+            || ( !$config{filepath} )
+            || ( !$config{savedir} )
+            || ( !$config{mp3player} ) )
         {
             print
               "All fields not filled in: db_file is $config{db_file}, filepath is $config{filepath}, savedir is $config{savedir}, mp3player is $config{mp3player}\n"
@@ -2808,15 +3025,15 @@ sub edit_song
         print "Got song ID $id\n" if $debug;
         my $query =
           sprintf(
-            "SELECT title,artist,category,info,publisher from mrvoice where id = %s",
+            "SELECT title,artist,category,info,publisher,filename from mrvoice where id = %s",
             $dbh->quote($id) );
         my (
-            $edit_title, $edit_artist, $edit_category,
-            $edit_info,  $edit_publisher
+            $edit_title, $edit_artist,    $edit_category,
+            $edit_info,  $edit_publisher, $edit_filename
           )
           = $dbh->selectrow_array($query);
         print
-          "Got the following information about the song.  title: $edit_title, artist: $edit_artist, category: $edit_category, info: $edit_info, publisher: $edit_publisher\n"
+          "Got the following information about the song.  title: $edit_title, artist: $edit_artist, category: $edit_category, info: $edit_info, publisher: $edit_publisher, filename: $edit_filename\n"
           if $debug;
 
         my $box = $mw->DialogBox(
@@ -2829,6 +3046,9 @@ sub edit_song
             -text =>
               "You may use this form to modify information about a song that is already in the database\n"
         )->pack();
+        my $frame0 = $box->add("Frame")->pack( -fill => 'x' );
+        $frame0->Label( -text => "Filename" )->pack( -side     => 'left' );
+        $frame0->Label( -text => $edit_filename )->pack( -side => 'right' );
         my $frame1 = $box->add("Frame")->pack( -fill => 'x' );
         $frame1->Label( -text => "Song Title" )->pack( -side => 'left' );
         $frame1->Entry(
@@ -3019,7 +3239,7 @@ sub edit_song
             push( @querystring, $edit_info )      if $edit_info;
             push( @querystring, $edit_publisher ) if $edit_publisher;
             push( @querystring, $edit_category )  if $edit_category;
-            push( @querystring, "modtime=(SELECT strftime('%s','now'))" );
+            push( @querystring, "modtime=(SELECT strftime('%%s','now'))" );
 
             $string = join( ", ", @querystring );
 
@@ -3119,7 +3339,7 @@ sub delete_song
                 print "STH finished with error code: $sth->errstr\n" if $debug;
                 if ( $delete_file_cb == 1 )
                 {
-                    my $file = catfile( $config{'filepath'}, $filename );
+                    my $file = catfile( $config{filepath}, $filename );
                     print "Deleting file $file\n" if $debug;
                     if ( -e $file )
                     {
@@ -3161,12 +3381,20 @@ sub show_about
         -buttons    => ["OK"],
         -background => 'white'
     );
-    my $logo_photo = $mw->Photo( -data => mrvoice_logo_gif() );
+    my $logo_photo = $mw->Photo( -data => mrvoice_logo_gif(), -height => 133 );
+    my $egg_photo =
+      $mw->Photo( -data => egg_data(), -format => 'jpeg', -height => 133 );
     $box->Icon( -image => $icon );
     $box->add(
-        "Label",
-        -image      => $logo_photo,
-        -background => 'white'
+        "Checkbutton",
+        -image            => $logo_photo,
+        -selectimage      => $egg_photo,
+        -indicatoron      => 0,
+        -height           => "133px",
+        -background       => 'white',
+        -activebackground => 'white',
+        -selectcolor      => 'white',
+        -justify          => 'center'
     )->pack();
     $box->add(
         "Label",
@@ -3360,8 +3588,8 @@ sub import_bundle
         -command => sub {
             $filename = $box1->getOpenFile(
                 -title      => 'Choose the bundle file to add',
-                -filetypes  => [ [ 'Zip Files', '.zip' ] ],
-                -initialdir => ( $^O eq "MSWin32" ) ? "C:\\" : get_homedir()
+                -initialdir => ( $^O eq "MSWin32" ) ? "C:\\" : get_homedir(),
+                -filetypes  => $zipfiletypes,
             );
         }
     )->pack( -side => 'left' );
@@ -3417,7 +3645,8 @@ sub import_bundle
     {
         unless ( get_category( $cat_ref->{code} ) )
         {
-            print "Adding category $cat_ref->{code}, $cat_ref->{description}\n";
+            print "Adding category $cat_ref->{code}, $cat_ref->{description}\n"
+              if $debug;
             my $sth = $dbh->prepare("INSERT INTO categories VALUES (?, ?)")
               or die;
             $sth->execute( $cat_ref->{code}, $cat_ref->{description} ) or die;
@@ -3545,7 +3774,7 @@ sub launch_tank_playlist
     }
     else
     {
-        system("$config{'mp3player'} $filename");
+        system("$config{mp3player} $filename");
     }
 }
 
@@ -3714,7 +3943,7 @@ sub move_tank
     print "Re-adding $targettext in the proper location\n" if $debug;
 
     my $info = get_info_from_id($target);
-    if ( !-e catfile( $config{'filepath'}, $info->{filename} ) )
+    if ( !-e catfile( $config{filepath}, $info->{filename} ) )
     {
         print "This item is inavlid, so turn it red\n" if $debug;
         my $style = $tankbox->ItemStyle(
@@ -3872,9 +4101,8 @@ sub update_time
         $count++;
         my ( $id, $filename, $time, $md5 ) = @$table_row;
         next if ( !-r catfile( $config{filepath}, $filename ) );
-        my $newtime =
-          get_songlength( catfile( $config{'filepath'}, $filename ) );
-        my $newmd5 = get_md5( catfile( $config{filepath}, $filename ) );
+        my $newtime = get_songlength( catfile( $config{filepath}, $filename ) );
+        my $newmd5  = get_md5( catfile( $config{filepath},        $filename ) );
         if ( ( $newtime ne $time ) || ( $newmd5 ne $md5 ) )
         {
             print
@@ -3950,6 +4178,7 @@ sub validate_id
 
 sub stop_mp3
 {
+    startcheck_player();
     print "Stopping MP3\n" if $debug;
 
     my $widget = shift;
@@ -3964,7 +4193,7 @@ sub stop_mp3
     }
     else
     {
-        system("$config{'mp3player'} --stop");
+        system("$config{mp3player} --stop");
     }
     $status = "Playing Stopped";
 
@@ -3976,6 +4205,7 @@ sub stop_mp3
 sub play_mp3
 {
 
+    startcheck_player();
     print "Playing MP3\n" if $debug;
     my ( $statustitle, $statusartist, $filename );
     my $songstatusstring;
@@ -4035,7 +4265,7 @@ sub play_mp3
             $filename     = $id_ref->{filename};
             $statustitle  = $id_ref->{title};
             $statusartist = $id_ref->{artist};
-            if ( !-e catfile( $config{'filepath'}, $id_ref->{filename} ) )
+            if ( !-e catfile( $config{filepath}, $id_ref->{filename} ) )
             {
                 $status =
                   "Cannot play invalid entry - no file on disk to play!";
@@ -4055,7 +4285,7 @@ sub play_mp3
         }
         else
         {
-            system("$config{'mp3player'} $filename");
+            system("$config{mp3player} $filename");
         }
     }
     elsif ($filename)
@@ -4079,7 +4309,7 @@ sub play_mp3
         }
         print "Playing file $filename\n" if $debug;
         $status = "Playing $songstatusstring";
-        my $file = catfile( $config{'filepath'}, $filename );
+        my $file = catfile( $config{filepath}, $filename );
         if ( $^O eq "darwin" )
         {
             RunAppleScript(
@@ -4089,7 +4319,7 @@ sub play_mp3
         }
         else
         {
-            system("$config{'mp3player'} $file");
+            system("$config{mp3player} $file");
         }
     }
 }
@@ -4129,7 +4359,7 @@ sub get_songlength
         $minute = "0$minute" if ( $minute < 10 );
         my $second = $info->{SS};
         $second = "0$second" if ( $second < 10 );
-        $time = "[$minute:$second]";
+        $time = "$minute:$second";
         print "Got time $time\n" if $debug;
     }
     elsif ( $file =~ /\.wav$/i )
@@ -4148,11 +4378,11 @@ sub get_songlength
             $minute = "0$minute" if ( $minute < 10 );
             my $second = $audio_seconds % 60;
             $second = "0$second" if ( $second < 10 );
-            $time = "[$minute:$second]";
+            $time = "$minute:$second";
         }
         else
         {
-            $time = "[??:??]";
+            $time = "??:??";
         }
         print "Time is $time\n" if $debug;
     }
@@ -4169,7 +4399,7 @@ sub get_songlength
         $minute = "0$minute" if ( $minute < 10 );
         my $second = $audio_seconds % 60;
         $second = "0$second" if ( $second < 10 );
-        $time = "[$minute:$second]";
+        $time = "$minute:$second";
         print "Time is $time\n" if $debug;
     }
     elsif ( ( $file =~ /\.wma$/i ) && ( $^O eq "MSWin32" ) )
@@ -4185,7 +4415,7 @@ sub get_songlength
         $minute = "0$minute" if ( $minute < 10 );
         my $second = $audio_seconds % 60;
         $second = "0$second" if ( $second < 10 );
-        $time = "[$minute:$second]";
+        $time = "$minute:$second";
         print "Time is $time\n" if $debug;
     }
     elsif ( ( $file =~ /\.m4a/i ) || ( $file =~ /\.mp4/i ) )
@@ -4195,7 +4425,7 @@ sub get_songlength
 
         # AAC/MP4 File
         my $info = get_mp4info($file);
-        $time = "[$info->{TIME}]";
+        $time = "$info->{TIME}";
         print "Time is $time\n" if $debug;
     }
     elsif ( ( $file =~ /\.m3u$/i ) || ( $file =~ /\.pls$/i ) )
@@ -4204,7 +4434,7 @@ sub get_songlength
         print "It's a playlist\n" if $debug;
 
         #It's a playlist
-        $time = "[PLAYLIST]";
+        $time = "PLAYLIST";
     }
     else
     {
@@ -4212,7 +4442,7 @@ sub get_songlength
         print "It's a nonsupported file type\n" if $debug;
 
         # Unsupported file type
-        $time = "[??:??]";
+        $time = "??:??";
     }
     return ($time);
 }
@@ -4324,7 +4554,7 @@ sub do_search
         $string = $string . ") - \"$row_hashref->{title}\"";
         $string = $string . " by $row_hashref->{artist}"
           if ( $row_hashref->{artist} );
-        $string = $string . " $row_hashref->{time}";
+        $string = $string . " [$row_hashref->{time}]";
         $string = $string . " ($row_hashref->{publisher})"
           if ( $config{'show_publisher'} == 1 );
         print "Adding ID $row_hashref->{id} and string $string\n" if $debug;
@@ -4335,7 +4565,7 @@ sub do_search
         );
         $numrows++;
 
-        if ( !-e catfile( $config{'filepath'}, $row_hashref->{filename} ) )
+        if ( !-e catfile( $config{filepath}, $row_hashref->{filename} ) )
         {
             print "$row_hashref->{id} is invalid, turning it red\n" if $debug;
             my $style = $mainbox->ItemStyle(
@@ -4483,22 +4713,15 @@ sub search_online
     $listbox->delete('all');
     my ( $term, $category, $person, $online_status ) = @_;
     my $xmlrpc;
-    unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
+    unless ( $xmlrpc = XMLRPC::Lite->proxy( $config{xmlrpc_url} ) )
     {
         $status = "Could not initialize XMLRPC";
         return;
     }
 
-    my $search_call = $xmlrpc->call(
-        'search_songs',
-        {
-            online_key     => $config{online_key},
-            search_term    => $term,
-            category       => $category,
-            person         => $person,
-            show_publisher => $config{show_publisher},
-        }
-    );
+    my $search_call =
+      $xmlrpc->call( 'search_songs', $config{online_key}, $term, $category,
+        $person, $config{show_publisher} );
 
     my $result = $search_call->result;
 
@@ -4549,15 +4772,14 @@ sub compare_online
         $local_md5{ $row->{md5} } = $row;
     }
 
-    unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
+    unless ( $xmlrpc = XMLRPC::Lite->proxy( $config{xmlrpc_url} ) )
     {
         $status = "Could not initialize XMLRPC";
         return;
     }
 
     $onlinewin->Busy( -recurse => 1 );
-    my $md5_call =
-      $xmlrpc->call( 'search_songs', { online_key => $config{online_key}, } );
+    my $md5_call = $xmlrpc->call( 'search_songs', $config{online_key} );
 
     my $result = $md5_call->result;
 
@@ -4591,7 +4813,7 @@ sub compare_online
                 $string = $string . ") - \"$row_hashref->{title}\"";
                 $string = $string . " by $row_hashref->{artist}"
                   if ( $row_hashref->{artist} );
-                $string = $string . " $row_hashref->{time}";
+                $string = $string . " [$row_hashref->{time}]";
                 $string = $string . " ($row_hashref->{publisher})"
                   if ( $config{'show_publisher'} == 1 );
                 print "Adding ID $row_hashref->{id} and string $string\n"
@@ -4608,6 +4830,7 @@ sub compare_online
     }
     elsif ( $arg eq "show_remote" )
     {
+        my $remote_count;
         foreach my $remote (
             sort { $remote_md5{$a}->{string} cmp $remote_md5{$b}->{string} }
             keys %remote_md5
@@ -4615,6 +4838,7 @@ sub compare_online
         {
             unless ( exists $local_md5{$remote} )
             {
+                $remote_count++;
                 $box->add(
                     $remote_md5{$remote}->{id},
                     -data => $remote_md5{$remote}->{id},
@@ -4622,6 +4846,7 @@ sub compare_online
                 );
             }
         }
+        $status = "Search returned $remote_count online songs";
     }
     $onlinewin->Unbusy( -recurse => 1 );
 
@@ -4641,7 +4866,7 @@ sub online_download
     my $index = $selection[0];
     my $id    = $listbox->info( 'data', $index );
 
-    unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
+    unless ( $xmlrpc = XMLRPC::Lite->proxy( $config{xmlrpc_url} ) )
     {
         $status = "Could not initialize XMLRPC";
         return;
@@ -4649,14 +4874,8 @@ sub online_download
 
     my $toplevel = $listbox->toplevel;
     $toplevel->Busy();
-    my $download_call = $xmlrpc->call(
-        'download_song',
-        {
-            online_key => $config{online_key},
-            song_id    => $id,
-        }
-    );
-
+    my $download_call =
+      $xmlrpc->call( 'download_song', $config{online_key}, $id );
     my $result = $download_call->result;
     $toplevel->Unbusy();
 
@@ -4702,11 +4921,11 @@ sub online_search_window
 
     my $onlinebox;
     my $online_search_term;
-    my $category      = 'any';
-    my $person        = 'any';
+    my $category      = 0;
+    my $person        = 0;
     my $online_status = 'Mr. Voice Online';
     my $xmlrpc;
-    unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
+    unless ( $xmlrpc = XMLRPC::Lite->proxy( $config{xmlrpc_url} ) )
     {
         $status = "Could not initialize XMLRPC";
         return;
@@ -4754,12 +4973,11 @@ sub online_search_window
         )->pack( -side => 'left' );
 
         my $category_call =
-          $xmlrpc->call( 'get_categories',
-            { online_key => $config{online_key}, } );
+          $xmlrpc->call( 'get_categories', $config{online_key} );
 
-        my $cat_hashref = $category_call->result;
+        my $cat_arrayref = $category_call->result;
 
-        if ( !$cat_hashref )
+        if ( !$cat_arrayref )
         {
             chomp( my $error = $category_call->faultstring );
             infobox( $mw, "XMLRPC search error", $error );
@@ -4767,24 +4985,19 @@ sub online_search_window
             return;
         }
 
-        foreach my $key (
-            sort {
-                $cat_hashref->{$a}{description}
-                  cmp $cat_hashref->{$b}{description}
-            } keys %$cat_hashref
-          )
+        foreach my $cat (@$cat_arrayref)
         {
             $catmenu->radiobutton(
-                -label    => $cat_hashref->{$key}{description},
-                -value    => $key,
+                -label    => $cat->{description},
+                -value    => $cat->{id},
                 -variable => \$category,
                 -command  => sub {
-                    $catmenu->configure(
-                        -text => $cat_hashref->{$category}{description} );
+                    $catmenu->configure( -text => $cat->{description} );
                 },
             );
+            $catmenu->configure( -text => $cat->{description} )
+              if $cat->{id} == $category;
         }
-        $catmenu->configure( -text => $cat_hashref->{$category}{description} );
 
         my $personframe =
           $onlinewin->Frame()->pack( -fill => 'x', -side => 'top' );
@@ -4798,12 +5011,11 @@ sub online_search_window
             -indicatoron => 1
         )->pack( -side => 'left' );
 
-        my $person_call =
-          $xmlrpc->call( 'get_people', { online_key => $config{online_key}, } );
+        my $person_call = $xmlrpc->call( 'get_people', $config{online_key} );
 
-        my $person_hashref = $person_call->result;
+        my $person_arrayref = $person_call->result;
 
-        if ( !$person_hashref )
+        if ( !$person_arrayref )
         {
             chomp( my $error = $person_call->faultstring );
             infobox( $mw, "XMLRPC search error", $error );
@@ -4811,22 +5023,19 @@ sub online_search_window
             return;
         }
 
-        foreach my $key (
-            sort { $person_hashref->{$a}{name} cmp $person_hashref->{$b}{name} }
-            keys %$person_hashref
-          )
+        foreach my $user (@$person_arrayref)
         {
             $personmenu->radiobutton(
-                -label    => $person_hashref->{$key}{name},
-                -value    => $key,
+                -label    => $user->{name},
+                -value    => $user->{id},
                 -variable => \$person,
                 -command  => sub {
-                    $personmenu->configure(
-                        -text => $person_hashref->{$person}{name} );
+                    $personmenu->configure( -text => $user->{name} );
                 },
             );
+            $personmenu->configure( -text => $user->{name} )
+              if $user->{id} == $person;
         }
-        $personmenu->configure( -text => $person_hashref->{$person}{name} );
 
         my $searchframe =
           $onlinewin->Frame()->pack( -fill => 'x', -side => 'top' );
@@ -4889,12 +5098,20 @@ sub online_search_window
                 search_online( $onlinebox, $online_search_term, $category,
                     $person, \$online_status );
                 $online_search_term = undef;
-                $category           = "any";
-                $catmenu->configure(
-                    -text => $cat_hashref->{$category}{description} );
-                $person = "any";
-                $personmenu->configure(
-                    -text => $person_hashref->{$person}{name} );
+                $category           = 0;
+
+                foreach my $cat (@$cat_arrayref)
+                {
+                    $catmenu->configure( -text => $cat->{description} )
+                      if $cat->{id} == $category;
+                }
+                $person = 0;
+
+                foreach my $peep (@$person_arrayref)
+                {
+                    $personmenu->configure( -text => $peep->{name} )
+                      if $peep->{id} == $person;
+                }
             }
         )->pack( -side => 'top' );
         $onlinebox->bind( "<Double-Button-1>",
@@ -4906,11 +5123,13 @@ sub online_search_window
                     $person, \$online_status );
                 $online_search_term = undef;
                 $category           = "any";
-                $catmenu->configure(
-                    -text => $cat_hashref->{$category}{description} );
+
+         #                $catmenu->configure(
+         #                    -text => $cat_hashref->{$category}{description} );
                 $person = "any";
-                $personmenu->configure(
-                    -text => $person_hashref->{$person}{name} );
+
+               #                $personmenu->configure(
+               #                    -text => $person_hashref->{$person}{name} );
             }
         );
 
@@ -4942,7 +5161,7 @@ sub upload_xmlrpc
     my $id    = $mainbox->info( 'data', $index );
     my $info  = get_info_from_id($id);
 
-    unless ( $xmlrpc = XMLRPC::Lite->proxy($xmlrpc_url) )
+    unless ( $xmlrpc = XMLRPC::Lite->proxy( $config{xmlrpc_url} ) )
     {
         $status = "Could not initialize XMLRPC";
         return;
@@ -4966,18 +5185,9 @@ sub upload_xmlrpc
 
     my $md5 = md5_hex($bindata);
 
-    my $check_call = $xmlrpc->call(
-        'check_upload',
-        {
-            online_key => $config{online_key},
-            title      => $info->{title},
-            artist     => $info->{artist},
-            info       => $info->{info},
-            filename   => $info->{filename},
-            md5sum     => $md5,
-            publisher  => $info->{publisher},
-        }
-    );
+    my $check_call =
+      $xmlrpc->call( 'check_upload', $config{online_key}, $info->{title},
+        $info->{filename}, $md5 );
 
     if ( !$check_call->result )
     {
@@ -4989,18 +5199,9 @@ sub upload_xmlrpc
 
     my $starttime = time();
     $mw->Busy( -recurse => 1 );
-    my $call = $xmlrpc->call(
-        'upload_song',
-        {
-            online_key => $config{online_key},
-            title      => $info->{title},
-            artist     => $info->{artist},
-            info       => $info->{info},
-            filename   => $info->{filename},
-            md5sum     => $md5,
-            file       => $bindata
-        }
-    );
+    my $call =
+      $xmlrpc->call( 'upload_song', $config{online_key}, $info->{title},
+        $info->{artist}, $info->{info}, $info->{filename}, $md5, $bindata );
     $mw->Unbusy( -recurse => 1 );
     my $endtime = time();
     my $elapsed = $endtime - $starttime;
@@ -5107,7 +5308,8 @@ sub read_rcfile
         else
         {
             print "Performing default configuration\n" if $debug;
-            $config{filepath} =
+            $config{xmlrpc_url} = "http://www.mrvoice.net/backend/api";
+            $config{filepath}   =
               ( $^O eq "MSWin32" )
               ? catfile( "C:",          "mp3" )
               : catfile( get_homedir(), "mp3" );
@@ -5213,13 +5415,13 @@ sub read_rcfile
     }
     if ( $^O eq "MSWin32" )
     {
-        $config{'filepath'}  = Win32::GetShortPathName( $config{'filepath'} );
-        $config{'savedir'}   = Win32::GetShortPathName( $config{'savedir'} );
-        $config{'mp3player'} = Win32::GetShortPathName( $config{'mp3player'} );
+        $config{filepath}  = Win32::GetShortPathName( $config{filepath} );
+        $config{savedir}   = Win32::GetShortPathName( $config{savedir} );
+        $config{mp3player} = Win32::GetShortPathName( $config{mp3player} );
     }
     else
     {
-        $config{'savedir'} =~ s#(.*)/$#$1#;
+        $config{savedir} =~ s#(.*)/$#$1#;
     }
 
 }
@@ -5270,9 +5472,10 @@ sub Hotkey_Drop
     print "Got ID $id\n" if $debug;
     my $filename = get_info_from_id($id)->{filename};
     my $title    = get_info_from_id($id)->{fulltitle};
+    my $time     = get_info_from_id($id)->{time};
     $fkeys{$fkey_var}->{id}       = $id;
     $fkeys{$fkey_var}->{filename} = $filename;
-    $fkeys{$fkey_var}->{title}    = $title;
+    $fkeys{$fkey_var}->{title}    = "$title [$time]";
 }
 
 sub Tank_Drop
@@ -5291,7 +5494,7 @@ sub Tank_Drop
         next if $current{$id};
         $tankbox->add( $id, -data => $id, -text => $text );
         my $info = get_info_from_id($id);
-        if ( !-e catfile( $config{'filepath'}, $info->{filename} ) )
+        if ( !-e catfile( $config{filepath}, $info->{filename} ) )
         {
             my $style = $tankbox->ItemStyle(
                 'text',
@@ -5376,6 +5579,13 @@ $mw->Icon( -image => $icon );
 
 print "Reading rcfile\n" if $debug;
 read_rcfile();
+
+# XMLRPC URL new in 2.2
+unless ( $config{'xmlrpc_url'} )
+{
+    $config{'xmlrpc_url'} = "http://www.mrvoice.net/backend/api";
+    save_config( \%config );
+}
 print "Read rcfile\n" if $debug;
 
 print "Checking if db_file is set\n" if $debug;
@@ -5498,9 +5708,9 @@ if ( !( $dbh = DBI->connect( "dbi:SQLite:dbname=$config{db_file}", "", "" ) ) )
 }
 
 print "Checking if filepath is writable\n" if $debug;
-if ( !-W $config{'filepath'} )
+if ( !-W $config{filepath} )
 {
-    print "Could not write to MP3 directory $config{'filepath'}\n" if $debug;
+    print "Could not write to MP3 directory $config{filepath}\n" if $debug;
     my $box = $mw->DialogBox( -title => "Fatal Error", -buttons => ["Exit"] );
     $box->Icon( -image => $icon );
     $box->add( "Label", -text => "MP3 Directory unavailable" )->pack();
@@ -5516,7 +5726,7 @@ if ( !-W $config{'filepath'} )
         -text =>
           "After you set the preferences, Mr. Voice will exit. You will need to restart to test your changes."
     )->pack();
-    $box->add( "Label", -text => "Current MP3 Directory: $config{'filepath'}" )
+    $box->add( "Label", -text => "Current MP3 Directory: $config{filepath}" )
       ->pack();
     print "Showing 'could not write to MP3 directory' box\n" if $debug;
     my $result = $box->Show();
@@ -5535,7 +5745,7 @@ if ( !-W $config{'filepath'} )
 }
 
 print "Checking if savedir is writable\n" if $debug;
-if ( !-W $config{'savedir'} )
+if ( !-W $config{savedir} )
 {
     print "Could not write to hotkey directory $config{savedir}\n" if $debug;
     my $box = $mw->DialogBox( -title => "Warning", -buttons => ["Continue"] );
@@ -5549,8 +5759,8 @@ if ( !-W $config{'savedir'} )
         -text =>
           "While this will not impact the operation of Mr. Voice, you should probably fix it in the File->Preferences menu."
     )->pack();
-    $box->add( "Label",
-        -text => "Current Hotkey Directory: $config{'savedir'}" )->pack();
+    $box->add( "Label", -text => "Current Hotkey Directory: $config{savedir}" )
+      ->pack();
     print "Showing 'could not write to hotkey directory' box\n" if $debug;
     my $result = $box->Show();
     print "Showed 'could not write to hotkey directory' box\n" if $debug;
@@ -5559,57 +5769,7 @@ if ( !-W $config{'savedir'} )
 # We use the following statement to open the MP3 player asynchronously
 # when the Mr. Voice app starts.
 
-print "Starting MP3 Player\n" if $debug;
-if ( ( !-x $config{'mp3player'} ) && ( $^O ne "darwin" ) )
-{
-    print "Could not execute MP3 player $config{'mp3player'}\n" if $debug;
-    infobox(
-        $mw,
-        "Warning - MP3 Player Not Found",
-        "Warning - Could not execute your defined MP3 player:\n\n$config{'mp3player'}\n\nYou may need to select the proper file in the preferences.",
-        "warning"
-    );
-}
-else
-{
-    if ( "$^O" eq "MSWin32" )
-    {
-
-        # Start the MP3 player on a Windows system
-        my $object;
-        print "Creating Win32::Process for $config{'mp3player'}\n" if $debug;
-        Win32::Process::Create( $object, $config{'mp3player'}, '', 1,
-            NORMAL_PRIORITY_CLASS(), "." );
-        $mp3_pid = $object->GetProcessID();
-        print "Got Win32::Process id $mp3_pid\n" if $debug;
-        sleep(1);
-    }
-    elsif ( $^O eq "darwin" )
-    {
-        print "Starting AppleScript\n" if $debug;
-        RunAppleScript(qq( tell application "Audion 3" to activate))
-          or infobox(
-            $mw,
-            "Audion Error",
-            "AppleScript could not find Audion.  You will probably want to download the app and put it in the Applications folder.  Otherwise you will not be able to, in a word, 'play' any music"
-          );
-        print "Finished AppleScript\n" if $debug;
-    }
-    else
-    {
-
-        # Start the MP3 player on a Unix system using fork/exec
-        print "Forking to exec $config{'mp3player'}\n" if $debug;
-        $mp3_pid = fork();
-        print "Got PID $mp3_pid\n" if $debug;
-        if ( $mp3_pid == 0 )
-        {
-
-            # We're the child of the fork
-            exec("$config{'mp3player'}");
-        }
-    }
-}
+startcheck_player();
 
 # Menu bar
 # Using the new-style menubars from "Mastering Perl/Tk"
@@ -5685,6 +5845,7 @@ sub filemenu_items
             'Import Database Backup File',
             -command => \&import_database
         ],
+        [ 'command', 'Export Song List', -command => \&export_songlist ],
         '',
         [ 'command', 'Preferences',  -command => \&edit_preferences ],
         [ 'cascade', 'Recent Files', -tearoff => 0 ],
@@ -6362,10 +6523,10 @@ $mw->bind( "<Control-Key-p>", [ \&play_mp3, "Current" ] );
 print "Bound hotkeys\n" if $debug;
 
 # If the default hotkey file exists, load that up.
-if ( -r catfile( $config{'savedir'}, "default.mrv" ) )
+if ( -r catfile( $config{savedir}, "default.mrv" ) )
 {
     print "Loading default hotkey file default.mrv\n" if $debug;
-    open_file( $mw, catfile( $config{'savedir'}, "default.mrv" ) );
+    open_file( $mw, catfile( $config{savedir}, "default.mrv" ) );
     print "Loaded default hotkey file default.mrv\n" if $debug;
 }
 
@@ -6391,6 +6552,22 @@ unless ( $dbh->do("SELECT md5 FROM mrvoice LIMIT 1") )
     $dbh->do("DROP TABLE categories")                           or die;
     $dbh->do("ALTER TABLE categories_bak RENAME TO categories") or die;
     print "2.1 schema upgrade complete\n" if $debug;
+}
+
+# Check for 2.2 upgrade
+my $sth22 = $dbh->prepare("SELECT id,time FROM mrvoice ORDER BY id ASC") or die;
+$sth22->execute;
+my $rows = $sth22->fetchall_arrayref( {} );
+if ( $rows->[0]{time} =~ /^\[/ )
+{
+    foreach my $timerow (@$rows)
+    {
+        if ( $timerow->{time} =~ /^\[(.*)\]$/ )
+        {
+            my $sth = $dbh->prepare("UPDATE mrvoice SET time=? WHERE id=?");
+            $sth->execute( $1, $timerow->{id} );
+        }
+    }
 }
 
 if ( ( $config{check_version} == 1 ) && ( $config{enable_online} ) )

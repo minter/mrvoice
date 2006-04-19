@@ -1,3 +1,48 @@
+Wed  Apr 19 2006	H. Wade Minter (minter@lunenburg.org)
+     * Merged from trunk 984:1013
+
+Tue  Apr 18 2006	H. Wade Minter (minter@lunenburg.org)
+     * Tag 2.2
+
+Mon  Apr 17 2006	H. Wade Minter (minter@lunenburg.org)
+     * Add Preferences UI for setting the XML-RPC URL.
+     * Set default XML-RPC URL if one does not exist.
+     * Use the unbracketed time in the database - do brackets in the display.
+
+Thu  Apr 13 2006	H. Wade Minter (minter@lunenburg.org)
+     * Fix debug statement that was displaying all the time.
+
+Tue  Apr  4 2006	H. Wade Minter (minter@lunenburg.org)
+     * Get the XML-RPC URL from the config file.
+     * Move XML-RPC code to use the new Rails interface.
+     * Display song time next to the hotkey (Ted Hobgood)
+
+Thu  Oct  6 2005	H. Wade Minter (minter@lunenburg.org)
+     * Fixed a sprintf/%s bug in edit_songs.
+
+Sat  Oct  1 2005	H. Wade Minter (minter@lunenburg.org)
+     * Fix bug with double-quoting of $addcat_desc in category addition.
+     * Standardize quoting in edit_category function.
+
+Sun  Sep 24 2005	H. Wade Minter (minter@lunenburg.org)
+     * Remove spurious quoting in hashes when possible.
+     * Move the MP3 Player start code into a new subroutine, so that it will
+       be easier to verify that the player is running before starting to play.
+       Suggested by Kareem in Austin.
+     * Have the Mac code perform said MP3 Player checks.
+
+Sat  Sep 24 2005	H. Wade Minter (minter@lunenburg.org)
+     * Display the filename in the "Edit Song" menu.  Suggested by Bill
+       in Portland.
+
+Thu  Sep 22 2005	H. Wade Minter (minter@lunenburg.org)
+     * Add a File menu option to export the song list to a file.
+       Suggested by Ted in Chapel Hill.
+
+Mon  Sep 12 2005	H. Wade Minter (minter@lunenburg.org)
+     * Fixed a bug where the file browser would not pop up on Windows when
+       going to add a bundle.  Reported by Lanny in Dallas.
+
 Thu  Sep  1 2005	H. Wade Minter (minter@lunenburg.org)
      * Fixed another bug where empty artists/info was showing up as the
        string "NULL".

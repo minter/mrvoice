@@ -4,6 +4,11 @@ Things I'm currently working on:
 * Allow users to specify the filename in a Bundle export.
 * Multi-file upload and download in Mr. Voice Online.
 * More predefined searched in Mr. Voice Online.
+* Use Smart::Comments for debugging.
+* Add menu options for copying songs to the holding tank.
+* Check whether or not the MP3 player is running before playing.
+* Rework table structure to use a "join table" between songs and categories,
+  thus allowing songs to live in multiple categories.
 * General code cleanup and pretty-fication.
 
 --

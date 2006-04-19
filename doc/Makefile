@@ -2,9 +2,9 @@
 
 # Define Variables
 export BOOK := mrvoice
-export HTML_STYLESHEET := /usr/local/share/sgml/docbook/dsssl/modular/html/docbook.dsl
-export PDF_STYLESHEET := /usr/local/share/sgml/docbook/dsssl/modular/print/docbook.dsl
-export CHAPTERS := ../sgml/mrvoice.sgml ../sgml/installing-mrvoice.sgml ../sgml/using-mrvoice.sgml ../sgml/config-mrvoice.sgml
+export HTML_STYLESHEET := /usr/share/sgml/docbook/dsssl-stylesheets-1.79/html/docbook.dsl
+export PDF_STYLESHEET := /usr/share/sgml/docbook/dsssl-stylesheets-1.79/print/docbook.dsl
+export CHAPTERS := ../sgml/mrvoice.sgml ../sgml/installing-mrvoice.sgml ../sgml/using-mrvoice.sgml ../sgml/config-mrvoice.sgml ../sgml/mrvoice-online.sgml
 
 all:	html pdf
 
