@@ -1,0 +1,332 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Installation Steps</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Mr. Voice 2.2 Installation and Reference Manual"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Installing Mr. Voice"
+HREF="c151.html"><LINK
+REL="PREVIOUS"
+TITLE="Installing Mr. Voice"
+HREF="c151.html"><LINK
+REL="NEXT"
+TITLE="Configuring Mr. Voice"
+HREF="c293.html"></HEAD
+><BODY
+CLASS="SECT1"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Mr. Voice 2.2 Installation and Reference Manual</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="c151.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 1. Installing Mr. Voice</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="c293.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="AEN223"
+>1.2. Installation Steps</A
+></H1
+><P
+>This will help you get Mr. Voice up and running on either a Unix or Windows system.</P
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN226"
+>1.2.1. Upgrading to Mr. Voice 2.0</A
+></H2
+><P
+>If you are installing Mr. Voice on a new machine, one which does not contain an existing Mr. Voice 0.x or 1.x installation, skip these steps and go straight to the installation section.</P
+><P
+>Mr. Voice 2.0 involves a migration from the old database backend (MySQL) used in Mr. Voice 1.10.6 and before, to a new database backend (SQLite).  In order to migrate your data from the old database to the new one, you need to run the migration utility.</P
+><P
+>Windows users should double-click on the <TT
+CLASS="FILENAME"
+>upgrade20.exe</TT
+> file.  It will open up a DOS box.  Follow the instructions on-screen and, if there are no errors, it will create the new Mr. Voice database file and update your configuration to point to it.  If there are errors, your MySQL database will not be modified, so you can always use 1.10.6 or lower as usual while I'm working on the problem.</P
+><P
+>Unix users should run the <TT
+CLASS="FILENAME"
+>tools/upgrade20.pl</TT
+> script, and it will do the same as in the Windows instructions.</P
+><P
+>Once you are comfortable that the upgrade worked properly and that you're set up in Mr. Voice 2.0, you can delete your old MySQL installation to save disk space and system resources.</P
+><P
+>Windows users can disable the MySQL service, while keeping the software installed, by right-clicking on the stoplight in the system tray and choosing <SPAN
+CLASS="GUIMENU"
+>WinNT</SPAN
+>-&gt;<SPAN
+CLASS="GUIMENUITEM"
+>Stop Service</SPAN
+>.  This will leave your old data alone, but the MySQL service will not be running and using system resources.  To completely remove MySQL from your system, go to Add/Remove Programs, choose MySQL, and hit "Remove".  Then, you can delete the <TT
+CLASS="FILENAME"
+>C:\mysql</TT
+> directory.  Once that is done, MySQL is gone, along with your old database.</P
+><P
+>For Unix users, you may want to go into the MySQL command shell and "drop database mrvoice", and/or uninstall MySQL from your system completely (if it was only being used for Mr. Voice, of course)</P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN241"
+>1.2.2. Unix Installation Instructions</A
+></H2
+><P
+></P
+><UL
+><LI
+><P
+>Unpack the <TT
+CLASS="FILENAME"
+>mrvoice-x.x.tar.gz</TT
+> archive.  It will create a <TT
+CLASS="FILENAME"
+>mrvoice-x.x</TT
+> directory.  The <TT
+CLASS="FILENAME"
+>mrvoice.pl</TT
+> file is the only one needed to run the program (meaning that you can move <TT
+CLASS="FILENAME"
+>mrvoice.pl</TT
+> to another location after you're done configuring it), but there are other files in the archive, such as documentation, licenses, etc.</P
+></LI
+><LI
+><P
+>Compile and/or install any required software from above (perl modules, etc.).  I will skip the software setup, assuming that if you're trying to run this on a Unix system, you're geeky enough to install the required stuff by yourself.  ;-)  If you run into issues, feel free to email me or check the software's website. </P
+></LI
+></UL
+><P
+>At this point, all of the software should be set up and ready for configuration!</P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN253"
+>1.2.3. Windows Installation Instructions</A
+></H2
+><P
+>First, download WinAmp and install it the normal way, by double-clicking the installer icon and using the defaults provided.</P
+><P
+>If you're using the httpQ plugin for WinAmp, download its zip file and install it.  Then, do the following steps:
+        <P
+></P
+><UL
+><LI
+><P
+>Start WinAmp by itself, right-click on the "OAIDV" bar on the left of the window, choose Options-&#62;Preferences.</P
+></LI
+><LI
+><P
+>Go down to Plugins-&#62;General Purpose.  You should see the httpQ plugin listed.  Highlight that, and hit "configure".</P
+></LI
+><LI
+><P
+>Under the General tab, put in a password (your choosing), leave the port at 4800, and check the box to start the service automatically.  Hit the Apply button, then the x at the top-right.  Close the preferences, and exit from WinAmp.  <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>Remember the password you just set up - you will need it later.</I
+></SPAN
+></P
+></LI
+></UL
+>
+      </P
+><P
+>Any other WinAmp plugins (OGG, AAC, etc.) should be installed in the default way following the instructions provided with the package.</P
+><DIV
+CLASS="SECT3"
+><H3
+CLASS="SECT3"
+><A
+NAME="AEN266"
+>1.2.3.1. Installing the Mr. Voice software on Windows</A
+></H3
+><P
+>Unzip the <TT
+CLASS="FILENAME"
+>mrvoice-current.zip</TT
+> file to your desired location.  It will create a directory named <TT
+CLASS="FILENAME"
+>mrvoice-x.x</TT
+> under the location that you choose.  These instructions will assume that you unzip it to <TT
+CLASS="FILENAME"
+>C:\</TT
+>, creating the <TT
+CLASS="FILENAME"
+>C:\mrvoice-x.x\</TT
+> directory, where x.x is the version number.</P
+><P
+>The first time you run Mr. Voice on a particular computer, you will need to set up the configuration.   With later releases, you can just unzip the new version, and skip these remaining steps.</P
+><P
+>You will need a directory to store your MP3 files, and a directory to store your hotkey save files.  I suggest <TT
+CLASS="FILENAME"
+>C:\MP3\</TT
+> for the MP3 directory and <TT
+CLASS="FILENAME"
+>C:\hotkeys\</TT
+> for the save files, but you can pick anything.  Go ahead and create the directories now.</P
+><P
+>Finally, to actually run the software, double-click on the file <TT
+CLASS="FILENAME"
+>mrvoice.exe</TT
+>.  The program should start up!  The first time you run the program (or, more specifically, if it can't find its configuration file), you will be given the option of creating a default configuration, or going into the preferences to set the values manually.  The default should be good enough for most people.  It sets up the following values, creating directories where needed:
+          <P
+></P
+><UL
+><LI
+><P
+>MP3 Directory: <TT
+CLASS="FILENAME"
+>C:\MP3</TT
+></P
+></LI
+><LI
+><P
+>Hotkey Directory: <TT
+CLASS="FILENAME"
+>C:\HOTKEYS</TT
+></P
+></LI
+><LI
+><P
+>MP3 Player: <TT
+CLASS="FILENAME"
+>C:\Program Files\Winamp\Winamp.exe</TT
+></P
+></LI
+><LI
+><P
+>Database File: <TT
+CLASS="FILENAME"
+>C:\MRVOICE.DB</TT
+></P
+></LI
+></UL
+>
+        </P
+><P
+>After doing the initial setup, Mr. Voice will exit.  Restart it, and it will initialize your database and run the program.</P
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="c151.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="c293.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Installing Mr. Voice</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="c151.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Configuring Mr. Voice</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

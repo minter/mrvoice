@@ -1,0 +1,538 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Mr. Voice 2.2 Installation and Reference Manual</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="NEXT"
+TITLE="Foreword"
+HREF="f45.html"></HEAD
+><BODY
+CLASS="BOOK"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="BOOK"
+><A
+NAME="AEN1"
+></A
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="TITLE"
+><A
+NAME="AEN2"
+>Mr. Voice 2.2 Installation and Reference Manual</A
+></H1
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="../images/mrvoice-logo.png"
+ALIGN="CENTER"></P
+></DIV
+><H3
+CLASS="AUTHOR"
+><A
+NAME="AEN7"
+></A
+>H. Wade Minter</H3
+><DIV
+CLASS="AFFILIATION"
+><DIV
+CLASS="ADDRESS"
+><P
+CLASS="ADDRESS"
+><CODE
+CLASS="EMAIL"
+>&#60;<A
+HREF="mailto:minter@mrvoice.net"
+>minter@mrvoice.net</A
+>&#62;</CODE
+></P
+></DIV
+></DIV
+><P
+CLASS="COPYRIGHT"
+>Copyright &copy; 2000-2005 H. Wade Minter</P
+><HR></DIV
+><H1
+><A
+NAME="AEN16"
+></A
+>Acknowledgements</H1
+><P
+>Thanks to my wife, Holly, for encouragement and editorial help.</P
+><P
+>Thanks to the authors and publishers, and contributors of the following books and newsgroups, without which none of this would have gotten done:
+    <P
+></P
+><UL
+><LI
+><P
+><I
+CLASS="CITETITLE"
+>Learning Perl, 2nd Edition</I
+>, by Randal Schwartz and Tom Christiansen, published by O'Reilly and Associates.</P
+></LI
+><LI
+><P
+><I
+CLASS="CITETITLE"
+>Programming Perl, 2nd Edition</I
+>, by Larry Wall, Randal Schwartz and Tom Christiansen, published by O'Reilly and Associates.</P
+></LI
+><LI
+><P
+><I
+CLASS="CITETITLE"
+>Learning Perl/TK</I
+>, by Nancy Walsh, published by O'Reilly and Associates.</P
+></LI
+><LI
+><P
+><I
+CLASS="CITETITLE"
+>Matering Perl/TK</I
+>, by Steven Liddie and Nancy Walsh, published by O'Reilly and Associates.</P
+></LI
+><LI
+><P
+><I
+CLASS="CITETITLE"
+>Programming the Perl DBI</I
+>, by Alligator Descartes &#38; Tim Bunce, published by O'Reilly and Associates.</P
+></LI
+><LI
+><P
+>The newsgroup comp.lang.perl.tk</P
+></LI
+></UL
+>
+  </P
+><P
+>The improv groups who have been willing to actually run this software!  See the list at the <A
+HREF="http://www.mrvoice.net/users/"
+TARGET="_top"
+>Mr. Voice Website</A
+></P
+><P
+>Thanks to <A
+HREF="http://pobox.com/~dereklane/"
+TARGET="_top"
+>Derek Lane</A
+> of the <A
+HREF="http://raleigh.pm.org/"
+TARGET="_top"
+>Raleigh Perl Mongers</A
+> for suggesting the move to SQLite as a database backend.</P
+><P
+>And thanks to the Open Source and Free Software movements, letting people write software that doesn't suck!</P
+><P
+>Mr. Voice is dedicated to the memory of Andy Sepelak (4/4/78 - 3/11/02), a fine improviser and a good man.  He will be missed.</P
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="f45.html"
+>Foreword</A
+></DT
+><DT
+><A
+HREF="f52.html"
+>What's New</A
+></DT
+><DD
+><DL
+><DT
+>1. <A
+HREF="f52.html#AEN55"
+>What's new in Version 2.2?</A
+></DT
+><DT
+>2. <A
+HREF="x74.html"
+>What's new in Version 2.1.2?</A
+></DT
+><DT
+>3. <A
+HREF="x80.html"
+>What's new in Version 2.1.1?</A
+></DT
+><DT
+>4. <A
+HREF="x90.html"
+>What's new in Version 2.1?</A
+></DT
+><DT
+>5. <A
+HREF="x114.html"
+>What's new in Version 2.0?</A
+></DT
+></DL
+></DD
+><DT
+>1. <A
+HREF="c151.html"
+>Installing Mr. Voice</A
+></DT
+><DD
+><DL
+><DT
+>1.1. <A
+HREF="c151.html#AEN153"
+>Required Components</A
+></DT
+><DD
+><DL
+><DT
+>1.1.1. <A
+HREF="c151.html#AEN156"
+>Microsoft Windows</A
+></DT
+><DT
+>1.1.2. <A
+HREF="c151.html#AEN177"
+>Unix/Linux/BSD</A
+></DT
+></DL
+></DD
+><DT
+>1.2. <A
+HREF="x223.html"
+>Installation Steps</A
+></DT
+><DD
+><DL
+><DT
+>1.2.1. <A
+HREF="x223.html#AEN226"
+>Upgrading to Mr. Voice 2.0</A
+></DT
+><DT
+>1.2.2. <A
+HREF="x223.html#AEN241"
+>Unix Installation Instructions</A
+></DT
+><DT
+>1.2.3. <A
+HREF="x223.html#AEN253"
+>Windows Installation Instructions</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+>2. <A
+HREF="c293.html"
+>Configuring Mr. Voice</A
+></DT
+><DD
+><DL
+><DT
+>2.1. <A
+HREF="c293.html#AEN309"
+>Configuration Options and Variables</A
+></DT
+><DD
+><DL
+><DT
+>2.1.1. <A
+HREF="c293.html#AEN315"
+>Database Options</A
+></DT
+><DT
+>2.1.2. <A
+HREF="c293.html#AEN323"
+>File Paths</A
+></DT
+><DT
+>2.1.3. <A
+HREF="c293.html#AEN332"
+>Search Options</A
+></DT
+><DT
+>2.1.4. <A
+HREF="c293.html#AEN347"
+>Online Options</A
+></DT
+><DT
+>2.1.5. <A
+HREF="c293.html#AEN359"
+>Other</A
+></DT
+><DT
+>2.1.6. <A
+HREF="c293.html#AEN380"
+>Manual Configuration</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+>3. <A
+HREF="c389.html"
+>Using Mr. Voice</A
+></DT
+><DD
+><DL
+><DT
+>3.1. <A
+HREF="c389.html#AEN399"
+>Adding, Deleting, and Editing Songs and Categories</A
+></DT
+><DD
+><DL
+><DT
+>3.1.1. <A
+HREF="c389.html#AEN402"
+>Categories</A
+></DT
+><DT
+>3.1.2. <A
+HREF="c389.html#AEN438"
+>Songs</A
+></DT
+></DL
+></DD
+><DT
+>3.2. <A
+HREF="x562.html"
+>Searching and Playing Songs</A
+></DT
+><DD
+><DL
+><DT
+>3.2.1. <A
+HREF="x562.html#AEN565"
+>Searching The Database</A
+></DT
+><DT
+>3.2.2. <A
+HREF="x562.html#AEN600"
+>Playing Songs</A
+></DT
+><DT
+>3.2.3. <A
+HREF="x562.html#AEN620"
+>Exiting Mr. Voice</A
+></DT
+></DL
+></DD
+><DT
+>3.3. <A
+HREF="x629.html"
+>Hotkeys</A
+></DT
+><DD
+><DL
+><DT
+>3.3.1. <A
+HREF="x629.html#AEN632"
+>Configuring Hotkeys</A
+></DT
+><DT
+>3.3.2. <A
+HREF="x629.html#AEN670"
+>Using Hotkeys</A
+></DT
+><DT
+>3.3.3. <A
+HREF="x629.html#AEN673"
+>Saving and Loading Hotkeys</A
+></DT
+><DT
+>3.3.4. <A
+HREF="x629.html#AEN707"
+>The Holding Tank</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+>4. <A
+HREF="c744.html"
+>Mr. Voice Online</A
+></DT
+><DD
+><DL
+><DT
+>4.1. <A
+HREF="c744.html#AEN746"
+>What Is Mr. Voice Online?</A
+></DT
+><DT
+>4.2. <A
+HREF="x752.html"
+>Using Mr. Voice Online</A
+></DT
+><DD
+><DL
+><DT
+>4.2.1. <A
+HREF="x752.html#AEN765"
+>Downloading Songs</A
+></DT
+><DT
+>4.2.2. <A
+HREF="x752.html#AEN774"
+>Uploading Songs</A
+></DT
+></DL
+></DD
+><DT
+>4.3. <A
+HREF="x784.html"
+>Using The Mr. Voice Online Website</A
+></DT
+></DL
+></DD
+><DT
+>5. <A
+HREF="c793.html"
+>Troubleshooting and FAQs</A
+></DT
+><DT
+>A. <A
+HREF="a850.html"
+>Known Bugs and Issues</A
+></DT
+><DT
+>B. <A
+HREF="a854.html"
+>Contributing, Contacting, and Bug Reporting</A
+></DT
+><DT
+>C. <A
+HREF="a863.html"
+>Software License</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="LOT"
+><DL
+CLASS="LOT"
+><DT
+><B
+>List of Figures</B
+></DT
+><DT
+>2-1. <A
+HREF="c293.html#AEN302"
+>The Preferences window</A
+></DT
+><DT
+>3-1. <A
+HREF="c389.html#AEN392"
+>The Main window</A
+></DT
+><DT
+>3-2. <A
+HREF="c389.html#AEN413"
+>The Add Category window</A
+></DT
+><DT
+>3-3. <A
+HREF="c389.html#AEN425"
+>The Delete Category window</A
+></DT
+><DT
+>3-4. <A
+HREF="c389.html#AEN445"
+>The Add Song window</A
+></DT
+><DT
+>3-5. <A
+HREF="c389.html#AEN475"
+>The Add Song File Selection window</A
+></DT
+><DT
+>3-6. <A
+HREF="c389.html#AEN511"
+>The Delete Song window</A
+></DT
+><DT
+>3-7. <A
+HREF="c389.html#AEN552"
+>Orphaned Files Report</A
+></DT
+><DT
+>3-8. <A
+HREF="x629.html#AEN647"
+>The Hotkey window</A
+></DT
+><DT
+>3-9. <A
+HREF="x629.html#AEN718"
+>The Holding Tank window</A
+></DT
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="f45.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Foreword</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>
