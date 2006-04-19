@@ -251,7 +251,7 @@ else
 
 #####
 
-my $version = "2.2";    # Program version
+my $version = "2.2.1";    # Program version
 our $status = "Welcome to Mr. Voice version $version";
 
 sub get_category
@@ -4111,7 +4111,6 @@ sub validate_id
 
 sub stop_mp3
 {
-    startcheck_player();
     print "Stopping MP3\n" if $debug;
 
     my $widget = shift;
@@ -4129,16 +4128,10 @@ sub stop_mp3
         system("$config{mp3player} --stop");
     }
     $status = "Playing Stopped";
-
-    # Manually give the mainbox focus
-    print "Focusing on mainbox\n" if $debug;
-    $mainbox->focus();
 }
 
 sub play_mp3
 {
-
-    startcheck_player();
     print "Playing MP3\n" if $debug;
     my ( $statustitle, $statusartist, $filename );
     my $songstatusstring;
