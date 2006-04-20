@@ -1,5 +1,6 @@
 Wed  Apr 19 2006	H. Wade Minter (minter@lunenburg.org)
      * Fix issue with focus playing/stopping on Win32.
+     * Tag 2.2.1
 
 Tue  Apr 18 2006	H. Wade Minter (minter@lunenburg.org)
      * Tag 2.2
