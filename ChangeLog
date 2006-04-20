@@ -1,4 +1,8 @@
+Thu  Apr 20 2006	H. Wade Minter (minter@lunenburg.org)
+     * Merged from trunk 1014:1018
+
 Wed  Apr 19 2006	H. Wade Minter (minter@lunenburg.org)
+     * Fix issue with focus playing/stopping on Win32.
      * Merged from trunk 984:1013
 
 Tue  Apr 18 2006	H. Wade Minter (minter@lunenburg.org)
