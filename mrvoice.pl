@@ -4244,7 +4244,7 @@ sub play_mp3
         }
         else
         {
-            system("$config{mp3player} add $filename && $config{mp3player} play")
+            system("$config{mp3player} add $file && $config{mp3player} play")
         }
     }
 }
