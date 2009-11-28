@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 use warnings;
 no warnings 'redefine';
 no warnings 'uninitialized';
@@ -930,15 +930,8 @@ sub startcheck_player
         {
 
             # Start the MP3 player on a Unix system using fork/exec
-            print "Forking to exec $config{mp3player}\n" if $debug;
-            $mp3_pid = fork();
-            print "Got PID $mp3_pid\n" if $debug;
-            if ( $mp3_pid == 0 )
-            {
-
-                # We're the child of the fork
-                exec("$config{mp3player}");
-            }
+            print "Starting $config{mp3player}\n" if $debug;
+            system("$config{mp3player} clear");
         }
     }
 
@@ -3705,9 +3698,13 @@ sub launch_tank_playlist
           )
           or $status = "Audion Error playing $filename";
     }
-    else
+    elsif ( $^O eq "MSWin32" )
     {
         system("$config{mp3player} $filename");
+    }
+    else
+    {
+        system("$config{mp3player} add $filename && $config{mp3player} play");
     }
 }
 
@@ -4123,9 +4120,13 @@ sub stop_mp3
         RunAppleScript(
             qq( tell application "Audion 3" to stop in control window 1));
     }
-    else
+    elsif ($^O eq "MSWin32")
     {
         system("$config{mp3player} --stop");
+    }
+    else
+    {
+        system("$config{mp3player} stop && $config{mp3player} clear");
     }
     $status = "Playing Stopped";
 }
@@ -4199,9 +4200,13 @@ sub play_mp3
               )
               or $status = "Can't play: $@";
         }
-        else
+        elsif ( $^O eq "MSWin32" )
         {
             system("$config{mp3player} $filename");
+        }
+        else
+        {
+            system("$config{mp3player} add $filename && $config{mp3player} play")
         }
     }
     elsif ($filename)
@@ -4233,9 +4238,13 @@ sub play_mp3
               )
               or $status = "Can't play: $@";
         }
-        else
+        elsif ( $^O eq "MSWin32" )
         {
             system("$config{mp3player} $file");
+        }
+        else
+        {
+            system("$config{mp3player} add $filename && $config{mp3player} play")
         }
     }
 }
@@ -5298,7 +5307,7 @@ sub read_rcfile
             }
             else
             {
-                $config{mp3player} = "/usr/bin/xmms";
+                $config{mp3player} = "/usr/bin/xmms2";
             }
             print "MP3 player is $config{mp3player}\n" if $debug;
             $string .= "Looking for MP3 player in $config{mp3player}...";
