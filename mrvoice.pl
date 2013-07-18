@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use warnings;
 no warnings 'redefine';
 no warnings 'uninitialized';
@@ -251,8 +251,46 @@ else
 
 #####
 
-my $version = "2.2.2pre";    # Program version
+my $version = "2.2.2";    # Program version
 our $status = "Welcome to Mr. Voice version $version";
+
+sub play_applescript
+{
+  my $filename = shift;
+  my $applescript = <<END_AS;
+  to replaceFrontQTPlayerWithFile(aFile)
+  	tell application "QuickTime Player"
+  		activate
+  		try
+  			set frontDoc to front document
+  			close front document
+  		on error err number errNum
+  			if errNum is -1719 then
+  			else if errNum is -10000 then
+  			else
+  				log err
+  			end if
+  		end try
+  		open aFile
+  		play front document
+  		tell application "System Events"
+  			keystroke "h" using command down
+  		end tell
+  	end tell
+  end replaceFrontQTPlayerWithFile
+  on run
+  	set unixFile to "$filename"
+  	set macFile to POSIX file unixFile
+  	set fileRef to (macFile as alias)
+  	my replaceFrontQTPlayerWithFile(fileRef)
+  end run
+END_AS
+  print "DEBUG: Applescript is $applescript\n";
+  open(MYFILE, '>/tmp/mrvoice.osa');
+  print MYFILE $applescript;
+  close(MYFILE);
+  qx{ osascript /tmp/mrvoice.osa };  
+}
 
 sub get_category
 {
@@ -911,20 +949,20 @@ sub startcheck_player
         }
         elsif ( $^O eq "darwin" )
         {
-            return
-              if (
-                RunAppleScript(
-                    qq(tell application "System Events" to (creator type of processes) contains "Audn")
-                ) eq "true"
-              );
-            print "Starting AppleScript\n" if $debug;
-            RunAppleScript(qq( tell application "Audion 3" to activate))
-              or infobox(
-                $mw,
-                "Audion Error",
-                "AppleScript could not find Audion.  You will probably want to download the app and put it in the Applications folder.  Otherwise you will not be able to, in a word, 'play' any music"
-              );
-            print "Finished AppleScript\n" if $debug;
+#            return
+#              if (
+#                RunAppleScript(
+#                    qq(tell application "System Events" to (creator type of processes) contains "Audn")
+#                ) eq "true"
+#              );
+            # print "Starting AppleScript\n" if $debug;
+            # RunAppleScript(qq( tell application "QuickTime Player" to activate\ntell application "System Events" to set visible of process "QuickTime Player" to false))
+            #   or infobox(
+            #     $mw,
+            #     "QuickTime Error",
+            #     "AppleScript could not find QuickTime Player.  You will probably want to download the app and put it in the Applications folder.  Otherwise you will not be able to, in a word, 'play' any music"
+            #   );
+            # print "Finished AppleScript\n" if $debug;
         }
         else
         {
@@ -3693,10 +3731,7 @@ sub launch_tank_playlist
     print "Sending playlist command to MP3 player\n" if $debug;
     if ( $^O eq "darwin" )
     {
-        RunAppleScript(
-            qq( set unixFile to \"$filename\"\nset macFile to POSIX file unixFile\nset fileRef to (macFile as alias)\ntell application "Audion 3"\nplay fileRef in control window 1\nend tell)
-          )
-          or $status = "Audion Error playing $filename";
+      play_applescript($filename);
     }
     elsif ( $^O eq "MSWin32" )
     {
@@ -4118,7 +4153,7 @@ sub stop_mp3
     if ( $^O eq "darwin" )
     {
         RunAppleScript(
-            qq( tell application "Audion 3" to stop in control window 1));
+            qq( tell application "QuickTime Player"\nstop the front document\nclose the front document\nend tell));
     }
     elsif ($^O eq "MSWin32")
     {
@@ -4195,10 +4230,7 @@ sub play_mp3
         $status = "Previewing file $filename";
         if ( $^O eq "darwin" )
         {
-            RunAppleScript(
-                qq( set unixFile to \"$filename\"\nset macFile to POSIX file unixFile\nset fileRef to (macFile as alias)\ntell application "Audion 3"\nplay fileRef in control window 1\nend tell)
-              )
-              or $status = "Can't play: $@";
+          play_applescript($filename);
         }
         elsif ( $^O eq "MSWin32" )
         {
@@ -4233,10 +4265,7 @@ sub play_mp3
         my $file = catfile( $config{filepath}, $filename );
         if ( $^O eq "darwin" )
         {
-            RunAppleScript(
-                qq( set unixFile to \"$file\"\nset macFile to POSIX file unixFile\nset fileRef to (macFile as alias)\ntell application "Audion 3"\nplay fileRef in control window 1\nend tell)
-              )
-              or $status = "Can't play: $@";
+          play_applescript($file);
         }
         elsif ( $^O eq "MSWin32" )
         {
@@ -4617,7 +4646,7 @@ sub do_exit
         }
         elsif ( $^O eq "darwin" )
         {
-            RunAppleScript(qq (tell application "Audion 3" to quit));
+            RunAppleScript(qq (tell application "QuickTime Player" to quit));
         }
         else
         {
@@ -5303,7 +5332,7 @@ sub read_rcfile
             }
             elsif ( $^O eq "darwin" )
             {
-                $config{mp3player} = "Audion";
+                $config{mp3player} = "QuickTime Player";
             }
             else
             {
