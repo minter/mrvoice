@@ -3908,7 +3908,8 @@ sub move_tank
     print "Re-adding $targettext in the proper location\n" if $debug;
 
     my $info = get_info_from_id($target);
-    if ( !-e catfile( $config{filepath}, $info->{filename} ) )
+    
+    if ( ( !-e catfile( $config{filepath}, $info->{filename} ) ) || ( $^O eq "darwin" && $info->{filename} =~ /\.ogg$/) )
     {
         print "This item is inavlid, so turn it red\n" if $debug;
         my $style = $tankbox->ItemStyle(
@@ -4519,7 +4520,7 @@ sub do_search
         );
         $numrows++;
 
-        if ( !-e catfile( $config{filepath}, $row_hashref->{filename} ) )
+        if ( ( !-e catfile( $config{filepath}, $row_hashref->{filename} ) ) || ( $^O eq "darwin" && $row_hashref->{filename} =~ /\.ogg$/) )
         {
             print "$row_hashref->{id} is invalid, turning it red\n" if $debug;
             my $style = $mainbox->ItemStyle(
