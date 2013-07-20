@@ -1,0 +1,13 @@
+on run
+	tell application "Finder"
+		--Launch X11 and bring to front
+		activate application "XQuartz"
+		--String that will be executed by the do shell script command
+		--First set the display
+		set theCommand to "export DISPLAY=':0.0';./mrvoice > /tmp/mrvoice.log 2>&1 &"
+		with timeout of 1000000 seconds
+			do shell script theCommand
+		end timeout
+	end tell
+end run
+
