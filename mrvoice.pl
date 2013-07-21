@@ -4652,7 +4652,7 @@ sub do_exit
         }
         elsif ( $^O eq "darwin" )
         {
-            RunAppleScript(qq (tell application "QuickTime Player"\nclose front document\nquit\nend tell));
+            RunAppleScript(qq (tell application "QuickTime Player"\nclose every window\nquit\nend tell));
         }
         else
         {
