@@ -251,7 +251,7 @@ else
 
 #####
 
-my $version = "2.2.2";    # Program version
+my $version = "2.2.3";    # Program version
 our $status = "Welcome to Mr. Voice version $version";
 
 sub play_applescript
@@ -4405,8 +4405,10 @@ sub get_songlength
 sub do_search
 {
     print "Doing search\n" if $debug;
+    print "Arguments are @_\n";
     my ( $datestring, $startdate, $enddate );
     my $modifier = shift;
+    my $keep_category = $_[1];
     print "Modifier is $modifier\n" if $debug;
     if ( $modifier eq "timespan" )
     {
@@ -4542,12 +4544,14 @@ sub do_search
     $sth->finish;
     my $endtime = gettimeofday();
     my $diff = sprintf( "%.2f", $endtime - $starttime );
-    $cattext  = "";
     $title    = "";
     $artist   = "";
     $anyfield = "";
-    $category = "Any";
-    $longcat  = "Any Category";
+    if ($keep_category ne "keep") {
+      $category = "Any";
+      $longcat  = "Any Category";
+      $cattext  = "";
+    }
     $mw->Unbusy( -recurse => 1 );
     print "MainWindow unbusy now\n" if $debug;
 
@@ -4597,6 +4601,7 @@ sub build_main_categories_menu
             $longcat = "Any Category";
         }
     );
+    $catmenu->bind( '<ButtonRelease>', [\&do_search, "", "keep"] );
     my $query = "SELECT * from categories ORDER BY description";
     my $sth   = $dbh->prepare($query);
     $sth->execute or die "can't execute the query: $DBI::errstr\n";
@@ -4647,7 +4652,7 @@ sub do_exit
         }
         elsif ( $^O eq "darwin" )
         {
-            RunAppleScript(qq (tell application "QuickTime Player" to quit));
+            RunAppleScript(qq (tell application "QuickTime Player"\nclose front document\nquit\nend tell));
         }
         else
         {
